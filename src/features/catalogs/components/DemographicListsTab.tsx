@@ -12,9 +12,14 @@ import { useToggleSocioeconomicLevelActive } from '../hooks/useToggleSocioeconom
 import { useLanguages } from '../hooks/useLanguages'
 import { useCreateLanguage } from '../hooks/useCreateLanguage'
 import { useToggleLanguageActive } from '../hooks/useToggleLanguageActive'
+import { useCountries } from '../hooks/useCountries'
+import { useCreateCountry } from '../hooks/useCreateCountry'
 import { SimpleCatalogList } from './SimpleCatalogList'
+import { CountriesList } from './CountriesList'
 
-const SUB_TABS = ['Estado civil', 'Raza', 'Nivel socioeconómico', 'Idioma'] as const
+// El catálogo de "País" es la única lista de países del sistema: se usa tanto
+// para nacionalidad como para país de origen/residencia en Pacientes, evitando duplicar el catálogo.
+const SUB_TABS = ['Estado civil', 'Raza', 'Nivel socioeconómico', 'Idioma', 'País / Nacionalidad'] as const
 
 export function DemographicListsTab() {
   const [subTab, setSubTab] = useState(0)
@@ -34,6 +39,9 @@ export function DemographicListsTab() {
   const { data: languages = [] } = useLanguages()
   const createLanguage = useCreateLanguage()
   const toggleLanguage = useToggleLanguageActive()
+
+  const { data: countries = [] } = useCountries()
+  const createCountry = useCreateCountry()
 
   return (
     <Box>
@@ -82,6 +90,13 @@ export function DemographicListsTab() {
           isCreating={createLanguage.isPending}
           onCreate={(values) => createLanguage.mutate({ name: values.name, isoCode: values.isoCode ?? '' })}
           onToggleActive={(id) => toggleLanguage.mutate(id)}
+        />
+      )}
+      {subTab === 4 && (
+        <CountriesList
+          items={countries}
+          isCreating={createCountry.isPending}
+          onCreate={(values) => createCountry.mutate(values)}
         />
       )}
     </Box>

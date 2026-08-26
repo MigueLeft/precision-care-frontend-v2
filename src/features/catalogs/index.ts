@@ -1,5 +1,6 @@
 export { catalogsKeys } from './hooks/catalogs.keys'
 export { useCountries } from './hooks/useCountries'
+export { useCreateCountry } from './hooks/useCreateCountry'
 export { useCivilStatuses } from './hooks/useCivilStatuses'
 export { useRaces } from './hooks/useRaces'
 export { useSocioeconomicLevels } from './hooks/useSocioeconomicLevels'

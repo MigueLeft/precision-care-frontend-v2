@@ -6,6 +6,11 @@ export async function fetchCountries(): Promise<Country[]> {
   return data.countries
 }
 
+export async function createCountry(payload: { name: string; isoCode: string }): Promise<Country> {
+  const { data } = await api.post<{ country: Country }>('/catalogs/countries', payload)
+  return data.country
+}
+
 export async function fetchCivilStatuses(): Promise<CivilStatus[]> {
   const { data } = await api.get<{ civilStatuses: CivilStatus[] }>('/catalogs/civil-statuses')
   return data.civilStatuses
