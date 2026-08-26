@@ -1,0 +1,43 @@
+import { useState } from 'react'
+import { Typography, Box, Tabs, Tab } from '@mui/material'
+import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined'
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
+import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
+import ListOutlinedIcon from '@mui/icons-material/ListOutlined'
+import { MedicationsTab } from './MedicationsTab'
+import { ExamsTab } from './ExamsTab'
+import { SymptomsTab } from './SymptomsTab'
+import { DemographicListsTab } from './DemographicListsTab'
+
+const TABS = [
+  { label: 'Medicamentos', icon: LinkOutlinedIcon },
+  { label: 'Exámenes', icon: ScienceOutlinedIcon },
+  { label: 'Síntomas', icon: MonitorHeartOutlinedIcon },
+  { label: 'Listas demográficas', icon: ListOutlinedIcon },
+] as const
+
+export function CatalogsPage() {
+  const [tab, setTab] = useState(0)
+
+  return (
+    <Box>
+      <Typography variant="h1" sx={{ mb: 0.5 }}>
+        Catálogos
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        Gestión de catálogos clínicos y listas de referencia del sistema
+      </Typography>
+
+      <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ mb: 3 }}>
+        {TABS.map(({ label, icon: Icon }) => (
+          <Tab key={label} label={label} icon={<Icon sx={{ fontSize: 18 }} />} iconPosition="start" />
+        ))}
+      </Tabs>
+
+      {tab === 0 && <MedicationsTab />}
+      {tab === 1 && <ExamsTab />}
+      {tab === 2 && <SymptomsTab />}
+      {tab === 3 && <DemographicListsTab />}
+    </Box>
+  )
+}
