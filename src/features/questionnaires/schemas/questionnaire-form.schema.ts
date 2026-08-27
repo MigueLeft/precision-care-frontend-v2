@@ -1,8 +1,9 @@
 import { z } from 'zod'
+import { requiredTextSchema, optionalTextSchema } from '@/utils/text-validation'
 
 export const questionnaireFormSchema = z.object({
-  name: z.string().min(1, 'El nombre es requerido.'),
-  description: z.string().optional().or(z.literal('')),
+  name: requiredTextSchema('El nombre', 150),
+  description: optionalTextSchema(500),
   type: z.enum(['lifestyle', 'psychometric', 'antecedents', 'other'], {
     error: 'Selecciona un tipo de ingresable.',
   }),

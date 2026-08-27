@@ -1,11 +1,12 @@
 import { z } from 'zod'
+import { requiredTextSchema, optionalTextSchema } from '@/utils/text-validation'
 
 export const medicationFormSchema = z.object({
-  brandName: z.string().min(1, 'El nombre comercial es requerido.'),
-  genericName: z.string().min(1, 'El nombre genérico es requerido.'),
-  presentation: z.string().min(1, 'La presentación es requerida.'),
-  concentration: z.string().optional().or(z.literal('')),
-  category: z.string().optional().or(z.literal('')),
+  brandName: requiredTextSchema('El nombre comercial', 150),
+  genericName: requiredTextSchema('El nombre genérico', 150),
+  presentation: requiredTextSchema('La presentación', 100),
+  concentration: optionalTextSchema(50),
+  category: optionalTextSchema(100),
 })
 
 export type MedicationFormValues = z.infer<typeof medicationFormSchema>

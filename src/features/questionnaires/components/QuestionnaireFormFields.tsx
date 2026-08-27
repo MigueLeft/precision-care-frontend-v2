@@ -26,6 +26,7 @@ export function QuestionnaireFormFields({ control }: QuestionnaireFormFieldsProp
             error={!!error}
             helperText={error?.message}
             fullWidth
+            slotProps={{ htmlInput: { maxLength: 150 } }}
           />
         )}
       />
@@ -42,6 +43,7 @@ export function QuestionnaireFormFields({ control }: QuestionnaireFormFieldsProp
             multiline
             minRows={2}
             fullWidth
+            slotProps={{ htmlInput: { maxLength: 500 } }}
           />
         )}
       />

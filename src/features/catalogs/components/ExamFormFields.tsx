@@ -1,5 +1,6 @@
-import { Controller } from 'react-hook-form'
-import type { Control } from 'react-hook-form'
+import { useEffect } from 'react'
+import { Controller, useWatch } from 'react-hook-form'
+import type { Control, UseFormSetValue } from 'react-hook-form'
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { examCategoryOptions, examValueTypeOptions } from '../schemas/exam-form.schema'
 import type { ExamFormValues } from '../schemas/exam-form.schema'
@@ -19,9 +20,20 @@ const VALUE_TYPE_LABELS: Record<(typeof examValueTypeOptions)[number], string> =
 
 interface ExamFormFieldsProps {
   control: Control<ExamFormValues>
+  setValue: UseFormSetValue<ExamFormValues>
 }
 
-export function ExamFormFields({ control }: ExamFormFieldsProps) {
+export function ExamFormFields({ control, setValue }: ExamFormFieldsProps) {
+  const valueType = useWatch({ control, name: 'valueType' })
+  const isNumericType = valueType === 'numeric'
+
+  useEffect(() => {
+    if (!isNumericType) {
+      setValue('referenceMin', '')
+      setValue('referenceMax', '')
+    }
+  }, [isNumericType, setValue])
+
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -29,7 +41,14 @@ export function ExamFormFields({ control }: ExamFormFieldsProps) {
           name="name"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Nombre del examen" fullWidth error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Nombre del examen"
+              fullWidth
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 150 } }}
+            />
           )}
         />
       </Grid>
@@ -55,7 +74,16 @@ export function ExamFormFields({ control }: ExamFormFieldsProps) {
         <Controller
           name="defaultUnit"
           control={control}
-          render={({ field }) => <TextField {...field} label="Unidad por defecto" fullWidth />}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Unidad por defecto"
+              fullWidth
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 30 } }}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -80,14 +108,34 @@ export function ExamFormFields({ control }: ExamFormFieldsProps) {
         <Controller
           name="referenceMin"
           control={control}
-          render={({ field }) => <TextField {...field} label="Referencia mínima" fullWidth />}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Referencia mínima"
+              fullWidth
+              disabled={!isNumericType}
+              error={!!error}
+              helperText={error?.message ?? (isNumericType ? ' ' : 'Solo aplica para tipo numérico.')}
+              slotProps={{ htmlInput: { maxLength: 30 } }}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
           name="referenceMax"
           control={control}
-          render={({ field }) => <TextField {...field} label="Referencia máxima" fullWidth />}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Referencia máxima"
+              fullWidth
+              disabled={!isNumericType}
+              error={!!error}
+              helperText={error?.message ?? (isNumericType ? ' ' : 'Solo aplica para tipo numérico.')}
+              slotProps={{ htmlInput: { maxLength: 30 } }}
+            />
+          )}
         />
       </Grid>
     </Grid>

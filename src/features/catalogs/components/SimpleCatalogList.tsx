@@ -17,7 +17,9 @@ interface SimpleCatalogListProps {
   items: SimpleCatalogItem[]
   showIsoCode?: boolean
   isCreating: boolean
+  isUpdating?: boolean
   onCreate: (values: { name: string; isoCode?: string }) => void
+  onUpdate?: (id: number, values: { name: string; isoCode?: string }) => void
   onToggleActive: (id: number) => void
 }
 
@@ -26,10 +28,20 @@ export function SimpleCatalogList({
   items,
   showIsoCode,
   isCreating,
+  isUpdating,
   onCreate,
+  onUpdate,
   onToggleActive,
 }: SimpleCatalogListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<SimpleCatalogItem | null>(null)
+
+  const isEditing = editingItem !== null
+
+  function closeForm() {
+    setIsFormOpen(false)
+    setEditingItem(null)
+  }
 
   return (
     <div>
@@ -47,19 +59,30 @@ export function SimpleCatalogList({
         </AppButton>
       </Stack>
 
-      <SimpleCatalogTable items={items} showIsoCode={showIsoCode} onToggleActive={onToggleActive} />
-
-      <SimpleCatalogFormModal
-        open={isFormOpen}
-        title={`Agregar ${label.toLowerCase()}`}
+      <SimpleCatalogTable
+        items={items}
         showIsoCode={showIsoCode}
-        isSubmitting={isCreating}
-        onSubmit={(values) => {
-          onCreate(values)
-          setIsFormOpen(false)
-        }}
-        onClose={() => setIsFormOpen(false)}
+        onEdit={(item) => setEditingItem(item)}
+        onToggleActive={onToggleActive}
       />
+
+      {(isFormOpen || isEditing) && (
+        <SimpleCatalogFormModal
+          title={isEditing ? `Editar ${label.toLowerCase()}` : `Agregar ${label.toLowerCase()}`}
+          showIsoCode={showIsoCode}
+          isSubmitting={isEditing ? !!isUpdating : isCreating}
+          initialValues={editingItem ?? undefined}
+          onSubmit={(values) => {
+            if (isEditing && editingItem) {
+              onUpdate?.(editingItem.id, values)
+            } else {
+              onCreate(values)
+            }
+            closeForm()
+          }}
+          onClose={closeForm}
+        />
+      )}
     </div>
   )
 }

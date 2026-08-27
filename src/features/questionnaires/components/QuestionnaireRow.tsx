@@ -21,10 +21,12 @@ interface QuestionnaireRowProps {
 export function QuestionnaireRow({ questionnaire, onEdit, onDelete }: QuestionnaireRowProps) {
   return (
     <TableRow hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
-      <TableCell>
-        <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>{questionnaire.name}</Typography>
+      <TableCell sx={{ maxWidth: 320, wordBreak: 'break-word' }}>
+        <Typography sx={{ fontSize: '14px', fontWeight: 600, wordBreak: 'break-word' }}>
+          {questionnaire.name}
+        </Typography>
         {questionnaire.description && (
-          <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+          <Typography sx={{ fontSize: '12px', color: 'text.secondary', wordBreak: 'break-word' }}>
             {questionnaire.description}
           </Typography>
         )}
@@ -44,7 +46,7 @@ export function QuestionnaireRow({ questionnaire, onEdit, onDelete }: Questionna
           color={questionnaire.active ? 'success' : 'default'}
         />
       </TableCell>
-      <TableCell align="right">
+      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
         <Tooltip title="Ver / editar contenido">
           <Link to="/cuestionarios/$id" params={{ id: String(questionnaire.id) }}>
             <IconButton size="small" component="span" aria-label="Ver ingresable">

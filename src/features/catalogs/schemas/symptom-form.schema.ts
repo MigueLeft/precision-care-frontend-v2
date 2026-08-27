@@ -1,8 +1,9 @@
 import { z } from 'zod'
+import { requiredTextSchema, optionalTextSchema } from '@/utils/text-validation'
 
 export const symptomFormSchema = z.object({
-  name: z.string().min(1, 'El nombre del síntoma es requerido.'),
-  cie10Code: z.string().optional().or(z.literal('')),
+  name: requiredTextSchema('El nombre del síntoma', 150),
+  cie10Code: optionalTextSchema(10),
   bodySystemId: z.number().int().positive().optional(),
 })
 

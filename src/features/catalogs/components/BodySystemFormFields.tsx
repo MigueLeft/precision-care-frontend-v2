@@ -1,55 +1,23 @@
 import { Controller } from 'react-hook-form'
 import type { Control } from 'react-hook-form'
 import { Grid, TextField } from '@mui/material'
-import type { MedicationFormValues } from '../schemas/medication-form.schema'
+import type { BodySystemFormValues } from '../schemas/body-system-form.schema'
 
-interface MedicationFormFieldsProps {
-  control: Control<MedicationFormValues>
+interface BodySystemFormFieldsProps {
+  control: Control<BodySystemFormValues>
 }
 
-export function MedicationFormFields({ control }: MedicationFormFieldsProps) {
+export function BodySystemFormFields({ control }: BodySystemFormFieldsProps) {
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
-          name="brandName"
+          name="name"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              label="Nombre comercial"
-              fullWidth
-              error={!!error}
-              helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 150 } }}
-            />
-          )}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="genericName"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              label="Sustancia activa"
-              fullWidth
-              error={!!error}
-              helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 150 } }}
-            />
-          )}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="presentation"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              label="Presentación"
+              label="Nombre"
               fullWidth
               error={!!error}
               helperText={error?.message}
@@ -60,32 +28,50 @@ export function MedicationFormFields({ control }: MedicationFormFieldsProps) {
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
-          name="concentration"
+          name="shortCode"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              label="Concentración"
+              label="Código corto"
               fullWidth
               error={!!error}
               helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 50 } }}
+              slotProps={{ htmlInput: { maxLength: 20 } }}
             />
           )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
-          name="category"
+          name="cie10Chapter"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              label="Categoría"
+              label="Capítulo CIE-10"
               fullWidth
               error={!!error}
               helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 100 } }}
+              slotProps={{ htmlInput: { maxLength: 20 } }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid size={12}>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Descripción"
+              fullWidth
+              multiline
+              minRows={2}
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 500 } }}
             />
           )}
         />

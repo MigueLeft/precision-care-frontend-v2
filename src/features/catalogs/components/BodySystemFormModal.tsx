@@ -3,32 +3,29 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
-import { ExamFormFields } from './ExamFormFields'
-import { createExamFormSchema } from '../schemas/exam-form.schema'
-import type { ExamFormValues } from '../schemas/exam-form.schema'
+import { BodySystemFormFields } from './BodySystemFormFields'
+import { bodySystemFormSchema } from '../schemas/body-system-form.schema'
+import type { BodySystemFormValues } from '../schemas/body-system-form.schema'
 
-interface ExamFormModalProps {
+interface BodySystemFormModalProps {
   open: boolean
   mode: 'create' | 'edit'
-  initialValues: ExamFormValues
+  initialValues: BodySystemFormValues
   isSubmitting: boolean
-  /** Nombres de los demás exámenes ya guardados, para bloquear duplicados en el formulario. */
-  existingNames?: string[]
-  onSubmit: (values: ExamFormValues) => void
+  onSubmit: (values: BodySystemFormValues) => void
   onClose: () => void
 }
 
-export function ExamFormModal({
+export function BodySystemFormModal({
   open,
   mode,
   initialValues,
   isSubmitting,
-  existingNames = [],
   onSubmit,
   onClose,
-}: ExamFormModalProps) {
-  const { control, handleSubmit, reset, setValue } = useForm<ExamFormValues>({
-    resolver: zodResolver(createExamFormSchema(existingNames)),
+}: BodySystemFormModalProps) {
+  const { control, handleSubmit, reset } = useForm<BodySystemFormValues>({
+    resolver: zodResolver(bodySystemFormSchema),
     defaultValues: initialValues,
   })
 
@@ -38,10 +35,10 @@ export function ExamFormModal({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{mode === 'create' ? 'Agregar examen' : 'Editar examen'}</DialogTitle>
+      <DialogTitle>{mode === 'create' ? 'Agregar aparato / sistema' : 'Editar aparato / sistema'}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2.5 }}>
-          <ExamFormFields control={control} setValue={setValue} />
+          <BodySystemFormFields control={control} />
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
@@ -49,7 +46,7 @@ export function ExamFormModal({
           Cancelar
         </Button>
         <AppButton variant="contained" loading={isSubmitting} onClick={handleSubmit(onSubmit)}>
-          {mode === 'create' ? 'Crear examen' : 'Guardar cambios'}
+          {mode === 'create' ? 'Crear' : 'Guardar cambios'}
         </AppButton>
       </DialogActions>
     </Dialog>

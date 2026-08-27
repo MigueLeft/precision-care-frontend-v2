@@ -35,6 +35,7 @@ export function QuestionFormFields({ control }: QuestionFormFieldsProps) {
             multiline
             minRows={2}
             fullWidth
+            slotProps={{ htmlInput: { maxLength: 500 } }}
           />
         )}
       />

@@ -32,6 +32,7 @@ export function OptionsEditor({ control }: OptionsEditorProps) {
                   error={!!error}
                   helperText={error?.message}
                   sx={{ flex: 2 }}
+                  slotProps={{ htmlInput: { maxLength: 200 } }}
                 />
               )}
             />
@@ -46,6 +47,7 @@ export function OptionsEditor({ control }: OptionsEditorProps) {
                   error={!!error}
                   helperText={error?.message}
                   sx={{ flex: 1 }}
+                  slotProps={{ htmlInput: { maxLength: 100 } }}
                 />
               )}
             />

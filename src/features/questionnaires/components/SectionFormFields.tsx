@@ -14,7 +14,14 @@ export function SectionFormFields({ control }: SectionFormFieldsProps) {
         name="title"
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <TextField {...field} label="Título de la sección" error={!!error} helperText={error?.message} fullWidth />
+          <TextField
+            {...field}
+            label="Título de la sección"
+            error={!!error}
+            helperText={error?.message}
+            fullWidth
+            slotProps={{ htmlInput: { maxLength: 150 } }}
+          />
         )}
       />
 
@@ -30,6 +37,7 @@ export function SectionFormFields({ control }: SectionFormFieldsProps) {
             multiline
             minRows={2}
             fullWidth
+            slotProps={{ htmlInput: { maxLength: 500 } }}
           />
         )}
       />

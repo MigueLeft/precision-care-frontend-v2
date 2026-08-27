@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { requiredTextSchema, optionalTextSchema } from '@/utils/text-validation'
 
 export const AHA_LIFESTYLE_COMPONENTS = [
   { value: '', label: 'Ninguno' },
@@ -13,8 +14,8 @@ export const AHA_LIFESTYLE_COMPONENTS = [
 ] as const
 
 export const sectionFormSchema = z.object({
-  title: z.string().min(1, 'El título de la sección es requerido.'),
-  description: z.string().optional().or(z.literal('')),
+  title: requiredTextSchema('El título de la sección', 150),
+  description: optionalTextSchema(500),
   lifestyleComponent: z.string().optional().or(z.literal('')),
 })
 

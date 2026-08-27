@@ -2,18 +2,23 @@ import { useState } from 'react'
 import { Box, Tabs, Tab } from '@mui/material'
 import { useCivilStatuses } from '../hooks/useCivilStatuses'
 import { useCreateCivilStatus } from '../hooks/useCreateCivilStatus'
+import { useUpdateCivilStatus } from '../hooks/useUpdateCivilStatus'
 import { useToggleCivilStatusActive } from '../hooks/useToggleCivilStatusActive'
 import { useRaces } from '../hooks/useRaces'
 import { useCreateRace } from '../hooks/useCreateRace'
+import { useUpdateRace } from '../hooks/useUpdateRace'
 import { useToggleRaceActive } from '../hooks/useToggleRaceActive'
 import { useSocioeconomicLevels } from '../hooks/useSocioeconomicLevels'
 import { useCreateSocioeconomicLevel } from '../hooks/useCreateSocioeconomicLevel'
+import { useUpdateSocioeconomicLevel } from '../hooks/useUpdateSocioeconomicLevel'
 import { useToggleSocioeconomicLevelActive } from '../hooks/useToggleSocioeconomicLevelActive'
 import { useLanguages } from '../hooks/useLanguages'
 import { useCreateLanguage } from '../hooks/useCreateLanguage'
+import { useUpdateLanguage } from '../hooks/useUpdateLanguage'
 import { useToggleLanguageActive } from '../hooks/useToggleLanguageActive'
 import { useCountries } from '../hooks/useCountries'
 import { useCreateCountry } from '../hooks/useCreateCountry'
+import { useUpdateCountry } from '../hooks/useUpdateCountry'
 import { SimpleCatalogList } from './SimpleCatalogList'
 import { CountriesList } from './CountriesList'
 
@@ -26,22 +31,27 @@ export function DemographicListsTab() {
 
   const { data: civilStatuses = [] } = useCivilStatuses()
   const createCivilStatus = useCreateCivilStatus()
+  const updateCivilStatus = useUpdateCivilStatus()
   const toggleCivilStatus = useToggleCivilStatusActive()
 
   const { data: races = [] } = useRaces()
   const createRace = useCreateRace()
+  const updateRace = useUpdateRace()
   const toggleRace = useToggleRaceActive()
 
   const { data: socioeconomicLevels = [] } = useSocioeconomicLevels()
   const createSocioeconomicLevel = useCreateSocioeconomicLevel()
+  const updateSocioeconomicLevel = useUpdateSocioeconomicLevel()
   const toggleSocioeconomicLevel = useToggleSocioeconomicLevelActive()
 
   const { data: languages = [] } = useLanguages()
   const createLanguage = useCreateLanguage()
+  const updateLanguage = useUpdateLanguage()
   const toggleLanguage = useToggleLanguageActive()
 
   const { data: countries = [] } = useCountries()
   const createCountry = useCreateCountry()
+  const updateCountry = useUpdateCountry()
 
   return (
     <Box>
@@ -60,7 +70,9 @@ export function DemographicListsTab() {
           label="Estados civiles"
           items={civilStatuses}
           isCreating={createCivilStatus.isPending}
+          isUpdating={updateCivilStatus.isPending}
           onCreate={(values) => createCivilStatus.mutate(values.name)}
+          onUpdate={(id, values) => updateCivilStatus.mutate({ id, name: values.name })}
           onToggleActive={(id) => toggleCivilStatus.mutate(id)}
         />
       )}
@@ -69,7 +81,9 @@ export function DemographicListsTab() {
           label="Razas"
           items={races}
           isCreating={createRace.isPending}
+          isUpdating={updateRace.isPending}
           onCreate={(values) => createRace.mutate(values.name)}
+          onUpdate={(id, values) => updateRace.mutate({ id, name: values.name })}
           onToggleActive={(id) => toggleRace.mutate(id)}
         />
       )}
@@ -78,7 +92,9 @@ export function DemographicListsTab() {
           label="Niveles socioeconómicos"
           items={socioeconomicLevels}
           isCreating={createSocioeconomicLevel.isPending}
+          isUpdating={updateSocioeconomicLevel.isPending}
           onCreate={(values) => createSocioeconomicLevel.mutate(values.name)}
+          onUpdate={(id, values) => updateSocioeconomicLevel.mutate({ id, name: values.name })}
           onToggleActive={(id) => toggleSocioeconomicLevel.mutate(id)}
         />
       )}
@@ -88,7 +104,11 @@ export function DemographicListsTab() {
           items={languages}
           showIsoCode
           isCreating={createLanguage.isPending}
+          isUpdating={updateLanguage.isPending}
           onCreate={(values) => createLanguage.mutate({ name: values.name, isoCode: values.isoCode ?? '' })}
+          onUpdate={(id, values) =>
+            updateLanguage.mutate({ id, name: values.name, isoCode: values.isoCode ?? '' })
+          }
           onToggleActive={(id) => toggleLanguage.mutate(id)}
         />
       )}
@@ -96,7 +116,9 @@ export function DemographicListsTab() {
         <CountriesList
           items={countries}
           isCreating={createCountry.isPending}
+          isUpdating={updateCountry.isPending}
           onCreate={(values) => createCountry.mutate(values)}
+          onUpdate={(id, values) => updateCountry.mutate({ id, ...values })}
         />
       )}
     </Box>

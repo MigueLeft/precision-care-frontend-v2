@@ -25,6 +25,7 @@ export function ExamsTab() {
 
   const filtered = filterExams(exams, { q, category: category || undefined, onlyActive })
   const editingExam = exams.find((e) => e.id === editingId) ?? null
+  const existingNames = exams.filter((e) => e.id !== editingId).map((e) => e.name)
 
   const createMutation = useCreateExam({ onSuccess: () => setIsCreateOpen(false) })
   const updateMutation = useUpdateExam(editingId ?? undefined, { onSuccess: () => setEditingId(null) })
@@ -79,6 +80,7 @@ export function ExamsTab() {
         mode={formMode}
         initialValues={formInitialValues}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
+        existingNames={existingNames}
         onSubmit={handleSubmit}
         onClose={closeForm}
       />

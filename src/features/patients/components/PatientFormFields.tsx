@@ -54,7 +54,13 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
           name="firstName"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Primer nombre" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Primer nombre"
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 60 } }}
+            />
           )}
         />
       </Grid>
@@ -62,7 +68,15 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
         <Controller
           name="middleName"
           control={control}
-          render={({ field }) => <TextField {...field} label="Segundo nombre" />}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Segundo nombre"
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 60 } }}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -70,7 +84,13 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
           name="lastName"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Primer apellido" error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Primer apellido"
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 60 } }}
+            />
           )}
         />
       </Grid>
@@ -78,7 +98,15 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
         <Controller
           name="secondLastName"
           control={control}
-          render={({ field }) => <TextField {...field} label="Segundo apellido" />}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Segundo apellido"
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 60 } }}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
@@ -92,7 +120,7 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
               label="Fecha de nacimiento"
               error={!!error}
               helperText={error?.message}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: new Date().toISOString().slice(0, 10) } }}
             />
           )}
         />

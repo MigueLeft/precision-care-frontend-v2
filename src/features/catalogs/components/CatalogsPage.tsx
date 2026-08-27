@@ -4,15 +4,18 @@ import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
 import ListOutlinedIcon from '@mui/icons-material/ListOutlined'
+import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined'
 import { MedicationsTab } from './MedicationsTab'
 import { ExamsTab } from './ExamsTab'
 import { SymptomsTab } from './SymptomsTab'
 import { DemographicListsTab } from './DemographicListsTab'
+import { BodySystemsTab } from './BodySystemsTab'
 
 const TABS = [
   { label: 'Medicamentos', icon: LinkOutlinedIcon },
   { label: 'Exámenes', icon: ScienceOutlinedIcon },
   { label: 'Síntomas', icon: MonitorHeartOutlinedIcon },
+  { label: 'Aparatos / Sistemas', icon: AccessibilityNewOutlinedIcon },
   { label: 'Listas demográficas', icon: ListOutlinedIcon },
 ] as const
 
@@ -37,7 +40,8 @@ export function CatalogsPage() {
       {tab === 0 && <MedicationsTab />}
       {tab === 1 && <ExamsTab />}
       {tab === 2 && <SymptomsTab />}
-      {tab === 3 && <DemographicListsTab />}
+      {tab === 3 && <BodySystemsTab />}
+      {tab === 4 && <DemographicListsTab />}
     </Box>
   )
 }

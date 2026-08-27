@@ -9,11 +9,21 @@ import type { Country } from '../types'
 interface CountriesListProps {
   items: Country[]
   isCreating: boolean
+  isUpdating?: boolean
   onCreate: (values: { name: string; isoCode: string }) => void
+  onUpdate?: (id: number, values: { name: string; isoCode: string }) => void
 }
 
-export function CountriesList({ items, isCreating, onCreate }: CountriesListProps) {
+export function CountriesList({ items, isCreating, isUpdating, onCreate, onUpdate }: CountriesListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<Country | null>(null)
+
+  const isEditing = editingItem !== null
+
+  function closeForm() {
+    setIsFormOpen(false)
+    setEditingItem(null)
+  }
 
   return (
     <div>
@@ -31,19 +41,26 @@ export function CountriesList({ items, isCreating, onCreate }: CountriesListProp
         </AppButton>
       </Stack>
 
-      <CountriesTable items={items} />
+      <CountriesTable items={items} onEdit={(item) => setEditingItem(item)} />
 
-      <SimpleCatalogFormModal
-        open={isFormOpen}
-        title="Agregar país"
-        showIsoCode
-        isSubmitting={isCreating}
-        onSubmit={(values) => {
-          onCreate({ name: values.name, isoCode: values.isoCode ?? '' })
-          setIsFormOpen(false)
-        }}
-        onClose={() => setIsFormOpen(false)}
-      />
+      {(isFormOpen || isEditing) && (
+        <SimpleCatalogFormModal
+          title={isEditing ? 'Editar país' : 'Agregar país'}
+          showIsoCode
+          isSubmitting={isEditing ? !!isUpdating : isCreating}
+          initialValues={editingItem ?? undefined}
+          onSubmit={(values) => {
+            const isoCode = values.isoCode ?? ''
+            if (isEditing && editingItem) {
+              onUpdate?.(editingItem.id, { name: values.name, isoCode })
+            } else {
+              onCreate({ name: values.name, isoCode })
+            }
+            closeForm()
+          }}
+          onClose={closeForm}
+        />
+      )}
     </div>
   )
 }

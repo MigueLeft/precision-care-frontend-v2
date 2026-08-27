@@ -18,7 +18,14 @@ export function SymptomFormFields({ control }: SymptomFormFieldsProps) {
           name="name"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField {...field} label="Nombre del síntoma" fullWidth error={!!error} helperText={error?.message} />
+            <TextField
+              {...field}
+              label="Nombre del síntoma"
+              fullWidth
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 150 } }}
+            />
           )}
         />
       </Grid>
@@ -26,7 +33,16 @@ export function SymptomFormFields({ control }: SymptomFormFieldsProps) {
         <Controller
           name="cie10Code"
           control={control}
-          render={({ field }) => <TextField {...field} label="Código CIE-10" fullWidth />}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Código CIE-10"
+              fullWidth
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 10 } }}
+            />
+          )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
