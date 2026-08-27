@@ -33,6 +33,7 @@ export function BodySystemFormFields({ control }: BodySystemFormFieldsProps) {
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
+              onChange={(event) => field.onChange(event.target.value.toUpperCase())}
               label="Código corto"
               fullWidth
               error={!!error}

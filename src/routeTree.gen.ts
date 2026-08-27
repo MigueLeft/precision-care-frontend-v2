@@ -17,7 +17,7 @@ import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-
 import { Route as AppPacientesRouteImport } from './routes/_app/pacientes'
 import { Route as AppCuestionariosRouteImport } from './routes/_app/cuestionarios'
 import { Route as AppCatalogosRouteImport } from './routes/_app/catalogos'
-import { Route as AppCuestionariosIdRouteImport } from './routes/_app/cuestionarios.$id'
+import { Route as AppCuestionariosIdRouteImport } from './routes/_app/cuestionarios_.$id'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
@@ -58,15 +58,15 @@ const AppCatalogosRoute = AppCatalogosRouteImport.update({
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppCuestionariosIdRoute = AppCuestionariosIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AppCuestionariosRoute,
+  id: '/cuestionarios_/$id',
+  path: '/cuestionarios/$id',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
-  '/cuestionarios': typeof AppCuestionariosRouteWithChildren
+  '/cuestionarios': typeof AppCuestionariosRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
@@ -75,7 +75,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
-  '/cuestionarios': typeof AppCuestionariosRouteWithChildren
+  '/cuestionarios': typeof AppCuestionariosRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
@@ -86,12 +86,12 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteRouteWithChildren
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_app/catalogos': typeof AppCatalogosRoute
-  '/_app/cuestionarios': typeof AppCuestionariosRouteWithChildren
+  '/_app/cuestionarios': typeof AppCuestionariosRoute
   '/_app/pacientes': typeof AppPacientesRoute
   '/_app/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_app/': typeof AppIndexRoute
-  '/_app/cuestionarios/$id': typeof AppCuestionariosIdRoute
+  '/_app/cuestionarios_/$id': typeof AppCuestionariosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -122,7 +122,7 @@ export interface FileRouteTypes {
     | '/_app/usuarios-y-roles'
     | '/_auth/login'
     | '/_app/'
-    | '/_app/cuestionarios/$id'
+    | '/_app/cuestionarios_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,41 +188,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCatalogosRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/_app/cuestionarios/$id': {
-      id: '/_app/cuestionarios/$id'
-      path: '/$id'
+    '/_app/cuestionarios_/$id': {
+      id: '/_app/cuestionarios_/$id'
+      path: '/cuestionarios/$id'
       fullPath: '/cuestionarios/$id'
       preLoaderRoute: typeof AppCuestionariosIdRouteImport
-      parentRoute: typeof AppCuestionariosRoute
+      parentRoute: typeof AppRouteRoute
     }
   }
 }
 
-interface AppCuestionariosRouteChildren {
-  AppCuestionariosIdRoute: typeof AppCuestionariosIdRoute
-}
-
-const AppCuestionariosRouteChildren: AppCuestionariosRouteChildren = {
-  AppCuestionariosIdRoute: AppCuestionariosIdRoute,
-}
-
-const AppCuestionariosRouteWithChildren =
-  AppCuestionariosRoute._addFileChildren(AppCuestionariosRouteChildren)
-
 interface AppRouteRouteChildren {
   AppCatalogosRoute: typeof AppCatalogosRoute
-  AppCuestionariosRoute: typeof AppCuestionariosRouteWithChildren
+  AppCuestionariosRoute: typeof AppCuestionariosRoute
   AppPacientesRoute: typeof AppPacientesRoute
   AppUsuariosYRolesRoute: typeof AppUsuariosYRolesRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppCuestionariosIdRoute: typeof AppCuestionariosIdRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppCatalogosRoute: AppCatalogosRoute,
-  AppCuestionariosRoute: AppCuestionariosRouteWithChildren,
+  AppCuestionariosRoute: AppCuestionariosRoute,
   AppPacientesRoute: AppPacientesRoute,
   AppUsuariosYRolesRoute: AppUsuariosYRolesRoute,
   AppIndexRoute: AppIndexRoute,
+  AppCuestionariosIdRoute: AppCuestionariosIdRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

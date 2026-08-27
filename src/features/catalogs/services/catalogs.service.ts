@@ -1,5 +1,5 @@
 import { api } from '@/utils/api'
-import type { Country, CivilStatus, Race, SocioeconomicLevel, Language, BodySystem } from '../types'
+import type { Country, CivilStatus, Race, SocioeconomicLevel, Language, BodySystem, Cie10Entry } from '../types'
 
 export async function fetchCountries(): Promise<Country[]> {
   const { data } = await api.get<{ countries: Country[] }>('/catalogs/countries')
@@ -136,4 +136,21 @@ export async function updateBodySystem(id: number, payload: BodySystemPayload): 
 export async function toggleBodySystemActive(id: number): Promise<BodySystem> {
   const { data } = await api.patch<{ bodySystem: BodySystem }>(`/catalogs/body-systems/${id}/toggle-active`)
   return data.bodySystem
+}
+
+export async function fetchCie10(): Promise<Cie10Entry[]> {
+  const { data } = await api.get<{ cie10: Cie10Entry[] }>('/catalogs/cie10')
+  return data.cie10
+}
+
+export interface Cie10Payload {
+  code: string
+  description: string
+  chapter?: string
+  bodySystemId?: number
+}
+
+export async function createCie10(payload: Cie10Payload): Promise<Cie10Entry> {
+  const { data } = await api.post<{ cie10: Cie10Entry }>('/catalogs/cie10', payload)
+  return data.cie10
 }

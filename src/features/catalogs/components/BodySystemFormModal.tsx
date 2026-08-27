@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import { BodySystemFormFields } from './BodySystemFormFields'
-import { bodySystemFormSchema } from '../schemas/body-system-form.schema'
+import { createBodySystemFormSchema } from '../schemas/body-system-form.schema'
 import type { BodySystemFormValues } from '../schemas/body-system-form.schema'
 
 interface BodySystemFormModalProps {
@@ -12,6 +12,8 @@ interface BodySystemFormModalProps {
   mode: 'create' | 'edit'
   initialValues: BodySystemFormValues
   isSubmitting: boolean
+  /** Códigos cortos de los demás aparatos/sistemas ya guardados, para bloquear duplicados. */
+  existingShortCodes?: string[]
   onSubmit: (values: BodySystemFormValues) => void
   onClose: () => void
 }
@@ -21,11 +23,12 @@ export function BodySystemFormModal({
   mode,
   initialValues,
   isSubmitting,
+  existingShortCodes = [],
   onSubmit,
   onClose,
 }: BodySystemFormModalProps) {
   const { control, handleSubmit, reset } = useForm<BodySystemFormValues>({
-    resolver: zodResolver(bodySystemFormSchema),
+    resolver: zodResolver(createBodySystemFormSchema(existingShortCodes)),
     defaultValues: initialValues,
   })
 

@@ -19,6 +19,7 @@ export function BodySystemsTab() {
 
   const { data: bodySystems = [] } = useBodySystems()
   const editingBodySystem = bodySystems.find((item) => item.id === editingId) ?? null
+  const existingShortCodes = bodySystems.filter((item) => item.id !== editingId).map((item) => item.shortCode)
 
   const createMutation = useCreateBodySystem({ onSuccess: () => setIsCreateOpen(false) })
   const updateMutation = useUpdateBodySystem(editingId ?? undefined, { onSuccess: () => setEditingId(null) })
@@ -73,6 +74,7 @@ export function BodySystemsTab() {
         mode={formMode}
         initialValues={formInitialValues}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
+        existingShortCodes={existingShortCodes}
         onSubmit={handleSubmit}
         onClose={closeForm}
       />

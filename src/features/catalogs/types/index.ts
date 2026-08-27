@@ -39,6 +39,14 @@ export interface BodySystem {
   active: boolean
 }
 
+export interface Cie10Entry {
+  code: string
+  description: string
+  chapter: string | null
+  bodySystemId: number | null
+  version: string
+}
+
 export interface Medication {
   id: number
   brandName: string

@@ -3,7 +3,10 @@ import { Box, Typography } from '@mui/material'
 import { QuestionnaireBuilderPage, questionnairesKeys, fetchQuestionnaireDetailed } from '@/features/questionnaires'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 
-export const Route = createFileRoute('/_app/cuestionarios/$id')({
+// Sufijo "_" en el segmento padre: separa esta ruta del layout de /cuestionarios
+// (que renderiza la tabla de ingresables, sin <Outlet />) para que este builder
+// se muestre como página propia en vez de quedar "atrapado" dentro de esa lista.
+export const Route = createFileRoute('/_app/cuestionarios_/$id')({
   loader: ({ context: { queryClient }, params: { id } }) =>
     queryClient.ensureQueryData({
       queryKey: questionnairesKeys.detail(Number(id)),

@@ -10,6 +10,8 @@ export { useBodySystems } from './hooks/useBodySystems'
 export { useCreateBodySystem } from './hooks/useCreateBodySystem'
 export { useUpdateBodySystem } from './hooks/useUpdateBodySystem'
 export { useToggleBodySystemActive } from './hooks/useToggleBodySystemActive'
+export { useCie10 } from './hooks/useCie10'
+export { useCreateCie10 } from './hooks/useCreateCie10'
 export { useCreateCivilStatus } from './hooks/useCreateCivilStatus'
 export { useUpdateCivilStatus } from './hooks/useUpdateCivilStatus'
 export { useToggleCivilStatusActive } from './hooks/useToggleCivilStatusActive'
@@ -44,6 +46,7 @@ export type {
   SocioeconomicLevel,
   Language,
   BodySystem,
+  Cie10Entry,
   Medication,
   ExamCatalog,
   ExamCategory,

@@ -1,56 +1,63 @@
 import { Controller } from 'react-hook-form'
 import type { Control } from 'react-hook-form'
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Autocomplete } from '@mui/material'
+import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { useBodySystems } from '../hooks/useBodySystems'
-import { useCie10 } from '../hooks/useCie10'
-import type { SymptomFormValues } from '../schemas/symptom-form.schema'
+import type { Cie10FormValues } from '../schemas/cie10-form.schema'
 
-interface SymptomFormFieldsProps {
-  control: Control<SymptomFormValues>
+interface Cie10FormFieldsProps {
+  control: Control<Cie10FormValues>
 }
 
-export function SymptomFormFields({ control }: SymptomFormFieldsProps) {
+export function Cie10FormFields({ control }: Cie10FormFieldsProps) {
   const { data: bodySystems = [] } = useBodySystems()
-  const { data: cie10Options = [] } = useCie10()
 
   return (
     <Grid container spacing={2}>
-      <Grid size={{ xs: 12, sm: 6 }}>
+      <Grid size={{ xs: 12, sm: 4 }}>
         <Controller
-          name="name"
+          name="code"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              label="Nombre del síntoma"
+              onChange={(event) => field.onChange(event.target.value.toUpperCase())}
+              label="Código"
               fullWidth
               error={!!error}
               helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 150 } }}
+              slotProps={{ htmlInput: { maxLength: 10 } }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 8 }}>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              label="Descripción"
+              fullWidth
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 200 } }}
             />
           )}
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
-          name="cie10Code"
+          name="chapter"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <Autocomplete
-              options={cie10Options}
-              getOptionLabel={(option) => `${option.code} — ${option.description}`}
-              isOptionEqualToValue={(option, value) => option.code === value.code}
-              value={cie10Options.find((option) => option.code === field.value) ?? null}
-              onChange={(_, selected) => field.onChange(selected?.code ?? '')}
-              noOptionsText="No hay códigos CIE-10 registrados. Agrégalos en Catálogos > CIE-10."
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Código CIE-10"
-                  error={!!error}
-                  helperText={error?.message}
-                />
-              )}
+            <TextField
+              {...field}
+              label="Capítulo"
+              fullWidth
+              error={!!error}
+              helperText={error?.message}
+              slotProps={{ htmlInput: { maxLength: 20 } }}
             />
           )}
         />
@@ -61,9 +68,9 @@ export function SymptomFormFields({ control }: SymptomFormFieldsProps) {
           control={control}
           render={({ field }) => (
             <FormControl fullWidth>
-              <InputLabel id="symptom-body-system-label">Aparato / sistema</InputLabel>
+              <InputLabel id="cie10-body-system-label">Aparato / sistema</InputLabel>
               <Select<number | ''>
-                labelId="symptom-body-system-label"
+                labelId="cie10-body-system-label"
                 label="Aparato / sistema"
                 value={field.value ?? ''}
                 onChange={(event) =>
