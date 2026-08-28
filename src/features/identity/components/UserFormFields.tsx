@@ -1,8 +1,11 @@
+import { useRef, useState } from 'react'
 import { Controller } from 'react-hook-form'
-import type { Control } from 'react-hook-form'
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import type { Control, UseFormSetError, UseFormClearErrors } from 'react-hook-form'
+import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, IconButton, InputAdornment } from '@mui/material'
+import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { usePatients, formatPatientName } from '@/features/patients'
 import { useSpecialistsLookup } from '../hooks/useSpecialistsLookup'
+import { checkEmailExists } from '../services/users.service'
 import { userTypeOptions } from '../schemas/user-form.schema'
 import type { UserFormValues } from '../schemas/user-form.schema'
 
@@ -12,15 +15,40 @@ const TYPE_LABELS: Record<(typeof userTypeOptions)[number], string> = {
   administrative: 'Administrativo',
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 interface UserFormFieldsProps {
   control: Control<UserFormValues>
   mode: 'create' | 'edit'
   type: UserFormValues['type']
+  setError: UseFormSetError<UserFormValues>
+  clearErrors: UseFormClearErrors<UserFormValues>
 }
 
-export function UserFormFields({ control, mode, type }: UserFormFieldsProps) {
+export function UserFormFields({ control, mode, type, setError, clearErrors }: UserFormFieldsProps) {
   const { data: patients = [] } = usePatients()
   const { data: specialists = [] } = useSpecialistsLookup()
+  const [showPassword, setShowPassword] = useState(false)
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false)
+  const checkSeq = useRef(0)
+
+  async function handleEmailBlur(email: string) {
+    if (mode !== 'create' || !EMAIL_REGEX.test(email)) return
+
+    const seq = ++checkSeq.current
+    setIsCheckingEmail(true)
+    try {
+      const exists = await checkEmailExists(email)
+      if (seq !== checkSeq.current) return
+      if (exists) {
+        setError('email', { type: 'manual', message: 'Ya existe un usuario registrado con este correo.' })
+      } else {
+        clearErrors('email')
+      }
+    } finally {
+      if (seq === checkSeq.current) setIsCheckingEmail(false)
+    }
+  }
 
   return (
     <Grid container spacing={2}>
@@ -36,7 +64,11 @@ export function UserFormFields({ control, mode, type }: UserFormFieldsProps) {
               fullWidth
               disabled={mode === 'edit'}
               error={!!error}
-              helperText={error?.message}
+              helperText={error?.message ?? (isCheckingEmail ? 'Verificando disponibilidad…' : undefined)}
+              onBlur={(event) => {
+                field.onBlur()
+                void handleEmailBlur(event.target.value)
+              }}
             />
           )}
         />
@@ -49,11 +81,32 @@ export function UserFormFields({ control, mode, type }: UserFormFieldsProps) {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 label="Contraseña"
                 fullWidth
                 error={!!error}
                 helperText={error?.message}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword((v) => !v)}
+                          edge="end"
+                          size="small"
+                          tabIndex={-1}
+                          aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        >
+                          {showPassword ? (
+                            <VisibilityOff sx={{ fontSize: 18 }} />
+                          ) : (
+                            <Visibility sx={{ fontSize: 18 }} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
             )}
           />

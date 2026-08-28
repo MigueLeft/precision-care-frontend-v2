@@ -2,15 +2,9 @@ import { useEffect } from 'react'
 import { Controller, useWatch } from 'react-hook-form'
 import type { Control, UseFormSetValue } from 'react-hook-form'
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
-import { examCategoryOptions, examValueTypeOptions } from '../schemas/exam-form.schema'
+import { examValueTypeOptions } from '../schemas/exam-form.schema'
+import { useExamCategories } from '../hooks/useExamCategories'
 import type { ExamFormValues } from '../schemas/exam-form.schema'
-
-const CATEGORY_LABELS: Record<(typeof examCategoryOptions)[number], string> = {
-  laboratory: 'Laboratorio',
-  imaging: 'Imagenología',
-  cardiology: 'Cardiología',
-  other: 'Otro',
-}
 
 const VALUE_TYPE_LABELS: Record<(typeof examValueTypeOptions)[number], string> = {
   numeric: 'Numérico',
@@ -24,6 +18,7 @@ interface ExamFormFieldsProps {
 }
 
 export function ExamFormFields({ control, setValue }: ExamFormFieldsProps) {
+  const { data: categories = [] } = useExamCategories()
   const valueType = useWatch({ control, name: 'valueType' })
   const isNumericType = valueType === 'numeric'
 
@@ -54,15 +49,20 @@ export function ExamFormFields({ control, setValue }: ExamFormFieldsProps) {
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
-          name="category"
+          name="categoryId"
           control={control}
           render={({ field, fieldState: { error } }) => (
             <FormControl fullWidth error={!!error}>
               <InputLabel id="exam-category-label">Categoría</InputLabel>
-              <Select labelId="exam-category-label" label="Categoría" {...field}>
-                {examCategoryOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {CATEGORY_LABELS[option]}
+              <Select
+                labelId="exam-category-label"
+                label="Categoría"
+                value={field.value || ''}
+                onChange={(event) => field.onChange(Number(event.target.value))}
+              >
+                {categories.map((option) => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.name}
                   </MenuItem>
                 ))}
               </Select>

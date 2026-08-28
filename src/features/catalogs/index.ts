@@ -10,8 +10,22 @@ export { useBodySystems } from './hooks/useBodySystems'
 export { useCreateBodySystem } from './hooks/useCreateBodySystem'
 export { useUpdateBodySystem } from './hooks/useUpdateBodySystem'
 export { useToggleBodySystemActive } from './hooks/useToggleBodySystemActive'
-export { useCie10 } from './hooks/useCie10'
-export { useCreateCie10 } from './hooks/useCreateCie10'
+export { useExamCategories } from './hooks/useExamCategories'
+export { useCreateExamCategory } from './hooks/useCreateExamCategory'
+export { useUpdateExamCategory } from './hooks/useUpdateExamCategory'
+export { useToggleExamCategoryActive } from './hooks/useToggleExamCategoryActive'
+export { useMedicationPresentations } from './hooks/useMedicationPresentations'
+export { useCreateMedicationPresentation } from './hooks/useCreateMedicationPresentation'
+export { useUpdateMedicationPresentation } from './hooks/useUpdateMedicationPresentation'
+export { useToggleMedicationPresentationActive } from './hooks/useToggleMedicationPresentationActive'
+export { useMedicationCategories } from './hooks/useMedicationCategories'
+export { useCreateMedicationCategory } from './hooks/useCreateMedicationCategory'
+export { useUpdateMedicationCategory } from './hooks/useUpdateMedicationCategory'
+export { useToggleMedicationCategoryActive } from './hooks/useToggleMedicationCategoryActive'
+export { useMedicalSpecialties } from './hooks/useMedicalSpecialties'
+export { useCreateMedicalSpecialty } from './hooks/useCreateMedicalSpecialty'
+export { useUpdateMedicalSpecialty } from './hooks/useUpdateMedicalSpecialty'
+export { useToggleMedicalSpecialtyActive } from './hooks/useToggleMedicalSpecialtyActive'
 export { useCreateCivilStatus } from './hooks/useCreateCivilStatus'
 export { useUpdateCivilStatus } from './hooks/useUpdateCivilStatus'
 export { useToggleCivilStatusActive } from './hooks/useToggleCivilStatusActive'
@@ -46,10 +60,12 @@ export type {
   SocioeconomicLevel,
   Language,
   BodySystem,
-  Cie10Entry,
+  ExamCategoryCatalog,
+  MedicationPresentation,
+  MedicationCategory,
+  MedicalSpecialty,
   Medication,
   ExamCatalog,
-  ExamCategory,
   ExamValueType,
   SymptomCatalog,
 } from './types'

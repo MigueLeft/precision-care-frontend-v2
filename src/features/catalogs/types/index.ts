@@ -32,46 +32,57 @@ export interface Language {
 export interface BodySystem {
   id: number
   name: string
-  shortCode: string
-  cie10Chapter: string | null
-  description: string | null
-  sortOrder: number
   active: boolean
 }
 
-export interface Cie10Entry {
-  code: string
-  description: string
-  chapter: string | null
-  bodySystemId: number | null
-  version: string
+export interface ExamCategoryCatalog {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface MedicationPresentation {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface MedicationCategory {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface MedicalSpecialty {
+  id: number
+  name: string
+  active: boolean
 }
 
 export interface Medication {
   id: number
   brandName: string
   genericName: string
-  presentation: string
+  presentationId: number
   concentration: string | null
-  category: string | null
+  categoryId: number | null
   active: boolean
 }
 
 export interface CreateMedicationPayload {
   brandName: string
   genericName: string
-  presentation: string
+  presentationId: number
   concentration?: string
-  category?: string
+  categoryId?: number
 }
 export type UpdateMedicationPayload = Partial<CreateMedicationPayload>
 
-export type ExamCategory = 'laboratory' | 'imaging' | 'cardiology' | 'other'
 export type ExamValueType = 'numeric' | 'text' | 'boolean'
 
 export interface ExamCatalog {
   id: number
-  category: ExamCategory
+  categoryId: number
   name: string
   defaultUnit: string | null
   referenceMin: string | null
@@ -82,7 +93,7 @@ export interface ExamCatalog {
 
 export interface CreateExamPayload {
   name: string
-  category: ExamCategory
+  categoryId: number
   defaultUnit?: string
   valueType: ExamValueType
   referenceMin?: number
@@ -93,14 +104,10 @@ export type UpdateExamPayload = Partial<CreateExamPayload>
 export interface SymptomCatalog {
   id: number
   name: string
-  cie10Code: string | null
-  bodySystemId: number | null
   active: boolean
 }
 
 export interface CreateSymptomPayload {
   name: string
-  cie10Code?: string
-  bodySystemId?: number
 }
 export type UpdateSymptomPayload = Partial<CreateSymptomPayload>

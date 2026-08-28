@@ -5,8 +5,8 @@ export function mapMedicationToFormValues(medication: Medication): MedicationFor
   return {
     brandName: medication.brandName,
     genericName: medication.genericName,
-    presentation: medication.presentation,
+    presentationId: medication.presentationId,
     concentration: medication.concentration ?? '',
-    category: medication.category ?? '',
+    categoryId: medication.categoryId ?? undefined,
   }
 }

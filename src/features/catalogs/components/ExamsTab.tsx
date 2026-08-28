@@ -1,89 +1,27 @@
 import { useState } from 'react'
-import { Typography, Box } from '@mui/material'
-import { useExams } from '../hooks/useExams'
-import { useCreateExam } from '../hooks/useCreateExam'
-import { useUpdateExam } from '../hooks/useUpdateExam'
-import { useToggleExamActive } from '../hooks/useToggleExamActive'
-import { filterExams } from '../utils/filter-exams'
-import { mapExamToFormValues } from '../utils/map-exam-to-form-values'
-import { mapExamFormToPayload } from '../utils/map-exam-form-to-payload'
-import { examFormDefaultValues } from '../schemas/exam-form.schema'
-import { ExamsToolbar } from './ExamsToolbar'
-import { ExamsTable } from './ExamsTable'
-import { ExamFormModal } from './ExamFormModal'
-import type { ExamFormValues } from '../schemas/exam-form.schema'
-import type { ExamCategory } from '../types'
+import { Box, Tabs, Tab } from '@mui/material'
+import { ExamsListTab } from './ExamsListTab'
+import { ExamCategoriesTab } from './ExamCategoriesTab'
+
+const SUB_TABS = ['Exámenes', 'Categorías'] as const
 
 export function ExamsTab() {
-  const [q, setQ] = useState('')
-  const [category, setCategory] = useState<ExamCategory | ''>('')
-  const [onlyActive, setOnlyActive] = useState(true)
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
-
-  const { data: exams = [] } = useExams()
-
-  const filtered = filterExams(exams, { q, category: category || undefined, onlyActive })
-  const editingExam = exams.find((e) => e.id === editingId) ?? null
-  const existingNames = exams.filter((e) => e.id !== editingId).map((e) => e.name)
-
-  const createMutation = useCreateExam({ onSuccess: () => setIsCreateOpen(false) })
-  const updateMutation = useUpdateExam(editingId ?? undefined, { onSuccess: () => setEditingId(null) })
-  const toggleActiveMutation = useToggleExamActive()
-
-  const isFormOpen = isCreateOpen || editingId !== null
-  const formMode = isCreateOpen ? 'create' : 'edit'
-  const formInitialValues: ExamFormValues = isCreateOpen
-    ? examFormDefaultValues
-    : editingExam
-      ? mapExamToFormValues(editingExam)
-      : examFormDefaultValues
-
-  function closeForm() {
-    setIsCreateOpen(false)
-    setEditingId(null)
-  }
-
-  function handleSubmit(values: ExamFormValues) {
-    const payload = mapExamFormToPayload(values)
-    if (isCreateOpen) {
-      createMutation.mutate(payload)
-    } else if (editingId) {
-      updateMutation.mutate(payload)
-    }
-  }
+  const [subTab, setSubTab] = useState(0)
 
   return (
     <Box>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        {filtered.length} exámenes
-      </Typography>
+      <Tabs
+        value={subTab}
+        onChange={(_, value) => setSubTab(value)}
+        sx={{ mb: 3, minHeight: 36, '& .MuiTab-root': { minHeight: 36, fontSize: '13px' } }}
+      >
+        {SUB_TABS.map((label) => (
+          <Tab key={label} label={label} />
+        ))}
+      </Tabs>
 
-      <ExamsToolbar
-        q={q}
-        category={category}
-        onlyActive={onlyActive}
-        onQChange={setQ}
-        onCategoryChange={setCategory}
-        onOnlyActiveChange={setOnlyActive}
-        onAdd={() => setIsCreateOpen(true)}
-      />
-
-      <ExamsTable
-        exams={filtered}
-        onEdit={(id) => setEditingId(id)}
-        onToggleActive={(id) => toggleActiveMutation.mutate(id)}
-      />
-
-      <ExamFormModal
-        open={isFormOpen}
-        mode={formMode}
-        initialValues={formInitialValues}
-        isSubmitting={createMutation.isPending || updateMutation.isPending}
-        existingNames={existingNames}
-        onSubmit={handleSubmit}
-        onClose={closeForm}
-      />
+      {subTab === 0 && <ExamsListTab />}
+      {subTab === 1 && <ExamCategoriesTab />}
     </Box>
   )
 }

@@ -12,21 +12,22 @@ import {
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
+import type { MedicationCategory } from '../types'
 
 interface MedicationsToolbarProps {
   q: string
-  category: string
-  categories: string[]
+  categoryId: number | ''
+  categories: MedicationCategory[]
   onlyActive: boolean
   onQChange: (value: string) => void
-  onCategoryChange: (value: string) => void
+  onCategoryChange: (value: number | '') => void
   onOnlyActiveChange: (value: boolean) => void
   onAdd: () => void
 }
 
 export function MedicationsToolbar({
   q,
-  category,
+  categoryId,
   categories,
   onlyActive,
   onQChange,
@@ -54,16 +55,16 @@ export function MedicationsToolbar({
 
       <FormControl sx={{ minWidth: 180 }}>
         <InputLabel id="medication-category-filter-label">Categoría</InputLabel>
-        <Select
+        <Select<number | ''>
           labelId="medication-category-filter-label"
           label="Categoría"
-          value={category}
-          onChange={(event) => onCategoryChange(event.target.value)}
+          value={categoryId}
+          onChange={(event) => onCategoryChange(event.target.value === '' ? '' : Number(event.target.value))}
         >
           <MenuItem value="">Todas</MenuItem>
           {categories.map((item) => (
-            <MenuItem key={item} value={item}>
-              {item}
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
             </MenuItem>
           ))}
         </Select>

@@ -5,24 +5,15 @@ import type { SymptomCatalog } from '../types'
 
 interface SymptomRowProps {
   symptom: SymptomCatalog
-  bodySystemName?: string
   onEdit: () => void
   onToggleActive: () => void
 }
 
-export function SymptomRow({ symptom, bodySystemName, onEdit, onToggleActive }: SymptomRowProps) {
+export function SymptomRow({ symptom, onEdit, onToggleActive }: SymptomRowProps) {
   return (
     <TableRow hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
       <TableCell>
         <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>{symptom.name}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography sx={{ fontSize: '14px' }}>{symptom.cie10Code ?? '—'}</Typography>
-      </TableCell>
-      <TableCell>
-        <Typography sx={{ fontSize: '14px', color: bodySystemName ? 'text.primary' : 'text.secondary' }}>
-          {bodySystemName ?? '—'}
-        </Typography>
       </TableCell>
       <TableCell>
         <Chip label={symptom.active ? 'Activo' : 'Inactivo'} size="small" color={symptom.active ? 'success' : 'default'} />

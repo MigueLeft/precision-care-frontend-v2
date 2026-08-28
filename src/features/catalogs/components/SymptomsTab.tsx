@@ -4,7 +4,6 @@ import { useSymptoms } from '../hooks/useSymptoms'
 import { useCreateSymptom } from '../hooks/useCreateSymptom'
 import { useUpdateSymptom } from '../hooks/useUpdateSymptom'
 import { useToggleSymptomActive } from '../hooks/useToggleSymptomActive'
-import { useBodySystems } from '../hooks/useBodySystems'
 import { filterSymptoms } from '../utils/filter-symptoms'
 import { mapSymptomToFormValues } from '../utils/map-symptom-to-form-values'
 import { mapSymptomFormToPayload } from '../utils/map-symptom-form-to-payload'
@@ -21,9 +20,7 @@ export function SymptomsTab() {
   const [editingId, setEditingId] = useState<number | null>(null)
 
   const { data: symptoms = [] } = useSymptoms()
-  const { data: bodySystems = [] } = useBodySystems()
 
-  const bodySystemNameById = new Map(bodySystems.map((system) => [system.id, system.name]))
   const filtered = filterSymptoms(symptoms, { q, onlyActive })
   const editingSymptom = symptoms.find((s) => s.id === editingId) ?? null
 
@@ -69,7 +66,6 @@ export function SymptomsTab() {
 
       <SymptomsTable
         symptoms={filtered}
-        bodySystemNameById={bodySystemNameById}
         onEdit={(id) => setEditingId(id)}
         onToggleActive={(id) => toggleActiveMutation.mutate(id)}
       />

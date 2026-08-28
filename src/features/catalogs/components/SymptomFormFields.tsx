@@ -1,8 +1,6 @@
 import { Controller } from 'react-hook-form'
 import type { Control } from 'react-hook-form'
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Autocomplete } from '@mui/material'
-import { useBodySystems } from '../hooks/useBodySystems'
-import { useCie10 } from '../hooks/useCie10'
+import { Grid, TextField } from '@mui/material'
 import type { SymptomFormValues } from '../schemas/symptom-form.schema'
 
 interface SymptomFormFieldsProps {
@@ -10,12 +8,9 @@ interface SymptomFormFieldsProps {
 }
 
 export function SymptomFormFields({ control }: SymptomFormFieldsProps) {
-  const { data: bodySystems = [] } = useBodySystems()
-  const { data: cie10Options = [] } = useCie10()
-
   return (
     <Grid container spacing={2}>
-      <Grid size={{ xs: 12, sm: 6 }}>
+      <Grid size={12}>
         <Controller
           name="name"
           control={control}
@@ -28,56 +23,6 @@ export function SymptomFormFields({ control }: SymptomFormFieldsProps) {
               helperText={error?.message}
               slotProps={{ htmlInput: { maxLength: 150 } }}
             />
-          )}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="cie10Code"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Autocomplete
-              options={cie10Options}
-              getOptionLabel={(option) => `${option.code} — ${option.description}`}
-              isOptionEqualToValue={(option, value) => option.code === value.code}
-              value={cie10Options.find((option) => option.code === field.value) ?? null}
-              onChange={(_, selected) => field.onChange(selected?.code ?? '')}
-              noOptionsText="No hay códigos CIE-10 registrados. Agrégalos en Catálogos > CIE-10."
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Código CIE-10"
-                  error={!!error}
-                  helperText={error?.message}
-                />
-              )}
-            />
-          )}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="bodySystemId"
-          control={control}
-          render={({ field }) => (
-            <FormControl fullWidth>
-              <InputLabel id="symptom-body-system-label">Aparato / sistema</InputLabel>
-              <Select<number | ''>
-                labelId="symptom-body-system-label"
-                label="Aparato / sistema"
-                value={field.value ?? ''}
-                onChange={(event) =>
-                  field.onChange(event.target.value === '' ? undefined : Number(event.target.value))
-                }
-              >
-                <MenuItem value="">Sin especificar</MenuItem>
-                {bodySystems.map((system) => (
-                  <MenuItem key={system.id} value={system.id}>
-                    {system.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
           )}
         />
       </Grid>

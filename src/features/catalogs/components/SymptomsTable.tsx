@@ -5,14 +5,13 @@ import type { SymptomCatalog } from '../types'
 
 interface SymptomsTableProps {
   symptoms: SymptomCatalog[]
-  bodySystemNameById: Map<number, string>
   onEdit: (id: number) => void
   onToggleActive: (id: number) => void
 }
 
-const HEADERS = ['Nombre', 'CIE-10', 'Aparato / sistema', 'Estado', '']
+const HEADERS = ['Nombre', 'Estado', '']
 
-export function SymptomsTable({ symptoms, bodySystemNameById, onEdit, onToggleActive }: SymptomsTableProps) {
+export function SymptomsTable({ symptoms, onEdit, onToggleActive }: SymptomsTableProps) {
   if (symptoms.length === 0) {
     return <EmptyState message="No se encontraron síntomas con los filtros actuales." />
   }
@@ -34,7 +33,6 @@ export function SymptomsTable({ symptoms, bodySystemNameById, onEdit, onToggleAc
             <SymptomRow
               key={symptom.id}
               symptom={symptom}
-              bodySystemName={symptom.bodySystemId ? bodySystemNameById.get(symptom.bodySystemId) : undefined}
               onEdit={() => onEdit(symptom.id)}
               onToggleActive={() => onToggleActive(symptom.id)}
             />

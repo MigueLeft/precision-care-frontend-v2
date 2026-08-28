@@ -4,7 +4,7 @@ import type { CreateExamPayload } from '../types'
 export function mapExamFormToPayload(values: ExamFormValues): CreateExamPayload {
   return {
     name: values.name,
-    category: values.category,
+    categoryId: values.categoryId,
     valueType: values.valueType,
     defaultUnit: values.defaultUnit || undefined,
     referenceMin: values.referenceMin ? Number(values.referenceMin) : undefined,

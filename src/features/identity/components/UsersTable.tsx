@@ -7,11 +7,12 @@ interface UsersTableProps {
   users: UserAccount[]
   onEdit: (id: number) => void
   onDelete: (id: number) => void
+  onRestore: (id: number) => void
 }
 
 const HEADERS = ['Nombre', 'Correo', 'Tipo', 'Rol', 'Estado', '']
 
-export function UsersTable({ users, onEdit, onDelete }: UsersTableProps) {
+export function UsersTable({ users, onEdit, onDelete, onRestore }: UsersTableProps) {
   if (users.length === 0) {
     return <EmptyState message="No se encontraron usuarios con los filtros actuales." />
   }
@@ -30,7 +31,13 @@ export function UsersTable({ users, onEdit, onDelete }: UsersTableProps) {
         </TableHead>
         <TableBody>
           {users.map((user) => (
-            <UserRow key={user.id} user={user} onEdit={() => onEdit(user.id)} onDelete={() => onDelete(user.id)} />
+            <UserRow
+              key={user.id}
+              user={user}
+              onEdit={() => onEdit(user.id)}
+              onDelete={() => onDelete(user.id)}
+              onRestore={() => onRestore(user.id)}
+            />
           ))}
         </TableBody>
       </Table>

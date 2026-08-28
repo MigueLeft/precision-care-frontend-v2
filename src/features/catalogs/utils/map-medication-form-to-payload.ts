@@ -5,8 +5,8 @@ export function mapMedicationFormToPayload(values: MedicationFormValues): Create
   return {
     brandName: values.brandName,
     genericName: values.genericName,
-    presentation: values.presentation,
+    presentationId: values.presentationId,
     concentration: values.concentration || undefined,
-    category: values.category || undefined,
+    categoryId: values.categoryId,
   }
 }

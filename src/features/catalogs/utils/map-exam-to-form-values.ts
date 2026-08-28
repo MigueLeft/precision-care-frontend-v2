@@ -4,7 +4,7 @@ import type { ExamFormValues } from '../schemas/exam-form.schema'
 export function mapExamToFormValues(exam: ExamCatalog): ExamFormValues {
   return {
     name: exam.name,
-    category: exam.category,
+    categoryId: exam.categoryId,
     defaultUnit: exam.defaultUnit ?? '',
     valueType: exam.valueType,
     referenceMin: exam.referenceMin ?? '',

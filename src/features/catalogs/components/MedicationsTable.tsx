@@ -5,13 +5,21 @@ import type { Medication } from '../types'
 
 interface MedicationsTableProps {
   medications: Medication[]
+  presentationNameById: Map<number, string>
+  categoryNameById: Map<number, string>
   onEdit: (id: number) => void
   onToggleActive: (id: number) => void
 }
 
 const HEADERS = ['Nombre comercial', 'Sustancia activa', 'Presentación', 'Concentración', 'Categoría', 'Estado', '']
 
-export function MedicationsTable({ medications, onEdit, onToggleActive }: MedicationsTableProps) {
+export function MedicationsTable({
+  medications,
+  presentationNameById,
+  categoryNameById,
+  onEdit,
+  onToggleActive,
+}: MedicationsTableProps) {
   if (medications.length === 0) {
     return <EmptyState message="No se encontraron medicamentos con los filtros actuales." />
   }
@@ -33,6 +41,8 @@ export function MedicationsTable({ medications, onEdit, onToggleActive }: Medica
             <MedicationRow
               key={medication.id}
               medication={medication}
+              presentationNameById={presentationNameById}
+              categoryNameById={categoryNameById}
               onEdit={() => onEdit(medication.id)}
               onToggleActive={() => onToggleActive(medication.id)}
             />

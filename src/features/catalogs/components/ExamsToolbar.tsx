@@ -12,29 +12,23 @@ import {
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
-import { examCategoryOptions } from '../schemas/exam-form.schema'
-import type { ExamCategory } from '../types'
-
-const CATEGORY_LABELS: Record<ExamCategory, string> = {
-  laboratory: 'Laboratorio',
-  imaging: 'Imagenología',
-  cardiology: 'Cardiología',
-  other: 'Otro',
-}
+import type { ExamCategoryCatalog } from '../types'
 
 interface ExamsToolbarProps {
   q: string
-  category: ExamCategory | ''
+  categoryId: number | ''
+  categories: ExamCategoryCatalog[]
   onlyActive: boolean
   onQChange: (value: string) => void
-  onCategoryChange: (value: ExamCategory | '') => void
+  onCategoryChange: (value: number | '') => void
   onOnlyActiveChange: (value: boolean) => void
   onAdd: () => void
 }
 
 export function ExamsToolbar({
   q,
-  category,
+  categoryId,
+  categories,
   onlyActive,
   onQChange,
   onCategoryChange,
@@ -61,16 +55,16 @@ export function ExamsToolbar({
 
       <FormControl sx={{ minWidth: 180 }}>
         <InputLabel id="exam-category-filter-label">Categoría</InputLabel>
-        <Select
+        <Select<number | ''>
           labelId="exam-category-filter-label"
           label="Categoría"
-          value={category}
-          onChange={(event) => onCategoryChange(event.target.value as ExamCategory | '')}
+          value={categoryId}
+          onChange={(event) => onCategoryChange(event.target.value === '' ? '' : Number(event.target.value))}
         >
           <MenuItem value="">Todas</MenuItem>
-          {examCategoryOptions.map((option) => (
-            <MenuItem key={option} value={option}>
-              {CATEGORY_LABELS[option]}
+          {categories.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.name}
             </MenuItem>
           ))}
         </Select>

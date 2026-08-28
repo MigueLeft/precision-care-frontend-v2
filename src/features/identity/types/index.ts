@@ -37,6 +37,7 @@ export interface UserAccount {
   lastLoginAt: string | null
   roleId: number | null
   roleName: string | null
+  deletedAt: string | null
 }
 
 export interface CreateUserPayload {

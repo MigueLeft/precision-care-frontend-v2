@@ -17,7 +17,7 @@ interface UserFormModalProps {
 }
 
 export function UserFormModal({ open, mode, initialValues, isSubmitting, onSubmit, onClose }: UserFormModalProps) {
-  const { control, handleSubmit, reset } = useForm<UserFormValues>({
+  const { control, handleSubmit, reset, setError, clearErrors } = useForm<UserFormValues>({
     resolver: zodResolver(getUserFormSchema(mode)),
     defaultValues: initialValues,
   })
@@ -33,7 +33,13 @@ export function UserFormModal({ open, mode, initialValues, isSubmitting, onSubmi
       <DialogTitle>{mode === 'create' ? 'Nuevo usuario' : 'Editar usuario'}</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2.5 }}>
-          <UserFormFields control={control} mode={mode} type={type} />
+          <UserFormFields
+            control={control}
+            mode={mode}
+            type={type}
+            setError={setError}
+            clearErrors={clearErrors}
+          />
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Stack, TextField, InputAdornment } from '@mui/material'
+import { Stack, TextField, InputAdornment, FormControlLabel, Checkbox } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
@@ -7,6 +7,7 @@ import { useUsers } from '../hooks/useUsers'
 import { useCreateUser } from '../hooks/useCreateUser'
 import { useUpdateUser } from '../hooks/useUpdateUser'
 import { useDeleteUser } from '../hooks/useDeleteUser'
+import { useRestoreUser } from '../hooks/useRestoreUser'
 import { filterUsers } from '../utils/filter-users'
 import { mapUserToFormValues } from '../utils/map-user-to-form-values'
 import { mapUserFormToCreatePayload, mapUserFormToUpdatePayload } from '../utils/map-user-form-to-payload'
@@ -18,11 +19,12 @@ import type { UserFormValues } from '../schemas/user-form.schema'
 
 export function UsersTab() {
   const [q, setQ] = useState('')
+  const [showDeleted, setShowDeleted] = useState(false)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
-  const { data: users = [] } = useUsers()
+  const { data: users = [] } = useUsers(showDeleted)
 
   const filtered = filterUsers(users, q)
   const editingUser = users.find((u) => u.id === editingId) ?? null
@@ -31,6 +33,7 @@ export function UsersTab() {
   const createMutation = useCreateUser({ onSuccess: () => setIsCreateOpen(false) })
   const updateMutation = useUpdateUser(editingId ?? undefined, { onSuccess: () => setEditingId(null) })
   const deleteMutation = useDeleteUser({ onSuccess: () => setDeletingId(null) })
+  const restoreMutation = useRestoreUser()
 
   const isFormOpen = isCreateOpen || editingId !== null
   const formMode = isCreateOpen ? 'create' : 'edit'
@@ -71,6 +74,12 @@ export function UsersTab() {
             },
           }}
         />
+        <FormControlLabel
+          control={
+            <Checkbox checked={showDeleted} onChange={(event) => setShowDeleted(event.target.checked)} />
+          }
+          label="Mostrar eliminados"
+        />
         <AppButton
           variant="contained"
           startIcon={<AddIcon sx={{ fontSize: 18 }} />}
@@ -81,7 +90,12 @@ export function UsersTab() {
         </AppButton>
       </Stack>
 
-      <UsersTable users={filtered} onEdit={(id) => setEditingId(id)} onDelete={(id) => setDeletingId(id)} />
+      <UsersTable
+        users={filtered}
+        onEdit={(id) => setEditingId(id)}
+        onDelete={(id) => setDeletingId(id)}
+        onRestore={(id) => restoreMutation.mutate(id)}
+      />
 
       <UserFormModal
         open={isFormOpen}

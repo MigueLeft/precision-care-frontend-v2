@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { alphanumericTextSchema, optionalTextSchema } from '@/utils/text-validation'
 
-export const examCategoryOptions = ['laboratory', 'imaging', 'cardiology', 'other'] as const
 export const examValueTypeOptions = ['numeric', 'text', 'boolean'] as const
 
 const NUMERIC_VALUE_REGEX = /^-?\d+(\.\d+)?$/
@@ -10,7 +9,7 @@ const referenceValueSchema = optionalTextSchema(30)
 
 const examFormBaseSchema = z.object({
   name: alphanumericTextSchema('El nombre del examen', 150),
-  category: z.enum(examCategoryOptions, { error: 'Selecciona una categoría.' }),
+  categoryId: z.number({ error: 'Selecciona una categoría.' }).int().positive('Selecciona una categoría.'),
   defaultUnit: optionalTextSchema(30),
   valueType: z.enum(examValueTypeOptions),
   referenceMin: referenceValueSchema,
@@ -83,7 +82,7 @@ export function createExamFormSchema(existingNames: string[] = []) {
 
 export const examFormDefaultValues: ExamFormValues = {
   name: '',
-  category: 'laboratory',
+  categoryId: 0,
   defaultUnit: '',
   valueType: 'numeric',
   referenceMin: '',

@@ -1,5 +1,16 @@
 import { api } from '@/utils/api'
-import type { Country, CivilStatus, Race, SocioeconomicLevel, Language, BodySystem, Cie10Entry } from '../types'
+import type {
+  Country,
+  CivilStatus,
+  Race,
+  SocioeconomicLevel,
+  Language,
+  BodySystem,
+  ExamCategoryCatalog,
+  MedicationPresentation,
+  MedicationCategory,
+  MedicalSpecialty,
+} from '../types'
 
 export async function fetchCountries(): Promise<Country[]> {
   const { data } = await api.get<{ countries: Country[] }>('/catalogs/countries')
@@ -116,20 +127,13 @@ export async function fetchBodySystems(): Promise<BodySystem[]> {
   return data.bodySystems
 }
 
-export interface BodySystemPayload {
-  name: string
-  shortCode: string
-  cie10Chapter?: string
-  description?: string
-}
-
-export async function createBodySystem(payload: BodySystemPayload): Promise<BodySystem> {
-  const { data } = await api.post<{ bodySystem: BodySystem }>('/catalogs/body-systems', payload)
+export async function createBodySystem(name: string): Promise<BodySystem> {
+  const { data } = await api.post<{ bodySystem: BodySystem }>('/catalogs/body-systems', { name })
   return data.bodySystem
 }
 
-export async function updateBodySystem(id: number, payload: BodySystemPayload): Promise<BodySystem> {
-  const { data } = await api.patch<{ bodySystem: BodySystem }>(`/catalogs/body-systems/${id}`, payload)
+export async function updateBodySystem(id: number, name: string): Promise<BodySystem> {
+  const { data } = await api.patch<{ bodySystem: BodySystem }>(`/catalogs/body-systems/${id}`, { name })
   return data.bodySystem
 }
 
@@ -138,19 +142,113 @@ export async function toggleBodySystemActive(id: number): Promise<BodySystem> {
   return data.bodySystem
 }
 
-export async function fetchCie10(): Promise<Cie10Entry[]> {
-  const { data } = await api.get<{ cie10: Cie10Entry[] }>('/catalogs/cie10')
-  return data.cie10
+export async function fetchExamCategories(): Promise<ExamCategoryCatalog[]> {
+  const { data } = await api.get<{ examCategories: ExamCategoryCatalog[] }>('/catalogs/exam-categories')
+  return data.examCategories
 }
 
-export interface Cie10Payload {
-  code: string
-  description: string
-  chapter?: string
-  bodySystemId?: number
+export async function createExamCategory(name: string): Promise<ExamCategoryCatalog> {
+  const { data } = await api.post<{ examCategory: ExamCategoryCatalog }>('/catalogs/exam-categories', { name })
+  return data.examCategory
 }
 
-export async function createCie10(payload: Cie10Payload): Promise<Cie10Entry> {
-  const { data } = await api.post<{ cie10: Cie10Entry }>('/catalogs/cie10', payload)
-  return data.cie10
+export async function updateExamCategory(id: number, name: string): Promise<ExamCategoryCatalog> {
+  const { data } = await api.patch<{ examCategory: ExamCategoryCatalog }>(`/catalogs/exam-categories/${id}`, {
+    name,
+  })
+  return data.examCategory
+}
+
+export async function toggleExamCategoryActive(id: number): Promise<ExamCategoryCatalog> {
+  const { data } = await api.patch<{ examCategory: ExamCategoryCatalog }>(
+    `/catalogs/exam-categories/${id}/toggle-active`,
+  )
+  return data.examCategory
+}
+
+export async function fetchMedicationPresentations(): Promise<MedicationPresentation[]> {
+  const { data } = await api.get<{ medicationPresentations: MedicationPresentation[] }>(
+    '/catalogs/medication-presentations',
+  )
+  return data.medicationPresentations
+}
+
+export async function createMedicationPresentation(name: string): Promise<MedicationPresentation> {
+  const { data } = await api.post<{ medicationPresentation: MedicationPresentation }>(
+    '/catalogs/medication-presentations',
+    { name },
+  )
+  return data.medicationPresentation
+}
+
+export async function updateMedicationPresentation(id: number, name: string): Promise<MedicationPresentation> {
+  const { data } = await api.patch<{ medicationPresentation: MedicationPresentation }>(
+    `/catalogs/medication-presentations/${id}`,
+    { name },
+  )
+  return data.medicationPresentation
+}
+
+export async function toggleMedicationPresentationActive(id: number): Promise<MedicationPresentation> {
+  const { data } = await api.patch<{ medicationPresentation: MedicationPresentation }>(
+    `/catalogs/medication-presentations/${id}/toggle-active`,
+  )
+  return data.medicationPresentation
+}
+
+export async function fetchMedicationCategories(): Promise<MedicationCategory[]> {
+  const { data } = await api.get<{ medicationCategories: MedicationCategory[] }>(
+    '/catalogs/medication-categories',
+  )
+  return data.medicationCategories
+}
+
+export async function createMedicationCategory(name: string): Promise<MedicationCategory> {
+  const { data } = await api.post<{ medicationCategory: MedicationCategory }>(
+    '/catalogs/medication-categories',
+    { name },
+  )
+  return data.medicationCategory
+}
+
+export async function updateMedicationCategory(id: number, name: string): Promise<MedicationCategory> {
+  const { data } = await api.patch<{ medicationCategory: MedicationCategory }>(
+    `/catalogs/medication-categories/${id}`,
+    { name },
+  )
+  return data.medicationCategory
+}
+
+export async function toggleMedicationCategoryActive(id: number): Promise<MedicationCategory> {
+  const { data } = await api.patch<{ medicationCategory: MedicationCategory }>(
+    `/catalogs/medication-categories/${id}/toggle-active`,
+  )
+  return data.medicationCategory
+}
+
+export async function fetchMedicalSpecialties(): Promise<MedicalSpecialty[]> {
+  const { data } = await api.get<{ medicalSpecialties: MedicalSpecialty[] }>('/catalogs/medical-specialties')
+  return data.medicalSpecialties
+}
+
+export async function createMedicalSpecialty(name: string): Promise<MedicalSpecialty> {
+  const { data } = await api.post<{ medicalSpecialty: MedicalSpecialty }>('/catalogs/medical-specialties', {
+    name,
+  })
+  return data.medicalSpecialty
+}
+
+export async function updateMedicalSpecialty(id: number, name: string): Promise<MedicalSpecialty> {
+  const { data } = await api.patch<{ medicalSpecialty: MedicalSpecialty }>(
+    `/catalogs/medical-specialties/${id}`,
+    { name },
+  )
+  return data.medicalSpecialty
+}
+
+export async function toggleMedicalSpecialtyActive(id: number): Promise<MedicalSpecialty> {
+  const { data } = await api.patch<{ medicalSpecialty: MedicalSpecialty }>(
+    `/catalogs/medical-specialties/${id}/toggle-active`,
+  )
+  return data.medicalSpecialty
 }

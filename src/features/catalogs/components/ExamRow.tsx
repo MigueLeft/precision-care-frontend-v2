@@ -3,20 +3,14 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import type { ExamCatalog } from '../types'
 
-const CATEGORY_LABELS: Record<ExamCatalog['category'], string> = {
-  laboratory: 'Laboratorio',
-  imaging: 'Imagenología',
-  cardiology: 'Cardiología',
-  other: 'Otro',
-}
-
 interface ExamRowProps {
   exam: ExamCatalog
+  categoryNameById: Map<number, string>
   onEdit: () => void
   onToggleActive: () => void
 }
 
-export function ExamRow({ exam, onEdit, onToggleActive }: ExamRowProps) {
+export function ExamRow({ exam, categoryNameById, onEdit, onToggleActive }: ExamRowProps) {
   const referenceRange =
     exam.referenceMin || exam.referenceMax ? `${exam.referenceMin ?? '—'} – ${exam.referenceMax ?? '—'}` : '—'
 
@@ -26,7 +20,12 @@ export function ExamRow({ exam, onEdit, onToggleActive }: ExamRowProps) {
         <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>{exam.name}</Typography>
       </TableCell>
       <TableCell>
-        <Chip label={CATEGORY_LABELS[exam.category]} size="small" color="info" variant="outlined" />
+        <Chip
+          label={categoryNameById.get(exam.categoryId) ?? '—'}
+          size="small"
+          color="info"
+          variant="outlined"
+        />
       </TableCell>
       <TableCell>
         <Typography sx={{ fontSize: '14px' }}>{exam.defaultUnit ?? '—'}</Typography>

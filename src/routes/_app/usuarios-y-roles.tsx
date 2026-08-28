@@ -4,7 +4,10 @@ import { IdentityPage, identityKeys, fetchUsers, fetchRoles, fetchPermissions } 
 export const Route = createFileRoute('/_app/usuarios-y-roles')({
   loader: ({ context: { queryClient } }) =>
     Promise.all([
-      queryClient.ensureQueryData({ queryKey: identityKeys.users, queryFn: fetchUsers }),
+      queryClient.ensureQueryData({
+        queryKey: [...identityKeys.users, { includeDeleted: false }] as const,
+        queryFn: () => fetchUsers(false),
+      }),
       queryClient.ensureQueryData({ queryKey: identityKeys.roles, queryFn: fetchRoles }),
       queryClient.ensureQueryData({ queryKey: identityKeys.permissions, queryFn: fetchPermissions }),
     ]),
