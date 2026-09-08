@@ -8,7 +8,11 @@ import {
   resendSpecialistInvitation,
 } from '../services/specialists.service'
 import { specialistsKeys } from './specialists.keys'
-import type { CreateSpecialistResult, UpdateSpecialistPayload } from '../types'
+import type {
+  CreateSpecialistResult,
+  Specialist,
+  UpdateSpecialistPayload,
+} from '../types'
 
 function useInvalidate() {
   const queryClient = useQueryClient()
@@ -59,12 +63,25 @@ export function useUpdateSpecialist(
 }
 
 export function useSetSpecialistStatus(options?: { onSuccess?: () => void }) {
+  const queryClient = useQueryClient()
   const invalidate = useInvalidate()
+
+  function patchCaches(id: number, active: boolean) {
+    queryClient.setQueryData<Specialist[]>(specialistsKeys.lists(), (list) =>
+      list?.map((s) => (s.id === id ? { ...s, active } : s)),
+    )
+    queryClient.setQueryData<Specialist>(specialistsKeys.detail(id), (s) =>
+      s ? { ...s, active } : s,
+    )
+  }
 
   return useMutation({
     mutationFn: ({ id, active }: { id: number; active: boolean }) =>
       setSpecialistStatus(id, active),
+    // Refleja el cambio en la UI de inmediato; se reconcilia con la respuesta real.
+    onMutate: ({ id, active }) => patchCaches(id, active),
     onSuccess: (specialist) => {
+      patchCaches(specialist.id, specialist.active)
       invalidate()
       toast.success(
         specialist.active
@@ -73,7 +90,8 @@ export function useSetSpecialistStatus(options?: { onSuccess?: () => void }) {
       )
       options?.onSuccess?.()
     },
-    onError: (error) => {
+    onError: (error, { id, active }) => {
+      patchCaches(id, !active)
       toast.error(getApiErrorMessage(error, 'Error al cambiar el estado'))
     },
   })

@@ -26,7 +26,17 @@ export function SpecialistDataFields({ control, setValue }: Props) {
   const countryOptions = countries.map((c) => ({ id: c.id, label: c.name }))
   const specialtyOptions = specialties.map((s) => ({ id: s.id, label: s.name }))
 
-  const text = (name: TextName, label: string, helper?: string, required?: boolean) => (
+  interface TextOpts {
+    helper?: string
+    required?: boolean
+    maxLength?: number
+    /** Deja solo dígitos y separadores de teléfono. */
+    phone?: boolean
+    /** Deja solo letras, espacios, guiones y apóstrofes (nombres de persona). */
+    lettersOnly?: boolean
+  }
+
+  const text = (name: TextName, label: string, opts: TextOpts = {}) => (
     <Grid size={{ xs: 12, sm: name === 'practiceAddress' ? 12 : 6 }}>
       <Controller
         name={name}
@@ -35,10 +45,22 @@ export function SpecialistDataFields({ control, setValue }: Props) {
           <TextField
             {...field}
             label={label}
-            required={required}
+            required={opts.required}
             fullWidth
             error={!!error}
-            helperText={error?.message ?? helper}
+            helperText={error?.message ?? opts.helper}
+            slotProps={{
+              htmlInput: {
+                maxLength: opts.maxLength,
+                inputMode: opts.phone ? 'tel' : undefined,
+              },
+            }}
+            onChange={(event) => {
+              let value = event.target.value
+              if (opts.phone) value = value.replace(/[^\d\s+()-]/g, '')
+              if (opts.lettersOnly) value = value.replace(/[^\p{L}\s'-]/gu, '')
+              field.onChange(value)
+            }}
           />
         )}
       />
@@ -76,15 +98,13 @@ export function SpecialistDataFields({ control, setValue }: Props) {
 
   return (
     <Grid container spacing={2}>
-      {text('name', 'Nombre', undefined, true)}
-      {text('lastName', 'Apellido', undefined, true)}
-      {text(
-        'email',
-        'Correo',
-        'Se usa como identificador y, si se crea usuario, como acceso al sistema.',
-        true,
-      )}
-      {text('phone', 'Teléfono (opcional)')}
+      {text('name', 'Nombre', { required: true, maxLength: 60, lettersOnly: true })}
+      {text('lastName', 'Apellido', { required: true, maxLength: 60, lettersOnly: true })}
+      {text('email', 'Correo', {
+        required: true,
+        helper: 'Se usa como identificador y, si se crea usuario, como acceso al sistema.',
+      })}
+      {text('phone', 'Teléfono (opcional)', { maxLength: 30, phone: true })}
 
       {select('nationalityCountryId', 'Nacionalidad', countryOptions)}
       {select('residenceCountryId', 'País de residencia', countryOptions, undefined, () => {
@@ -147,11 +167,10 @@ export function SpecialistDataFields({ control, setValue }: Props) {
         />
       </Grid>
 
-      {text(
-        'practiceAddress',
-        'Dirección física donde atiende (opcional)',
-        'Aparece en recetas y entregables impresos. Puede definirse después.',
-      )}
+      {text('practiceAddress', 'Dirección física donde atiende (opcional)', {
+        maxLength: 255,
+        helper: 'Aparece en recetas y entregables impresos. Puede definirse después.',
+      })}
     </Grid>
   )
 }

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { SpecialistFormPage, specialistsKeys, fetchSpecialist } from '@/features/specialists'
 import { catalogsKeys, fetchCountries, fetchMedicalSpecialties } from '@/features/catalogs'
 
-export const Route = createFileRoute('/_app/especialistas_/$specialistId/editar')({
+export const Route = createFileRoute('/_app/especialistas_/$specialistId_/editar')({
   loader: ({ context: { queryClient }, params: { specialistId } }) =>
     Promise.all([
       queryClient.ensureQueryData({

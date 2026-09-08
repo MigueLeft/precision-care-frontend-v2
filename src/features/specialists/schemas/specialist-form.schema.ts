@@ -1,14 +1,25 @@
 import { z } from 'zod'
+import { lettersOnlySchema } from '@/utils/text-validation'
 
 const optionalId = z.number().int().positive().optional()
+
+// Teléfono: solo dígitos y separadores comunes (+, espacio, guion, paréntesis).
+// Nada de letras ni puntos.
+const PHONE_REGEX = /^[\d\s+()-]+$/
 
 export function getSpecialistFormSchema(mode: 'create' | 'edit') {
   return z
     .object({
-      name: z.string().trim().min(1, 'El nombre es requerido.'),
-      lastName: z.string().trim().min(1, 'El apellido es requerido.'),
+      name: lettersOnlySchema('El nombre', 60),
+      lastName: lettersOnlySchema('El apellido', 60),
       email: z.string().email('El correo no tiene un formato válido.'),
-      phone: z.string().trim().max(30).optional().or(z.literal('')),
+      phone: z
+        .string()
+        .trim()
+        .max(30, 'El teléfono no debe superar los 30 caracteres.')
+        .regex(PHONE_REGEX, 'El teléfono solo puede contener números.')
+        .optional()
+        .or(z.literal('')),
       nationalityCountryId: z
         .number({ error: 'La nacionalidad es requerida.' })
         .int()

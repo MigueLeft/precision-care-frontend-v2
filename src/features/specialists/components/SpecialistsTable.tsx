@@ -31,7 +31,24 @@ interface Props {
   onToggleStatus: (specialist: Specialist) => void
 }
 
-const HEAD = ['Especialista', 'Especialidad', 'Ubicación', 'Contacto', 'Acceso', 'Estado', '']
+const HEAD = ['Especialista', 'Especialidad', 'Ubicación', 'Contacto', 'Acceso', 'Estado']
+
+// Celda de acciones fija a la derecha para que Editar/Desactivar sigan visibles
+// aunque la tabla necesite scroll horizontal.
+const stickyActions = {
+  position: 'sticky',
+  right: 0,
+  bgcolor: 'background.paper',
+  borderLeft: '1px solid',
+  borderColor: 'divider',
+} as const
+
+const ellipsis = {
+  maxWidth: 220,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+} as const
 
 export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props) {
   const navigate = useNavigate()
@@ -42,14 +59,15 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
 
   return (
     <TableContainer component={Paper}>
-      <Table>
+      <Table size="small">
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
-            {HEAD.map((label, i) => (
-              <TableCell key={label || i} sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>
+            {HEAD.map((label) => (
+              <TableCell key={label} sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>
                 {label}
               </TableCell>
             ))}
+            <TableCell sx={{ ...stickyActions, bgcolor: 'grey.50' }} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -62,9 +80,9 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
             >
               <TableCell>
                 <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-                  <InitialsAvatar initials={formatSpecialistInitials(s)} size={36} />
+                  <InitialsAvatar initials={formatSpecialistInitials(s)} size={32} />
                   <div>
-                    <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600, ...ellipsis }} title={`${s.name} ${s.lastName}`}>
                       {s.name} {s.lastName}
                     </Typography>
                     <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
@@ -76,7 +94,7 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
               <TableCell>
                 <Typography sx={{ fontSize: '14px' }}>{s.primarySpecialtyName ?? '—'}</Typography>
                 {s.otherSpecialties.length > 0 && (
-                  <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                  <Typography sx={{ fontSize: '12px', color: 'text.secondary', ...ellipsis }}>
                     + {s.otherSpecialties.map((o) => o.name).join(', ')}
                   </Typography>
                 )}
@@ -88,7 +106,9 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: '14px' }}>{s.email}</Typography>
+                <Typography sx={{ fontSize: '14px', ...ellipsis }} title={s.email}>
+                  {s.email}
+                </Typography>
                 <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
                   {s.phone ?? 'Sin teléfono'}
                 </Typography>
@@ -107,34 +127,36 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
                   color={s.active ? 'success' : 'default'}
                 />
               </TableCell>
-              <TableCell align="right" onClick={(event) => event.stopPropagation()}>
-                <Tooltip title="Editar">
-                  <IconButton
-                    size="small"
-                    aria-label="Editar especialista"
-                    onClick={() =>
-                      navigate({
-                        to: '/especialistas/$specialistId/editar',
-                        params: { specialistId: String(s.id) },
-                      })
-                    }
-                  >
-                    <EditOutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={s.active ? 'Desactivar' : 'Activar'}>
-                  <IconButton
-                    size="small"
-                    aria-label={s.active ? 'Desactivar especialista' : 'Activar especialista'}
-                    onClick={() => onToggleStatus(s)}
-                  >
-                    {s.active ? (
-                      <PersonOffOutlinedIcon sx={{ fontSize: 18 }} />
-                    ) : (
-                      <PersonAddAlt1OutlinedIcon sx={{ fontSize: 18 }} />
-                    )}
-                  </IconButton>
-                </Tooltip>
+              <TableCell align="right" sx={stickyActions} onClick={(event) => event.stopPropagation()}>
+                <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
+                  <Tooltip title="Editar">
+                    <IconButton
+                      size="small"
+                      aria-label="Editar especialista"
+                      onClick={() =>
+                        navigate({
+                          to: '/especialistas/$specialistId/editar',
+                          params: { specialistId: String(s.id) },
+                        })
+                      }
+                    >
+                      <EditOutlinedIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={s.active ? 'Desactivar' : 'Activar'}>
+                    <IconButton
+                      size="small"
+                      aria-label={s.active ? 'Desactivar especialista' : 'Activar especialista'}
+                      onClick={() => onToggleStatus(s)}
+                    >
+                      {s.active ? (
+                        <PersonOffOutlinedIcon sx={{ fontSize: 18 }} />
+                      ) : (
+                        <PersonAddAlt1OutlinedIcon sx={{ fontSize: 18 }} />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}
