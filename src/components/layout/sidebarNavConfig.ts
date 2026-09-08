@@ -28,7 +28,7 @@ export const sidebarNavConfig: SidebarNavSection[] = [
     items: [
       { label: 'Dashboard', icon: DashboardOutlinedIcon, to: '/' },
       { label: 'Pacientes', icon: PeopleAltOutlinedIcon, to: '/pacientes' },
-      { label: 'Citas', icon: EventOutlinedIcon },
+      { label: 'Citas', icon: EventOutlinedIcon, to: '/citas' },
       { label: 'Calendario', icon: CalendarMonthOutlinedIcon },
       { label: 'Cuestionarios', icon: AssignmentOutlinedIcon, to: '/cuestionarios' },
       { label: 'Entregables', icon: DescriptionOutlinedIcon },

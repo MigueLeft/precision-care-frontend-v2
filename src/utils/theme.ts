@@ -8,6 +8,13 @@ const BRAND = {
   soft: '#b9d6f2',
 } as const
 
+// Altura de un MenuItem estándar (48px) y padding vertical de la lista del menú (8px).
+// Limitamos los desplegables de todos los Select a 5 items visibles; a partir de ahí aparece scroll.
+const MENU_ITEM_HEIGHT = 48
+const MENU_LIST_PADDING = 8
+const MAX_VISIBLE_SELECT_ITEMS = 5
+const SELECT_MENU_MAX_HEIGHT = MENU_ITEM_HEIGHT * MAX_VISIBLE_SELECT_ITEMS + MENU_LIST_PADDING
+
 declare module '@mui/material/styles' {
   interface Palette {
     brand: { dark: string; accent: string; soft: string }
@@ -101,6 +108,17 @@ export const theme = createTheme({
     },
     MuiTextField: {
       defaultProps: { variant: 'outlined', fullWidth: true },
+    },
+    // Todos los Select (incluidos los de TextField select) muestran como máximo
+    // 5 items; con más items la lista hace scroll.
+    MuiSelect: {
+      defaultProps: {
+        MenuProps: {
+          slotProps: {
+            paper: { style: { maxHeight: SELECT_MENU_MAX_HEIGHT } },
+          },
+        },
+      },
     },
     MuiOutlinedInput: {
       styleOverrides: {

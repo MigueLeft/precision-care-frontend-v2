@@ -5,4 +5,5 @@ export const identityKeys = {
   roleDetail: (id: number) => ['identity', 'roles', id] as const,
   permissions: ['identity', 'permissions'] as const,
   specialistsLookup: ['identity', 'specialists-lookup'] as const,
+  me: ['identity', 'me'] as const,
 }

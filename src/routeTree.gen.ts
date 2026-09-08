@@ -16,8 +16,22 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-roles'
 import { Route as AppPacientesRouteImport } from './routes/_app/pacientes'
 import { Route as AppCuestionariosRouteImport } from './routes/_app/cuestionarios'
+import { Route as AppCitasRouteImport } from './routes/_app/citas'
 import { Route as AppCatalogosRouteImport } from './routes/_app/catalogos'
 import { Route as AppCuestionariosIdRouteImport } from './routes/_app/cuestionarios_.$id'
+import { Route as AppConsultasConsultationIdRouteImport } from './routes/_app/consultas_.$consultationId'
+import { Route as AppPacientesPatientIdRouteRouteImport } from './routes/_app/pacientes_.$patientId/route'
+import { Route as AppPacientesPatientIdIndexRouteImport } from './routes/_app/pacientes_.$patientId/index'
+import { Route as AppPacientesPatientIdResumenRouteImport } from './routes/_app/pacientes_.$patientId/resumen'
+import { Route as AppPacientesPatientIdParaclinicosRouteImport } from './routes/_app/pacientes_.$patientId/paraclinicos'
+import { Route as AppPacientesPatientIdMedicamentosRouteImport } from './routes/_app/pacientes_.$patientId/medicamentos'
+import { Route as AppPacientesPatientIdIngresablesRouteImport } from './routes/_app/pacientes_.$patientId/ingresables'
+import { Route as AppPacientesPatientIdExamenFisicoRouteImport } from './routes/_app/pacientes_.$patientId/examen-fisico'
+import { Route as AppPacientesPatientIdEstiloDeVidaRouteImport } from './routes/_app/pacientes_.$patientId/estilo-de-vida'
+import { Route as AppPacientesPatientIdEntregablesRouteImport } from './routes/_app/pacientes_.$patientId/entregables'
+import { Route as AppPacientesPatientIdConsultasRouteImport } from './routes/_app/pacientes_.$patientId/consultas'
+import { Route as AppPacientesPatientIdComposicionCorporalRouteImport } from './routes/_app/pacientes_.$patientId/composicion-corporal'
+import { Route as AppPacientesPatientIdAntecedentesRouteImport } from './routes/_app/pacientes_.$patientId/antecedentes'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
@@ -52,6 +66,11 @@ const AppCuestionariosRoute = AppCuestionariosRouteImport.update({
   path: '/cuestionarios',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppCitasRoute = AppCitasRouteImport.update({
+  id: '/citas',
+  path: '/citas',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppCatalogosRoute = AppCatalogosRouteImport.update({
   id: '/catalogos',
   path: '/catalogos',
@@ -62,67 +81,227 @@ const AppCuestionariosIdRoute = AppCuestionariosIdRouteImport.update({
   path: '/cuestionarios/$id',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppConsultasConsultationIdRoute =
+  AppConsultasConsultationIdRouteImport.update({
+    id: '/consultas_/$consultationId',
+    path: '/consultas/$consultationId',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
+const AppPacientesPatientIdRouteRoute =
+  AppPacientesPatientIdRouteRouteImport.update({
+    id: '/pacientes_/$patientId',
+    path: '/pacientes/$patientId',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
+const AppPacientesPatientIdIndexRoute =
+  AppPacientesPatientIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdResumenRoute =
+  AppPacientesPatientIdResumenRouteImport.update({
+    id: '/resumen',
+    path: '/resumen',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdParaclinicosRoute =
+  AppPacientesPatientIdParaclinicosRouteImport.update({
+    id: '/paraclinicos',
+    path: '/paraclinicos',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdMedicamentosRoute =
+  AppPacientesPatientIdMedicamentosRouteImport.update({
+    id: '/medicamentos',
+    path: '/medicamentos',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdIngresablesRoute =
+  AppPacientesPatientIdIngresablesRouteImport.update({
+    id: '/ingresables',
+    path: '/ingresables',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdExamenFisicoRoute =
+  AppPacientesPatientIdExamenFisicoRouteImport.update({
+    id: '/examen-fisico',
+    path: '/examen-fisico',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdEstiloDeVidaRoute =
+  AppPacientesPatientIdEstiloDeVidaRouteImport.update({
+    id: '/estilo-de-vida',
+    path: '/estilo-de-vida',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdEntregablesRoute =
+  AppPacientesPatientIdEntregablesRouteImport.update({
+    id: '/entregables',
+    path: '/entregables',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdConsultasRoute =
+  AppPacientesPatientIdConsultasRouteImport.update({
+    id: '/consultas',
+    path: '/consultas',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdComposicionCorporalRoute =
+  AppPacientesPatientIdComposicionCorporalRouteImport.update({
+    id: '/composicion-corporal',
+    path: '/composicion-corporal',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
+const AppPacientesPatientIdAntecedentesRoute =
+  AppPacientesPatientIdAntecedentesRouteImport.update({
+    id: '/antecedentes',
+    path: '/antecedentes',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
+  '/citas': typeof AppCitasRoute
   '/cuestionarios': typeof AppCuestionariosRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
+  '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
+  '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/cuestionarios/$id': typeof AppCuestionariosIdRoute
+  '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
+  '/pacientes/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
+  '/pacientes/$patientId/consultas': typeof AppPacientesPatientIdConsultasRoute
+  '/pacientes/$patientId/entregables': typeof AppPacientesPatientIdEntregablesRoute
+  '/pacientes/$patientId/estilo-de-vida': typeof AppPacientesPatientIdEstiloDeVidaRoute
+  '/pacientes/$patientId/examen-fisico': typeof AppPacientesPatientIdExamenFisicoRoute
+  '/pacientes/$patientId/ingresables': typeof AppPacientesPatientIdIngresablesRoute
+  '/pacientes/$patientId/medicamentos': typeof AppPacientesPatientIdMedicamentosRoute
+  '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
+  '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
+  '/pacientes/$patientId/': typeof AppPacientesPatientIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
+  '/citas': typeof AppCitasRoute
   '/cuestionarios': typeof AppCuestionariosRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
+  '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/cuestionarios/$id': typeof AppCuestionariosIdRoute
+  '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
+  '/pacientes/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
+  '/pacientes/$patientId/consultas': typeof AppPacientesPatientIdConsultasRoute
+  '/pacientes/$patientId/entregables': typeof AppPacientesPatientIdEntregablesRoute
+  '/pacientes/$patientId/estilo-de-vida': typeof AppPacientesPatientIdEstiloDeVidaRoute
+  '/pacientes/$patientId/examen-fisico': typeof AppPacientesPatientIdExamenFisicoRoute
+  '/pacientes/$patientId/ingresables': typeof AppPacientesPatientIdIngresablesRoute
+  '/pacientes/$patientId/medicamentos': typeof AppPacientesPatientIdMedicamentosRoute
+  '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
+  '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
+  '/pacientes/$patientId': typeof AppPacientesPatientIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_app/catalogos': typeof AppCatalogosRoute
+  '/_app/citas': typeof AppCitasRoute
   '/_app/cuestionarios': typeof AppCuestionariosRoute
   '/_app/pacientes': typeof AppPacientesRoute
   '/_app/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/pacientes_/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
+  '/_app/consultas_/$consultationId': typeof AppConsultasConsultationIdRoute
   '/_app/cuestionarios_/$id': typeof AppCuestionariosIdRoute
+  '/_app/pacientes_/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
+  '/_app/pacientes_/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
+  '/_app/pacientes_/$patientId/consultas': typeof AppPacientesPatientIdConsultasRoute
+  '/_app/pacientes_/$patientId/entregables': typeof AppPacientesPatientIdEntregablesRoute
+  '/_app/pacientes_/$patientId/estilo-de-vida': typeof AppPacientesPatientIdEstiloDeVidaRoute
+  '/_app/pacientes_/$patientId/examen-fisico': typeof AppPacientesPatientIdExamenFisicoRoute
+  '/_app/pacientes_/$patientId/ingresables': typeof AppPacientesPatientIdIngresablesRoute
+  '/_app/pacientes_/$patientId/medicamentos': typeof AppPacientesPatientIdMedicamentosRoute
+  '/_app/pacientes_/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
+  '/_app/pacientes_/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
+  '/_app/pacientes_/$patientId/': typeof AppPacientesPatientIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/catalogos'
+    | '/citas'
     | '/cuestionarios'
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
+    | '/pacientes/$patientId'
+    | '/consultas/$consultationId'
     | '/cuestionarios/$id'
+    | '/pacientes/$patientId/antecedentes'
+    | '/pacientes/$patientId/composicion-corporal'
+    | '/pacientes/$patientId/consultas'
+    | '/pacientes/$patientId/entregables'
+    | '/pacientes/$patientId/estilo-de-vida'
+    | '/pacientes/$patientId/examen-fisico'
+    | '/pacientes/$patientId/ingresables'
+    | '/pacientes/$patientId/medicamentos'
+    | '/pacientes/$patientId/paraclinicos'
+    | '/pacientes/$patientId/resumen'
+    | '/pacientes/$patientId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/catalogos'
+    | '/citas'
     | '/cuestionarios'
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
+    | '/consultas/$consultationId'
     | '/cuestionarios/$id'
+    | '/pacientes/$patientId/antecedentes'
+    | '/pacientes/$patientId/composicion-corporal'
+    | '/pacientes/$patientId/consultas'
+    | '/pacientes/$patientId/entregables'
+    | '/pacientes/$patientId/estilo-de-vida'
+    | '/pacientes/$patientId/examen-fisico'
+    | '/pacientes/$patientId/ingresables'
+    | '/pacientes/$patientId/medicamentos'
+    | '/pacientes/$patientId/paraclinicos'
+    | '/pacientes/$patientId/resumen'
+    | '/pacientes/$patientId'
   id:
     | '__root__'
     | '/_app'
     | '/_auth'
     | '/_app/catalogos'
+    | '/_app/citas'
     | '/_app/cuestionarios'
     | '/_app/pacientes'
     | '/_app/usuarios-y-roles'
     | '/_auth/login'
     | '/_app/'
+    | '/_app/pacientes_/$patientId'
+    | '/_app/consultas_/$consultationId'
     | '/_app/cuestionarios_/$id'
+    | '/_app/pacientes_/$patientId/antecedentes'
+    | '/_app/pacientes_/$patientId/composicion-corporal'
+    | '/_app/pacientes_/$patientId/consultas'
+    | '/_app/pacientes_/$patientId/entregables'
+    | '/_app/pacientes_/$patientId/estilo-de-vida'
+    | '/_app/pacientes_/$patientId/examen-fisico'
+    | '/_app/pacientes_/$patientId/ingresables'
+    | '/_app/pacientes_/$patientId/medicamentos'
+    | '/_app/pacientes_/$patientId/paraclinicos'
+    | '/_app/pacientes_/$patientId/resumen'
+    | '/_app/pacientes_/$patientId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -181,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCuestionariosRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/citas': {
+      id: '/_app/citas'
+      path: '/citas'
+      fullPath: '/citas'
+      preLoaderRoute: typeof AppCitasRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/catalogos': {
       id: '/_app/catalogos'
       path: '/catalogos'
@@ -195,24 +381,163 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCuestionariosIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/consultas_/$consultationId': {
+      id: '/_app/consultas_/$consultationId'
+      path: '/consultas/$consultationId'
+      fullPath: '/consultas/$consultationId'
+      preLoaderRoute: typeof AppConsultasConsultationIdRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/pacientes_/$patientId': {
+      id: '/_app/pacientes_/$patientId'
+      path: '/pacientes/$patientId'
+      fullPath: '/pacientes/$patientId'
+      preLoaderRoute: typeof AppPacientesPatientIdRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/pacientes_/$patientId/': {
+      id: '/_app/pacientes_/$patientId/'
+      path: '/'
+      fullPath: '/pacientes/$patientId/'
+      preLoaderRoute: typeof AppPacientesPatientIdIndexRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/resumen': {
+      id: '/_app/pacientes_/$patientId/resumen'
+      path: '/resumen'
+      fullPath: '/pacientes/$patientId/resumen'
+      preLoaderRoute: typeof AppPacientesPatientIdResumenRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/paraclinicos': {
+      id: '/_app/pacientes_/$patientId/paraclinicos'
+      path: '/paraclinicos'
+      fullPath: '/pacientes/$patientId/paraclinicos'
+      preLoaderRoute: typeof AppPacientesPatientIdParaclinicosRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/medicamentos': {
+      id: '/_app/pacientes_/$patientId/medicamentos'
+      path: '/medicamentos'
+      fullPath: '/pacientes/$patientId/medicamentos'
+      preLoaderRoute: typeof AppPacientesPatientIdMedicamentosRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/ingresables': {
+      id: '/_app/pacientes_/$patientId/ingresables'
+      path: '/ingresables'
+      fullPath: '/pacientes/$patientId/ingresables'
+      preLoaderRoute: typeof AppPacientesPatientIdIngresablesRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/examen-fisico': {
+      id: '/_app/pacientes_/$patientId/examen-fisico'
+      path: '/examen-fisico'
+      fullPath: '/pacientes/$patientId/examen-fisico'
+      preLoaderRoute: typeof AppPacientesPatientIdExamenFisicoRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/estilo-de-vida': {
+      id: '/_app/pacientes_/$patientId/estilo-de-vida'
+      path: '/estilo-de-vida'
+      fullPath: '/pacientes/$patientId/estilo-de-vida'
+      preLoaderRoute: typeof AppPacientesPatientIdEstiloDeVidaRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/entregables': {
+      id: '/_app/pacientes_/$patientId/entregables'
+      path: '/entregables'
+      fullPath: '/pacientes/$patientId/entregables'
+      preLoaderRoute: typeof AppPacientesPatientIdEntregablesRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/consultas': {
+      id: '/_app/pacientes_/$patientId/consultas'
+      path: '/consultas'
+      fullPath: '/pacientes/$patientId/consultas'
+      preLoaderRoute: typeof AppPacientesPatientIdConsultasRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/composicion-corporal': {
+      id: '/_app/pacientes_/$patientId/composicion-corporal'
+      path: '/composicion-corporal'
+      fullPath: '/pacientes/$patientId/composicion-corporal'
+      preLoaderRoute: typeof AppPacientesPatientIdComposicionCorporalRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
+    '/_app/pacientes_/$patientId/antecedentes': {
+      id: '/_app/pacientes_/$patientId/antecedentes'
+      path: '/antecedentes'
+      fullPath: '/pacientes/$patientId/antecedentes'
+      preLoaderRoute: typeof AppPacientesPatientIdAntecedentesRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
   }
 }
 
+interface AppPacientesPatientIdRouteRouteChildren {
+  AppPacientesPatientIdAntecedentesRoute: typeof AppPacientesPatientIdAntecedentesRoute
+  AppPacientesPatientIdComposicionCorporalRoute: typeof AppPacientesPatientIdComposicionCorporalRoute
+  AppPacientesPatientIdConsultasRoute: typeof AppPacientesPatientIdConsultasRoute
+  AppPacientesPatientIdEntregablesRoute: typeof AppPacientesPatientIdEntregablesRoute
+  AppPacientesPatientIdEstiloDeVidaRoute: typeof AppPacientesPatientIdEstiloDeVidaRoute
+  AppPacientesPatientIdExamenFisicoRoute: typeof AppPacientesPatientIdExamenFisicoRoute
+  AppPacientesPatientIdIngresablesRoute: typeof AppPacientesPatientIdIngresablesRoute
+  AppPacientesPatientIdMedicamentosRoute: typeof AppPacientesPatientIdMedicamentosRoute
+  AppPacientesPatientIdParaclinicosRoute: typeof AppPacientesPatientIdParaclinicosRoute
+  AppPacientesPatientIdResumenRoute: typeof AppPacientesPatientIdResumenRoute
+  AppPacientesPatientIdIndexRoute: typeof AppPacientesPatientIdIndexRoute
+}
+
+const AppPacientesPatientIdRouteRouteChildren: AppPacientesPatientIdRouteRouteChildren =
+  {
+    AppPacientesPatientIdAntecedentesRoute:
+      AppPacientesPatientIdAntecedentesRoute,
+    AppPacientesPatientIdComposicionCorporalRoute:
+      AppPacientesPatientIdComposicionCorporalRoute,
+    AppPacientesPatientIdConsultasRoute: AppPacientesPatientIdConsultasRoute,
+    AppPacientesPatientIdEntregablesRoute:
+      AppPacientesPatientIdEntregablesRoute,
+    AppPacientesPatientIdEstiloDeVidaRoute:
+      AppPacientesPatientIdEstiloDeVidaRoute,
+    AppPacientesPatientIdExamenFisicoRoute:
+      AppPacientesPatientIdExamenFisicoRoute,
+    AppPacientesPatientIdIngresablesRoute:
+      AppPacientesPatientIdIngresablesRoute,
+    AppPacientesPatientIdMedicamentosRoute:
+      AppPacientesPatientIdMedicamentosRoute,
+    AppPacientesPatientIdParaclinicosRoute:
+      AppPacientesPatientIdParaclinicosRoute,
+    AppPacientesPatientIdResumenRoute: AppPacientesPatientIdResumenRoute,
+    AppPacientesPatientIdIndexRoute: AppPacientesPatientIdIndexRoute,
+  }
+
+const AppPacientesPatientIdRouteRouteWithChildren =
+  AppPacientesPatientIdRouteRoute._addFileChildren(
+    AppPacientesPatientIdRouteRouteChildren,
+  )
+
 interface AppRouteRouteChildren {
   AppCatalogosRoute: typeof AppCatalogosRoute
+  AppCitasRoute: typeof AppCitasRoute
   AppCuestionariosRoute: typeof AppCuestionariosRoute
   AppPacientesRoute: typeof AppPacientesRoute
   AppUsuariosYRolesRoute: typeof AppUsuariosYRolesRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppPacientesPatientIdRouteRoute: typeof AppPacientesPatientIdRouteRouteWithChildren
+  AppConsultasConsultationIdRoute: typeof AppConsultasConsultationIdRoute
   AppCuestionariosIdRoute: typeof AppCuestionariosIdRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppCatalogosRoute: AppCatalogosRoute,
+  AppCitasRoute: AppCitasRoute,
   AppCuestionariosRoute: AppCuestionariosRoute,
   AppPacientesRoute: AppPacientesRoute,
   AppUsuariosYRolesRoute: AppUsuariosYRolesRoute,
   AppIndexRoute: AppIndexRoute,
+  AppPacientesPatientIdRouteRoute: AppPacientesPatientIdRouteRouteWithChildren,
+  AppConsultasConsultationIdRoute: AppConsultasConsultationIdRoute,
   AppCuestionariosIdRoute: AppCuestionariosIdRoute,
 }
 

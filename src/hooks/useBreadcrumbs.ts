@@ -8,6 +8,7 @@ interface Breadcrumb {
 const PATHNAME_LABELS: Record<string, string> = {
   '/': 'Dashboard',
   '/pacientes': 'Pacientes',
+  '/citas': 'Citas',
   '/catalogos': 'Catálogos',
   '/usuarios-y-roles': 'Usuarios y roles',
 }
@@ -16,6 +17,12 @@ export function useBreadcrumbs(): Breadcrumb[] {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
 
   const crumbs: Breadcrumb[] = [{ label: 'Inicio', to: '/' }]
+
+  if (pathname.startsWith('/consultas/')) {
+    crumbs.push({ label: 'Citas', to: '/citas' })
+    crumbs.push({ label: 'Consulta en curso' })
+    return crumbs
+  }
 
   if (pathname !== '/') {
     const label = PATHNAME_LABELS[pathname] ?? pathname

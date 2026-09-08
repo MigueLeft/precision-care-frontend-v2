@@ -7,7 +7,7 @@ import ListOutlinedIcon from '@mui/icons-material/ListOutlined'
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined'
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
 import { MedicationsTab } from './MedicationsTab'
-import { ExamsTab } from './ExamsTab'
+import { ParaclinicalsTab } from './ParaclinicalsTab'
 import { SymptomsTab } from './SymptomsTab'
 import { DemographicListsTab } from './DemographicListsTab'
 import { BodySystemsTab } from './BodySystemsTab'
@@ -15,7 +15,7 @@ import { MedicalSpecialtiesTab } from './MedicalSpecialtiesTab'
 
 const TABS = [
   { label: 'Medicamentos', icon: LinkOutlinedIcon },
-  { label: 'Exámenes', icon: ScienceOutlinedIcon },
+  { label: 'Paraclínicos', icon: ScienceOutlinedIcon },
   { label: 'Síntomas', icon: MonitorHeartOutlinedIcon },
   { label: 'Aparatos / Sistemas', icon: AccessibilityNewOutlinedIcon },
   { label: 'Especialidades', icon: LocalHospitalOutlinedIcon },
@@ -41,7 +41,7 @@ export function CatalogsPage() {
       </Tabs>
 
       {tab === 0 && <MedicationsTab />}
-      {tab === 1 && <ExamsTab />}
+      {tab === 1 && <ParaclinicalsTab />}
       {tab === 2 && <SymptomsTab />}
       {tab === 3 && <BodySystemsTab />}
       {tab === 4 && <MedicalSpecialtiesTab />}

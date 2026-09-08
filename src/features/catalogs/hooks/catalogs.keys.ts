@@ -5,11 +5,11 @@ export const catalogsKeys = {
   socioeconomicLevels: ['catalogs', 'socioeconomic-levels'] as const,
   languages: ['catalogs', 'languages'] as const,
   bodySystems: ['catalogs', 'body-systems'] as const,
-  examCategories: ['catalogs', 'exam-categories'] as const,
+  paraclinicalCategories: ['catalogs', 'paraclinical-categories'] as const,
   medicationPresentations: ['catalogs', 'medication-presentations'] as const,
   medicationCategories: ['catalogs', 'medication-categories'] as const,
   medicalSpecialties: ['catalogs', 'medical-specialties'] as const,
   medications: ['catalogs', 'medications'] as const,
-  exams: ['catalogs', 'exams'] as const,
+  paraclinicals: ['catalogs', 'paraclinicals'] as const,
   symptoms: ['catalogs', 'symptoms'] as const,
 }

@@ -6,7 +6,9 @@ import type {
   SocioeconomicLevel,
   Language,
   BodySystem,
-  ExamCategoryCatalog,
+  ParaclinicalCategoryCatalog,
+  CreateParaclinicalCategoryPayload,
+  UpdateParaclinicalCategoryPayload,
   MedicationPresentation,
   MedicationCategory,
   MedicalSpecialty,
@@ -142,28 +144,41 @@ export async function toggleBodySystemActive(id: number): Promise<BodySystem> {
   return data.bodySystem
 }
 
-export async function fetchExamCategories(): Promise<ExamCategoryCatalog[]> {
-  const { data } = await api.get<{ examCategories: ExamCategoryCatalog[] }>('/catalogs/exam-categories')
-  return data.examCategories
+export async function fetchParaclinicalCategories(): Promise<
+  ParaclinicalCategoryCatalog[]
+> {
+  const { data } = await api.get<{
+    paraclinicalCategories: ParaclinicalCategoryCatalog[]
+  }>('/catalogs/paraclinical-categories')
+  return data.paraclinicalCategories
 }
 
-export async function createExamCategory(name: string): Promise<ExamCategoryCatalog> {
-  const { data } = await api.post<{ examCategory: ExamCategoryCatalog }>('/catalogs/exam-categories', { name })
-  return data.examCategory
+export async function createParaclinicalCategory(
+  payload: CreateParaclinicalCategoryPayload,
+): Promise<ParaclinicalCategoryCatalog> {
+  const { data } = await api.post<{
+    paraclinicalCategory: ParaclinicalCategoryCatalog
+  }>('/catalogs/paraclinical-categories', payload)
+  return data.paraclinicalCategory
 }
 
-export async function updateExamCategory(id: number, name: string): Promise<ExamCategoryCatalog> {
-  const { data } = await api.patch<{ examCategory: ExamCategoryCatalog }>(`/catalogs/exam-categories/${id}`, {
-    name,
-  })
-  return data.examCategory
+export async function updateParaclinicalCategory(
+  id: number,
+  payload: UpdateParaclinicalCategoryPayload,
+): Promise<ParaclinicalCategoryCatalog> {
+  const { data } = await api.patch<{
+    paraclinicalCategory: ParaclinicalCategoryCatalog
+  }>(`/catalogs/paraclinical-categories/${id}`, payload)
+  return data.paraclinicalCategory
 }
 
-export async function toggleExamCategoryActive(id: number): Promise<ExamCategoryCatalog> {
-  const { data } = await api.patch<{ examCategory: ExamCategoryCatalog }>(
-    `/catalogs/exam-categories/${id}/toggle-active`,
-  )
-  return data.examCategory
+export async function toggleParaclinicalCategoryActive(
+  id: number,
+): Promise<ParaclinicalCategoryCatalog> {
+  const { data } = await api.patch<{
+    paraclinicalCategory: ParaclinicalCategoryCatalog
+  }>(`/catalogs/paraclinical-categories/${id}/toggle-active`)
+  return data.paraclinicalCategory
 }
 
 export async function fetchMedicationPresentations(): Promise<MedicationPresentation[]> {

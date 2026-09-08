@@ -2,7 +2,20 @@ export { PatientsPage } from './components/PatientsPage'
 export { patientsListSearchSchema } from './schemas/patients-list-search.schema'
 export type { PatientsListSearch } from './schemas/patients-list-search.schema'
 export { patientsKeys } from './hooks/patients.keys'
-export { fetchPatients } from './services/patients.service'
+export { fetchPatients, fetchPatient } from './services/patients.service'
 export { usePatients } from './hooks/usePatients'
-export { formatPatientName } from './utils/patient-format'
-export type { Patient } from './types'
+export { usePatient } from './hooks/usePatient'
+export { usePatientAllergies } from './hooks/usePatientAllergies'
+export {
+  formatPatientName,
+  formatPatientInitials,
+  calculatePatientAge,
+  formatBirthDate,
+} from './utils/patient-format'
+export {
+  ALLERGY_TYPE_LABELS,
+  ALLERGY_SEVERITY_LABELS,
+  ALLERGY_SEVERITY_COLORS,
+  formatAllergyLabel,
+} from './utils/allergy-format'
+export type { Patient, Allergy, AllergyType, AllergySeverity } from './types'

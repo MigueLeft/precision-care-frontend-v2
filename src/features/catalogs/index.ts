@@ -10,10 +10,10 @@ export { useBodySystems } from './hooks/useBodySystems'
 export { useCreateBodySystem } from './hooks/useCreateBodySystem'
 export { useUpdateBodySystem } from './hooks/useUpdateBodySystem'
 export { useToggleBodySystemActive } from './hooks/useToggleBodySystemActive'
-export { useExamCategories } from './hooks/useExamCategories'
-export { useCreateExamCategory } from './hooks/useCreateExamCategory'
-export { useUpdateExamCategory } from './hooks/useUpdateExamCategory'
-export { useToggleExamCategoryActive } from './hooks/useToggleExamCategoryActive'
+export { useParaclinicalCategories } from './hooks/useParaclinicalCategories'
+export { useCreateParaclinicalCategory } from './hooks/useCreateParaclinicalCategory'
+export { useUpdateParaclinicalCategory } from './hooks/useUpdateParaclinicalCategory'
+export { useToggleParaclinicalCategoryActive } from './hooks/useToggleParaclinicalCategoryActive'
 export { useMedicationPresentations } from './hooks/useMedicationPresentations'
 export { useCreateMedicationPresentation } from './hooks/useCreateMedicationPresentation'
 export { useUpdateMedicationPresentation } from './hooks/useUpdateMedicationPresentation'
@@ -42,10 +42,10 @@ export { useMedications } from './hooks/useMedications'
 export { useCreateMedication } from './hooks/useCreateMedication'
 export { useUpdateMedication } from './hooks/useUpdateMedication'
 export { useToggleMedicationActive } from './hooks/useToggleMedicationActive'
-export { useExams } from './hooks/useExams'
-export { useCreateExam } from './hooks/useCreateExam'
-export { useUpdateExam } from './hooks/useUpdateExam'
-export { useToggleExamActive } from './hooks/useToggleExamActive'
+export { useParaclinicals } from './hooks/useParaclinicals'
+export { useCreateParaclinical } from './hooks/useCreateParaclinical'
+export { useUpdateParaclinical } from './hooks/useUpdateParaclinical'
+export { useToggleParaclinicalActive } from './hooks/useToggleParaclinicalActive'
 export { useSymptoms } from './hooks/useSymptoms'
 export { useCreateSymptom } from './hooks/useCreateSymptom'
 export { useUpdateSymptom } from './hooks/useUpdateSymptom'
@@ -60,12 +60,16 @@ export type {
   SocioeconomicLevel,
   Language,
   BodySystem,
-  ExamCategoryCatalog,
+  ParaclinicalCategoryCatalog,
+  CreateParaclinicalCategoryPayload,
+  UpdateParaclinicalCategoryPayload,
   MedicationPresentation,
   MedicationCategory,
   MedicalSpecialty,
   Medication,
-  ExamCatalog,
-  ExamValueType,
+  ParaclinicalCatalog,
+  ParaclinicalValueType,
+  CreateParaclinicalPayload,
+  UpdateParaclinicalPayload,
   SymptomCatalog,
 } from './types'

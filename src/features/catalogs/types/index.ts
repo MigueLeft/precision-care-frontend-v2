@@ -35,11 +35,19 @@ export interface BodySystem {
   active: boolean
 }
 
-export interface ExamCategoryCatalog {
+export interface ParaclinicalCategoryCatalog {
   id: number
   name: string
+  parentId: number | null
   active: boolean
 }
+
+export interface CreateParaclinicalCategoryPayload {
+  name: string
+  parentId?: number | null
+}
+export type UpdateParaclinicalCategoryPayload =
+  Partial<CreateParaclinicalCategoryPayload>
 
 export interface MedicationPresentation {
   id: number
@@ -78,28 +86,28 @@ export interface CreateMedicationPayload {
 }
 export type UpdateMedicationPayload = Partial<CreateMedicationPayload>
 
-export type ExamValueType = 'numeric' | 'text' | 'boolean'
+export type ParaclinicalValueType = 'numeric' | 'text' | 'boolean'
 
-export interface ExamCatalog {
+export interface ParaclinicalCatalog {
   id: number
   categoryId: number
   name: string
   defaultUnit: string | null
   referenceMin: string | null
   referenceMax: string | null
-  valueType: ExamValueType
+  valueType: ParaclinicalValueType
   active: boolean
 }
 
-export interface CreateExamPayload {
+export interface CreateParaclinicalPayload {
   name: string
   categoryId: number
   defaultUnit?: string
-  valueType: ExamValueType
+  valueType: ParaclinicalValueType
   referenceMin?: number
   referenceMax?: number
 }
-export type UpdateExamPayload = Partial<CreateExamPayload>
+export type UpdateParaclinicalPayload = Partial<CreateParaclinicalPayload>
 
 export interface SymptomCatalog {
   id: number
