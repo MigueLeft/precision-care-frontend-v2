@@ -7,6 +7,7 @@ import {
   Chip,
   Divider,
   CircularProgress,
+  Link,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
@@ -125,6 +126,27 @@ export function AppointmentDetailDrawer({
                 />
               </Stack>
               <Field label="Motivo" value={appointment.reason ?? '—'} />
+              {appointment.modality === 'telemedicine' ? (
+                <Box>
+                  <Typography sx={{ fontSize: '11px', color: 'text.secondary', textTransform: 'uppercase' }}>
+                    Enlace de telemedicina
+                  </Typography>
+                  {appointment.telemedicineLink ? (
+                    <Link
+                      href={appointment.telemedicineLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ fontSize: '14px', fontWeight: 600, wordBreak: 'break-all' }}
+                    >
+                      {appointment.telemedicineLink}
+                    </Link>
+                  ) : (
+                    <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>—</Typography>
+                  )}
+                </Box>
+              ) : (
+                <Field label="Ubicación" value={appointment.location ?? '—'} />
+              )}
             </Stack>
 
             <Divider sx={{ my: 3 }} />

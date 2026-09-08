@@ -17,7 +17,8 @@ import { usePatients, formatPatientName } from '@/features/patients'
 import { useSpecialistsLookup } from '@/features/identity'
 import {
   appointmentTypeOptions,
-  durationOptions,
+  DURATION_MIN,
+  DURATION_STEP_MIN,
 } from '../schemas/appointment-form.schema'
 import type { AppointmentFormValues } from '../schemas/appointment-form.schema'
 import {
@@ -32,11 +33,19 @@ interface AppointmentFormFieldsProps {
 }
 
 const MODALITIES: AppointmentModality[] = ['in_person', 'telemedicine']
+const todayIso = new Date().toLocaleDateString('en-CA')
 
 export function AppointmentFormFields({ control, lockPatient }: AppointmentFormFieldsProps) {
   const { data: patients = [] } = usePatients()
   const { data: specialists = [] } = useSpecialistsLookup()
   const modality = useWatch({ control, name: 'modality' })
+  const selectedSpecialistId = useWatch({ control, name: 'specialistId' })
+
+  // Solo especialistas activos; se mantiene el ya seleccionado aunque esté inactivo
+  // (para no romper la edición de una cita antigua).
+  const specialistOptions = specialists.filter(
+    (s) => s.active || s.id === selectedSpecialistId,
+  )
 
   return (
     <Grid container spacing={2} sx={{ mt: 0.5 }}>
@@ -75,9 +84,10 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
                 value={field.value || ''}
                 onChange={(e) => field.onChange(Number(e.target.value))}
               >
-                {specialists.map((s) => (
+                {specialistOptions.map((s) => (
                   <MenuItem key={s.id} value={s.id}>
                     {s.name} {s.lastName}
+                    {!s.active ? ' (inactivo)' : ''}
                   </MenuItem>
                 ))}
               </Select>
@@ -162,7 +172,7 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
               label="Fecha"
               error={!!error}
               helperText={error?.message}
-              slotProps={{ inputLabel: { shrink: true } }}
+              slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: todayIso } }}
               fullWidth
             />
           )}
@@ -189,22 +199,23 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
         <Controller
           name="durationMin"
           control={control}
-          render={({ field }) => (
-            <FormControl fullWidth>
-              <InputLabel id="appt-form-duration">Duración</InputLabel>
-              <Select
-                labelId="appt-form-duration"
-                label="Duración"
-                value={field.value}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-              >
-                {durationOptions.map((d) => (
-                  <MenuItem key={d} value={d}>
-                    {d} min
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              type="number"
+              label="Duración (min)"
+              value={field.value ?? ''}
+              onChange={(e) =>
+                field.onChange(e.target.value === '' ? undefined : Number(e.target.value))
+              }
+              onBlur={field.onBlur}
+              error={!!error}
+              helperText={error?.message ?? `En pasos de ${DURATION_STEP_MIN} min`}
+              slotProps={{
+                inputLabel: { shrink: true },
+                htmlInput: { min: DURATION_MIN, step: DURATION_STEP_MIN },
+              }}
+              fullWidth
+            />
           )}
         />
       </Grid>

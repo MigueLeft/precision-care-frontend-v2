@@ -9,10 +9,15 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  Button,
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
+import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined'
 import type { SpecialistLookup } from '@/features/identity'
-import type { AppointmentFilters } from '../utils/filter-appointments'
+import {
+  defaultAppointmentFilters,
+  type AppointmentFilters,
+} from '../utils/filter-appointments'
 import {
   APPOINTMENT_MODALITY_LABELS,
   APPOINTMENT_STATUS_LABELS,
@@ -40,6 +45,10 @@ export function AppointmentsToolbar({
   specialists,
   onChange,
 }: AppointmentsToolbarProps) {
+  const hasActiveFilters = (
+    Object.keys(defaultAppointmentFilters) as (keyof AppointmentFilters)[]
+  ).some((key) => filters[key] !== defaultAppointmentFilters[key])
+
   return (
     <Stack
       direction="row"
@@ -146,6 +155,17 @@ export function AppointmentsToolbar({
           ))}
         </Select>
       </FormControl>
+
+      {hasActiveFilters && (
+        <Button
+          size="small"
+          color="inherit"
+          startIcon={<FilterAltOffOutlinedIcon sx={{ fontSize: 18 }} />}
+          onClick={() => onChange(defaultAppointmentFilters)}
+        >
+          Limpiar filtros
+        </Button>
+      )}
     </Stack>
   )
 }

@@ -62,4 +62,5 @@ export interface SpecialistLookup {
   id: number
   name: string
   lastName: string
+  active: boolean
 }

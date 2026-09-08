@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/
 import { AppButton } from '@/components/AppButton'
 import { AppointmentFormFields } from './AppointmentFormFields'
 import {
-  appointmentFormSchema,
+  getAppointmentFormSchema,
   appointmentFormDefaultValues,
   type AppointmentFormValues,
 } from '../schemas/appointment-form.schema'
@@ -31,7 +31,7 @@ export function AppointmentFormModal({
 }: AppointmentFormModalProps) {
   const values = initialValues ?? appointmentFormDefaultValues
   const { control, handleSubmit, reset } = useForm<AppointmentFormValues>({
-    resolver: zodResolver(appointmentFormSchema),
+    resolver: zodResolver(getAppointmentFormSchema(mode)),
     defaultValues: values,
   })
 
