@@ -6,12 +6,17 @@ import { CountriesTable } from './CountriesTable'
 import { SimpleCatalogFormModal } from './SimpleCatalogFormModal'
 import type { Country } from '../types'
 
+interface CountryFormValues {
+  name: string
+  nationalityName?: string
+}
+
 interface CountriesListProps {
   items: Country[]
   isCreating: boolean
   isUpdating?: boolean
-  onCreate: (values: { name: string; isoCode: string }) => void
-  onUpdate?: (id: number, values: { name: string; isoCode: string }) => void
+  onCreate: (values: CountryFormValues) => void
+  onUpdate?: (id: number, values: CountryFormValues) => void
 }
 
 export function CountriesList({ items, isCreating, isUpdating, onCreate, onUpdate }: CountriesListProps) {
@@ -46,15 +51,19 @@ export function CountriesList({ items, isCreating, isUpdating, onCreate, onUpdat
       {(isFormOpen || isEditing) && (
         <SimpleCatalogFormModal
           title={isEditing ? 'Editar país' : 'Agregar país'}
-          showIsoCode
+          showNationality
           isSubmitting={isEditing ? !!isUpdating : isCreating}
-          initialValues={editingItem ?? undefined}
+          initialValues={
+            editingItem
+              ? { name: editingItem.name, nationalityName: editingItem.nationalityName ?? undefined }
+              : undefined
+          }
           onSubmit={(values) => {
-            const isoCode = values.isoCode ?? ''
+            const payload = { name: values.name, nationalityName: values.nationalityName }
             if (isEditing && editingItem) {
-              onUpdate?.(editingItem.id, { name: values.name, isoCode })
+              onUpdate?.(editingItem.id, payload)
             } else {
-              onCreate({ name: values.name, isoCode })
+              onCreate(payload)
             }
             closeForm()
           }}

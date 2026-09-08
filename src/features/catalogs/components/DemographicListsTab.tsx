@@ -21,10 +21,20 @@ import { useCreateCountry } from '../hooks/useCreateCountry'
 import { useUpdateCountry } from '../hooks/useUpdateCountry'
 import { SimpleCatalogList } from './SimpleCatalogList'
 import { CountriesList } from './CountriesList'
+import { StateCatalogPanel } from './StateCatalogPanel'
+import { CityCatalogPanel } from './CityCatalogPanel'
 
 // El catálogo de "País" es la única lista de países del sistema: se usa tanto
 // para nacionalidad como para país de origen/residencia en Pacientes, evitando duplicar el catálogo.
-const SUB_TABS = ['Estado civil', 'Raza', 'Nivel socioeconómico', 'Idioma', 'País / Nacionalidad'] as const
+const SUB_TABS = [
+  'Estado civil',
+  'Raza',
+  'Nivel socioeconómico',
+  'Idioma',
+  'País / Nacionalidad',
+  'Estado',
+  'Ciudad',
+] as const
 
 export function DemographicListsTab() {
   const [subTab, setSubTab] = useState(0)
@@ -121,6 +131,8 @@ export function DemographicListsTab() {
           onUpdate={(id, values) => updateCountry.mutate({ id, ...values })}
         />
       )}
+      {subTab === 5 && <StateCatalogPanel />}
+      {subTab === 6 && <CityCatalogPanel />}
     </Box>
   )
 }

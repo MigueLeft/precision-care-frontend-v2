@@ -19,7 +19,9 @@ export function CountriesTable({ items, onEdit }: CountriesTableProps) {
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
             <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>Nombre</TableCell>
-            <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>Código ISO</TableCell>
+            <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>
+              Nombre de nacionalidad
+            </TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -27,7 +29,7 @@ export function CountriesTable({ items, onEdit }: CountriesTableProps) {
           {items.map((item) => (
             <TableRow key={item.id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
               <TableCell sx={{ fontSize: '14px', fontWeight: 600 }}>{item.name}</TableCell>
-              <TableCell sx={{ fontSize: '14px' }}>{item.isoCode}</TableCell>
+              <TableCell sx={{ fontSize: '14px' }}>{item.nationalityName ?? '—'}</TableCell>
               <TableCell align="right">
                 <Tooltip title="Editar">
                   <IconButton size="small" onClick={() => onEdit(item)} aria-label="Editar país">

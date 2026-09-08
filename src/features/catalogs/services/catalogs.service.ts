@@ -1,6 +1,8 @@
 import { api } from '@/utils/api'
 import type {
   Country,
+  State,
+  City,
   CivilStatus,
   Race,
   SocioeconomicLevel,
@@ -19,14 +21,67 @@ export async function fetchCountries(): Promise<Country[]> {
   return data.countries
 }
 
-export async function createCountry(payload: { name: string; isoCode: string }): Promise<Country> {
+export interface CountryPayload {
+  name: string
+  nationalityName?: string
+}
+
+export async function createCountry(payload: CountryPayload): Promise<Country> {
   const { data } = await api.post<{ country: Country }>('/catalogs/countries', payload)
   return data.country
 }
 
-export async function updateCountry(id: number, payload: { name: string; isoCode: string }): Promise<Country> {
+export async function updateCountry(id: number, payload: CountryPayload): Promise<Country> {
   const { data } = await api.patch<{ country: Country }>(`/catalogs/countries/${id}`, payload)
   return data.country
+}
+
+// ─── Estados / provincias ───────────────────────────────────────────────────
+
+export async function fetchStates(countryId?: number): Promise<State[]> {
+  const { data } = await api.get<{ states: State[] }>('/catalogs/states', {
+    params: countryId ? { countryId } : undefined,
+  })
+  return data.states
+}
+
+export async function createState(payload: { name: string; countryId: number }): Promise<State> {
+  const { data } = await api.post<{ state: State }>('/catalogs/states', payload)
+  return data.state
+}
+
+export async function updateState(id: number, payload: { name: string }): Promise<State> {
+  const { data } = await api.patch<{ state: State }>(`/catalogs/states/${id}`, payload)
+  return data.state
+}
+
+export async function toggleStateActive(id: number): Promise<State> {
+  const { data } = await api.patch<{ state: State }>(`/catalogs/states/${id}/toggle-active`)
+  return data.state
+}
+
+// ─── Ciudades ───────────────────────────────────────────────────────────────
+
+export async function fetchCities(stateId?: number): Promise<City[]> {
+  const { data } = await api.get<{ cities: City[] }>('/catalogs/cities', {
+    params: stateId ? { stateId } : undefined,
+  })
+  return data.cities
+}
+
+export async function createCity(payload: { name: string; stateId: number }): Promise<City> {
+  const { data } = await api.post<{ city: City }>('/catalogs/cities', payload)
+  return data.city
+}
+
+export async function updateCity(id: number, payload: { name: string }): Promise<City> {
+  const { data } = await api.patch<{ city: City }>(`/catalogs/cities/${id}`, payload)
+  return data.city
+}
+
+export async function toggleCityActive(id: number): Promise<City> {
+  const { data } = await api.patch<{ city: City }>(`/catalogs/cities/${id}/toggle-active`)
+  return data.city
 }
 
 export async function fetchCivilStatuses(): Promise<CivilStatus[]> {

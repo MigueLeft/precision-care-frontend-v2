@@ -1,5 +1,11 @@
 export const catalogsKeys = {
   countries: ['catalogs', 'countries'] as const,
+  states: ['catalogs', 'states'] as const,
+  statesByCountry: (countryId: number) =>
+    ['catalogs', 'states', { countryId }] as const,
+  cities: ['catalogs', 'cities'] as const,
+  citiesByState: (stateId: number) =>
+    ['catalogs', 'cities', { stateId }] as const,
   civilStatuses: ['catalogs', 'civil-statuses'] as const,
   races: ['catalogs', 'races'] as const,
   socioeconomicLevels: ['catalogs', 'socioeconomic-levels'] as const,

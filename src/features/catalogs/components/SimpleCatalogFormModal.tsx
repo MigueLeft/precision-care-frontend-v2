@@ -5,12 +5,19 @@ import { AppButton } from '@/components/AppButton'
 const NAME_REGEX = /^[\p{L}\s'-]+$/u
 const MAX_NAME_LENGTH = 100
 
+export interface SimpleCatalogFormValues {
+  name: string
+  isoCode?: string
+  nationalityName?: string
+}
+
 interface SimpleCatalogFormModalProps {
   title: string
   showIsoCode?: boolean
+  showNationality?: boolean
   isSubmitting: boolean
-  initialValues?: { name: string; isoCode?: string }
-  onSubmit: (values: { name: string; isoCode?: string }) => void
+  initialValues?: SimpleCatalogFormValues
+  onSubmit: (values: SimpleCatalogFormValues) => void
   onClose: () => void
 }
 
@@ -20,6 +27,7 @@ interface SimpleCatalogFormModalProps {
 export function SimpleCatalogFormModal({
   title,
   showIsoCode,
+  showNationality,
   isSubmitting,
   initialValues,
   onSubmit,
@@ -27,6 +35,7 @@ export function SimpleCatalogFormModal({
 }: SimpleCatalogFormModalProps) {
   const [name, setName] = useState(initialValues?.name ?? '')
   const [isoCode, setIsoCode] = useState(initialValues?.isoCode ?? '')
+  const [nationality, setNationality] = useState(initialValues?.nationalityName ?? '')
   const [touched, setTouched] = useState(false)
 
   const trimmedName = name.trim()
@@ -38,12 +47,26 @@ export function SimpleCatalogFormModal({
         ? 'El nombre no debe contener números ni caracteres especiales.'
         : null
 
-  const isValid = !!trimmedName && !nameError && (!showIsoCode || isoCode.trim().length === 2)
+  const trimmedNationality = nationality.trim()
+  const nationalityError =
+    showNationality && trimmedNationality && !NAME_REGEX.test(trimmedNationality)
+      ? 'El nombre de nacionalidad no debe contener números ni caracteres especiales.'
+      : null
+
+  const isValid =
+    !!trimmedName &&
+    !nameError &&
+    !nationalityError &&
+    (!showIsoCode || isoCode.trim().length === 2)
 
   function handleSubmit() {
     setTouched(true)
     if (!isValid) return
-    onSubmit({ name: trimmedName, isoCode: isoCode.trim() || undefined })
+    onSubmit({
+      name: trimmedName,
+      isoCode: showIsoCode ? isoCode.trim() || undefined : undefined,
+      nationalityName: showNationality ? trimmedNationality || undefined : undefined,
+    })
   }
 
   return (
@@ -70,6 +93,18 @@ export function SimpleCatalogFormModal({
               error={touched && isoCode.trim().length !== 2}
               helperText={touched && isoCode.trim().length !== 2 ? 'Debe tener 2 caracteres.' : undefined}
               slotProps={{ htmlInput: { maxLength: 2 } }}
+              fullWidth
+            />
+          )}
+          {showNationality && (
+            <TextField
+              label="Nombre de nacionalidad"
+              placeholder="Ej. Mexicana"
+              value={nationality}
+              onChange={(event) => setNationality(event.target.value)}
+              error={touched && !!nationalityError}
+              helperText={touched ? nationalityError : undefined}
+              slotProps={{ htmlInput: { maxLength: MAX_NAME_LENGTH } }}
               fullWidth
             />
           )}

@@ -11,6 +11,7 @@ const PATHNAME_LABELS: Record<string, string> = {
   '/citas': 'Citas',
   '/catalogos': 'Catálogos',
   '/usuarios-y-roles': 'Usuarios y roles',
+  '/especialistas': 'Especialistas',
 }
 
 export function useBreadcrumbs(): Breadcrumb[] {
@@ -21,6 +22,18 @@ export function useBreadcrumbs(): Breadcrumb[] {
   if (pathname.startsWith('/consultas/')) {
     crumbs.push({ label: 'Citas', to: '/citas' })
     crumbs.push({ label: 'Consulta en curso' })
+    return crumbs
+  }
+
+  if (pathname.startsWith('/especialistas/')) {
+    crumbs.push({ label: 'Especialistas', to: '/especialistas' })
+    if (pathname === '/especialistas/nuevo') {
+      crumbs.push({ label: 'Crear especialista' })
+    } else if (pathname.endsWith('/editar')) {
+      crumbs.push({ label: 'Editar especialista' })
+    } else {
+      crumbs.push({ label: 'Detalle del especialista' })
+    }
     return crumbs
   }
 

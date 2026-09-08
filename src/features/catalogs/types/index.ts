@@ -1,7 +1,21 @@
 export interface Country {
   id: number
   name: string
-  isoCode: string
+  nationalityName: string | null
+}
+
+export interface State {
+  id: number
+  name: string
+  countryId: number
+  active: boolean
+}
+
+export interface City {
+  id: number
+  name: string
+  stateId: number
+  active: boolean
 }
 
 export interface CivilStatus {

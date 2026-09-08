@@ -8,8 +8,15 @@ export function useUpdateCountry(options?: { onSuccess?: () => void }) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, name, isoCode }: { id: number; name: string; isoCode: string }) =>
-      updateCountry(id, { name, isoCode }),
+    mutationFn: ({
+      id,
+      name,
+      nationalityName,
+    }: {
+      id: number
+      name: string
+      nationalityName?: string
+    }) => updateCountry(id, { name, nationalityName }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: catalogsKeys.countries })
       toast.success('País actualizado correctamente')

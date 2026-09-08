@@ -1,7 +1,6 @@
 import { Controller, useWatch } from 'react-hook-form'
 import type { Control } from 'react-hook-form'
 import {
-  Autocomplete,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -13,6 +12,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { SearchableSelect } from '@/components/SearchableSelect'
 import { usePatients, formatPatientName } from '@/features/patients'
 import { useSpecialistsLookup } from '@/features/identity'
 import {
@@ -45,24 +45,18 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
           name="patientId"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <Autocomplete
-              options={patients}
+            <SearchableSelect
+              label="Paciente"
+              placeholder="Buscar paciente por nombre o MRN…"
               disabled={lockPatient}
-              getOptionLabel={(option) =>
-                `${formatPatientName(option)} · ${option.mrn}`
-              }
-              isOptionEqualToValue={(o, v) => o.id === v.id}
-              value={patients.find((p) => p.id === field.value) ?? null}
-              onChange={(_e, option) => field.onChange(option?.id ?? 0)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Paciente"
-                  placeholder="Buscar paciente por nombre o MRN…"
-                  error={!!error}
-                  helperText={error?.message}
-                />
-              )}
+              options={patients.map((patient) => ({
+                id: patient.id,
+                label: `${formatPatientName(patient)} · ${patient.mrn}`,
+              }))}
+              value={field.value || undefined}
+              onChange={(id) => field.onChange(id ?? 0)}
+              error={!!error}
+              helperText={error?.message}
             />
           )}
         />

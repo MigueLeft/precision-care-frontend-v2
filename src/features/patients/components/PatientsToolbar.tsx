@@ -1,7 +1,8 @@
-import { Stack, TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import { Box, Stack, TextField, InputAdornment } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
+import { SearchableSelect } from '@/components/SearchableSelect'
 import { MoreFiltersButton } from './MoreFiltersButton'
 import type { Country } from '@/features/catalogs'
 
@@ -40,24 +41,15 @@ export function PatientsToolbar({
         }}
       />
 
-      <FormControl sx={{ minWidth: 200 }}>
-        <InputLabel id="nationality-filter-label">Nacionalidad</InputLabel>
-        <Select<number | ''>
-          labelId="nationality-filter-label"
+      <Box sx={{ minWidth: 220 }}>
+        <SearchableSelect
           label="Nacionalidad"
-          value={nationalityCountryId ?? ''}
-          onChange={(event) =>
-            onNationalityChange(event.target.value === '' ? undefined : Number(event.target.value))
-          }
-        >
-          <MenuItem value="">Todas</MenuItem>
-          {countries.map((country) => (
-            <MenuItem key={country.id} value={country.id}>
-              {country.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          placeholder="Todas"
+          options={countries.map((country) => ({ id: country.id, label: country.name }))}
+          value={nationalityCountryId}
+          onChange={onNationalityChange}
+        />
+      </Box>
 
       <MoreFiltersButton />
 

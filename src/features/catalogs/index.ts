@@ -2,6 +2,14 @@ export { catalogsKeys } from './hooks/catalogs.keys'
 export { useCountries } from './hooks/useCountries'
 export { useCreateCountry } from './hooks/useCreateCountry'
 export { useUpdateCountry } from './hooks/useUpdateCountry'
+export { useStates } from './hooks/useStates'
+export { useCreateState } from './hooks/useCreateState'
+export { useUpdateState } from './hooks/useUpdateState'
+export { useToggleStateActive } from './hooks/useToggleStateActive'
+export { useCities } from './hooks/useCities'
+export { useCreateCity } from './hooks/useCreateCity'
+export { useUpdateCity } from './hooks/useUpdateCity'
+export { useToggleCityActive } from './hooks/useToggleCityActive'
 export { useCivilStatuses } from './hooks/useCivilStatuses'
 export { useRaces } from './hooks/useRaces'
 export { useSocioeconomicLevels } from './hooks/useSocioeconomicLevels'
@@ -50,11 +58,18 @@ export { useSymptoms } from './hooks/useSymptoms'
 export { useCreateSymptom } from './hooks/useCreateSymptom'
 export { useUpdateSymptom } from './hooks/useUpdateSymptom'
 export { useToggleSymptomActive } from './hooks/useToggleSymptomActive'
-export { fetchCountries } from './services/catalogs.service'
+export {
+  fetchCountries,
+  fetchStates,
+  fetchCities,
+  fetchMedicalSpecialties,
+} from './services/catalogs.service'
 export { fetchMedications } from './services/medications.service'
 export { CatalogsPage } from './components/CatalogsPage'
 export type {
   Country,
+  State,
+  City,
   CivilStatus,
   Race,
   SocioeconomicLevel,
