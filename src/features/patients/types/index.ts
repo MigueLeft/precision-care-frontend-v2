@@ -25,20 +25,18 @@ export interface Patient {
   deletedBy: number | null
 }
 
-export type AllergyType = 'food' | 'medication' | 'environmental' | 'other'
-export type AllergySeverity = 'mild' | 'moderate' | 'severe'
-
+// Alergia del paciente, resuelta con los nombres del catálogo por el backend.
 export interface Allergy {
   id: number
   patientId: number
-  type: AllergyType
-  medicationId: number | null
-  description: string
-  severity: AllergySeverity | null
+  allergyCatalogId: number
+  name: string | null
+  typeId: number | null
+  typeName: string | null
+  severityId: number
+  severityName: string | null
+  consultationId: number | null
+  reaction: string | null
+  onsetYear: number | null
   createdAt: string
-  createdBy: number
-  updatedAt: string
-  updatedBy: number
-  deletedAt: string | null
-  deletedBy: number | null
 }

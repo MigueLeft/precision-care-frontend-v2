@@ -1,27 +1,18 @@
-import type { Allergy, AllergyType, AllergySeverity } from '../types'
+import type { Allergy } from '../types'
 
-export const ALLERGY_TYPE_LABELS: Record<AllergyType, string> = {
-  food: 'Alimentaria',
-  medication: 'Medicamento',
-  environmental: 'Ambiental',
-  other: 'Otra',
+// La gravedad viene del subcatálogo (texto libre); "grave"/"severa" se resalta en rojo.
+export function isSevereAllergy(allergy: Allergy): boolean {
+  return /grave|severa/i.test(allergy.severityName ?? '')
 }
 
-export const ALLERGY_SEVERITY_LABELS: Record<AllergySeverity, string> = {
-  mild: 'Leve',
-  moderate: 'Moderada',
-  severe: 'Severa',
-}
-
-export const ALLERGY_SEVERITY_COLORS: Record<
-  AllergySeverity,
-  'warning' | 'error'
-> = {
-  mild: 'warning',
-  moderate: 'warning',
-  severe: 'error',
+export function allergySeverityColor(
+  severityName: string | null,
+): 'error' | 'warning' | 'default' {
+  if (!severityName) return 'default'
+  return /grave|severa/i.test(severityName) ? 'error' : 'warning'
 }
 
 export function formatAllergyLabel(allergy: Allergy): string {
-  return `${ALLERGY_TYPE_LABELS[allergy.type]}: ${allergy.description}`
+  const base = allergy.name ?? 'Alergia'
+  return allergy.severityName ? `${base} — ${allergy.severityName.toLowerCase()}` : base
 }

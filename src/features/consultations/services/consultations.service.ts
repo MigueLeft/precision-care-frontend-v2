@@ -5,6 +5,14 @@ import type {
   ConsultationSymptom,
   ReplaceSymptomInput,
   SymptomHistoryEntry,
+  ConsultationAllergy,
+  AddAllergyInput,
+  ConsultationDisease,
+  AddDiseaseInput,
+  UpdateDiseaseInput,
+  ConsultationHistoryEntry,
+  AllergyHistoryItem,
+  DiseaseHistoryItem,
 } from '../types'
 
 export async function fetchConsultationsByPatient(
@@ -90,5 +98,115 @@ export async function fetchConsultationSymptomHistory(
   const { data } = await api.get<{ history: SymptomHistoryEntry[] }>(
     `/consultations/${id}/symptom-history`,
   )
+  return data.history
+}
+
+// Todos los síntomas del paciente agrupados por consulta (expediente).
+export async function fetchPatientSymptoms(
+  patientId: number,
+): Promise<SymptomHistoryEntry[]> {
+  const { data } = await api.get<{ symptoms: SymptomHistoryEntry[] }>(
+    `/consultations/patient/${patientId}/symptoms`,
+  )
+  return data.symptoms
+}
+
+// ─── Alergias ───────────────────────────────────────────────────────────────
+
+export interface ConsultationAllergiesResponse {
+  allergies: ConsultationAllergy[]
+  noKnownAllergies: boolean
+}
+
+export async function fetchConsultationAllergies(
+  id: number,
+): Promise<ConsultationAllergiesResponse> {
+  const { data } = await api.get<ConsultationAllergiesResponse>(
+    `/consultations/${id}/allergies`,
+  )
+  return data
+}
+
+export async function addConsultationAllergy(
+  id: number,
+  input: AddAllergyInput,
+): Promise<ConsultationAllergy> {
+  const { data } = await api.post<{ allergy: ConsultationAllergy }>(
+    `/consultations/${id}/allergies`,
+    input,
+  )
+  return data.allergy
+}
+
+export async function removeConsultationAllergy(
+  id: number,
+  allergyId: number,
+): Promise<void> {
+  await api.delete(`/consultations/${id}/allergies/${allergyId}`)
+}
+
+export async function setNoKnownAllergies(
+  id: number,
+  value: boolean,
+): Promise<void> {
+  await api.patch(`/consultations/${id}/no-known-allergies`, { value })
+}
+
+export async function fetchConsultationAllergyHistory(
+  id: number,
+): Promise<ConsultationHistoryEntry<AllergyHistoryItem>[]> {
+  const { data } = await api.get<{
+    history: ConsultationHistoryEntry<AllergyHistoryItem>[]
+  }>(`/consultations/${id}/allergy-history`)
+  return data.history
+}
+
+// ─── Enfermedades / diagnósticos ────────────────────────────────────────────
+
+export async function fetchConsultationDiseases(
+  id: number,
+): Promise<ConsultationDisease[]> {
+  const { data } = await api.get<{ diseases: ConsultationDisease[] }>(
+    `/consultations/${id}/diseases`,
+  )
+  return data.diseases
+}
+
+export async function addConsultationDisease(
+  id: number,
+  input: AddDiseaseInput,
+): Promise<ConsultationDisease> {
+  const { data } = await api.post<{ disease: ConsultationDisease }>(
+    `/consultations/${id}/diseases`,
+    input,
+  )
+  return data.disease
+}
+
+export async function updateConsultationDisease(
+  id: number,
+  diseaseId: number,
+  input: UpdateDiseaseInput,
+): Promise<ConsultationDisease> {
+  const { data } = await api.patch<{ disease: ConsultationDisease }>(
+    `/consultations/${id}/diseases/${diseaseId}`,
+    input,
+  )
+  return data.disease
+}
+
+export async function removeConsultationDisease(
+  id: number,
+  diseaseId: number,
+): Promise<void> {
+  await api.delete(`/consultations/${id}/diseases/${diseaseId}`)
+}
+
+export async function fetchConsultationDiseaseHistory(
+  id: number,
+): Promise<ConsultationHistoryEntry<DiseaseHistoryItem>[]> {
+  const { data } = await api.get<{
+    history: ConsultationHistoryEntry<DiseaseHistoryItem>[]
+  }>(`/consultations/${id}/disease-history`)
   return data.history
 }

@@ -7,6 +7,7 @@ import {
   formatPatientName,
   usePatientAllergies,
   formatAllergyLabel,
+  isSevereAllergy,
   type Patient,
 } from '@/features/patients'
 
@@ -16,6 +17,8 @@ interface EncounterPatientBarProps {
 
 export function EncounterPatientBar({ patient }: EncounterPatientBarProps) {
   const { data: allergies = [] } = usePatientAllergies(patient.id)
+  // En la barra del paciente solo se muestran las alergias graves.
+  const severeAllergies = allergies.filter(isSevereAllergy)
 
   return (
     <Box sx={{ bgcolor: 'brand.dark', color: '#fff', px: 3, py: 1.5 }}>
@@ -27,7 +30,7 @@ export function EncounterPatientBar({ patient }: EncounterPatientBarProps) {
         <Typography sx={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>
           {patient.mrn} · {calculatePatientAge(patient.birthDate)} años
         </Typography>
-        {allergies.map((allergy) => (
+        {severeAllergies.map((allergy) => (
           <Chip
             key={allergy.id}
             icon={<WarningAmberOutlinedIcon sx={{ fontSize: 14, color: '#fff !important' }} />}

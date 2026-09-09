@@ -8,6 +8,7 @@ export {
   fetchConsultationSymptomHistory,
 } from './services/consultations.service'
 export { useConsultationsByPatient } from './hooks/useConsultationsByPatient'
+export { usePatientSymptoms } from './hooks/usePatientSymptoms'
 export {
   useConsultation,
   useConsultationByAppointment,
@@ -18,6 +19,7 @@ export {
   useReplaceConsultationSymptoms,
 } from './hooks/useConsultationDetail'
 export { ConsultationsPanel } from './components/ConsultationsPanel'
+export { PatientSymptomsPanel } from './components/PatientSymptomsPanel'
 export { ConsultationEncounterPage } from './components/encounter/ConsultationEncounterPage'
 export {
   CONSULTATION_STATUS_LABELS,

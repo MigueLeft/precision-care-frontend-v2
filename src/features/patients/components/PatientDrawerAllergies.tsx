@@ -1,7 +1,7 @@
 import { Box, Stack, Typography, Chip, CircularProgress } from '@mui/material'
 import { EmptyState } from '@/components/EmptyState'
 import { usePatientAllergies } from '../hooks/usePatientAllergies'
-import { ALLERGY_SEVERITY_COLORS, formatAllergyLabel } from '../utils/allergy-format'
+import { allergySeverityColor, formatAllergyLabel } from '../utils/allergy-format'
 
 interface PatientDrawerAllergiesProps {
   patientId: number
@@ -28,7 +28,7 @@ export function PatientDrawerAllergies({ patientId }: PatientDrawerAllergiesProp
             <Chip
               key={allergy.id}
               label={formatAllergyLabel(allergy)}
-              color={allergy.severity ? ALLERGY_SEVERITY_COLORS[allergy.severity] : 'default'}
+              color={allergySeverityColor(allergy.severityName)}
               variant="outlined"
             />
           ))}

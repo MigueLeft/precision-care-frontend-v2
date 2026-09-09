@@ -5,6 +5,8 @@ import { EncounterHeader } from './EncounterHeader'
 import { EncounterPatientBar } from './EncounterPatientBar'
 import { EncounterSidebar } from './EncounterSidebar'
 import { SymptomsSection } from './SymptomsSection'
+import { AllergiesSection } from './AllergiesSection'
+import { DiseasesSection } from './DiseasesSection'
 import { PlaceholderSection } from './PlaceholderSection'
 import { AutosaveTextField } from './AutosaveTextField'
 
@@ -67,11 +69,17 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
               consultationDate={consultation.startAt}
               readOnly={readOnly}
             />
-            <PlaceholderSection index={2} title="Alergias" subtitle="Valida prescripciones" />
-            <PlaceholderSection
+            <AllergiesSection
+              index={2}
+              consultationId={consultationId}
+              consultationDate={consultation.startAt}
+              readOnly={readOnly}
+            />
+            <DiseasesSection
               index={3}
-              title="Enfermedades / diagnósticos"
-              subtitle="Agrupados por aparato o sistema"
+              consultationId={consultationId}
+              consultationDate={consultation.startAt}
+              readOnly={readOnly}
             />
             <PlaceholderSection
               index={4}

@@ -4,6 +4,7 @@ import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformati
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
+import SickOutlinedIcon from '@mui/icons-material/SickOutlined'
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
@@ -23,6 +24,7 @@ export type MedicalRecordTabTo =
   | '/pacientes/$patientId/resumen'
   | '/pacientes/$patientId/antecedentes'
   | '/pacientes/$patientId/consultas'
+  | '/pacientes/$patientId/sintomas'
   | '/pacientes/$patientId/paraclinicos'
   | '/pacientes/$patientId/medicamentos'
   | '/pacientes/$patientId/examen-fisico'
@@ -59,6 +61,12 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
     label: 'Consultas',
     icon: MedicalInformationOutlinedIcon,
     countKey: 'consultas',
+  },
+  {
+    slug: 'sintomas',
+    to: '/pacientes/$patientId/sintomas',
+    label: 'Síntomas',
+    icon: SickOutlinedIcon,
   },
   {
     slug: 'paraclinicos',

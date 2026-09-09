@@ -56,3 +56,83 @@ export interface SymptomHistoryEntry {
   specialistName: string | null
   symptoms: { name: string | null; bodySystemName: string | null }[]
 }
+
+// ─── Alergias en la consulta ────────────────────────────────────────────────
+
+export interface ConsultationAllergy {
+  id: number
+  patientId: number
+  allergyCatalogId: number
+  name: string | null
+  typeId: number | null
+  typeName: string | null
+  severityId: number
+  severityName: string | null
+  consultationId: number | null
+  reaction: string | null
+  onsetYear: number | null
+  createdAt: string
+}
+
+export interface AddAllergyInput {
+  allergyCatalogId?: number
+  name?: string
+  typeId?: number
+  severityId: number
+  reaction?: string
+  onsetYear?: number
+}
+
+// ─── Enfermedades / diagnósticos en la consulta ─────────────────────────────
+
+export type DiseaseStatus = 'active' | 'controlled' | 'resolved' | 'discarded'
+
+export interface ConsultationDisease {
+  id: number
+  patientId: number
+  diseaseCatalogId: number
+  name: string | null
+  isChronic: boolean | null
+  bodySystemId: number
+  bodySystemName: string | null
+  consultationId: number | null
+  status: DiseaseStatus
+  dxDate: string | null
+  createdAt: string
+}
+
+export interface AddDiseaseInput {
+  diseaseCatalogId?: number
+  name?: string
+  isChronic?: boolean
+  bodySystemId: number
+  status?: DiseaseStatus
+  dxDate?: string
+}
+
+export interface UpdateDiseaseInput {
+  bodySystemId?: number
+  status?: DiseaseStatus
+  dxDate?: string
+}
+
+// Bloque de histórico agrupado por la consulta en que se registró.
+export interface ConsultationHistoryEntry<T> {
+  consultationId: number
+  date: string
+  specialistName: string | null
+  items: T[]
+}
+
+export interface AllergyHistoryItem {
+  name: string | null
+  typeName: string | null
+  severityName: string | null
+  reaction: string | null
+}
+
+export interface DiseaseHistoryItem {
+  name: string | null
+  bodySystemName: string | null
+  status: DiseaseStatus
+}

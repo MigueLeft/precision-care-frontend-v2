@@ -47,9 +47,19 @@ export function AddMedicationModal({
   }, [open, reset])
 
   const medicationId = useWatch({ control, name: 'medicationId' })
-  const conflict = allergies.find(
-    (allergy) => allergy.type === 'medication' && allergy.medicationId === medicationId,
-  )
+  const selectedMedication = catalog.find((m) => m.id === medicationId)
+  // El catálogo de alergias es texto libre: se coteja el nombre del agente contra
+  // la sustancia activa o el nombre comercial del medicamento seleccionado.
+  const conflict = selectedMedication
+    ? allergies.find((allergy) => {
+        const agent = allergy.name?.trim().toLowerCase()
+        if (!agent) return false
+        return (
+          selectedMedication.genericName.toLowerCase().includes(agent) ||
+          selectedMedication.brandName.toLowerCase().includes(agent)
+        )
+      })
+    : undefined
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -87,8 +97,8 @@ export function AddMedicationModal({
           {conflict && (
             <Grid size={{ xs: 12 }}>
               <Alert severity="error">
-                El paciente tiene una alergia registrada a este medicamento
-                {conflict.description ? ` (${conflict.description})` : ''}. No se puede agregar.
+                El paciente tiene una alergia registrada que coincide con este medicamento
+                {conflict.name ? ` (${conflict.name})` : ''}. Revisa antes de agregar.
               </Alert>
             </Grid>
           )}

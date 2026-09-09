@@ -7,7 +7,7 @@ import {
   calculatePatientAge,
   formatBirthDate,
   usePatientAllergies,
-  ALLERGY_SEVERITY_COLORS,
+  allergySeverityColor,
   formatAllergyLabel,
   type Patient,
 } from '@/features/patients'
@@ -77,7 +77,7 @@ export function MedicalRecordHeader({ patient }: MedicalRecordHeaderProps) {
               icon={<WarningAmberOutlinedIcon sx={{ fontSize: 14 }} />}
               label={formatAllergyLabel(allergy)}
               size="small"
-              color={allergy.severity ? ALLERGY_SEVERITY_COLORS[allergy.severity] : 'default'}
+              color={allergySeverityColor(allergy.severityName)}
               variant="outlined"
             />
           ))}

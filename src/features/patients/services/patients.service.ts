@@ -28,6 +28,8 @@ export async function deletePatient(id: number): Promise<Patient> {
 }
 
 export async function fetchPatientAllergies(patientId: number): Promise<Allergy[]> {
-  const { data } = await api.get<{ allergies: Allergy[] }>(`/patients/${patientId}/allergies`)
+  const { data } = await api.get<{ allergies: Allergy[]; noKnownAllergies: boolean }>(
+    `/patients/${patientId}/allergies`,
+  )
   return data.allergies
 }

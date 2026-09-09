@@ -2,6 +2,7 @@ import { Grid, Stack } from '@mui/material'
 import type { Patient } from '@/features/patients'
 import { ExamenFisicoCard } from './ExamenFisicoCard'
 import { ProximasCitasCard } from './ProximasCitasCard'
+import { EnfermedadActualCard } from './EnfermedadActualCard'
 import { ConsultasRecientesCard } from './ConsultasRecientesCard'
 import { MedicamentosActivosCard } from './MedicamentosActivosCard'
 import { AlergiasCard } from './AlergiasCard'
@@ -19,6 +20,7 @@ export function SummaryPanel({ patient }: SummaryPanelProps) {
       <Grid size={{ xs: 12, lg: 8 }}>
         <Stack spacing={3}>
           <ExamenFisicoCard patientId={patient.id} />
+          <EnfermedadActualCard patientId={patient.id} />
           <ConsultasRecientesCard patientId={patient.id} />
           <UltimosLaboratoriosCard patientId={patient.id} />
         </Stack>

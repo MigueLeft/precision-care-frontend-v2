@@ -13,9 +13,8 @@ export {
   formatBirthDate,
 } from './utils/patient-format'
 export {
-  ALLERGY_TYPE_LABELS,
-  ALLERGY_SEVERITY_LABELS,
-  ALLERGY_SEVERITY_COLORS,
   formatAllergyLabel,
+  allergySeverityColor,
+  isSevereAllergy,
 } from './utils/allergy-format'
-export type { Patient, Allergy, AllergyType, AllergySeverity } from './types'
+export type { Patient, Allergy } from './types'

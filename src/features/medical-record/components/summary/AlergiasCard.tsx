@@ -2,11 +2,7 @@ import { Stack, Typography } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { EmptyState } from '@/components/EmptyState'
-import {
-  usePatientAllergies,
-  ALLERGY_TYPE_LABELS,
-  ALLERGY_SEVERITY_LABELS,
-} from '@/features/patients'
+import { usePatientAllergies } from '@/features/patients'
 
 interface AlergiasCardProps {
   patientId: number
@@ -34,13 +30,11 @@ export function AlergiasCard({ patientId }: AlergiasCardProps) {
             })}
           >
             <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>
-              {allergy.description}
+              {allergy.name ?? '—'}
             </Typography>
             <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-              {ALLERGY_TYPE_LABELS[allergy.type]}
-              {allergy.severity
-                ? ` · Severidad: ${ALLERGY_SEVERITY_LABELS[allergy.severity]}`
-                : ''}
+              {allergy.typeName ?? 'Sin tipo'}
+              {allergy.severityName ? ` · Gravedad: ${allergy.severityName}` : ''}
             </Typography>
           </Stack>
         ))}
