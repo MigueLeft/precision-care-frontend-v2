@@ -31,6 +31,7 @@ export interface BodyComposition {
   totalWaterKg: string | null
   idealWeightKg: string | null
   idealFatMassKg: string | null
+  fatToLoseKg: string | null
   notes: string | null
   segments: BodyCompositionSegment[]
   createdAt: string
@@ -59,6 +60,7 @@ export interface SaveBodyCompositionInput {
   totalWaterKg?: number
   idealWeightKg?: number
   idealFatMassKg?: number
+  fatToLoseKg?: number
   notes?: string
   segments?: SegmentInput[]
 }

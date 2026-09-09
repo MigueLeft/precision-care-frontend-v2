@@ -84,6 +84,7 @@ export function AppointmentsPage() {
       <AppointmentsToolbar
         filters={filters}
         specialists={specialists}
+        isSpecialist={me?.specialistId != null}
         onChange={(patch) => setFilters((prev) => ({ ...prev, ...patch }))}
       />
 

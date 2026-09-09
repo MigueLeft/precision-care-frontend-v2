@@ -26,14 +26,15 @@ export interface GeneralParam {
   calc?: boolean
 }
 
+// Solo el IMC se autocalcula (peso / altura²). El resto se captura a mano.
 export const GENERAL_PARAMS: GeneralParam[] = [
   { key: 'heightCm', label: 'Altura', unit: 'cm' },
   { key: 'weightKg', label: 'Peso', unit: 'kg' },
   { key: 'bmi', label: 'IMC', unit: 'kg/m²', calc: true },
   { key: 'basalMetabolismKcal', label: 'MB / Metabolismo basal', unit: 'kcal' },
   { key: 'totalFatPct', label: 'Masa grasa', unit: '%' },
-  { key: 'totalFatKg', label: 'Masa grasa', unit: 'kg', calc: true },
-  { key: 'totalLeanKg', label: 'Masa magra', unit: 'kg', calc: true },
+  { key: 'totalFatKg', label: 'Masa grasa', unit: 'kg' },
+  { key: 'totalLeanKg', label: 'Masa magra', unit: 'kg' },
   { key: 'totalWaterKg', label: 'Agua total', unit: 'kg' },
 ]
 

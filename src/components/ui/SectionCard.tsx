@@ -1,4 +1,5 @@
 import { Box, Paper, Stack, Typography } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 import type { ReactNode } from 'react'
 
 interface SectionCardProps {
@@ -7,6 +8,7 @@ interface SectionCardProps {
   children: ReactNode
   /** Quita el padding interno del cuerpo (útil para tablas a sangre). */
   disableBodyPadding?: boolean
+  sx?: SxProps<Theme>
 }
 
 // Card presentacional del expediente: título + acción opcional + cuerpo.
@@ -16,9 +18,10 @@ export function SectionCard({
   action,
   children,
   disableBodyPadding = false,
+  sx,
 }: SectionCardProps) {
   return (
-    <Paper sx={{ borderRadius: '8px', overflow: 'hidden' }}>
+    <Paper sx={{ borderRadius: '8px', overflow: 'hidden', ...sx }}>
       {(title || action) && (
         <Stack
           direction="row"

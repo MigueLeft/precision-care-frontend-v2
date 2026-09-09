@@ -6,19 +6,33 @@ export interface AppointmentFilters {
   q: string
   from: string
   to: string
-  status: AppointmentStatus | ''
+  statuses: AppointmentStatus[]
   modality: AppointmentModality | ''
   specialistId: number | ''
 }
 
+// Por defecto se muestran solo las citas programadas y en curso.
 export const defaultAppointmentFilters: AppointmentFilters = {
   scope: 'all',
   q: '',
   from: '',
   to: '',
-  status: '',
+  statuses: ['scheduled', 'in_progress'],
   modality: '',
   specialistId: '',
+}
+
+export function isDefaultFilters(filters: AppointmentFilters): boolean {
+  return (
+    filters.scope === defaultAppointmentFilters.scope &&
+    filters.q === '' &&
+    filters.from === '' &&
+    filters.to === '' &&
+    filters.modality === '' &&
+    filters.specialistId === '' &&
+    filters.statuses.length === defaultAppointmentFilters.statuses.length &&
+    defaultAppointmentFilters.statuses.every((s) => filters.statuses.includes(s))
+  )
 }
 
 export function filterAppointments(
@@ -27,14 +41,21 @@ export function filterAppointments(
   mySpecialistId: number | null,
 ): Appointment[] {
   return appointments.filter((appointment) => {
+    // Un especialista solo ve sus propias citas; el resto puede usar el toggle.
+    const onlyMine = mySpecialistId != null || filters.scope === 'mine'
     if (
-      filters.scope === 'mine' &&
+      onlyMine &&
       mySpecialistId != null &&
       !appointment.specialists.some((s) => s.specialistId === mySpecialistId)
     ) {
       return false
     }
-    if (filters.status && appointment.status !== filters.status) return false
+    if (
+      filters.statuses.length > 0 &&
+      !filters.statuses.includes(appointment.status)
+    ) {
+      return false
+    }
     if (filters.modality && appointment.modality !== filters.modality) return false
     if (
       filters.specialistId &&

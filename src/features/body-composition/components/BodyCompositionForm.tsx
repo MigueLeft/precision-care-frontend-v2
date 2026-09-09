@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   Box,
   Grid,
@@ -19,7 +19,6 @@ import {
   SEGMENT_LABELS,
   SEGMENT_PARAMS,
   computeBmi,
-  fatToLose,
   segmentSkeletalKg,
 } from '../config'
 import { getSegment } from '../utils/body-composition-helpers'
@@ -36,6 +35,10 @@ interface BodyCompositionFormProps {
 
 type State = Record<string, string>
 
+// Los campos "totales" (masa grasa %/kg, masa magra kg) viven en el segmento
+// "total"; el resto son columnas de la tabla body_composition.
+const IDEAL_KEYS = ['idealWeightKg', 'idealFatMassKg', 'fatToLoseKg']
+
 function initialState(existing?: BodyComposition | null): State {
   const state: State = {}
   if (!existing) return state
@@ -44,20 +47,24 @@ function initialState(existing?: BodyComposition | null): State {
     'heightCm',
     'basalMetabolismKcal',
     'totalWaterKg',
-    'idealWeightKg',
-    'idealFatMassKg',
+    ...IDEAL_KEYS,
   ]) {
     const value = (existing as unknown as Record<string, string | null>)[key]
     if (value != null) state[key] = value
   }
-  for (const segment of [...SEGMENTS, 'total'] as const) {
+  const total = getSegment(existing, 'total')
+  if (total) {
+    if (total.fatMassPct != null) state.totalFatPct = total.fatMassPct
+    if (total.fatMassKg != null) state.totalFatKg = total.fatMassKg
+    if (total.leanMassKg != null) state.totalLeanKg = total.leanMassKg
+  }
+  for (const segment of SEGMENTS) {
     const seg = getSegment(existing, segment)
     if (!seg) continue
     for (const param of SEGMENT_PARAMS) {
       const value = (seg as unknown as Record<string, string | null>)[param.key]
       if (value != null) state[`${segment}.${param.key}`] = value
     }
-    if (seg.fatMassPct != null) state[`${segment}.fatMassPct`] = seg.fatMassPct
   }
   return state
 }
@@ -81,32 +88,7 @@ export function BodyCompositionForm({
   const set = (key: string) => (event: React.ChangeEvent<HTMLInputElement>) =>
     setValues((prev) => ({ ...prev, [key]: event.target.value }))
 
-  const weight = n(values.weightKg)
-  const height = n(values.heightCm)
-  const totalFatPct = n(values['total.fatMassPct'])
-
-  const derived = useMemo(() => {
-    const bmi = computeBmi(weight, height)
-    const totalFatKg =
-      weight !== undefined && totalFatPct !== undefined
-        ? Number(((weight * totalFatPct) / 100).toFixed(1))
-        : undefined
-    const totalLeanKg =
-      weight !== undefined && totalFatKg !== undefined
-        ? Number((weight - totalFatKg).toFixed(1))
-        : undefined
-    return { bmi, totalFatKg, totalLeanKg }
-  }, [weight, height, totalFatPct])
-
-  const idealFatKg = n(values.idealFatMassKg)
-  const grasaAPerder = fatToLose(derived.totalFatKg, idealFatKg)
-
-  function generalDisplay(key: string): string {
-    if (key === 'bmi') return derived.bmi?.toString() ?? '—'
-    if (key === 'totalFatKg') return derived.totalFatKg?.toString() ?? '—'
-    if (key === 'totalLeanKg') return derived.totalLeanKg?.toString() ?? '—'
-    return values[key] ?? ''
-  }
+  const bmi = computeBmi(n(values.weightKg), n(values.heightCm))
 
   function segmentSkeletal(segment: string): number | undefined {
     return segmentSkeletalKg(n(values[`${segment}.leanMassKg`]))
@@ -116,11 +98,17 @@ export function BodyCompositionForm({
     const out: SegmentInput[] = []
     const total: SegmentInput = {
       segment: 'total',
-      fatMassPct: totalFatPct,
-      fatMassKg: derived.totalFatKg,
-      leanMassKg: derived.totalLeanKg,
+      fatMassPct: n(values.totalFatPct),
+      fatMassKg: n(values.totalFatKg),
+      leanMassKg: n(values.totalLeanKg),
     }
-    if (total.fatMassPct !== undefined || total.leanMassKg !== undefined) out.push(total)
+    if (
+      total.fatMassPct !== undefined ||
+      total.fatMassKg !== undefined ||
+      total.leanMassKg !== undefined
+    ) {
+      out.push(total)
+    }
 
     for (const segment of SEGMENTS) {
       const seg: Record<string, unknown> = { segment }
@@ -145,17 +133,24 @@ export function BodyCompositionForm({
       patientId,
       consultationId,
       assessmentDate: date,
-      weightKg: weight,
-      heightCm: height,
-      bmi: derived.bmi,
+      weightKg: n(values.weightKg),
+      heightCm: n(values.heightCm),
+      bmi,
       basalMetabolismKcal: n(values.basalMetabolismKcal),
       totalWaterKg: n(values.totalWaterKg),
       idealWeightKg: n(values.idealWeightKg),
-      idealFatMassKg: idealFatKg,
+      idealFatMassKg: n(values.idealFatMassKg),
+      fatToLoseKg: n(values.fatToLoseKg),
       notes: notes.trim() || undefined,
       segments: buildSegments(),
     })
   }
+
+  const idealFields = [
+    { key: 'idealWeightKg', label: 'Peso ideal', unit: 'kg' },
+    { key: 'idealFatMassKg', label: 'Masa grasa ideal', unit: 'kg' },
+    { key: 'fatToLoseKg', label: 'Grasa a perder', unit: 'kg' },
+  ]
 
   return (
     <Stack spacing={2.5}>
@@ -184,7 +179,7 @@ export function BodyCompositionForm({
                 <TextField
                   size="small"
                   type="number"
-                  value={param.calc ? generalDisplay(param.key) : (values[param.key] ?? '')}
+                  value={param.calc ? (bmi?.toString() ?? '') : (values[param.key] ?? '')}
                   onChange={param.calc ? undefined : set(param.key)}
                   disabled={param.calc}
                   sx={{ width: 110 }}
@@ -199,21 +194,21 @@ export function BodyCompositionForm({
             OBJETIVOS IDEALES
           </Typography>
           <Stack spacing={1}>
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '13px', flex: 1 }}>Peso ideal</Typography>
-              <Typography sx={{ fontSize: '11px', color: 'text.secondary', width: 40 }}>kg</Typography>
-              <TextField size="small" type="number" value={values.idealWeightKg ?? ''} onChange={set('idealWeightKg')} sx={{ width: 110 }} />
-            </Stack>
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '13px', flex: 1 }}>Masa grasa ideal</Typography>
-              <Typography sx={{ fontSize: '11px', color: 'text.secondary', width: 40 }}>kg</Typography>
-              <TextField size="small" type="number" value={values.idealFatMassKg ?? ''} onChange={set('idealFatMassKg')} sx={{ width: 110 }} />
-            </Stack>
-            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-              <Typography sx={{ fontSize: '13px', flex: 1 }}>Grasa a perder</Typography>
-              <Typography sx={{ fontSize: '11px', color: 'text.secondary', width: 40 }}>kg</Typography>
-              <TextField size="small" type="number" value={grasaAPerder ?? ''} disabled sx={{ width: 110 }} />
-            </Stack>
+            {idealFields.map((field) => (
+              <Stack key={field.key} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <Typography sx={{ fontSize: '13px', flex: 1 }}>{field.label}</Typography>
+                <Typography sx={{ fontSize: '11px', color: 'text.secondary', width: 40 }}>
+                  {field.unit}
+                </Typography>
+                <TextField
+                  size="small"
+                  type="number"
+                  value={values[field.key] ?? ''}
+                  onChange={set(field.key)}
+                  sx={{ width: 110 }}
+                />
+              </Stack>
+            ))}
           </Stack>
         </Grid>
       </Grid>

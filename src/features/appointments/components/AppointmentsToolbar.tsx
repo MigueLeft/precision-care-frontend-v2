@@ -6,6 +6,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Checkbox,
+  ListItemText,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -16,6 +18,7 @@ import FilterAltOffOutlinedIcon from '@mui/icons-material/FilterAltOffOutlined'
 import type { SpecialistLookup } from '@/features/identity'
 import {
   defaultAppointmentFilters,
+  isDefaultFilters,
   type AppointmentFilters,
 } from '../utils/filter-appointments'
 import {
@@ -28,6 +31,8 @@ interface AppointmentsToolbarProps {
   filters: AppointmentFilters
   specialists: SpecialistLookup[]
   onChange: (patch: Partial<AppointmentFilters>) => void
+  // Un especialista solo ve sus citas: se oculta el toggle "Mis citas / Todas".
+  isSpecialist: boolean
 }
 
 const STATUS_KEYS: AppointmentStatus[] = [
@@ -44,10 +49,9 @@ export function AppointmentsToolbar({
   filters,
   specialists,
   onChange,
+  isSpecialist,
 }: AppointmentsToolbarProps) {
-  const hasActiveFilters = (
-    Object.keys(defaultAppointmentFilters) as (keyof AppointmentFilters)[]
-  ).some((key) => filters[key] !== defaultAppointmentFilters[key])
+  const hasActiveFilters = !isDefaultFilters(filters)
 
   return (
     <Stack
@@ -56,15 +60,17 @@ export function AppointmentsToolbar({
       useFlexGap
       sx={{ alignItems: 'center', flexWrap: 'wrap', mb: 3 }}
     >
-      <ToggleButtonGroup
-        size="small"
-        exclusive
-        value={filters.scope}
-        onChange={(_e, value) => value && onChange({ scope: value })}
-      >
-        <ToggleButton value="mine">Mis citas</ToggleButton>
-        <ToggleButton value="all">Todas</ToggleButton>
-      </ToggleButtonGroup>
+      {!isSpecialist && (
+        <ToggleButtonGroup
+          size="small"
+          exclusive
+          value={filters.scope}
+          onChange={(_e, value) => value && onChange({ scope: value })}
+        >
+          <ToggleButton value="mine">Mis citas</ToggleButton>
+          <ToggleButton value="all">Todas</ToggleButton>
+        </ToggleButtonGroup>
+      )}
 
       <TextField
         placeholder="Buscar paciente o motivo…"
@@ -98,20 +104,31 @@ export function AppointmentsToolbar({
         sx={{ width: 160 }}
       />
 
-      <FormControl sx={{ minWidth: 150 }}>
+      <FormControl sx={{ minWidth: 190 }}>
         <InputLabel id="appt-status-label">Estado</InputLabel>
-        <Select
+        <Select<AppointmentStatus[]>
           labelId="appt-status-label"
           label="Estado"
-          value={filters.status}
+          multiple
+          value={filters.statuses}
           onChange={(e) =>
-            onChange({ status: e.target.value as AppointmentStatus | '' })
+            onChange({
+              statuses:
+                typeof e.target.value === 'string'
+                  ? []
+                  : (e.target.value as AppointmentStatus[]),
+            })
+          }
+          renderValue={(selected) =>
+            selected.length === 0
+              ? 'Todos'
+              : selected.map((s) => APPOINTMENT_STATUS_LABELS[s]).join(', ')
           }
         >
-          <MenuItem value="">Todos</MenuItem>
           {STATUS_KEYS.map((key) => (
             <MenuItem key={key} value={key}>
-              {APPOINTMENT_STATUS_LABELS[key]}
+              <Checkbox size="small" checked={filters.statuses.includes(key)} />
+              <ListItemText primary={APPOINTMENT_STATUS_LABELS[key]} />
             </MenuItem>
           ))}
         </Select>

@@ -50,22 +50,27 @@ export function TreatmentMedicationRow({
   isSaving,
   onSave,
 }: TreatmentMedicationRowProps) {
-  const [editing, setEditing] = useState(false)
+  const suspended = medication.status === 'previous'
+  const hasCapture =
+    medication.adherence != null ||
+    (medication.ramStatus != null && medication.ramStatus !== 'none')
+
+  // Si ya hay captura se muestra el resumen; "Editar" abre los controles.
+  const [capturing, setCapturing] = useState(!hasCapture && !suspended)
+  const [editingMed, setEditingMed] = useState(false)
   const [dose, setDose] = useState(medication.dose ?? '')
   const [frequency, setFrequency] = useState(medication.frequency ?? '')
-  const [adherence, setAdherence] = useState<MedicationAdherence | null>(null)
-  const [ramStatus, setRamStatus] = useState<MedicationRamStatus | null>(null)
-  const [adherenceNotes, setAdherenceNotes] = useState('')
-  const [ramNotes, setRamNotes] = useState('')
+  const [adherence, setAdherence] = useState<MedicationAdherence | null>(
+    medication.adherence ?? null,
+  )
+  const [ramStatus, setRamStatus] = useState<MedicationRamStatus | null>(
+    medication.ramStatus ?? null,
+  )
+  const [adherenceNotes, setAdherenceNotes] = useState(medication.adherenceNotes ?? '')
+  const [ramNotes, setRamNotes] = useState(medication.ramNotes ?? '')
 
-  // Suspendido por RAM confirmado en esta consulta: se muestra en rojo y sin captura.
-  const suspended = medication.status === 'previous'
-  // Lo que ya quedó registrado para este medicamento en esta consulta.
-  const hasCapture =
-    medication.adherence != null || (medication.ramStatus != null && medication.ramStatus !== 'none')
-
-  const doseChanged = editing && dose.trim() !== (medication.dose ?? '')
-  const freqChanged = editing && frequency.trim() !== (medication.frequency ?? '')
+  const doseChanged = editingMed && dose.trim() !== (medication.dose ?? '')
+  const freqChanged = editingMed && frequency.trim() !== (medication.frequency ?? '')
   const canSave =
     !readOnly && (adherence !== null || ramStatus !== null || doseChanged || freqChanged)
 
@@ -90,38 +95,38 @@ export function TreatmentMedicationRow({
         bgcolor: suspended ? (theme) => theme.palette.error.light + '14' : 'transparent',
       }}
     >
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <Typography sx={{ fontSize: '14px', fontWeight: 700, color: suspended ? 'error.main' : 'text.primary' }}>
-          {medname(medication)}
-        </Typography>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', gap: 1 }}>
+        <Box>
+          <Typography sx={{ fontSize: '14px', fontWeight: 700, color: suspended ? 'error.main' : 'text.primary' }}>
+            {medname(medication)}
+          </Typography>
+          {editingMed ? (
+            <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
+              <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
+              <TextField
+                size="small"
+                label="Frecuencia"
+                value={frequency}
+                onChange={(e) => setFrequency(e.target.value)}
+              />
+            </Stack>
+          ) : (
+            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
+              {medication.dose ?? '—'} · {medication.frequency ?? '—'}
+            </Typography>
+          )}
+        </Box>
         {!readOnly && !suspended && (
           <AppButton
             size="small"
             variant="text"
             startIcon={<EditOutlinedIcon sx={{ fontSize: 15 }} />}
-            onClick={() => setEditing((prev) => !prev)}
+            onClick={() => setEditingMed((prev) => !prev)}
           >
-            {editing ? 'Cancelar' : 'Editar'}
+            {editingMed ? 'Cancelar' : 'Editar dosis'}
           </AppButton>
         )}
       </Stack>
-
-      {editing ? (
-        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-          <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
-          <TextField
-            size="small"
-            label="Frecuencia"
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            fullWidth
-          />
-        </Stack>
-      ) : (
-        <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
-          {medication.dose ?? '—'} · {medication.frequency ?? '—'}
-        </Typography>
-      )}
 
       {suspended && (
         <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'error.main', mt: 0.5 }}>
@@ -130,11 +135,13 @@ export function TreatmentMedicationRow({
         </Typography>
       )}
 
-      {!suspended && hasCapture && (
-        <Stack direction="row" spacing={0.5} sx={{ mt: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-          <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
-            Registrado en esta consulta:
-          </Typography>
+      {/* Resumen simplificado de la captura ya guardada */}
+      {!suspended && hasCapture && !capturing && (
+        <Stack
+          direction="row"
+          spacing={0.75}
+          sx={{ mt: 1, flexWrap: 'wrap', alignItems: 'center' }}
+        >
           {medication.adherence && (
             <Chip
               size="small"
@@ -154,10 +161,21 @@ export function TreatmentMedicationRow({
               {[medication.adherenceNotes, medication.ramNotes].filter(Boolean).join(' · ')}
             </Typography>
           )}
+          {!readOnly && (
+            <AppButton
+              size="small"
+              variant="text"
+              startIcon={<EditOutlinedIcon sx={{ fontSize: 14 }} />}
+              onClick={() => setCapturing(true)}
+            >
+              Editar
+            </AppButton>
+          )}
         </Stack>
       )}
 
-      {!readOnly && !suspended && (
+      {/* Controles de captura */}
+      {!readOnly && !suspended && capturing && (
         <Stack spacing={1} sx={{ mt: 1.5 }}>
           <Box>
             <Typography sx={{ fontSize: '12px', fontWeight: 600, mb: 0.5 }}>Adherencia</Typography>
@@ -222,16 +240,22 @@ export function TreatmentMedicationRow({
             )}
           </Box>
 
-          <AppButton
-            variant="contained"
-            size="small"
-            loading={isSaving}
-            disabled={!canSave}
-            onClick={save}
-            sx={{ alignSelf: 'flex-start' }}
-          >
-            Guardar
-          </AppButton>
+          <Stack direction="row" spacing={1}>
+            <AppButton
+              variant="contained"
+              size="small"
+              loading={isSaving}
+              disabled={!canSave}
+              onClick={save}
+            >
+              Guardar
+            </AppButton>
+            {hasCapture && (
+              <AppButton size="small" variant="text" onClick={() => setCapturing(false)}>
+                Cancelar
+              </AppButton>
+            )}
+          </Stack>
         </Stack>
       )}
     </Box>

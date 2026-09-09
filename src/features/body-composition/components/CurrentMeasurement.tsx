@@ -6,6 +6,7 @@ import { toNumber, formatNumber } from '@/utils/parse-numeric'
 import type { BodyComposition, BodySegment } from '../types'
 import { BODY_SEGMENT_LABELS, getSegment } from '../utils/body-composition-helpers'
 import { SegmentSummaryTable } from './SegmentSummaryTable'
+import { BodyFigure } from './BodyFigure'
 
 interface CurrentMeasurementProps {
   composition: BodyComposition
@@ -31,22 +32,27 @@ export function CurrentMeasurement({ composition }: CurrentMeasurementProps) {
 
   return (
     <Stack spacing={3}>
-      <SectionCard title={`${BODY_SEGMENT_LABELS[segment]} — datos de composición`}>
-        <Stack spacing={2}>
-          <ToggleButtonGroup
-            size="small"
-            exclusive
-            value={segment}
-            onChange={(_event, next) => next && setSegment(next as BodySegment)}
-            sx={{ flexWrap: 'wrap' }}
-          >
-            {SEGMENT_OPTIONS.map((option) => (
-              <ToggleButton key={option} value={option}>
-                {BODY_SEGMENT_LABELS[option]}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ alignItems: 'flex-start' }}>
+        <SectionCard title="Selecciona un segmento" sx={{ width: { xs: '100%', md: 240 }, flexShrink: 0 }}>
+          <Stack spacing={1.5} sx={{ alignItems: 'center' }}>
+            <BodyFigure selected={segment} onSelect={setSegment} />
+            <ToggleButtonGroup
+              size="small"
+              exclusive
+              value={segment}
+              onChange={(_event, next) => next && setSegment(next as BodySegment)}
+              sx={{ flexWrap: 'wrap', justifyContent: 'center' }}
+            >
+              {SEGMENT_OPTIONS.map((option) => (
+                <ToggleButton key={option} value={option}>
+                  {BODY_SEGMENT_LABELS[option]}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Stack>
+        </SectionCard>
 
+        <SectionCard title={`${BODY_SEGMENT_LABELS[segment]} — datos de composición`} sx={{ flex: 1, width: '100%' }}>
           <Grid container spacing={2}>
             <Grid size={{ xs: 6, sm: 3 }}>
               <StatTile
@@ -82,8 +88,8 @@ export function CurrentMeasurement({ composition }: CurrentMeasurementProps) {
               />
             </Grid>
           </Grid>
-        </Stack>
-      </SectionCard>
+        </SectionCard>
+      </Stack>
 
       <SectionCard title="Resumen por segmento" disableBodyPadding>
         {composition.segments.length === 0 ? (
