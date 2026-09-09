@@ -8,6 +8,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { useAllergyCatalog, useAllergySeverities, useAllergyTypes } from '@/features/catalogs'
@@ -30,7 +31,10 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
   const [onsetYear, setOnsetYear] = useState('')
   const [reaction, setReaction] = useState('')
 
-  const activeCatalog = catalog.filter((item) => item.active)
+  // Si hay un tipo elegido, el catálogo de agentes se limita a ese tipo.
+  const options = catalog.filter(
+    (item) => item.active && (typeId === '' || item.typeId === typeId),
+  )
 
   function reset() {
     setTypeId('')
@@ -71,9 +75,15 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
             labelId="allergy-type"
             label="Tipo"
             value={typeId}
-            onChange={(event) =>
-              setTypeId(event.target.value === '' ? '' : Number(event.target.value))
-            }
+            onChange={(event) => {
+              const next = event.target.value === '' ? '' : Number(event.target.value)
+              setTypeId(next)
+              // Al cambiar el tipo a mano se limpia el agente elegido de otro tipo.
+              if (catalogId) {
+                setCatalogId(undefined)
+                setName('')
+              }
+            }}
           >
             {types
               .filter((type) => type.active)
@@ -88,7 +98,7 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
         <Autocomplete
           freeSolo
           sx={{ flex: 1, minWidth: 200 }}
-          options={activeCatalog}
+          options={options}
           getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
           inputValue={name}
           onInputChange={(_event, value) => {
@@ -145,7 +155,12 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
           value={reaction}
           onChange={(event) => setReaction(event.target.value)}
         />
-        <AppButton variant="outlined" loading={isAdding} onClick={submit}>
+        <AppButton
+          variant="outlined"
+          loading={isAdding}
+          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+          onClick={submit}
+        >
           Añadir alergia
         </AppButton>
       </Stack>

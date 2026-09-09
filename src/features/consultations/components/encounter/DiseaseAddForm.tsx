@@ -10,6 +10,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { useBodySystems, useDiseases } from '@/features/catalogs'
@@ -141,7 +142,12 @@ export function DiseaseAddForm({ onAdd, isAdding }: DiseaseAddFormProps) {
           sx={{ width: 120 }}
         />
 
-        <AppButton variant="outlined" loading={isAdding} onClick={submit}>
+        <AppButton
+          variant="outlined"
+          loading={isAdding}
+          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+          onClick={submit}
+        >
           Añadir
         </AppButton>
       </Stack>
