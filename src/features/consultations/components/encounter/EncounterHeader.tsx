@@ -63,11 +63,6 @@ export function EncounterHeader({ consultation, readOnly }: EncounterHeaderProps
           </Typography>
         )}
         {!readOnly && (
-          <AppButton variant="outlined" size="small" onClick={goBack}>
-            Pausar
-          </AppButton>
-        )}
-        {!readOnly && (
           <AppButton
             variant="contained"
             size="small"

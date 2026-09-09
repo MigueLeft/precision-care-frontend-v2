@@ -11,10 +11,12 @@ import {
   Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'sonner'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { useBodySystems, useSymptoms } from '@/features/catalogs'
 import { useDebouncedCallback } from '@/hooks/useDebouncedCallback'
 import { formatShortDate } from '@/utils/format-date'
+import { isLettersOnly } from '@/utils/text-validation'
 import {
   useConsultationSymptoms,
   useReplaceConsultationSymptoms,
@@ -50,6 +52,7 @@ export function SymptomsSection({
   const replaceMutation = useReplaceConsultationSymptoms(consultationId)
 
   const [rows, setRows] = useState<SymptomRow[]>([])
+  const [inputValue, setInputValue] = useState('')
   const dirtyRef = useRef(false)
 
   useEffect(() => {
@@ -86,6 +89,12 @@ export function SymptomsSection({
   function addSymptom(name: string, catalogId?: number) {
     const clean = name.trim()
     if (!clean) return
+    if (!isLettersOnly(clean)) {
+      toast.error(
+        'El síntoma solo puede contener letras, sin números ni caracteres especiales.',
+      )
+      return
+    }
     if (rows.some((row) => row.name.toLowerCase() === clean.toLowerCase())) return
     commit([
       ...rows,
@@ -94,6 +103,10 @@ export function SymptomsSection({
   }
 
   const currentNames = new Set(rows.map((row) => row.name.toLowerCase()))
+  // Los síntomas ya capturados en esta consulta no vuelven a ofrecerse en la búsqueda.
+  const availableOptions = catalog.filter(
+    (option) => !currentNames.has(option.name.toLowerCase()),
+  )
 
   return (
     <CollapsibleSection
@@ -158,17 +171,20 @@ export function SymptomsSection({
         <Autocomplete
           sx={{ mt: 2 }}
           freeSolo
-          options={catalog}
+          options={availableOptions}
           getOptionLabel={(option) =>
             typeof option === 'string' ? option : option.name
           }
           value={null}
+          inputValue={inputValue}
+          onInputChange={(_event, value) => setInputValue(value)}
           blurOnSelect
           clearOnBlur
           onChange={(_event, option) => {
             if (!option) return
             if (typeof option === 'string') addSymptom(option)
             else addSymptom(option.name, option.id)
+            setInputValue('')
           }}
           renderInput={(params) => (
             <TextField
@@ -179,6 +195,7 @@ export function SymptomsSection({
                   const value = (event.target as HTMLInputElement).value
                   if (value.trim()) {
                     addSymptom(value)
+                    setInputValue('')
                     ;(event.target as HTMLInputElement).blur()
                   }
                 }

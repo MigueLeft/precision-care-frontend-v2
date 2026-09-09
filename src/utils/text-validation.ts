@@ -7,6 +7,11 @@ const ALPHANUMERIC_REGEX = /^[\p{L}\p{N}\s.,()/-]+$/u
 const HAS_LETTER_REGEX = /\p{L}/u
 const HAS_ALPHANUMERIC_REGEX = /[\p{L}\p{N}]/u
 
+/** True si el texto solo tiene letras, espacios, guiones o apóstrofes y al menos una letra. */
+export function isLettersOnly(value: string): boolean {
+  return LETTERS_ONLY_REGEX.test(value) && HAS_LETTER_REGEX.test(value)
+}
+
 /** Campo de texto obligatorio compuesto solo por letras (nombres de personas, catálogos demográficos). */
 export function lettersOnlySchema(label: string, maxLength = 100) {
   return z

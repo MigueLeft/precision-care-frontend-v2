@@ -62,6 +62,8 @@ export function useUpdateConsultation(id: number) {
     onSuccess: (consultation) => {
       queryClient.setQueryData(consultationsKeys.detail(id), consultation)
       queryClient.invalidateQueries({ queryKey: consultationsKeys.all })
+      // Finalizar la consulta también cambia el estado de la cita ligada.
+      queryClient.invalidateQueries({ queryKey: ['appointments'] })
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al guardar la consulta'))
