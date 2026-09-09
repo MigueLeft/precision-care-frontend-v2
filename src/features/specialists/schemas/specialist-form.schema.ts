@@ -7,7 +7,7 @@ const optionalId = z.number().int().positive().optional()
 // Nada de letras ni puntos.
 const PHONE_REGEX = /^[\d\s+()-]+$/
 
-export function getSpecialistFormSchema(mode: 'create' | 'edit') {
+export function getSpecialistFormSchema() {
   return z
     .object({
       name: lettersOnlySchema('El nombre', 60),
@@ -42,7 +42,7 @@ export function getSpecialistFormSchema(mode: 'create' | 'edit') {
       passwordMode: z.enum(['invite', 'temporary']),
     })
     .superRefine((values, ctx) => {
-      if (mode === 'create' && values.createUser && !values.roleId) {
+      if (values.createUser && !values.roleId) {
         ctx.addIssue({
           code: 'custom',
           path: ['roleId'],

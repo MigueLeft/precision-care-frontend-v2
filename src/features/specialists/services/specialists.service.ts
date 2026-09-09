@@ -4,6 +4,7 @@ import type {
   CreateSpecialistPayload,
   UpdateSpecialistPayload,
   CreateSpecialistResult,
+  SpecialistUserInput,
 } from '../types'
 
 export async function fetchSpecialists(): Promise<Specialist[]> {
@@ -43,6 +44,17 @@ export async function setSpecialistStatus(
     { active },
   )
   return data.specialist
+}
+
+export async function addSpecialistUser(
+  id: number,
+  payload: SpecialistUserInput,
+): Promise<CreateSpecialistResult> {
+  const { data } = await api.post<CreateSpecialistResult>(
+    `/specialists/${id}/user`,
+    payload,
+  )
+  return data
 }
 
 export async function resendSpecialistInvitation(

@@ -91,9 +91,24 @@ export function SpecialistDetailSidebar({ specialist }: Props) {
             </AppButton>
           </Stack>
         ) : (
-          <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
-            Este especialista no tiene usuario de acceso. Puedes crearle uno editando el registro.
-          </Typography>
+          <Stack spacing={1}>
+            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
+              Este especialista no tiene usuario de acceso al sistema.
+            </Typography>
+            <AppButton
+              variant="outlined"
+              size="small"
+              onClick={() =>
+                navigate({
+                  to: '/especialistas/$specialistId/editar',
+                  params: { specialistId: String(specialist.id) },
+                })
+              }
+              sx={{ alignSelf: 'flex-start' }}
+            >
+              Dar acceso al sistema
+            </AppButton>
+          </Stack>
         )}
       </SectionCard>
     </Stack>

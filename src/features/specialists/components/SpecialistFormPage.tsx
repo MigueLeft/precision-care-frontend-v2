@@ -17,7 +17,11 @@ import {
   mapSpecialistToFormValues,
 } from '../utils/map-specialist-form'
 import { useSpecialist } from '../hooks/useSpecialists'
-import { useCreateSpecialist, useUpdateSpecialist } from '../hooks/useSpecialistMutations'
+import {
+  useAddSpecialistUser,
+  useCreateSpecialist,
+  useUpdateSpecialist,
+} from '../hooks/useSpecialistMutations'
 import { SpecialistDataFields } from './SpecialistDataFields'
 import { SpecialistAccessFields } from './SpecialistAccessFields'
 import { TemporaryPasswordDialog } from './TemporaryPasswordDialog'
@@ -33,12 +37,16 @@ export function SpecialistFormPage({ mode, specialistId }: Props) {
   const [tempPassword, setTempPassword] = useState<{ pwd: string; id: number } | null>(null)
 
   const { control, handleSubmit, setValue } = useForm<SpecialistFormValues>({
-    resolver: zodResolver(getSpecialistFormSchema(mode)),
+    resolver: zodResolver(getSpecialistFormSchema()),
     defaultValues:
       mode === 'edit' && specialist
         ? mapSpecialistToFormValues(specialist)
         : specialistFormDefaultValues,
   })
+
+  // En edición, solo se puede dar de alta el usuario si aún no tiene uno.
+  const canAddUser = mode === 'edit' && specialist != null && !specialist.hasUser
+  const showAccessSection = mode === 'create' || canAddUser
 
   const createMutation = useCreateSpecialist({
     onSuccess: (result) => {
@@ -49,19 +57,46 @@ export function SpecialistFormPage({ mode, specialistId }: Props) {
       }
     },
   })
-  const updateMutation = useUpdateSpecialist(specialistId, {
-    onSuccess: () =>
-      navigate({ to: '/especialistas/$specialistId', params: { specialistId: String(specialistId) } }),
+  function goToDetail(id: number | undefined) {
+    if (id === undefined) return
+    navigate({ to: '/especialistas/$specialistId', params: { specialistId: String(id) } })
+  }
+
+  const addUserMutation = useAddSpecialistUser(specialistId, {
+    onSuccess: (result) => {
+      if (result.temporaryPassword) {
+        setTempPassword({ pwd: result.temporaryPassword, id: result.specialist.id })
+      } else {
+        goToDetail(specialistId)
+      }
+    },
   })
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  // Navegación/encadenado con addUser se maneja en onSubmit (per-call onSuccess).
+  const updateMutation = useUpdateSpecialist(specialistId)
+
+  const isSubmitting =
+    createMutation.isPending || updateMutation.isPending || addUserMutation.isPending
 
   function onSubmit(values: SpecialistFormValues) {
     if (mode === 'create') {
       createMutation.mutate(mapFormToCreatePayload(values))
-    } else {
-      updateMutation.mutate(mapFormToUpdatePayload(values))
+      return
     }
+
+    updateMutation.mutate(mapFormToUpdatePayload(values), {
+      onSuccess: () => {
+        if (canAddUser && values.createUser && values.roleId) {
+          addUserMutation.mutate({
+            roleId: values.roleId,
+            initialStatus: values.initialStatus,
+            passwordMode: values.passwordMode,
+          })
+        } else {
+          goToDetail(specialistId)
+        }
+      },
+    })
   }
 
   if (mode === 'edit' && !specialist) return null
@@ -87,8 +122,14 @@ export function SpecialistFormPage({ mode, specialistId }: Props) {
           <SpecialistDataFields control={control} setValue={setValue} />
         </SectionCard>
 
-        {mode === 'create' && (
+        {showAccessSection && (
           <SectionCard title="Acceso al sistema">
+            {canAddUser && (
+              <Typography sx={{ fontSize: '13px', color: 'text.secondary', mb: 1.5 }}>
+                Este especialista aún no tiene usuario. Activa la opción para darle acceso
+                al sistema con el correo {specialist?.email}.
+              </Typography>
+            )}
             <SpecialistAccessFields control={control} />
           </SectionCard>
         )}

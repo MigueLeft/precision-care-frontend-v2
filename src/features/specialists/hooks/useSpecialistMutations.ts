@@ -5,12 +5,14 @@ import {
   createSpecialist,
   updateSpecialist,
   setSpecialistStatus,
+  addSpecialistUser,
   resendSpecialistInvitation,
 } from '../services/specialists.service'
 import { specialistsKeys } from './specialists.keys'
 import type {
   CreateSpecialistResult,
   Specialist,
+  SpecialistUserInput,
   UpdateSpecialistPayload,
 } from '../types'
 
@@ -58,6 +60,28 @@ export function useUpdateSpecialist(
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al actualizar el especialista'))
+    },
+  })
+}
+
+export function useAddSpecialistUser(
+  id: number | undefined,
+  options?: { onSuccess?: (result: CreateSpecialistResult) => void },
+) {
+  const invalidate = useInvalidate()
+
+  return useMutation({
+    mutationFn: (payload: SpecialistUserInput) => {
+      if (id === undefined) throw new Error('Falta el id del especialista.')
+      return addSpecialistUser(id, payload)
+    },
+    onSuccess: (result) => {
+      invalidate()
+      toast.success('Usuario de acceso creado correctamente')
+      options?.onSuccess?.(result)
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Error al crear el usuario de acceso'))
     },
   })
 }
