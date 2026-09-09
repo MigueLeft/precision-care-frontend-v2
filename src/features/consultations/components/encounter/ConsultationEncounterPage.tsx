@@ -7,6 +7,7 @@ import { EncounterSidebar } from './EncounterSidebar'
 import { SymptomsSection } from './SymptomsSection'
 import { AllergiesSection } from './AllergiesSection'
 import { DiseasesSection } from './DiseasesSection'
+import { TreatmentSection } from './TreatmentSection'
 import { PlaceholderSection } from './PlaceholderSection'
 import { AutosaveTextField } from './AutosaveTextField'
 
@@ -81,11 +82,7 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
               consultationDate={consultation.startAt}
               readOnly={readOnly}
             />
-            <PlaceholderSection
-              index={4}
-              title="Tratamiento actual"
-              subtitle="Texto libre · adherencia y RAM"
-            />
+            <TreatmentSection index={4} consultation={consultation} readOnly={readOnly} />
             <PlaceholderSection
               index={5}
               title="Composición corporal"

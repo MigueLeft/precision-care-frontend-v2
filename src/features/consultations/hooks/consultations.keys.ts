@@ -21,4 +21,8 @@ export const consultationsKeys = {
     [...consultationsKeys.all, 'detail', id, 'diseases'] as const,
   diseaseHistory: (id: number) =>
     [...consultationsKeys.all, 'detail', id, 'disease-history'] as const,
+  medications: (id: number) =>
+    [...consultationsKeys.all, 'detail', id, 'medications'] as const,
+  medicationHistory: (id: number) =>
+    [...consultationsKeys.all, 'detail', id, 'medication-history'] as const,
 }

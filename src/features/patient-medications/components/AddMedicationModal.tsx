@@ -105,6 +105,15 @@ export function AddMedicationModal({
 
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
+              name="dose"
+              control={control}
+              render={({ field }) => (
+                <TextField {...field} value={field.value ?? ''} label="Dosis" />
+              )}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
               name="frequency"
               control={control}
               render={({ field }) => (

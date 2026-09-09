@@ -9,6 +9,7 @@ export const medicationFormSchema = z.object({
     .number({ error: 'Selecciona un medicamento.' })
     .int()
     .positive('Selecciona un medicamento.'),
+  dose: z.string().optional(),
   frequency: z.string().optional(),
   duration: z.string().optional(),
   quantity: z.string().optional(),
@@ -24,6 +25,7 @@ export type MedicationFormValues = z.infer<typeof medicationFormSchema>
 
 export const medicationFormDefaultValues: MedicationFormValues = {
   medicationId: 0,
+  dose: '',
   frequency: '',
   duration: '',
   quantity: '',

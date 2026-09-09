@@ -48,6 +48,7 @@ export function MedicationsPanel({ patientId }: MedicationsPanelProps) {
       patientId,
       medicationId: values.medicationId,
       status: 'current',
+      dose: values.dose || undefined,
       frequency: values.frequency || undefined,
       duration: values.duration || undefined,
       quantity: values.quantity || undefined,

@@ -1,5 +1,7 @@
 export type ConsultationStatus = 'in_progress' | 'completed'
 
+export type VisitType = 'first' | 'subsequent'
+
 export type DiagnosisType =
   | 'primary'
   | 'secondary'
@@ -20,6 +22,7 @@ export interface Consultation {
   treatmentPlan: string | null
   evolution: string | null
   status: ConsultationStatus
+  visitType: VisitType
   // Adjuntado por GET /consultations/patient/:patientId
   specialistName?: string | null
   createdAt: string
@@ -135,4 +138,59 @@ export interface DiseaseHistoryItem {
   name: string | null
   bodySystemName: string | null
   status: DiseaseStatus
+}
+
+// ─── Tratamiento actual (medicamentos en la consulta) ──────────────────────
+
+export type MedicationAdherence = 'good' | 'partial' | 'poor'
+export type MedicationRamStatus = 'none' | 'suspected' | 'confirmed'
+
+export interface ConsultationMedication {
+  id: number
+  patientId: number
+  medicationId: number
+  consultationId: number | null
+  status: 'current' | 'previous'
+  dose: string | null
+  frequency: string | null
+  startAt: string | null
+  endAt: string | null
+  discontinuationReason: string | null
+  adherence: MedicationAdherence | null
+  adherenceNotes: string | null
+  ramStatus: MedicationRamStatus | null
+  ramNotes: string | null
+  prescriberSpecialistId: number | null
+  createdAt: string
+  brandName: string | null
+  genericName: string | null
+  concentration: string | null
+  presentationName: string | null
+}
+
+export interface AddMedicationInput {
+  medicationId: number
+  dose?: string
+  frequency?: string
+  startAt?: string
+}
+
+export interface CaptureMedicationInput {
+  dose?: string
+  frequency?: string
+  adherence?: MedicationAdherence
+  adherenceNotes?: string
+  ramStatus?: MedicationRamStatus
+  ramNotes?: string
+}
+
+export interface MedicationHistoryItem {
+  brandName: string | null
+  genericName: string | null
+  dose: string | null
+  frequency: string | null
+  adherence: MedicationAdherence | null
+  ramStatus: MedicationRamStatus | null
+  adherenceNotes: string | null
+  ramNotes: string | null
 }

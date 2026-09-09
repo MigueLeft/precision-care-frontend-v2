@@ -18,7 +18,7 @@ interface CurrentMedicationsTableProps {
   onSuspend: (medication: PatientMedication) => void
 }
 
-const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Desde', '']
+const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Desde', 'Prescriptor', '']
 
 export function CurrentMedicationsTable({
   medications,
@@ -50,13 +50,16 @@ export function CurrentMedicationsTable({
                 {getMedicationDisplayName(medication)}
               </TableCell>
               <TableCell sx={{ fontSize: '13px' }}>
-                {medication.concentration ?? '—'}
+                {medication.dose ?? medication.concentration ?? '—'}
               </TableCell>
               <TableCell sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
                 {medication.frequency ?? '—'}
               </TableCell>
               <TableCell sx={{ fontSize: '13px' }}>
                 {formatMonthYear(medication.startAt)}
+              </TableCell>
+              <TableCell sx={{ fontSize: '13px' }}>
+                {medication.prescriberName ?? '—'}
               </TableCell>
               <TableCell align="right">
                 <Button

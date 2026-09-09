@@ -13,6 +13,10 @@ import type {
   ConsultationHistoryEntry,
   AllergyHistoryItem,
   DiseaseHistoryItem,
+  ConsultationMedication,
+  AddMedicationInput,
+  CaptureMedicationInput,
+  MedicationHistoryItem,
 } from '../types'
 
 export async function fetchConsultationsByPatient(
@@ -49,6 +53,7 @@ export type UpdateConsultationPatch = Partial<
     | 'treatmentPlan'
     | 'evolution'
     | 'status'
+    | 'visitType'
   >
 >
 
@@ -208,5 +213,48 @@ export async function fetchConsultationDiseaseHistory(
   const { data } = await api.get<{
     history: ConsultationHistoryEntry<DiseaseHistoryItem>[]
   }>(`/consultations/${id}/disease-history`)
+  return data.history
+}
+
+// ─── Tratamiento actual ─────────────────────────────────────────────────────
+
+export async function fetchConsultationMedications(
+  id: number,
+): Promise<ConsultationMedication[]> {
+  const { data } = await api.get<{ medications: ConsultationMedication[] }>(
+    `/consultations/${id}/medications`,
+  )
+  return data.medications
+}
+
+export async function addConsultationMedication(
+  id: number,
+  input: AddMedicationInput,
+): Promise<ConsultationMedication> {
+  const { data } = await api.post<{ medication: ConsultationMedication }>(
+    `/consultations/${id}/medications`,
+    input,
+  )
+  return data.medication
+}
+
+export async function captureConsultationMedication(
+  id: number,
+  medicationId: number,
+  input: CaptureMedicationInput,
+): Promise<ConsultationMedication> {
+  const { data } = await api.patch<{ medication: ConsultationMedication }>(
+    `/consultations/${id}/medications/${medicationId}`,
+    input,
+  )
+  return data.medication
+}
+
+export async function fetchConsultationMedicationHistory(
+  id: number,
+): Promise<ConsultationHistoryEntry<MedicationHistoryItem>[]> {
+  const { data } = await api.get<{
+    history: ConsultationHistoryEntry<MedicationHistoryItem>[]
+  }>(`/consultations/${id}/medication-history`)
   return data.history
 }
