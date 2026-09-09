@@ -14,6 +14,14 @@ import type {
   MedicationPresentation,
   MedicationCategory,
   MedicalSpecialty,
+  AllergyType,
+  AllergySeverity,
+  AllergyCatalog,
+  CreateAllergyCatalogPayload,
+  UpdateAllergyCatalogPayload,
+  Disease,
+  CreateDiseasePayload,
+  UpdateDiseasePayload,
 } from '../types'
 
 export async function fetchCountries(): Promise<Country[]> {
@@ -321,4 +329,114 @@ export async function toggleMedicalSpecialtyActive(id: number): Promise<MedicalS
     `/catalogs/medical-specialties/${id}/toggle-active`,
   )
   return data.medicalSpecialty
+}
+
+// ─── Tipos de alergia ───────────────────────────────────────────────────────
+
+export async function fetchAllergyTypes(): Promise<AllergyType[]> {
+  const { data } = await api.get<{ allergyTypes: AllergyType[] }>('/catalogs/allergy-types')
+  return data.allergyTypes
+}
+
+export async function createAllergyType(name: string): Promise<AllergyType> {
+  const { data } = await api.post<{ allergyType: AllergyType }>('/catalogs/allergy-types', { name })
+  return data.allergyType
+}
+
+export async function updateAllergyType(id: number, name: string): Promise<AllergyType> {
+  const { data } = await api.patch<{ allergyType: AllergyType }>(`/catalogs/allergy-types/${id}`, { name })
+  return data.allergyType
+}
+
+export async function toggleAllergyTypeActive(id: number): Promise<AllergyType> {
+  const { data } = await api.patch<{ allergyType: AllergyType }>(
+    `/catalogs/allergy-types/${id}/toggle-active`,
+  )
+  return data.allergyType
+}
+
+// ─── Gravedades de alergia ──────────────────────────────────────────────────
+
+export async function fetchAllergySeverities(): Promise<AllergySeverity[]> {
+  const { data } = await api.get<{ allergySeverities: AllergySeverity[] }>(
+    '/catalogs/allergy-severities',
+  )
+  return data.allergySeverities
+}
+
+export async function createAllergySeverity(name: string): Promise<AllergySeverity> {
+  const { data } = await api.post<{ allergySeverity: AllergySeverity }>(
+    '/catalogs/allergy-severities',
+    { name },
+  )
+  return data.allergySeverity
+}
+
+export async function updateAllergySeverity(id: number, name: string): Promise<AllergySeverity> {
+  const { data } = await api.patch<{ allergySeverity: AllergySeverity }>(
+    `/catalogs/allergy-severities/${id}`,
+    { name },
+  )
+  return data.allergySeverity
+}
+
+export async function toggleAllergySeverityActive(id: number): Promise<AllergySeverity> {
+  const { data } = await api.patch<{ allergySeverity: AllergySeverity }>(
+    `/catalogs/allergy-severities/${id}/toggle-active`,
+  )
+  return data.allergySeverity
+}
+
+// ─── Alergias (catálogo) ────────────────────────────────────────────────────
+
+export async function fetchAllergyCatalog(): Promise<AllergyCatalog[]> {
+  const { data } = await api.get<{ allergies: AllergyCatalog[] }>('/catalogs/allergies')
+  return data.allergies
+}
+
+export async function createAllergyCatalog(
+  payload: CreateAllergyCatalogPayload,
+): Promise<AllergyCatalog> {
+  const { data } = await api.post<{ allergy: AllergyCatalog }>('/catalogs/allergies', payload)
+  return data.allergy
+}
+
+export async function updateAllergyCatalog(
+  id: number,
+  payload: UpdateAllergyCatalogPayload,
+): Promise<AllergyCatalog> {
+  const { data } = await api.patch<{ allergy: AllergyCatalog }>(`/catalogs/allergies/${id}`, payload)
+  return data.allergy
+}
+
+export async function toggleAllergyCatalogActive(id: number): Promise<AllergyCatalog> {
+  const { data } = await api.patch<{ allergy: AllergyCatalog }>(
+    `/catalogs/allergies/${id}/toggle-active`,
+  )
+  return data.allergy
+}
+
+// ─── Enfermedades (catálogo) ────────────────────────────────────────────────
+
+export async function fetchDiseases(): Promise<Disease[]> {
+  const { data } = await api.get<{ diseases: Disease[] }>('/catalogs/diseases')
+  return data.diseases
+}
+
+export async function createDisease(payload: CreateDiseasePayload): Promise<Disease> {
+  const { data } = await api.post<{ disease: Disease }>('/catalogs/diseases', payload)
+  return data.disease
+}
+
+export async function updateDisease(
+  id: number,
+  payload: UpdateDiseasePayload,
+): Promise<Disease> {
+  const { data } = await api.patch<{ disease: Disease }>(`/catalogs/diseases/${id}`, payload)
+  return data.disease
+}
+
+export async function toggleDiseaseActive(id: number): Promise<Disease> {
+  const { data } = await api.patch<{ disease: Disease }>(`/catalogs/diseases/${id}/toggle-active`)
+  return data.disease
 }

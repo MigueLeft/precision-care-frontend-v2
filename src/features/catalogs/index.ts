@@ -58,6 +58,22 @@ export { useSymptoms } from './hooks/useSymptoms'
 export { useCreateSymptom } from './hooks/useCreateSymptom'
 export { useUpdateSymptom } from './hooks/useUpdateSymptom'
 export { useToggleSymptomActive } from './hooks/useToggleSymptomActive'
+export { useAllergyTypes } from './hooks/useAllergyTypes'
+export { useCreateAllergyType } from './hooks/useCreateAllergyType'
+export { useUpdateAllergyType } from './hooks/useUpdateAllergyType'
+export { useToggleAllergyTypeActive } from './hooks/useToggleAllergyTypeActive'
+export { useAllergySeverities } from './hooks/useAllergySeverities'
+export { useCreateAllergySeverity } from './hooks/useCreateAllergySeverity'
+export { useUpdateAllergySeverity } from './hooks/useUpdateAllergySeverity'
+export { useToggleAllergySeverityActive } from './hooks/useToggleAllergySeverityActive'
+export { useAllergyCatalog } from './hooks/useAllergyCatalog'
+export { useCreateAllergyCatalog } from './hooks/useCreateAllergyCatalog'
+export { useUpdateAllergyCatalog } from './hooks/useUpdateAllergyCatalog'
+export { useToggleAllergyCatalogActive } from './hooks/useToggleAllergyCatalogActive'
+export { useDiseases } from './hooks/useDiseases'
+export { useCreateDisease } from './hooks/useCreateDisease'
+export { useUpdateDisease } from './hooks/useUpdateDisease'
+export { useToggleDiseaseActive } from './hooks/useToggleDiseaseActive'
 export {
   fetchCountries,
   fetchStates,
@@ -87,4 +103,12 @@ export type {
   CreateParaclinicalPayload,
   UpdateParaclinicalPayload,
   SymptomCatalog,
+  AllergyType,
+  AllergySeverity,
+  AllergyCatalog,
+  CreateAllergyCatalogPayload,
+  UpdateAllergyCatalogPayload,
+  Disease,
+  CreateDiseasePayload,
+  UpdateDiseasePayload,
 } from './types'

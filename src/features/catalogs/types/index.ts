@@ -133,3 +133,41 @@ export interface CreateSymptomPayload {
   name: string
 }
 export type UpdateSymptomPayload = Partial<CreateSymptomPayload>
+
+export interface AllergyType {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface AllergySeverity {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface AllergyCatalog {
+  id: number
+  name: string
+  typeId: number
+  active: boolean
+}
+
+export interface CreateAllergyCatalogPayload {
+  name: string
+  typeId: number
+}
+export type UpdateAllergyCatalogPayload = Partial<CreateAllergyCatalogPayload>
+
+export interface Disease {
+  id: number
+  name: string
+  isChronic: boolean
+  active: boolean
+}
+
+export interface CreateDiseasePayload {
+  name: string
+  isChronic: boolean
+}
+export type UpdateDiseasePayload = Partial<CreateDiseasePayload>

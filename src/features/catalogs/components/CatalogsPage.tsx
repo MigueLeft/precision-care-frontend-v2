@@ -6,9 +6,13 @@ import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
 import ListOutlinedIcon from '@mui/icons-material/ListOutlined'
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined'
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined'
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined'
+import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 import { MedicationsTab } from './MedicationsTab'
 import { ParaclinicalsTab } from './ParaclinicalsTab'
 import { SymptomsTab } from './SymptomsTab'
+import { AllergiesTab } from './AllergiesTab'
+import { DiseasesTab } from './DiseasesTab'
 import { DemographicListsTab } from './DemographicListsTab'
 import { BodySystemsTab } from './BodySystemsTab'
 import { MedicalSpecialtiesTab } from './MedicalSpecialtiesTab'
@@ -17,6 +21,8 @@ const TABS = [
   { label: 'Medicamentos', icon: LinkOutlinedIcon },
   { label: 'Paraclínicos', icon: ScienceOutlinedIcon },
   { label: 'Síntomas', icon: MonitorHeartOutlinedIcon },
+  { label: 'Alergias', icon: WarningAmberOutlinedIcon },
+  { label: 'Enfermedades', icon: CoronavirusOutlinedIcon },
   { label: 'Aparatos / Sistemas', icon: AccessibilityNewOutlinedIcon },
   { label: 'Especialidades', icon: LocalHospitalOutlinedIcon },
   { label: 'Listas demográficas', icon: ListOutlinedIcon },
@@ -43,9 +49,11 @@ export function CatalogsPage() {
       {tab === 0 && <MedicationsTab />}
       {tab === 1 && <ParaclinicalsTab />}
       {tab === 2 && <SymptomsTab />}
-      {tab === 3 && <BodySystemsTab />}
-      {tab === 4 && <MedicalSpecialtiesTab />}
-      {tab === 5 && <DemographicListsTab />}
+      {tab === 3 && <AllergiesTab />}
+      {tab === 4 && <DiseasesTab />}
+      {tab === 5 && <BodySystemsTab />}
+      {tab === 6 && <MedicalSpecialtiesTab />}
+      {tab === 7 && <DemographicListsTab />}
     </Box>
   )
 }
