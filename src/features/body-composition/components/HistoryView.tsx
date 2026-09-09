@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Box,
   Grid,
@@ -12,11 +13,13 @@ import {
 } from '@mui/material'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { Sparkline } from '@/components/ui/Sparkline'
+import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { toNumber, formatNumber } from '@/utils/parse-numeric'
-import { formatMonthYear } from '@/utils/format-date'
+import { formatMonthYear, formatShortDate } from '@/utils/format-date'
 import type { BodyComposition } from '../types'
 import { getSegment } from '../utils/body-composition-helpers'
+import { CurrentMeasurement } from './CurrentMeasurement'
 
 interface HistoryViewProps {
   compositions: BodyComposition[]
@@ -45,6 +48,8 @@ function Trend({ label, values, color }: TrendProps) {
 
 export function HistoryView({ compositions }: HistoryViewProps) {
   const theme = useTheme()
+  const [detailId, setDetailId] = useState<number | null>(null)
+  const detail = compositions.find((c) => c.id === detailId) ?? null
 
   if (compositions.length === 0) {
     return <EmptyState message="Sin mediciones históricas." />
@@ -97,9 +102,12 @@ export function HistoryView({ compositions }: HistoryViewProps) {
           <Table size="small">
             <TableHead>
               <TableRow sx={{ bgcolor: 'grey.50' }}>
-                {['Fecha', 'Peso', 'Grasa %', 'Grasa kg', 'Magra %', 'Magra kg', 'Musc. esq.'].map(
-                  (h) => (
-                    <TableCell key={h} sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>
+                {['Fecha', 'Peso', 'Grasa %', 'Grasa kg', 'Magra %', 'Magra kg', 'Musc. esq.', ''].map(
+                  (h, index) => (
+                    <TableCell
+                      key={`${h}-${index}`}
+                      sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}
+                    >
                       {h}
                     </TableCell>
                   ),
@@ -124,6 +132,17 @@ export function HistoryView({ compositions }: HistoryViewProps) {
                     <TableCell sx={{ fontSize: '13px' }}>
                       {formatNumber(total?.skeletalMuscleMassKg)}
                     </TableCell>
+                    <TableCell align="right">
+                      <AppButton
+                        size="small"
+                        variant="text"
+                        onClick={() =>
+                          setDetailId((prev) => (prev === composition.id ? null : composition.id))
+                        }
+                      >
+                        {detailId === composition.id ? 'Ocultar' : 'Ver detalle'}
+                      </AppButton>
+                    </TableCell>
                   </TableRow>
                 )
               })}
@@ -131,6 +150,12 @@ export function HistoryView({ compositions }: HistoryViewProps) {
           </Table>
         </Box>
       </SectionCard>
+
+      {detail && (
+        <SectionCard title={`Detalle — ${formatShortDate(detail.assessmentDate)}`}>
+          <CurrentMeasurement composition={detail} />
+        </SectionCard>
+      )}
     </Stack>
   )
 }

@@ -8,6 +8,8 @@ import { SymptomsSection } from './SymptomsSection'
 import { AllergiesSection } from './AllergiesSection'
 import { DiseasesSection } from './DiseasesSection'
 import { TreatmentSection } from './TreatmentSection'
+import { PhysicalExamSection } from '@/features/physical-exam'
+import { BodyCompositionSection } from '@/features/body-composition'
 import { PlaceholderSection } from './PlaceholderSection'
 import { AutosaveTextField } from './AutosaveTextField'
 
@@ -83,15 +85,19 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
               readOnly={readOnly}
             />
             <TreatmentSection index={4} consultation={consultation} readOnly={readOnly} />
-            <PlaceholderSection
+            <BodyCompositionSection
               index={5}
-              title="Composición corporal"
-              subtitle="Datos generales y segmentos"
+              consultationId={consultationId}
+              patientId={consultation.patientId}
+              consultationDate={consultation.startAt}
+              readOnly={readOnly}
             />
-            <PlaceholderSection
+            <PhysicalExamSection
               index={6}
-              title="Examen físico"
-              subtitle="Parámetros e índices calculados"
+              consultationId={consultationId}
+              patientId={consultation.patientId}
+              consultationDate={consultation.startAt}
+              readOnly={readOnly}
             />
             <PlaceholderSection
               index={7}

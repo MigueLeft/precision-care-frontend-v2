@@ -7,6 +7,8 @@ export interface VitalSigns {
   sat_o2?: number
 }
 
+export type PhysicalExamMeasurements = Record<string, number>
+
 export interface PhysicalExam {
   id: number
   patientId: number
@@ -14,6 +16,13 @@ export interface PhysicalExam {
   examDate: string
   vitalSigns: VitalSigns | null
   content: Record<string, unknown> | null
+  measurements: PhysicalExamMeasurements | null
   createdAt: string
   updatedAt: string
+}
+
+export interface SavePhysicalExamInput {
+  patientId: number
+  consultationId: number
+  measurements: PhysicalExamMeasurements
 }

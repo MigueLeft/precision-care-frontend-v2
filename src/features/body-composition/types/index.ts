@@ -14,6 +14,7 @@ export interface BodyCompositionSegment {
   fatMassKg: string | null
   leanMassPct: string | null
   leanMassKg: string | null
+  skeletalMuscleMassPct: string | null
   skeletalMuscleMassKg: string | null
   predictedMuscleMassKg: string | null
 }
@@ -26,7 +27,38 @@ export interface BodyComposition {
   weightKg: string | null
   heightCm: string | null
   bmi: string | null
+  basalMetabolismKcal: string | null
+  totalWaterKg: string | null
+  idealWeightKg: string | null
+  idealFatMassKg: string | null
+  notes: string | null
   segments: BodyCompositionSegment[]
   createdAt: string
   updatedAt: string
+}
+
+export interface SegmentInput {
+  segment: BodySegment
+  fatMassPct?: number
+  fatMassKg?: number
+  leanMassPct?: number
+  leanMassKg?: number
+  skeletalMuscleMassPct?: number
+  skeletalMuscleMassKg?: number
+  predictedMuscleMassKg?: number
+}
+
+export interface SaveBodyCompositionInput {
+  patientId: number
+  consultationId?: number
+  assessmentDate?: string
+  weightKg?: number
+  heightCm?: number
+  bmi?: number
+  basalMetabolismKcal?: number
+  totalWaterKg?: number
+  idealWeightKg?: number
+  idealFatMassKg?: number
+  notes?: string
+  segments?: SegmentInput[]
 }
