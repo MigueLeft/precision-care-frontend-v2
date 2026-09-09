@@ -3,15 +3,14 @@ import {
   Box,
   Grid,
   Stack,
-  Table,
   TableBody,
-  TableCell,
   TableHead,
   TableRow,
   TextField,
   Typography,
 } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
+import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
 import { todayIsoDate } from '@/utils/format-date'
 import {
   GENERAL_PARAMS,
@@ -217,45 +216,41 @@ export function BodyCompositionForm({
         <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'text.secondary', mb: 1 }}>
           COMPOSICIÓN POR SEGMENTO
         </Typography>
-        <Box sx={{ overflowX: 'auto' }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: 'grey.50' }}>
-                <TableCell sx={{ fontSize: '12px', fontWeight: 600 }}>Parámetro</TableCell>
-                <TableCell sx={{ fontSize: '12px', fontWeight: 600 }}>Unidad</TableCell>
+        <DataTable minWidth={140 + SEGMENTS.length * 110}>
+          <TableHead>
+            <TableRow>
+              <HeadCell>Parámetro</HeadCell>
+              <HeadCell>Unidad</HeadCell>
+              {SEGMENTS.map((segment) => (
+                <HeadCell key={segment}>{SEGMENT_LABELS[segment]}</HeadCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {SEGMENT_PARAMS.map((param) => (
+              <TableRow key={param.key}>
+                <DataCell>{param.label}</DataCell>
+                <DataCell sx={{ fontSize: '12px', color: 'text.secondary' }}>{param.unit}</DataCell>
                 {SEGMENTS.map((segment) => (
-                  <TableCell key={segment} sx={{ fontSize: '12px', fontWeight: 600 }}>
-                    {SEGMENT_LABELS[segment]}
-                  </TableCell>
+                  <DataCell key={segment} calc={param.calc}>
+                    <TextField
+                      size="small"
+                      type="number"
+                      value={
+                        param.calc
+                          ? (segmentSkeletal(segment)?.toString() ?? '')
+                          : (values[`${segment}.${param.key}`] ?? '')
+                      }
+                      onChange={param.calc ? undefined : set(`${segment}.${param.key}`)}
+                      disabled={param.calc}
+                      sx={{ width: 90 }}
+                    />
+                  </DataCell>
                 ))}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {SEGMENT_PARAMS.map((param) => (
-                <TableRow key={param.key}>
-                  <TableCell sx={{ fontSize: '13px' }}>{param.label}</TableCell>
-                  <TableCell sx={{ fontSize: '12px', color: 'text.secondary' }}>{param.unit}</TableCell>
-                  {SEGMENTS.map((segment) => (
-                    <TableCell key={segment}>
-                      <TextField
-                        size="small"
-                        type="number"
-                        value={
-                          param.calc
-                            ? (segmentSkeletal(segment)?.toString() ?? '')
-                            : (values[`${segment}.${param.key}`] ?? '')
-                        }
-                        onChange={param.calc ? undefined : set(`${segment}.${param.key}`)}
-                        disabled={param.calc}
-                        sx={{ width: 90 }}
-                      />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
+            ))}
+          </TableBody>
+        </DataTable>
       </Box>
 
       <TextField

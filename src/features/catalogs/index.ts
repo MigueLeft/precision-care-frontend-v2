@@ -66,6 +66,10 @@ export { useAllergySeverities } from './hooks/useAllergySeverities'
 export { useCreateAllergySeverity } from './hooks/useCreateAllergySeverity'
 export { useUpdateAllergySeverity } from './hooks/useUpdateAllergySeverity'
 export { useToggleAllergySeverityActive } from './hooks/useToggleAllergySeverityActive'
+export { useSymptomSeverities } from './hooks/useSymptomSeverities'
+export { useCreateSymptomSeverity } from './hooks/useCreateSymptomSeverity'
+export { useUpdateSymptomSeverity } from './hooks/useUpdateSymptomSeverity'
+export { useToggleSymptomSeverityActive } from './hooks/useToggleSymptomSeverityActive'
 export { useAllergyCatalog } from './hooks/useAllergyCatalog'
 export { useCreateAllergyCatalog } from './hooks/useCreateAllergyCatalog'
 export { useUpdateAllergyCatalog } from './hooks/useUpdateAllergyCatalog'
@@ -105,6 +109,7 @@ export type {
   SymptomCatalog,
   AllergyType,
   AllergySeverity,
+  SymptomSeverity,
   AllergyCatalog,
   CreateAllergyCatalogPayload,
   UpdateAllergyCatalogPayload,

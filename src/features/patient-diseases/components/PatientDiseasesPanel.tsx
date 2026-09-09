@@ -47,7 +47,7 @@ function Tile({ label, value }: { label: string; value: number }) {
 }
 
 export function PatientDiseasesPanel({ patientId }: PatientDiseasesPanelProps) {
-  const [view, setView] = useState<'system' | 'chronological'>('system')
+  const [view, setView] = useState<'system' | 'chronological'>('chronological')
   const [filter, setFilter] = useState<Filter>('active')
   const [isAddOpen, setIsAddOpen] = useState(false)
 
@@ -118,8 +118,8 @@ export function PatientDiseasesPanel({ patientId }: PatientDiseasesPanelProps) {
           value={view}
           onChange={(_event, next) => next && setView(next)}
         >
-          <ToggleButton value="system">Por aparato / sistema</ToggleButton>
           <ToggleButton value="chronological">Lista cronológica</ToggleButton>
+          <ToggleButton value="system">Por aparato / sistema</ToggleButton>
         </ToggleButtonGroup>
         <Select
           size="small"

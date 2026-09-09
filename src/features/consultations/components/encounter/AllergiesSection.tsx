@@ -134,7 +134,7 @@ export function AllergiesSection({
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
-        Las alergias se guardan en el expediente, no solo en esta consulta. Las de gravedad grave se
+        Las alergias se guardan en el expediente, no solo en esta consulta. Las de severidad grave se
         muestran en la barra del paciente y validan las prescripciones.
       </Typography>
     </CollapsibleSection>

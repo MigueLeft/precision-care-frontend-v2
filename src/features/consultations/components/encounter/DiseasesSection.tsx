@@ -1,34 +1,33 @@
-import { Box, Chip, IconButton, Stack, Typography } from '@mui/material'
+import {
+  FormControl,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
-import { formatShortDate } from '@/utils/format-date'
+import { formatFreeDate, formatShortDate } from '@/utils/format-date'
 import {
-  DISEASE_STATUS_COLORS,
   DISEASE_STATUS_LABELS,
+  diseaseStatusOptions,
 } from '../../utils/consultation-format'
 import {
   useConsultationDiseases,
   useAddConsultationDisease,
+  useUpdateConsultationDisease,
   useRemoveConsultationDisease,
 } from '../../hooks/useConsultationDiseases'
 import { DiseaseHistory } from './DiseaseHistory'
 import { DiseaseAddForm } from './DiseaseAddForm'
-import type { ConsultationDisease } from '../../types'
+import type { DiseaseStatus } from '../../types'
 
 interface DiseasesSectionProps {
   index: number
   consultationId: number
   consultationDate: string
   readOnly: boolean
-}
-
-function groupBySystem(diseases: ConsultationDisease[]) {
-  const groups = new Map<string, ConsultationDisease[]>()
-  for (const disease of diseases) {
-    const key = disease.bodySystemName ?? 'Sin asignar'
-    groups.set(key, [...(groups.get(key) ?? []), disease])
-  }
-  return [...groups.entries()]
 }
 
 export function DiseasesSection({
@@ -39,18 +38,18 @@ export function DiseasesSection({
 }: DiseasesSectionProps) {
   const { data: diseases = [] } = useConsultationDiseases(consultationId)
   const addMutation = useAddConsultationDisease(consultationId)
+  const updateMutation = useUpdateConsultationDisease(consultationId)
   const removeMutation = useRemoveConsultationDisease(consultationId)
 
-  const groups = groupBySystem(diseases)
   const usedCatalogIds = new Set(diseases.map((disease) => disease.diseaseCatalogId))
 
   return (
     <CollapsibleSection
-      title={`${index}. Enfermedades / diagnósticos`}
+      title={`${index}. Enfermedades`}
       headerMeta={
         diseases.length > 0 ? (
           <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-            {diseases.length} activas
+            {diseases.length} registradas
           </Typography>
         ) : undefined
       }
@@ -62,55 +61,54 @@ export function DiseasesSection({
         CAPTURA DE ESTA CONSULTA · {formatShortDate(consultationDate)}
       </Typography>
 
-      <Stack spacing={1.5} sx={{ my: 1.5 }}>
-        {groups.map(([systemName, rows]) => (
-          <Box key={systemName}>
-            <Typography
-              sx={{
-                fontSize: '11px',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                color: 'text.secondary',
-                textTransform: 'uppercase',
-                mb: 0.5,
-              }}
-            >
-              {systemName}
+      <Stack spacing={0.75} sx={{ my: 1.5 }}>
+        {diseases.map((disease) => (
+          <Stack
+            key={disease.id}
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: 'center' }}
+          >
+            <Typography sx={{ fontSize: '14px', flex: 1 }}>
+              {disease.name ?? '—'}
+              {disease.code && (
+                <Typography component="span" sx={{ fontSize: '12px', color: 'text.secondary', ml: 0.75 }}>
+                  {disease.code}
+                </Typography>
+              )}
             </Typography>
-            <Stack spacing={0.5}>
-              {rows.map((disease) => (
-                <Stack
-                  key={disease.id}
-                  direction="row"
-                  spacing={1}
-                  sx={{ alignItems: 'center' }}
-                >
-                  <Typography sx={{ fontSize: '14px', flex: 1 }}>
-                    {disease.name ?? '—'}
-                  </Typography>
-                  {disease.dxDate && (
-                    <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                      dx {disease.dxDate}
-                    </Typography>
-                  )}
-                  <Chip
-                    size="small"
-                    label={DISEASE_STATUS_LABELS[disease.status]}
-                    color={DISEASE_STATUS_COLORS[disease.status]}
-                  />
-                  {!readOnly && (
-                    <IconButton
-                      size="small"
-                      aria-label="Quitar enfermedad"
-                      onClick={() => removeMutation.mutate(disease.id)}
-                    >
-                      <CloseIcon sx={{ fontSize: 18 }} />
-                    </IconButton>
-                  )}
-                </Stack>
-              ))}
-            </Stack>
-          </Box>
+            {disease.dxDate && (
+              <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                dx {formatFreeDate(disease.dxDate)}
+              </Typography>
+            )}
+            <FormControl size="small" sx={{ minWidth: 150 }} disabled={readOnly || updateMutation.isPending}>
+              <Select<DiseaseStatus>
+                value={disease.status}
+                onChange={(event) =>
+                  updateMutation.mutate({
+                    diseaseId: disease.id,
+                    input: { status: event.target.value as DiseaseStatus },
+                  })
+                }
+              >
+                {diseaseStatusOptions(disease.isChronic).map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {DISEASE_STATUS_LABELS[value]}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            {!readOnly && (
+              <IconButton
+                size="small"
+                aria-label="Quitar enfermedad"
+                onClick={() => removeMutation.mutate(disease.id)}
+              >
+                <CloseIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            )}
+          </Stack>
         ))}
       </Stack>
 
@@ -123,8 +121,8 @@ export function DiseasesSection({
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
-        Cada enfermedad se asocia a un aparato o sistema del catálogo; el listado se agrupa por
-        sistema. Marca la casilla para escribir una que no esté en el catálogo.
+        El aparato o sistema se toma del catálogo de enfermedades. El cambio de estado se registra en
+        el historial del expediente.
       </Typography>
     </CollapsibleSection>
   )

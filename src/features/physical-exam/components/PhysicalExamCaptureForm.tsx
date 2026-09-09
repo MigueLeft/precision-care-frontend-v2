@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import {
-  Box,
   Stack,
-  Table,
   TableBody,
-  TableCell,
   TableHead,
   TableRow,
   TextField,
   Typography,
 } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
+import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
 import { formatNumber } from '@/utils/parse-numeric'
 import { PHYSICAL_EXAM_PARAMS, computePhysicalExam } from '../config'
 import type { PhysicalExam, SavePhysicalExamInput } from '../types'
@@ -64,58 +62,50 @@ export function PhysicalExamCaptureForm({
 
   return (
     <>
-      <Box sx={{ overflowX: 'auto' }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow sx={{ bgcolor: 'grey.50' }}>
-              <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>Parámetro</TableCell>
-              <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>Unidad</TableCell>
-              <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }} align="right">
-                Valor
-              </TableCell>
-              <TableCell sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }} align="right">
-                Anterior
-              </TableCell>
+      <DataTable minWidth={420}>
+        <TableHead>
+          <TableRow>
+            <HeadCell>Parámetro</HeadCell>
+            <HeadCell>Unidad</HeadCell>
+            <HeadCell align="right">Valor</HeadCell>
+            <HeadCell align="right">Anterior</HeadCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {PHYSICAL_EXAM_PARAMS.map((param) => (
+            <TableRow key={param.key}>
+              <DataCell>
+                {param.label}
+                {param.calc && (
+                  <Typography component="span" sx={{ fontSize: '10px', color: 'primary.main', ml: 0.5 }}>
+                    calc.
+                  </Typography>
+                )}
+              </DataCell>
+              <DataCell sx={{ fontSize: '12px', color: 'text.secondary' }}>{param.unit}</DataCell>
+              <DataCell align="right" calc={param.calc} sx={{ width: 110 }}>
+                {param.calc ? (
+                  formatNumber(computed[param.key] ?? null)
+                ) : (
+                  <TextField
+                    size="small"
+                    type="number"
+                    value={values[param.key] ?? ''}
+                    onChange={(event) =>
+                      setValues((prev) => ({ ...prev, [param.key]: event.target.value }))
+                    }
+                    disabled={readOnly}
+                    sx={{ width: 90 }}
+                  />
+                )}
+              </DataCell>
+              <DataCell align="right" sx={{ color: 'text.secondary' }}>
+                {formatNumber(previousComputed[param.key] ?? null)}
+              </DataCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {PHYSICAL_EXAM_PARAMS.map((param) => (
-              <TableRow key={param.key}>
-                <TableCell sx={{ fontSize: '13px' }}>
-                  {param.label}
-                  {param.calc && (
-                    <Typography component="span" sx={{ fontSize: '10px', color: 'primary.main', ml: 0.5 }}>
-                      calc.
-                    </Typography>
-                  )}
-                </TableCell>
-                <TableCell sx={{ fontSize: '12px', color: 'text.secondary' }}>{param.unit}</TableCell>
-                <TableCell align="right" sx={{ width: 110 }}>
-                  {param.calc ? (
-                    <Typography sx={{ fontSize: '13px', fontWeight: 600, color: 'primary.main' }}>
-                      {formatNumber(computed[param.key] ?? null)}
-                    </Typography>
-                  ) : (
-                    <TextField
-                      size="small"
-                      type="number"
-                      value={values[param.key] ?? ''}
-                      onChange={(event) =>
-                        setValues((prev) => ({ ...prev, [param.key]: event.target.value }))
-                      }
-                      disabled={readOnly}
-                      sx={{ width: 90 }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell align="right" sx={{ fontSize: '13px', color: 'text.secondary' }}>
-                  {formatNumber(previousComputed[param.key] ?? null)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Box>
+          ))}
+        </TableBody>
+      </DataTable>
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
         Las filas "calc." (IMC, grasa en kg, masa magra) se calculan a partir de peso, altura y grasa

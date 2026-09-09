@@ -1,6 +1,6 @@
 import type { Allergy } from '../types'
 
-// La gravedad viene del subcatálogo (texto libre); "grave"/"severa" se resalta en rojo.
+// La severidad viene del subcatálogo (texto libre); "grave"/"severa" se resalta en rojo.
 export function isSevereAllergy(allergy: Allergy): boolean {
   return /grave|severa/i.test(allergy.severityName ?? '')
 }

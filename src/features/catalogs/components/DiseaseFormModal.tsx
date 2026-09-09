@@ -7,12 +7,17 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Switch,
   TextField,
 } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
+import { useBodySystems } from '../hooks/useBodySystems'
 import { diseaseFormSchema, type DiseaseFormValues } from '../schemas/disease-form.schema'
 
 interface DiseaseFormModalProps {
@@ -32,6 +37,7 @@ export function DiseaseFormModal({
   onSubmit,
   onClose,
 }: DiseaseFormModalProps) {
+  const { data: bodySystems = [] } = useBodySystems()
   const { control, handleSubmit, reset } = useForm<DiseaseFormValues>({
     resolver: zodResolver(diseaseFormSchema),
     defaultValues: initialValues,
@@ -75,6 +81,30 @@ export function DiseaseFormModal({
                 helperText={error?.message}
                 slotProps={{ htmlInput: { maxLength: 20 } }}
               />
+            )}
+          />
+          <Controller
+            name="bodySystemId"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl fullWidth error={!!error}>
+                <InputLabel id="disease-body-system">Aparato / sistema</InputLabel>
+                <Select<number | ''>
+                  labelId="disease-body-system"
+                  label="Aparato / sistema"
+                  value={field.value ?? ''}
+                  onChange={(event) =>
+                    field.onChange(event.target.value === '' ? null : Number(event.target.value))
+                  }
+                >
+                  <MenuItem value="">Sin asignar</MenuItem>
+                  {bodySystems.map((system) => (
+                    <MenuItem key={system.id} value={system.id}>
+                      {system.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             )}
           />
           <Controller

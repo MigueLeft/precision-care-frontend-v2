@@ -16,7 +16,9 @@ export {
   useConsultationSymptoms,
   useConsultationSymptomHistory,
   useUpdateConsultation,
-  useReplaceConsultationSymptoms,
+  useAddConsultationSymptom,
+  useCaptureConsultationSymptom,
+  useRemoveConsultationSymptom,
 } from './hooks/useConsultationDetail'
 export { ConsultationsPanel } from './components/ConsultationsPanel'
 export { PatientSymptomsPanel } from './components/PatientSymptomsPanel'
@@ -27,14 +29,22 @@ export {
   DISEASE_STATUS_LABELS,
   DISEASE_STATUS_COLORS,
   ACTIVE_DISEASE_STATUSES,
+  diseaseStatusOptions,
+  SYMPTOM_STATUS_LABELS,
+  SYMPTOM_STATUS_COLORS,
+  SYMPTOM_STATUSES,
 } from './utils/consultation-format'
 export type {
   Consultation,
+  ConsultationProblems,
   ConsultationStatus,
   ConsultationDiagnosis,
   ConsultationSymptom,
-  ReplaceSymptomInput,
-  SymptomHistoryEntry,
+  AddSymptomInput,
+  CaptureSymptomInput,
+  SymptomStatus,
+  SymptomHistoryItem,
+  PatientSymptom,
   DiagnosisType,
   DiseaseStatus,
 } from './types'

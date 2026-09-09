@@ -34,7 +34,7 @@ export function AlergiasCard({ patientId }: AlergiasCardProps) {
             </Typography>
             <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
               {allergy.typeName ?? 'Sin tipo'}
-              {allergy.severityName ? ` · Gravedad: ${allergy.severityName}` : ''}
+              {allergy.severityName ? ` · Severidad: ${allergy.severityName}` : ''}
             </Typography>
           </Stack>
         ))}

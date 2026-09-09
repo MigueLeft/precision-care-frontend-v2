@@ -1,16 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { createAllergySeverity } from '../services/catalogs.service'
+import { createSymptomSeverity } from '../services/catalogs.service'
 import { catalogsKeys } from './catalogs.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 
-export function useCreateAllergySeverity(options?: { onSuccess?: () => void }) {
+export function useCreateSymptomSeverity(options?: { onSuccess?: () => void }) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: createAllergySeverity,
+    mutationFn: createSymptomSeverity,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: catalogsKeys.allergySeverities })
+      queryClient.invalidateQueries({ queryKey: catalogsKeys.symptomSeverities })
       toast.success('Severidad creada correctamente')
       options?.onSuccess?.()
     },

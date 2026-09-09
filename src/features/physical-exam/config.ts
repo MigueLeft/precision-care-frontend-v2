@@ -1,3 +1,5 @@
+import { truncateTo } from '@/utils/parse-numeric'
+
 // Set fijo de 15 parámetros del examen físico. Los `calc` se derivan de peso,
 // altura y grasa corporal y no se editan a mano.
 export interface PhysicalExamParam {
@@ -35,15 +37,16 @@ export function computePhysicalExam(
   const height = values.height_cm
   const fatPct = values.body_fat_pct
 
+  // Truncado (no redondeo) a 1 decimal, coherente con el formateo de la UI.
   const bmi =
-    weight && height ? Number((weight / (height / 100) ** 2).toFixed(1)) : undefined
+    weight && height ? truncateTo(weight / (height / 100) ** 2) : undefined
   const bodyFatKg =
     weight && fatPct !== undefined
-      ? Number(((weight * fatPct) / 100).toFixed(1))
+      ? truncateTo((weight * fatPct) / 100)
       : undefined
   const leanMassKg =
     weight && bodyFatKg !== undefined
-      ? Number((weight - bodyFatKg).toFixed(1))
+      ? truncateTo(weight - bodyFatKg)
       : undefined
 
   return {

@@ -3,14 +3,13 @@ import {
   Box,
   Grid,
   Stack,
-  Table,
   TableBody,
-  TableCell,
   TableHead,
   TableRow,
   Typography,
   useTheme,
 } from '@mui/material'
+import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { Sparkline } from '@/components/ui/Sparkline'
 import { AppButton } from '@/components/AppButton'
@@ -62,8 +61,8 @@ export function HistoryView({ compositions }: HistoryViewProps) {
   const fatPctSeries = totals
     .map((s) => toNumber(s?.fatMassPct ?? null))
     .filter((v): v is number => v !== null)
-  const leanPctSeries = totals
-    .map((s) => toNumber(s?.leanMassPct ?? null))
+  const leanKgSeries = totals
+    .map((s) => toNumber(s?.leanMassKg ?? null))
     .filter((v): v is number => v !== null)
   const musclesSeries = totals
     .map((s) => toNumber(s?.skeletalMuscleMassKg ?? null))
@@ -82,8 +81,8 @@ export function HistoryView({ compositions }: HistoryViewProps) {
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Trend
-              label="Masa magra (%)"
-              values={leanPctSeries}
+              label="Masa magra (kg)"
+              values={leanKgSeries}
               color={theme.palette.primary.main}
             />
           </Grid>
@@ -98,57 +97,45 @@ export function HistoryView({ compositions }: HistoryViewProps) {
       </SectionCard>
 
       <SectionCard title="Histórico de mediciones totales" disableBodyPadding>
-        <Box sx={{ overflowX: 'auto' }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: 'grey.50' }}>
-                {['Fecha', 'Peso', 'Grasa %', 'Grasa kg', 'Magra %', 'Magra kg', 'Musc. esq.', ''].map(
-                  (h, index) => (
-                    <TableCell
-                      key={`${h}-${index}`}
-                      sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}
+        <DataTable minWidth={560}>
+          <TableHead>
+            <TableRow>
+              {['Fecha', 'Peso', 'Grasa %', 'Grasa kg', 'Magra kg', 'Musc. esq.', ''].map(
+                (h, index) => (
+                  <HeadCell key={`${h}-${index}`}>{h}</HeadCell>
+                ),
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {compositions.map((composition) => {
+              const total = getSegment(composition, 'total')
+              return (
+                <TableRow key={composition.id}>
+                  <DataCell sx={{ fontWeight: 600 }}>
+                    {formatMonthYear(composition.assessmentDate)}
+                  </DataCell>
+                  <DataCell>{formatNumber(composition.weightKg)} kg</DataCell>
+                  <DataCell>{formatNumber(total?.fatMassPct)}%</DataCell>
+                  <DataCell>{formatNumber(total?.fatMassKg)}</DataCell>
+                  <DataCell>{formatNumber(total?.leanMassKg)}</DataCell>
+                  <DataCell calc>{formatNumber(total?.skeletalMuscleMassKg)}</DataCell>
+                  <DataCell align="right">
+                    <AppButton
+                      size="small"
+                      variant="text"
+                      onClick={() =>
+                        setDetailId((prev) => (prev === composition.id ? null : composition.id))
+                      }
                     >
-                      {h}
-                    </TableCell>
-                  ),
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {compositions.map((composition) => {
-                const total = getSegment(composition, 'total')
-                return (
-                  <TableRow key={composition.id}>
-                    <TableCell sx={{ fontSize: '13px', fontWeight: 600 }}>
-                      {formatMonthYear(composition.assessmentDate)}
-                    </TableCell>
-                    <TableCell sx={{ fontSize: '13px' }}>
-                      {formatNumber(composition.weightKg)} kg
-                    </TableCell>
-                    <TableCell sx={{ fontSize: '13px' }}>{formatNumber(total?.fatMassPct)}%</TableCell>
-                    <TableCell sx={{ fontSize: '13px' }}>{formatNumber(total?.fatMassKg)}</TableCell>
-                    <TableCell sx={{ fontSize: '13px' }}>{formatNumber(total?.leanMassPct)}%</TableCell>
-                    <TableCell sx={{ fontSize: '13px' }}>{formatNumber(total?.leanMassKg)}</TableCell>
-                    <TableCell sx={{ fontSize: '13px' }}>
-                      {formatNumber(total?.skeletalMuscleMassKg)}
-                    </TableCell>
-                    <TableCell align="right">
-                      <AppButton
-                        size="small"
-                        variant="text"
-                        onClick={() =>
-                          setDetailId((prev) => (prev === composition.id ? null : composition.id))
-                        }
-                      >
-                        {detailId === composition.id ? 'Ocultar' : 'Ver detalle'}
-                      </AppButton>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
-        </Box>
+                      {detailId === composition.id ? 'Ocultar' : 'Ver detalle'}
+                    </AppButton>
+                  </DataCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </DataTable>
       </SectionCard>
 
       {detail && (

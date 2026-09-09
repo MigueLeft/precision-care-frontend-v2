@@ -73,7 +73,7 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
   {
     slug: 'enfermedades',
     to: '/pacientes/$patientId/enfermedades',
-    label: 'Enfermedades / Dx',
+    label: 'Enfermedades',
     icon: CoronavirusOutlinedIcon,
   },
   {

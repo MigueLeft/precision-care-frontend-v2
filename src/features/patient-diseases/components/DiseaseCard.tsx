@@ -7,7 +7,10 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { DISEASE_STATUS_LABELS } from '@/features/consultations'
+import {
+  DISEASE_STATUS_LABELS,
+  diseaseStatusOptions,
+} from '@/features/consultations'
 import type { DiseaseStatus } from '@/features/consultations'
 import { formatShortDate } from '@/utils/format-date'
 import { formatDxDate } from '../utils'
@@ -20,9 +23,14 @@ interface DiseaseCardProps {
   disabled?: boolean
 }
 
-const STATUSES = Object.keys(DISEASE_STATUS_LABELS) as DiseaseStatus[]
-
 export function DiseaseCard({ disease, showSystem, onStatusChange, disabled }: DiseaseCardProps) {
+  // El set de estados depende de si la enfermedad es aguda o crónica; se incluye
+  // el estado actual aunque no esté en el set (p. ej. datos previos).
+  const statusOptions = diseaseStatusOptions(disease.isChronic)
+  const options = statusOptions.includes(disease.status)
+    ? statusOptions
+    : [disease.status, ...statusOptions]
+
   return (
     <Stack
       direction="row"
@@ -71,7 +79,7 @@ export function DiseaseCard({ disease, showSystem, onStatusChange, disabled }: D
           value={disease.status}
           onChange={(event) => onStatusChange(event.target.value as DiseaseStatus)}
         >
-          {STATUSES.map((status) => (
+          {options.map((status) => (
             <MenuItem key={status} value={status}>
               {DISEASE_STATUS_LABELS[status]}
             </MenuItem>

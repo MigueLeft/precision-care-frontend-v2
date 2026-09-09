@@ -8,12 +8,14 @@ import {
   fetchConsultationSymptomHistory,
   fetchConsultationRecorded,
   updateConsultation,
-  replaceConsultationSymptoms,
+  addConsultationSymptom,
+  captureConsultationSymptom,
+  removeConsultationSymptom,
   type UpdateConsultationPatch,
 } from '../services/consultations.service'
 import { consultationsKeys } from './consultations.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
-import type { ReplaceSymptomInput } from '../types'
+import type { AddSymptomInput, CaptureSymptomInput } from '../types'
 
 export function useConsultation(id: number | undefined) {
   return useQuery({
@@ -80,19 +82,48 @@ export function useUpdateConsultation(id: number) {
   })
 }
 
-export function useReplaceConsultationSymptoms(id: number) {
+// Invalidación compartida tras cualquier cambio de síntomas de la consulta.
+function useSymptomMutation<TArgs>(
+  id: number,
+  fn: (args: TArgs) => Promise<unknown>,
+  errorMessage: string,
+) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (symptoms: ReplaceSymptomInput[]) =>
-      replaceConsultationSymptoms(id, symptoms),
-    onSuccess: (symptoms) => {
-      queryClient.setQueryData(consultationsKeys.symptoms(id), symptoms)
+    mutationFn: fn,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: consultationsKeys.symptoms(id) })
       queryClient.invalidateQueries({
         queryKey: consultationsKeys.symptomHistory(id),
       })
     },
     onError: (error) => {
-      toast.error(getApiErrorMessage(error, 'Error al guardar los síntomas'))
+      toast.error(getApiErrorMessage(error, errorMessage))
     },
   })
+}
+
+export function useAddConsultationSymptom(id: number) {
+  return useSymptomMutation(
+    id,
+    (input: AddSymptomInput) => addConsultationSymptom(id, input),
+    'Error al añadir el síntoma',
+  )
+}
+
+export function useCaptureConsultationSymptom(id: number) {
+  return useSymptomMutation(
+    id,
+    ({ symptomId, input }: { symptomId: number; input: CaptureSymptomInput }) =>
+      captureConsultationSymptom(id, symptomId, input),
+    'Error al guardar el síntoma',
+  )
+}
+
+export function useRemoveConsultationSymptom(id: number) {
+  return useSymptomMutation(
+    id,
+    (symptomId: number) => removeConsultationSymptom(id, symptomId),
+    'Error al quitar el síntoma',
+  )
 }

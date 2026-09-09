@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import { Link, useRouterState } from '@tanstack/react-router'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import { useSession, useLogout } from '@/features/auth'
@@ -6,7 +6,12 @@ import { InitialsAvatar } from '@/components/InitialsAvatar'
 import { AppButton } from '@/components/AppButton'
 import { sidebarNavConfig } from './sidebarNavConfig'
 
-export function Sidebar() {
+interface SidebarProps {
+  // Modo compacto (solo iconos) para laptop dentro de consulta / expediente.
+  compact?: boolean
+}
+
+export function Sidebar({ compact = false }: SidebarProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const { user } = useSession()
   const { mutate: logout, isPending } = useLogout({
@@ -26,7 +31,7 @@ export function Sidebar() {
     <Box
       component="nav"
       sx={{
-        width: 260,
+        width: compact ? 72 : 260,
         flexShrink: 0,
         minHeight: '100vh',
         bgcolor: 'brand.dark',
@@ -34,9 +39,14 @@ export function Sidebar() {
         display: 'flex',
         flexDirection: 'column',
         py: 3,
+        transition: 'width 150ms ease',
       }}
     >
-      <Stack direction="row" spacing={1.5} sx={{ px: 3, mb: 4, alignItems: 'center' }}>
+      <Stack
+        direction="row"
+        spacing={1.5}
+        sx={{ px: compact ? 0 : 3, mb: 4, alignItems: 'center', justifyContent: compact ? 'center' : 'flex-start' }}
+      >
         <Box
           sx={{
             width: 36,
@@ -48,40 +58,46 @@ export function Sidebar() {
             justifyContent: 'center',
             fontWeight: 600,
             color: 'brand.dark',
+            flexShrink: 0,
           }}
         >
           PC
         </Box>
-        <Typography sx={{ fontWeight: 600, fontSize: '16px', color: '#ffffff' }}>
-          Precisión Care
-        </Typography>
+        {!compact && (
+          <Typography sx={{ fontWeight: 600, fontSize: '16px', color: '#ffffff' }}>
+            Precisión Care
+          </Typography>
+        )}
       </Stack>
 
-      <Stack spacing={3} sx={{ flex: 1, overflowY: 'auto' }}>
+      <Stack spacing={compact ? 1.5 : 3} sx={{ flex: 1, overflowY: 'auto' }}>
         {sidebarNavConfig.map((section) => (
-          <Box key={section.title} sx={{ px: 1.5 }}>
-            <Typography
-              sx={{
-                px: 1.5,
-                mb: 1,
-                fontSize: '11px',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                color: 'rgba(255,255,255,0.5)',
-              }}
-            >
-              {section.title}
-            </Typography>
+          <Box key={section.title} sx={{ px: compact ? 1 : 1.5 }}>
+            {!compact && (
+              <Typography
+                sx={{
+                  px: 1.5,
+                  mb: 1,
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  color: 'rgba(255,255,255,0.5)',
+                }}
+              >
+                {section.title}
+              </Typography>
+            )}
             <Stack spacing={0.5}>
               {section.items.map((item) => {
                 const isActive = !!item.to && pathname === item.to
                 const content = (
                   <Stack
                     direction="row"
-                    spacing={1.5}
+                    spacing={compact ? 0 : 1.5}
                     sx={{
                       alignItems: 'center',
-                      px: 1.5,
+                      justifyContent: compact ? 'center' : 'flex-start',
+                      px: compact ? 0 : 1.5,
                       py: 1,
                       borderRadius: '6px',
                       bgcolor: isActive ? 'primary.main' : 'transparent',
@@ -91,19 +107,29 @@ export function Sidebar() {
                     }}
                   >
                     <item.icon sx={{ fontSize: 20 }} />
-                    <Typography sx={{ fontSize: '14px', fontWeight: isActive ? 600 : 400 }}>
-                      {item.label}
-                    </Typography>
+                    {!compact && (
+                      <Typography sx={{ fontSize: '14px', fontWeight: isActive ? 600 : 400 }}>
+                        {item.label}
+                      </Typography>
+                    )}
                   </Stack>
                 )
 
+                const wrapped = compact ? (
+                  <Tooltip title={item.label} placement="right">
+                    <Box>{content}</Box>
+                  </Tooltip>
+                ) : (
+                  content
+                )
+
                 if (!item.to) {
-                  return <Box key={item.label}>{content}</Box>
+                  return <Box key={item.label}>{wrapped}</Box>
                 }
 
                 return (
                   <Link key={item.label} to={item.to} style={{ textDecoration: 'none' }}>
-                    {content}
+                    {wrapped}
                   </Link>
                 )
               })}
@@ -112,31 +138,40 @@ export function Sidebar() {
         ))}
       </Stack>
 
-      <Stack spacing={1.5} sx={{ px: 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-          <InitialsAvatar initials={initials} size={36} />
-          <Box sx={{ minWidth: 0 }}>
-            <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }} noWrap>
-              {user?.name ?? 'Usuario'}
-            </Typography>
-            <Typography sx={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }} noWrap>
-              {user?.email}
-            </Typography>
-          </Box>
-        </Stack>
+      <Stack
+        spacing={1.5}
+        sx={{ px: compact ? 1 : 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.1)', alignItems: compact ? 'center' : 'stretch' }}
+      >
+        {compact ? (
+          <InitialsAvatar initials={initials} size={32} />
+        ) : (
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+            <InitialsAvatar initials={initials} size={36} />
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }} noWrap>
+                {user?.name ?? 'Usuario'}
+              </Typography>
+              <Typography sx={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }} noWrap>
+                {user?.email}
+              </Typography>
+            </Box>
+          </Stack>
+        )}
         <AppButton
           size="small"
           variant="outlined"
           loading={isPending}
           onClick={() => logout()}
-          startIcon={<LogoutOutlinedIcon sx={{ fontSize: 16 }} />}
+          startIcon={compact ? undefined : <LogoutOutlinedIcon sx={{ fontSize: 16 }} />}
           sx={{
+            minWidth: compact ? 40 : undefined,
+            px: compact ? 1 : undefined,
             borderColor: 'rgba(255,255,255,0.3)',
             color: '#ffffff',
             '&:hover': { borderColor: '#ffffff', bgcolor: 'rgba(255,255,255,0.08)' },
           }}
         >
-          Cerrar sesión
+          {compact ? <LogoutOutlinedIcon sx={{ fontSize: 18 }} /> : 'Cerrar sesión'}
         </AppButton>
       </Stack>
     </Box>

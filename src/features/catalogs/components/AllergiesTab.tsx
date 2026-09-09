@@ -11,7 +11,7 @@ import { useToggleAllergySeverityActive } from '../hooks/useToggleAllergySeverit
 import { SimpleCatalogList } from './SimpleCatalogList'
 import { AllergyCatalogListTab } from './AllergyCatalogListTab'
 
-const SUB_TABS = ['Alergias', 'Tipos', 'Gravedades'] as const
+const SUB_TABS = ['Alergias', 'Tipos', 'Severidad'] as const
 
 export function AllergiesTab() {
   const [subTab, setSubTab] = useState(0)
@@ -52,7 +52,7 @@ export function AllergiesTab() {
       )}
       {subTab === 2 && (
         <SimpleCatalogList
-          label="Gravedades"
+          label="Severidad"
           items={severities}
           isCreating={createSeverity.isPending}
           isUpdating={updateSeverity.isPending}

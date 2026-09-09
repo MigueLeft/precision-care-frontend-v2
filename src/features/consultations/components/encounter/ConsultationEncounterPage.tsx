@@ -11,6 +11,7 @@ import { TreatmentSection } from './TreatmentSection'
 import { PhysicalExamSection } from '@/features/physical-exam'
 import { BodyCompositionSection } from '@/features/body-composition'
 import { PlaceholderSection } from './PlaceholderSection'
+import { ProblemsSection } from './ProblemsSection'
 import { AutosaveTextField } from './AutosaveTextField'
 
 interface ConsultationEncounterPageProps {
@@ -122,7 +123,7 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
 
           <GroupTitle>CIERRE CLÍNICO</GroupTitle>
           <Stack spacing={1.5}>
-            <PlaceholderSection index={1} title="Diagnósticos" />
+            <ProblemsSection consultation={consultation} readOnly={readOnly} />
             <PlaceholderSection index={2} title="Prescripciones" />
           </Stack>
         </Box>

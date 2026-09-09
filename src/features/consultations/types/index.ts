@@ -9,6 +9,12 @@ export type DiagnosisType =
   | 'definitive'
   | 'discarded'
 
+// Lista de problemas del Cierre Clínico (widget "Problemas").
+export interface ConsultationProblems {
+  actuales: string[]
+  previos: string[]
+}
+
 export interface Consultation {
   id: number
   appointmentId: number
@@ -21,6 +27,7 @@ export interface Consultation {
   diagnosticPlan: string | null
   treatmentPlan: string | null
   evolution: string | null
+  problems: ConsultationProblems | null
   status: ConsultationStatus
   visitType: VisitType
   // Adjuntado por GET /consultations/patient/:patientId
@@ -37,27 +44,78 @@ export interface ConsultationDiagnosis {
   notes: string | null
 }
 
+export type SymptomStatus =
+  | 'active'
+  | 'under_investigation'
+  | 'discarded'
+  | 'controlled'
+  | 'resolved'
+
 export interface ConsultationSymptom {
   id: number
+  consultationId: number | null
+  patientId: number
   symptomCatalogId: number
   name: string | null
-  bodySystemId: number | null
-  bodySystemName: string | null
+  symptomSeverityId: number | null
+  severityName: string | null
+  patientDiseaseId: number | null
+  diseaseName: string | null
+  status: SymptomStatus
+  // Fecha de inicio (texto libre); por defecto la de la consulta.
+  onsetDate: string | null
   notes: string | null
+  createdAt: string
+  // true si la versión vigente se capturó en esta consulta.
+  capturedHere: boolean
 }
 
-export interface ReplaceSymptomInput {
-  name: string
+export interface AddSymptomInput {
   symptomCatalogId?: number
-  bodySystemId?: number | null
+  name?: string
+  symptomSeverityId?: number
+  patientDiseaseId?: number
+  status?: SymptomStatus
+  onsetDate?: string
   notes?: string
 }
 
-export interface SymptomHistoryEntry {
-  consultationId: number
-  date: string
-  specialistName: string | null
-  symptoms: { name: string | null; bodySystemName: string | null }[]
+export interface CaptureSymptomInput {
+  symptomSeverityId?: number | null
+  patientDiseaseId?: number | null
+  status?: SymptomStatus
+  onsetDate?: string
+  notes?: string
+}
+
+export interface SymptomHistoryItem {
+  name: string | null
+  severityName: string | null
+  diseaseName: string | null
+  status: SymptomStatus
+  onsetDate: string | null
+}
+
+// Expediente: una entrada por síntoma con su historial de versiones.
+export interface PatientSymptom {
+  id: number
+  symptomCatalogId: number
+  name: string | null
+  severityName: string | null
+  diseaseName: string | null
+  status: SymptomStatus
+  createdAt: string
+  onsetDate: string | null
+  versions: {
+    id: number
+    consultationId: number | null
+    severityName: string | null
+    diseaseName: string | null
+    status: SymptomStatus
+    onsetDate: string | null
+    notes: string | null
+    createdAt: string
+  }[]
 }
 
 // ─── Alergias en la consulta ────────────────────────────────────────────────
@@ -94,6 +152,7 @@ export type DiseaseStatus =
   | 'remission'
   | 'resolved'
   | 'discarded'
+  | 'to_diagnose'
 
 export interface ConsultationDisease {
   id: number
@@ -115,16 +174,15 @@ export interface AddDiseaseInput {
   diseaseCatalogId?: number
   name?: string
   isChronic?: boolean
-  bodySystemId: number
   status?: DiseaseStatus
   dxDate?: string
   notes?: string
 }
 
 export interface UpdateDiseaseInput {
-  bodySystemId?: number
   status?: DiseaseStatus
   dxDate?: string
+  notes?: string
 }
 
 // Bloque de histórico agrupado por la consulta en que se registró.
@@ -190,6 +248,8 @@ export interface CaptureMedicationInput {
   adherenceNotes?: string
   ramStatus?: MedicationRamStatus
   ramNotes?: string
+  // Reemplazo por otro fármaco del catálogo.
+  replacementMedicationId?: number
 }
 
 export interface MedicationHistoryItem {
@@ -201,4 +261,5 @@ export interface MedicationHistoryItem {
   ramStatus: MedicationRamStatus | null
   adherenceNotes: string | null
   ramNotes: string | null
+  discontinuationReason: string | null
 }

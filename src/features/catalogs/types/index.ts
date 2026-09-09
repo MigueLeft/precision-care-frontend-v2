@@ -146,6 +146,12 @@ export interface AllergySeverity {
   active: boolean
 }
 
+export interface SymptomSeverity {
+  id: number
+  name: string
+  active: boolean
+}
+
 export interface AllergyCatalog {
   id: number
   name: string
@@ -164,6 +170,7 @@ export interface Disease {
   name: string
   code: string | null
   isChronic: boolean
+  bodySystemId: number | null
   active: boolean
 }
 
@@ -171,5 +178,6 @@ export interface CreateDiseasePayload {
   name: string
   code?: string
   isChronic: boolean
+  bodySystemId?: number | null
 }
 export type UpdateDiseasePayload = Partial<CreateDiseasePayload>

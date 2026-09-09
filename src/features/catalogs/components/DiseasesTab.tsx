@@ -29,7 +29,12 @@ export function DiseasesTab() {
   const initialValues: DiseaseFormValues =
     isCreateOpen || !editing
       ? diseaseFormDefaultValues
-      : { name: editing.name, code: editing.code ?? '', isChronic: editing.isChronic }
+      : {
+          name: editing.name,
+          code: editing.code ?? '',
+          isChronic: editing.isChronic,
+          bodySystemId: editing.bodySystemId,
+        }
 
   function closeForm() {
     setIsCreateOpen(false)
@@ -41,6 +46,7 @@ export function DiseasesTab() {
       name: values.name,
       code: values.code?.trim() || undefined,
       isChronic: values.isChronic,
+      bodySystemId: values.bodySystemId,
     }
     if (isCreateOpen) {
       createMutation.mutate(payload)

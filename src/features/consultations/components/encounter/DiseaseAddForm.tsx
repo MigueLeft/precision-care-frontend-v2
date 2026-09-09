@@ -13,9 +13,12 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
-import { useBodySystems, useDiseases } from '@/features/catalogs'
+import { useDiseases } from '@/features/catalogs'
 import type { Disease } from '@/features/catalogs'
-import { DISEASE_STATUS_LABELS } from '../../utils/consultation-format'
+import {
+  DISEASE_STATUS_LABELS,
+  diseaseStatusOptions,
+} from '../../utils/consultation-format'
 import type { AddDiseaseInput, DiseaseStatus } from '../../types'
 
 interface DiseaseAddFormProps {
@@ -24,17 +27,14 @@ interface DiseaseAddFormProps {
   usedCatalogIds: Set<number>
 }
 
-const STATUSES = Object.keys(DISEASE_STATUS_LABELS) as DiseaseStatus[]
-
 export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFormProps) {
   const { data: catalog = [] } = useDiseases()
-  const { data: bodySystems = [] } = useBodySystems()
 
   const [manual, setManual] = useState(false)
   const [onlyChronic, setOnlyChronic] = useState(false)
   const [selected, setSelected] = useState<Disease | null>(null)
   const [manualName, setManualName] = useState('')
-  const [bodySystemId, setBodySystemId] = useState<number | ''>('')
+  const [manualChronic, setManualChronic] = useState(false)
   const [status, setStatus] = useState<DiseaseStatus>('active')
   const [dxDate, setDxDate] = useState('')
 
@@ -45,10 +45,14 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
       (!onlyChronic || disease.isChronic),
   )
 
+  // El set de estados depende de si la enfermedad elegida es crónica.
+  const isChronic = manual ? manualChronic : (selected?.isChronic ?? false)
+  const statusOptions = diseaseStatusOptions(isChronic)
+
   function reset() {
     setSelected(null)
     setManualName('')
-    setBodySystemId('')
+    setManualChronic(false)
     setStatus('active')
     setDxDate('')
   }
@@ -62,15 +66,11 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
       toast.error('Elige una enfermedad del catálogo o marca "escribir manualmente".')
       return
     }
-    if (!bodySystemId) {
-      toast.error('Selecciona el aparato o sistema.')
-      return
-    }
     onAdd({
       diseaseCatalogId: manual ? undefined : selected!.id,
       name: manual ? manualName.trim() : undefined,
-      bodySystemId: Number(bodySystemId),
-      status,
+      isChronic: manual ? manualChronic : undefined,
+      status: statusOptions.includes(status) ? status : statusOptions[0],
       dxDate: dxDate.trim() || undefined,
     })
     reset()
@@ -108,13 +108,25 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
         {manual ? (
-          <TextField
-            size="small"
-            sx={{ flex: 1, minWidth: 220 }}
-            placeholder="Enfermedad o diagnóstico…"
-            value={manualName}
-            onChange={(event) => setManualName(event.target.value)}
-          />
+          <>
+            <TextField
+              size="small"
+              sx={{ flex: 1, minWidth: 220 }}
+              placeholder="Enfermedad o diagnóstico…"
+              value={manualName}
+              onChange={(event) => setManualName(event.target.value)}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={manualChronic}
+                  onChange={(event) => setManualChronic(event.target.checked)}
+                />
+              }
+              label="Crónica"
+            />
+          </>
         ) : (
           <Autocomplete
             sx={{ flex: 1, minWidth: 220 }}
@@ -128,33 +140,15 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
           />
         )}
 
-        <FormControl size="small" sx={{ minWidth: 190 }}>
-          <InputLabel id="disease-system">Aparato / sistema</InputLabel>
-          <Select<number | ''>
-            labelId="disease-system"
-            label="Aparato / sistema"
-            value={bodySystemId}
-            onChange={(event) =>
-              setBodySystemId(event.target.value === '' ? '' : Number(event.target.value))
-            }
-          >
-            {bodySystems.map((system) => (
-              <MenuItem key={system.id} value={system.id}>
-                {system.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl size="small" sx={{ minWidth: 130 }}>
+        <FormControl size="small" sx={{ minWidth: 150 }}>
           <InputLabel id="disease-status">Estado</InputLabel>
           <Select
             labelId="disease-status"
             label="Estado"
-            value={status}
+            value={statusOptions.includes(status) ? status : statusOptions[0]}
             onChange={(event) => setStatus(event.target.value as DiseaseStatus)}
           >
-            {STATUSES.map((value) => (
+            {statusOptions.map((value) => (
               <MenuItem key={value} value={value}>
                 {DISEASE_STATUS_LABELS[value]}
               </MenuItem>
@@ -164,10 +158,11 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
 
         <TextField
           size="small"
-          placeholder="Fecha dx"
+          label="Fecha dx"
+          placeholder="Vacío = fecha de consulta"
           value={dxDate}
           onChange={(event) => setDxDate(event.target.value)}
-          sx={{ width: 120 }}
+          sx={{ width: 160 }}
         />
 
         <AppButton

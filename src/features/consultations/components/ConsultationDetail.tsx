@@ -12,6 +12,7 @@ import {
   DISEASE_STATUS_COLORS,
   DISEASE_STATUS_LABELS,
   RAM_LABELS,
+  SYMPTOM_STATUS_LABELS,
 } from '../utils/consultation-format'
 import type { Consultation } from '../types'
 
@@ -61,11 +62,14 @@ export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
               {symptoms.map((symptom) => (
                 <Chip
                   key={symptom.id}
-                  label={
-                    symptom.bodySystemName
-                      ? `${symptom.name ?? '—'} · ${symptom.bodySystemName}`
-                      : (symptom.name ?? '—')
-                  }
+                  label={[
+                    symptom.name ?? '—',
+                    symptom.severityName,
+                    SYMPTOM_STATUS_LABELS[symptom.status],
+                    symptom.diseaseName,
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
                   size="small"
                   variant="outlined"
                 />
@@ -74,7 +78,7 @@ export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
           )}
         </Block>
 
-        <Block title="ENFERMEDADES / DIAGNÓSTICOS">
+        <Block title="ENFERMEDADES">
           {diseases.length === 0 ? (
             <Empty />
           ) : (
@@ -120,6 +124,9 @@ export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
                     </Box>
                     {medication.dose ? ` ${medication.dose}` : ''}
                     {medication.frequency ? ` · ${medication.frequency}` : ''}
+                    {medication.discontinuationReason
+                      ? ` — ${medication.discontinuationReason}`
+                      : ''}
                   </Typography>
                   {(medication.adherence ||
                     (medication.ramStatus && medication.ramStatus !== 'none')) && (

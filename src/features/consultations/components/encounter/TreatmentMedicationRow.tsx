@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import {
+  Autocomplete,
   Box,
   Chip,
   Stack,
@@ -10,6 +11,8 @@ import {
 } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { AppButton } from '@/components/AppButton'
+import { useMedications } from '@/features/catalogs'
+import type { Medication } from '@/features/catalogs'
 import {
   ADHERENCE_COLORS,
   ADHERENCE_LABELS,
@@ -33,7 +36,13 @@ interface TreatmentMedicationRowProps {
     adherenceNotes?: string
     ramStatus?: MedicationRamStatus
     ramNotes?: string
+    replacementMedicationId?: number
   }) => void
+}
+
+function catalogLabel(m: Medication) {
+  const base = m.brandName || m.genericName
+  return m.concentration ? `${base} ${m.concentration}` : base
 }
 
 const ADHERENCES: MedicationAdherence[] = ['good', 'partial', 'poor']
@@ -56,10 +65,13 @@ export function TreatmentMedicationRow({
     (medication.ramStatus != null && medication.ramStatus !== 'none')
 
   // Si ya hay captura se muestra el resumen; "Editar" abre los controles.
+  const { data: medicationCatalog = [] } = useMedications()
+
   const [capturing, setCapturing] = useState(!hasCapture && !suspended)
   const [editingMed, setEditingMed] = useState(false)
   const [dose, setDose] = useState(medication.dose ?? '')
   const [frequency, setFrequency] = useState(medication.frequency ?? '')
+  const [replacement, setReplacement] = useState<Medication | null>(null)
   const [adherence, setAdherence] = useState<MedicationAdherence | null>(
     medication.adherence ?? null,
   )
@@ -71,8 +83,11 @@ export function TreatmentMedicationRow({
 
   const doseChanged = editingMed && dose.trim() !== (medication.dose ?? '')
   const freqChanged = editingMed && frequency.trim() !== (medication.frequency ?? '')
+  const medChanged =
+    editingMed && replacement != null && replacement.id !== medication.medicationId
   const canSave =
-    !readOnly && (adherence !== null || ramStatus !== null || doseChanged || freqChanged)
+    !readOnly &&
+    (adherence !== null || ramStatus !== null || doseChanged || freqChanged || medChanged)
 
   function save() {
     onSave({
@@ -82,6 +97,7 @@ export function TreatmentMedicationRow({
       adherenceNotes: adherence ? adherenceNotes.trim() || undefined : undefined,
       ramStatus: ramStatus ?? undefined,
       ramNotes: ramStatus && ramStatus !== 'none' ? ramNotes.trim() || undefined : undefined,
+      replacementMedicationId: medChanged ? replacement!.id : undefined,
     })
   }
 
@@ -101,13 +117,26 @@ export function TreatmentMedicationRow({
             {medname(medication)}
           </Typography>
           {editingMed ? (
-            <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
-              <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
-              <TextField
+            <Stack spacing={1} sx={{ mt: 0.5 }}>
+              <Stack direction="row" spacing={1}>
+                <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
+                <TextField
+                  size="small"
+                  label="Frecuencia"
+                  value={frequency}
+                  onChange={(e) => setFrequency(e.target.value)}
+                />
+              </Stack>
+              <Autocomplete
                 size="small"
-                label="Frecuencia"
-                value={frequency}
-                onChange={(e) => setFrequency(e.target.value)}
+                options={medicationCatalog.filter((m) => m.active)}
+                getOptionLabel={catalogLabel}
+                value={replacement}
+                onChange={(_e, value) => setReplacement(value)}
+                sx={{ minWidth: 260 }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Reemplazar por otro medicamento (opcional)" />
+                )}
               />
             </Stack>
           ) : (
@@ -123,7 +152,7 @@ export function TreatmentMedicationRow({
             startIcon={<EditOutlinedIcon sx={{ fontSize: 15 }} />}
             onClick={() => setEditingMed((prev) => !prev)}
           >
-            {editingMed ? 'Cancelar' : 'Editar dosis'}
+            {editingMed ? 'Cancelar' : 'Editar / reemplazar'}
           </AppButton>
         )}
       </Stack>

@@ -1,10 +1,13 @@
 import { api } from '@/utils/api'
 import type {
   Consultation,
+  ConsultationProblems,
   ConsultationDiagnosis,
   ConsultationSymptom,
-  ReplaceSymptomInput,
-  SymptomHistoryEntry,
+  AddSymptomInput,
+  CaptureSymptomInput,
+  SymptomHistoryItem,
+  PatientSymptom,
   ConsultationAllergy,
   AddAllergyInput,
   ConsultationDisease,
@@ -55,7 +58,7 @@ export type UpdateConsultationPatch = Partial<
     | 'status'
     | 'visitType'
   >
->
+> & { problems?: ConsultationProblems }
 
 export async function updateConsultation(
   id: number,
@@ -86,31 +89,50 @@ export async function fetchConsultationSymptoms(
   return data.symptoms
 }
 
-export async function replaceConsultationSymptoms(
+export async function addConsultationSymptom(
   id: number,
-  symptoms: ReplaceSymptomInput[],
-): Promise<ConsultationSymptom[]> {
-  const { data } = await api.put<{ symptoms: ConsultationSymptom[] }>(
+  input: AddSymptomInput,
+): Promise<ConsultationSymptom> {
+  const { data } = await api.post<{ symptom: ConsultationSymptom }>(
     `/consultations/${id}/symptoms`,
-    { symptoms },
+    input,
   )
-  return data.symptoms
+  return data.symptom
+}
+
+export async function captureConsultationSymptom(
+  id: number,
+  symptomId: number,
+  input: CaptureSymptomInput,
+): Promise<ConsultationSymptom> {
+  const { data } = await api.patch<{ symptom: ConsultationSymptom }>(
+    `/consultations/${id}/symptoms/${symptomId}`,
+    input,
+  )
+  return data.symptom
+}
+
+export async function removeConsultationSymptom(
+  id: number,
+  symptomId: number,
+): Promise<void> {
+  await api.delete(`/consultations/${id}/symptoms/${symptomId}`)
 }
 
 export async function fetchConsultationSymptomHistory(
   id: number,
-): Promise<SymptomHistoryEntry[]> {
-  const { data } = await api.get<{ history: SymptomHistoryEntry[] }>(
-    `/consultations/${id}/symptom-history`,
-  )
+): Promise<ConsultationHistoryEntry<SymptomHistoryItem>[]> {
+  const { data } = await api.get<{
+    history: ConsultationHistoryEntry<SymptomHistoryItem>[]
+  }>(`/consultations/${id}/symptom-history`)
   return data.history
 }
 
-// Todos los síntomas del paciente agrupados por consulta (expediente).
+// Todos los síntomas del paciente (una entrada por síntoma con versiones).
 export async function fetchPatientSymptoms(
   patientId: number,
-): Promise<SymptomHistoryEntry[]> {
-  const { data } = await api.get<{ symptoms: SymptomHistoryEntry[] }>(
+): Promise<PatientSymptom[]> {
+  const { data } = await api.get<{ symptoms: PatientSymptom[] }>(
     `/consultations/patient/${patientId}/symptoms`,
   )
   return data.symptoms

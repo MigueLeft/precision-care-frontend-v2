@@ -55,7 +55,7 @@ export function AllergyAddForm({ onAdd, isAdding, usedCatalogIds }: AllergyAddFo
 
   function submit() {
     if (!severityId) {
-      toast.error('Selecciona la gravedad de la alergia.')
+      toast.error('Selecciona la severidad de la alergia.')
       return
     }
     if (manual && (!manualName.trim() || !typeId)) {
@@ -127,10 +127,10 @@ export function AllergyAddForm({ onAdd, isAdding, usedCatalogIds }: AllergyAddFo
         )}
 
         <FormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel id="allergy-severity">Gravedad</InputLabel>
+          <InputLabel id="allergy-severity">Severidad</InputLabel>
           <Select<number | ''>
             labelId="allergy-severity"
-            label="Gravedad"
+            label="Severidad"
             value={severityId}
             onChange={(event) =>
               setSeverityId(event.target.value === '' ? '' : Number(event.target.value))

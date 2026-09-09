@@ -12,9 +12,7 @@ export interface BodyCompositionSegment {
   segment: BodySegment
   fatMassPct: string | null
   fatMassKg: string | null
-  leanMassPct: string | null
   leanMassKg: string | null
-  skeletalMuscleMassPct: string | null
   skeletalMuscleMassKg: string | null
   predictedMuscleMassKg: string | null
 }
@@ -42,9 +40,7 @@ export interface SegmentInput {
   segment: BodySegment
   fatMassPct?: number
   fatMassKg?: number
-  leanMassPct?: number
   leanMassKg?: number
-  skeletalMuscleMassPct?: number
   skeletalMuscleMassKg?: number
   predictedMuscleMassKg?: number
 }

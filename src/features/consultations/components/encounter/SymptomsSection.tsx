@@ -1,26 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
-import {
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  Typography,
-} from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { Stack, Typography } from '@mui/material'
 import { toast } from 'sonner'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
-import { useBodySystems, useSymptoms } from '@/features/catalogs'
-import { useDebouncedCallback } from '@/hooks/useDebouncedCallback'
+import { useSymptoms, useSymptomSeverities } from '@/features/catalogs'
 import { formatShortDate } from '@/utils/format-date'
 import { isLettersOnly } from '@/utils/text-validation'
 import {
   useConsultationSymptoms,
-  useReplaceConsultationSymptoms,
+  useAddConsultationSymptom,
+  useCaptureConsultationSymptom,
+  useRemoveConsultationSymptom,
 } from '../../hooks/useConsultationDetail'
+import { useConsultationDiseases } from '../../hooks/useConsultationDiseases'
 import { SymptomHistory } from './SymptomHistory'
+import { SymptomRow } from './SymptomRow'
+import type { CaptureSymptomInput } from '../../types'
 
 interface SymptomsSectionProps {
   index: number
@@ -29,16 +23,6 @@ interface SymptomsSectionProps {
   readOnly: boolean
 }
 
-interface SymptomRow {
-  key: string
-  name: string
-  symptomCatalogId?: number
-  bodySystemId: number | null
-}
-
-let rowSeq = 0
-const nextKey = () => `row-${rowSeq++}`
-
 export function SymptomsSection({
   index,
   consultationId,
@@ -46,122 +30,69 @@ export function SymptomsSection({
   readOnly,
 }: SymptomsSectionProps) {
   const { data: symptoms = [] } = useConsultationSymptoms(consultationId)
-  const { data: bodySystems = [] } = useBodySystems()
+  const { data: severities = [] } = useSymptomSeverities()
+  const { data: diseases = [] } = useConsultationDiseases(consultationId)
   const { data: catalog = [] } = useSymptoms()
-  const replaceMutation = useReplaceConsultationSymptoms(consultationId)
 
-  const [rows, setRows] = useState<SymptomRow[]>([])
-  const dirtyRef = useRef(false)
+  const addMutation = useAddConsultationSymptom(consultationId)
+  const captureMutation = useCaptureConsultationSymptom(consultationId)
+  const removeMutation = useRemoveConsultationSymptom(consultationId)
 
-  useEffect(() => {
-    if (dirtyRef.current) return
-    setRows(
-      symptoms.map((symptom) => ({
-        key: nextKey(),
-        name: symptom.name ?? '',
-        symptomCatalogId: symptom.symptomCatalogId,
-        bodySystemId: symptom.bodySystemId,
-      })),
-    )
-  }, [symptoms])
-
-  const save = useDebouncedCallback((next: SymptomRow[]) => {
-    dirtyRef.current = false
-    replaceMutation.mutate(
-      next
-        .filter((row) => row.name.trim())
-        .map((row) => ({
-          name: row.name.trim(),
-          symptomCatalogId: row.symptomCatalogId,
-          bodySystemId: row.bodySystemId,
-        })),
-    )
-  }, 900)
-
-  function commit(next: SymptomRow[]) {
-    dirtyRef.current = true
-    setRows(next)
-    save(next)
-  }
+  const currentNames = new Set(
+    symptoms.map((symptom) => (symptom.name ?? '').toLowerCase()),
+  )
+  const availableOptions = catalog.filter(
+    (option) => !currentNames.has(option.name.toLowerCase()),
+  )
 
   function addSymptom(name: string, catalogId?: number) {
     const clean = name.trim()
     if (!clean) return
-    if (!isLettersOnly(clean)) {
+    if (!catalogId && !isLettersOnly(clean)) {
       toast.error(
         'El síntoma solo puede contener letras, sin números ni caracteres especiales.',
       )
       return
     }
-    if (rows.some((row) => row.name.toLowerCase() === clean.toLowerCase())) return
-    commit([
-      ...rows,
-      { key: nextKey(), name: clean, symptomCatalogId: catalogId, bodySystemId: null },
-    ])
+    if (currentNames.has(clean.toLowerCase())) return
+    addMutation.mutate({
+      symptomCatalogId: catalogId,
+      name: catalogId ? undefined : clean,
+      status: 'active',
+    })
   }
 
-  const currentNames = new Set(rows.map((row) => row.name.toLowerCase()))
-  // Los síntomas ya capturados en esta consulta no vuelven a ofrecerse en la búsqueda.
-  const availableOptions = catalog.filter(
-    (option) => !currentNames.has(option.name.toLowerCase()),
-  )
+  function capture(symptomId: number, input: CaptureSymptomInput) {
+    captureMutation.mutate({ symptomId, input })
+  }
 
   return (
     <CollapsibleSection
       title={`${index}. Síntomas`}
       headerMeta={
         <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-          {rows.length} en esta consulta
+          {symptoms.length} en seguimiento
         </Typography>
       }
       defaultExpanded
     >
-      <SymptomHistory consultationId={consultationId} currentNames={currentNames} />
+      <SymptomHistory consultationId={consultationId} />
 
       <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'primary.main', mb: 1 }}>
         CAPTURA DE ESTA CONSULTA · {formatShortDate(consultationDate)}
       </Typography>
 
-      <Stack spacing={1}>
-        {rows.map((row, rowIndex) => (
-          <Stack key={row.key} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography sx={{ fontSize: '14px', fontWeight: 600, flex: 1 }}>
-              {row.name}
-            </Typography>
-            <FormControl size="small" sx={{ minWidth: 200 }} disabled={readOnly}>
-              <InputLabel id={`bs-${row.key}`}>Aparato / sistema</InputLabel>
-              <Select<number | ''>
-                labelId={`bs-${row.key}`}
-                label="Aparato / sistema"
-                value={row.bodySystemId ?? ''}
-                onChange={(event) => {
-                  const raw = event.target.value
-                  const nextRows = [...rows]
-                  nextRows[rowIndex] = {
-                    ...row,
-                    bodySystemId: raw === '' ? null : Number(raw),
-                  }
-                  commit(nextRows)
-                }}
-              >
-                <MenuItem value="">Sin asignar</MenuItem>
-                {bodySystems.map((system) => (
-                  <MenuItem key={system.id} value={system.id}>
-                    {system.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {!readOnly && (
-              <IconButton
-                size="small"
-                aria-label="Quitar síntoma"
-                onClick={() => commit(rows.filter((_, i) => i !== rowIndex))}
-              >
-                <CloseIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-            )}
-          </Stack>
+      <Stack spacing={1.25}>
+        {symptoms.map((symptom) => (
+          <SymptomRow
+            key={symptom.symptomCatalogId}
+            symptom={symptom}
+            severities={severities}
+            diseases={diseases}
+            readOnly={readOnly}
+            onCapture={(input) => capture(symptom.id, input)}
+            onRemove={() => removeMutation.mutate(symptom.id)}
+          />
         ))}
       </Stack>
 
@@ -176,8 +107,9 @@ export function SymptomsSection({
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
-        Síntomas del catálogo configurable. Si no existe, marca la casilla para escribirlo (se agrega
-        al catálogo sin duplicar). El aparato/sistema que elijas queda asociado solo a esta consulta.
+        Los síntomas no resueltos de la consulta anterior se traen automáticamente para revisar su
+        severidad y estado. Un síntoma marcado como "Resuelto" no aparece en la próxima consulta pero
+        queda en el histórico.
       </Typography>
     </CollapsibleSection>
   )

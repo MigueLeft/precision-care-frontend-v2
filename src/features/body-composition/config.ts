@@ -51,7 +51,6 @@ export const SEGMENT_PARAMS: SegmentParam[] = [
   { key: 'fatMassKg', label: 'Masa grasa', unit: 'kg' },
   { key: 'leanMassKg', label: 'Masa magra', unit: 'kg' },
   { key: 'predictedMuscleMassKg', label: 'Masa músculo prevista', unit: 'kg' },
-  { key: 'skeletalMuscleMassPct', label: 'Masa músculo esquelética', unit: '%' },
   {
     key: 'skeletalMuscleMassKg',
     label: 'Masa músculo esquelética',
@@ -60,18 +59,21 @@ export const SEGMENT_PARAMS: SegmentParam[] = [
   },
 ]
 
-const round = (n: number, d = 2) => Number(n.toFixed(d))
+import { truncateTo } from '@/utils/parse-numeric'
+
+// Trunca (no redondea) a `d` decimales, igual que el formateo de la UI.
+const trunc = (n: number, d = 1) => truncateTo(n, d)
 
 // Masa músculo esquelética (kg) = 0.566 * masa magra (kg) del segmento.
 export function segmentSkeletalKg(leanKg: number | undefined): number | undefined {
-  return leanKg !== undefined ? round(0.566 * leanKg) : undefined
+  return leanKg !== undefined ? trunc(0.566 * leanKg) : undefined
 }
 
 export function computeBmi(
   weightKg: number | undefined,
   heightCm: number | undefined,
 ): number | undefined {
-  return weightKg && heightCm ? round(weightKg / (heightCm / 100) ** 2, 1) : undefined
+  return weightKg && heightCm ? trunc(weightKg / (heightCm / 100) ** 2) : undefined
 }
 
 // Grasa a perder = masa grasa total (kg) − masa grasa ideal (kg).
@@ -80,6 +82,6 @@ export function fatToLose(
   idealFatKg: number | undefined,
 ): number | undefined {
   return totalFatKg !== undefined && idealFatKg !== undefined
-    ? round(totalFatKg - idealFatKg, 1)
+    ? trunc(totalFatKg - idealFatKg)
     : undefined
 }

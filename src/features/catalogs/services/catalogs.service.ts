@@ -16,6 +16,7 @@ import type {
   MedicalSpecialty,
   AllergyType,
   AllergySeverity,
+  SymptomSeverity,
   AllergyCatalog,
   CreateAllergyCatalogPayload,
   UpdateAllergyCatalogPayload,
@@ -355,7 +356,7 @@ export async function toggleAllergyTypeActive(id: number): Promise<AllergyType> 
   return data.allergyType
 }
 
-// ─── Gravedades de alergia ──────────────────────────────────────────────────
+// ─── Severidad de alergia ───────────────────────────────────────────────────
 
 export async function fetchAllergySeverities(): Promise<AllergySeverity[]> {
   const { data } = await api.get<{ allergySeverities: AllergySeverity[] }>(
@@ -385,6 +386,38 @@ export async function toggleAllergySeverityActive(id: number): Promise<AllergySe
     `/catalogs/allergy-severities/${id}/toggle-active`,
   )
   return data.allergySeverity
+}
+
+// ─── Severidad de síntomas ──────────────────────────────────────────────────
+
+export async function fetchSymptomSeverities(): Promise<SymptomSeverity[]> {
+  const { data } = await api.get<{ symptomSeverities: SymptomSeverity[] }>(
+    '/catalogs/symptom-severities',
+  )
+  return data.symptomSeverities
+}
+
+export async function createSymptomSeverity(name: string): Promise<SymptomSeverity> {
+  const { data } = await api.post<{ symptomSeverity: SymptomSeverity }>(
+    '/catalogs/symptom-severities',
+    { name },
+  )
+  return data.symptomSeverity
+}
+
+export async function updateSymptomSeverity(id: number, name: string): Promise<SymptomSeverity> {
+  const { data } = await api.patch<{ symptomSeverity: SymptomSeverity }>(
+    `/catalogs/symptom-severities/${id}`,
+    { name },
+  )
+  return data.symptomSeverity
+}
+
+export async function toggleSymptomSeverityActive(id: number): Promise<SymptomSeverity> {
+  const { data } = await api.patch<{ symptomSeverity: SymptomSeverity }>(
+    `/catalogs/symptom-severities/${id}/toggle-active`,
+  )
+  return data.symptomSeverity
 }
 
 // ─── Alergias (catálogo) ────────────────────────────────────────────────────

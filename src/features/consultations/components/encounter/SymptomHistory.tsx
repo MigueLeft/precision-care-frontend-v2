@@ -1,82 +1,64 @@
-import { useState } from 'react'
-import { Box, Chip, Stack, Typography } from '@mui/material'
-import { formatShortDate } from '@/utils/format-date'
+import { Chip, Stack, Typography } from '@mui/material'
+import { formatFreeDate } from '@/utils/format-date'
+import {
+  SYMPTOM_STATUS_COLORS,
+  SYMPTOM_STATUS_LABELS,
+} from '../../utils/consultation-format'
 import { useConsultationSymptomHistory } from '../../hooks/useConsultationDetail'
+import { ConsultationHistoryTable } from './ConsultationHistoryTable'
 
 interface SymptomHistoryProps {
   consultationId: number
-  /** Nombres (lowercase) capturados en esta consulta, para marcar seguimiento. */
-  currentNames: Set<string>
 }
 
-export function SymptomHistory({ consultationId, currentNames }: SymptomHistoryProps) {
+export function SymptomHistory({ consultationId }: SymptomHistoryProps) {
   const { data: history = [] } = useConsultationSymptomHistory(consultationId)
-  const [expanded, setExpanded] = useState(true)
-
-  if (history.length === 0) return null
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography sx={{ fontSize: '13px', fontWeight: 700, color: 'text.secondary' }}>
-          Histórico · {history.length}{' '}
-          {history.length === 1 ? 'consulta anterior' : 'consultas anteriores'}
-        </Typography>
-        <Typography
-          onClick={() => setExpanded((prev) => !prev)}
-          sx={{ fontSize: '12px', color: 'primary.main', fontWeight: 600, cursor: 'pointer' }}
-        >
-          {expanded ? 'Ocultar' : 'Mostrar'}
-        </Typography>
-      </Stack>
-
-      {expanded && (
-        <Stack spacing={1} sx={{ mt: 1 }}>
-          {history.map((entry) => (
-            <Box key={entry.consultationId}>
-              <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                {formatShortDate(entry.date)}
-                {entry.specialistName ? ` · ${entry.specialistName}` : ''}
-              </Typography>
-              <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap', mt: 0.5 }}>
-                {entry.symptoms.map((symptom, index) => {
-                  const persisting =
-                    !!symptom.name &&
-                    currentNames.has(symptom.name.toLowerCase())
-                  return (
-                    <Chip
-                      key={`${entry.consultationId}-${index}`}
-                      size="small"
-                      variant="outlined"
-                      label={
-                        <>
-                          <Box
-                            component="span"
-                            sx={{ fontWeight: persisting ? 700 : 400 }}
-                          >
-                            {symptom.name ?? '—'}
-                          </Box>
-                          {symptom.bodySystemName ? (
-                            <Box component="span" sx={{ color: 'text.secondary' }}>
-                              {' '}
-                              · {symptom.bodySystemName}
-                            </Box>
-                          ) : null}
-                        </>
-                      }
-                      sx={{ opacity: persisting ? 1 : 0.6 }}
-                    />
-                  )
-                })}
+    <ConsultationHistoryTable
+      defaultExpanded
+      entries={history.map((entry) => ({
+        consultationId: entry.consultationId,
+        date: entry.date,
+        specialistName: entry.specialistName,
+        content: (
+          <Stack spacing={0.5}>
+            {entry.items.map((item, index) => (
+              <Stack
+                key={`${entry.consultationId}-${index}`}
+                direction="row"
+                spacing={1}
+                sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+              >
+                <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>
+                  {item.name ?? '—'}
+                </Typography>
+                {item.severityName && (
+                  <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                    {item.severityName}
+                  </Typography>
+                )}
+                {item.diseaseName && (
+                  <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                    · {item.diseaseName}
+                  </Typography>
+                )}
+                {item.onsetDate && (
+                  <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                    · inicio {formatFreeDate(item.onsetDate)}
+                  </Typography>
+                )}
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  color={SYMPTOM_STATUS_COLORS[item.status]}
+                  label={SYMPTOM_STATUS_LABELS[item.status]}
+                />
               </Stack>
-            </Box>
-          ))}
-          <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic' }}>
-            Los síntomas que persisten de una o más consultas se marcan para seguimiento. Cada
-            síntoma conserva el aparato/sistema con el que fue guardado.
-          </Typography>
-        </Stack>
-      )}
-    </Box>
+            ))}
+          </Stack>
+        ),
+      }))}
+    />
   )
 }

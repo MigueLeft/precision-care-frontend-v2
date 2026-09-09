@@ -26,9 +26,6 @@ export function CurrentMeasurement({ composition }: CurrentMeasurementProps) {
   const current = getSegment(composition, segment)
 
   const skeletal = toNumber(current?.skeletalMuscleMassKg ?? null)
-  const predicted = toNumber(current?.predictedMuscleMassKg ?? null)
-  const deficit =
-    skeletal !== null && predicted !== null ? skeletal - predicted : null
 
   return (
     <Stack spacing={3}>
@@ -54,7 +51,7 @@ export function CurrentMeasurement({ composition }: CurrentMeasurementProps) {
 
         <SectionCard title={`${BODY_SEGMENT_LABELS[segment]} — datos de composición`} sx={{ flex: 1, width: '100%' }}>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 6, sm: 3 }}>
+            <Grid size={{ xs: 6, sm: 4 }}>
               <StatTile
                 label="Masa grasa"
                 value={formatNumber(current?.fatMassPct)}
@@ -63,28 +60,19 @@ export function CurrentMeasurement({ composition }: CurrentMeasurementProps) {
                 caption={`${formatNumber(current?.fatMassKg)} kg`}
               />
             </Grid>
-            <Grid size={{ xs: 6, sm: 3 }}>
+            <Grid size={{ xs: 6, sm: 4 }}>
               <StatTile
                 label="Masa magra"
-                value={formatNumber(current?.leanMassPct)}
-                unit="%"
+                value={formatNumber(current?.leanMassKg)}
+                unit="kg"
                 tone="normal"
-                caption={`${formatNumber(current?.leanMassKg)} kg`}
               />
             </Grid>
-            <Grid size={{ xs: 6, sm: 3 }}>
+            <Grid size={{ xs: 6, sm: 4 }}>
               <StatTile
                 label="Masa muscular esq."
                 value={formatNumber(skeletal)}
                 unit="kg"
-              />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <StatTile
-                label="Déficit muscular"
-                value={deficit !== null ? formatNumber(deficit) : '—'}
-                unit="kg"
-                tone={deficit !== null && deficit < 0 ? 'danger' : 'neutral'}
               />
             </Grid>
           </Grid>
