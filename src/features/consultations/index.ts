@@ -24,6 +24,9 @@ export { ConsultationEncounterPage } from './components/encounter/ConsultationEn
 export {
   CONSULTATION_STATUS_LABELS,
   DIAGNOSIS_TYPE_LABELS,
+  DISEASE_STATUS_LABELS,
+  DISEASE_STATUS_COLORS,
+  ACTIVE_DISEASE_STATUSES,
 } from './utils/consultation-format'
 export type {
   Consultation,
@@ -33,4 +36,5 @@ export type {
   ReplaceSymptomInput,
   SymptomHistoryEntry,
   DiagnosisType,
+  DiseaseStatus,
 } from './types'

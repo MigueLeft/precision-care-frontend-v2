@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   Box,
+  Chip,
   Stack,
   TextField,
   ToggleButton,
@@ -9,7 +10,12 @@ import {
 } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import { AppButton } from '@/components/AppButton'
-import { ADHERENCE_LABELS, RAM_LABELS } from '../../utils/consultation-format'
+import {
+  ADHERENCE_COLORS,
+  ADHERENCE_LABELS,
+  RAM_COLORS,
+  RAM_LABELS,
+} from '../../utils/consultation-format'
 import type {
   ConsultationMedication,
   MedicationAdherence,
@@ -52,6 +58,12 @@ export function TreatmentMedicationRow({
   const [adherenceNotes, setAdherenceNotes] = useState('')
   const [ramNotes, setRamNotes] = useState('')
 
+  // Suspendido por RAM confirmado en esta consulta: se muestra en rojo y sin captura.
+  const suspended = medication.status === 'previous'
+  // Lo que ya quedó registrado para este medicamento en esta consulta.
+  const hasCapture =
+    medication.adherence != null || (medication.ramStatus != null && medication.ramStatus !== 'none')
+
   const doseChanged = editing && dose.trim() !== (medication.dose ?? '')
   const freqChanged = editing && frequency.trim() !== (medication.frequency ?? '')
   const canSave =
@@ -69,10 +81,20 @@ export function TreatmentMedicationRow({
   }
 
   return (
-    <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1.5, p: 1.5 }}>
+    <Box
+      sx={{
+        border: '1px solid',
+        borderColor: suspended ? 'error.main' : 'divider',
+        borderRadius: 1.5,
+        p: 1.5,
+        bgcolor: suspended ? (theme) => theme.palette.error.light + '14' : 'transparent',
+      }}
+    >
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline' }}>
-        <Typography sx={{ fontSize: '14px', fontWeight: 700 }}>{medname(medication)}</Typography>
-        {!readOnly && (
+        <Typography sx={{ fontSize: '14px', fontWeight: 700, color: suspended ? 'error.main' : 'text.primary' }}>
+          {medname(medication)}
+        </Typography>
+        {!readOnly && !suspended && (
           <AppButton
             size="small"
             variant="text"
@@ -101,7 +123,41 @@ export function TreatmentMedicationRow({
         </Typography>
       )}
 
-      {!readOnly && (
+      {suspended && (
+        <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'error.main', mt: 0.5 }}>
+          Suspendido por RAM confirmado
+          {medication.ramNotes ? ` · ${medication.ramNotes}` : ''}
+        </Typography>
+      )}
+
+      {!suspended && hasCapture && (
+        <Stack direction="row" spacing={0.5} sx={{ mt: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
+            Registrado en esta consulta:
+          </Typography>
+          {medication.adherence && (
+            <Chip
+              size="small"
+              color={ADHERENCE_COLORS[medication.adherence]}
+              label={`Adherencia: ${ADHERENCE_LABELS[medication.adherence]}`}
+            />
+          )}
+          {medication.ramStatus && medication.ramStatus !== 'none' && (
+            <Chip
+              size="small"
+              color={RAM_COLORS[medication.ramStatus]}
+              label={`RAM: ${RAM_LABELS[medication.ramStatus]}`}
+            />
+          )}
+          {(medication.adherenceNotes || medication.ramNotes) && (
+            <Typography sx={{ fontSize: '11px', fontStyle: 'italic', color: 'text.secondary', width: '100%' }}>
+              {[medication.adherenceNotes, medication.ramNotes].filter(Boolean).join(' · ')}
+            </Typography>
+          )}
+        </Stack>
+      )}
+
+      {!readOnly && !suspended && (
         <Stack spacing={1} sx={{ mt: 1.5 }}>
           <Box>
             <Typography sx={{ fontSize: '12px', fontWeight: 600, mb: 0.5 }}>Adherencia</Typography>
@@ -161,7 +217,7 @@ export function TreatmentMedicationRow({
             )}
             {ramStatus === 'confirmed' && (
               <Typography sx={{ fontSize: '11px', color: 'error.main', mt: 0.5 }}>
-                Al guardar, el medicamento queda suspendido por RAM confirmado y pasa al histórico.
+                Al guardar, el medicamento queda suspendido por RAM confirmado (se muestra en rojo).
               </Typography>
             )}
           </Box>

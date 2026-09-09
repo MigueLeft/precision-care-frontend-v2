@@ -33,6 +33,7 @@ import { Route as AppPacientesPatientIdIngresablesRouteImport } from './routes/_
 import { Route as AppPacientesPatientIdExamenFisicoRouteImport } from './routes/_app/pacientes_.$patientId/examen-fisico'
 import { Route as AppPacientesPatientIdEstiloDeVidaRouteImport } from './routes/_app/pacientes_.$patientId/estilo-de-vida'
 import { Route as AppPacientesPatientIdEntregablesRouteImport } from './routes/_app/pacientes_.$patientId/entregables'
+import { Route as AppPacientesPatientIdEnfermedadesRouteImport } from './routes/_app/pacientes_.$patientId/enfermedades'
 import { Route as AppPacientesPatientIdConsultasRouteImport } from './routes/_app/pacientes_.$patientId/consultas'
 import { Route as AppPacientesPatientIdComposicionCorporalRouteImport } from './routes/_app/pacientes_.$patientId/composicion-corporal'
 import { Route as AppPacientesPatientIdAntecedentesRouteImport } from './routes/_app/pacientes_.$patientId/antecedentes'
@@ -168,6 +169,12 @@ const AppPacientesPatientIdEntregablesRoute =
     path: '/entregables',
     getParentRoute: () => AppPacientesPatientIdRouteRoute,
   } as any)
+const AppPacientesPatientIdEnfermedadesRoute =
+  AppPacientesPatientIdEnfermedadesRouteImport.update({
+    id: '/enfermedades',
+    path: '/enfermedades',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
 const AppPacientesPatientIdConsultasRoute =
   AppPacientesPatientIdConsultasRouteImport.update({
     id: '/consultas',
@@ -211,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/pacientes/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
   '/pacientes/$patientId/consultas': typeof AppPacientesPatientIdConsultasRoute
+  '/pacientes/$patientId/enfermedades': typeof AppPacientesPatientIdEnfermedadesRoute
   '/pacientes/$patientId/entregables': typeof AppPacientesPatientIdEntregablesRoute
   '/pacientes/$patientId/estilo-de-vida': typeof AppPacientesPatientIdEstiloDeVidaRoute
   '/pacientes/$patientId/examen-fisico': typeof AppPacientesPatientIdExamenFisicoRoute
@@ -238,6 +246,7 @@ export interface FileRoutesByTo {
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/pacientes/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
   '/pacientes/$patientId/consultas': typeof AppPacientesPatientIdConsultasRoute
+  '/pacientes/$patientId/enfermedades': typeof AppPacientesPatientIdEnfermedadesRoute
   '/pacientes/$patientId/entregables': typeof AppPacientesPatientIdEntregablesRoute
   '/pacientes/$patientId/estilo-de-vida': typeof AppPacientesPatientIdEstiloDeVidaRoute
   '/pacientes/$patientId/examen-fisico': typeof AppPacientesPatientIdExamenFisicoRoute
@@ -269,6 +278,7 @@ export interface FileRoutesById {
   '/_app/pacientes_/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/_app/pacientes_/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
   '/_app/pacientes_/$patientId/consultas': typeof AppPacientesPatientIdConsultasRoute
+  '/_app/pacientes_/$patientId/enfermedades': typeof AppPacientesPatientIdEnfermedadesRoute
   '/_app/pacientes_/$patientId/entregables': typeof AppPacientesPatientIdEntregablesRoute
   '/_app/pacientes_/$patientId/estilo-de-vida': typeof AppPacientesPatientIdEstiloDeVidaRoute
   '/_app/pacientes_/$patientId/examen-fisico': typeof AppPacientesPatientIdExamenFisicoRoute
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/antecedentes'
     | '/pacientes/$patientId/composicion-corporal'
     | '/pacientes/$patientId/consultas'
+    | '/pacientes/$patientId/enfermedades'
     | '/pacientes/$patientId/entregables'
     | '/pacientes/$patientId/estilo-de-vida'
     | '/pacientes/$patientId/examen-fisico'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/antecedentes'
     | '/pacientes/$patientId/composicion-corporal'
     | '/pacientes/$patientId/consultas'
+    | '/pacientes/$patientId/enfermedades'
     | '/pacientes/$patientId/entregables'
     | '/pacientes/$patientId/estilo-de-vida'
     | '/pacientes/$patientId/examen-fisico'
@@ -356,6 +368,7 @@ export interface FileRouteTypes {
     | '/_app/pacientes_/$patientId/antecedentes'
     | '/_app/pacientes_/$patientId/composicion-corporal'
     | '/_app/pacientes_/$patientId/consultas'
+    | '/_app/pacientes_/$patientId/enfermedades'
     | '/_app/pacientes_/$patientId/entregables'
     | '/_app/pacientes_/$patientId/estilo-de-vida'
     | '/_app/pacientes_/$patientId/examen-fisico'
@@ -542,6 +555,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPacientesPatientIdEntregablesRouteImport
       parentRoute: typeof AppPacientesPatientIdRouteRoute
     }
+    '/_app/pacientes_/$patientId/enfermedades': {
+      id: '/_app/pacientes_/$patientId/enfermedades'
+      path: '/enfermedades'
+      fullPath: '/pacientes/$patientId/enfermedades'
+      preLoaderRoute: typeof AppPacientesPatientIdEnfermedadesRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
     '/_app/pacientes_/$patientId/consultas': {
       id: '/_app/pacientes_/$patientId/consultas'
       path: '/consultas'
@@ -577,6 +597,7 @@ interface AppPacientesPatientIdRouteRouteChildren {
   AppPacientesPatientIdAntecedentesRoute: typeof AppPacientesPatientIdAntecedentesRoute
   AppPacientesPatientIdComposicionCorporalRoute: typeof AppPacientesPatientIdComposicionCorporalRoute
   AppPacientesPatientIdConsultasRoute: typeof AppPacientesPatientIdConsultasRoute
+  AppPacientesPatientIdEnfermedadesRoute: typeof AppPacientesPatientIdEnfermedadesRoute
   AppPacientesPatientIdEntregablesRoute: typeof AppPacientesPatientIdEntregablesRoute
   AppPacientesPatientIdEstiloDeVidaRoute: typeof AppPacientesPatientIdEstiloDeVidaRoute
   AppPacientesPatientIdExamenFisicoRoute: typeof AppPacientesPatientIdExamenFisicoRoute
@@ -595,6 +616,8 @@ const AppPacientesPatientIdRouteRouteChildren: AppPacientesPatientIdRouteRouteCh
     AppPacientesPatientIdComposicionCorporalRoute:
       AppPacientesPatientIdComposicionCorporalRoute,
     AppPacientesPatientIdConsultasRoute: AppPacientesPatientIdConsultasRoute,
+    AppPacientesPatientIdEnfermedadesRoute:
+      AppPacientesPatientIdEnfermedadesRoute,
     AppPacientesPatientIdEntregablesRoute:
       AppPacientesPatientIdEntregablesRoute,
     AppPacientesPatientIdEstiloDeVidaRoute:

@@ -6,6 +6,7 @@ import {
   fetchConsultationDiagnoses,
   fetchConsultationSymptoms,
   fetchConsultationSymptomHistory,
+  fetchConsultationRecorded,
   updateConsultation,
   replaceConsultationSymptoms,
   type UpdateConsultationPatch,
@@ -50,6 +51,14 @@ export function useConsultationSymptomHistory(id: number | undefined) {
   return useQuery({
     queryKey: consultationsKeys.symptomHistory(id ?? 0),
     queryFn: () => fetchConsultationSymptomHistory(id as number),
+    enabled: typeof id === 'number',
+  })
+}
+
+export function useConsultationRecorded(id: number | undefined) {
+  return useQuery({
+    queryKey: consultationsKeys.recorded(id ?? 0),
+    queryFn: () => fetchConsultationRecorded(id as number),
     enabled: typeof id === 'number',
   })
 }

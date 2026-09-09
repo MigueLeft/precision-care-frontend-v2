@@ -22,19 +22,28 @@ export const DIAGNOSIS_TYPE_LABELS: Record<DiagnosisType, string> = {
 export const DISEASE_STATUS_LABELS: Record<DiseaseStatus, string> = {
   active: 'Activa',
   controlled: 'Controlada',
+  remission: 'En remisión',
   resolved: 'Resuelta',
   discarded: 'Descartada',
 }
 
 export const DISEASE_STATUS_COLORS: Record<
   DiseaseStatus,
-  'warning' | 'success' | 'default' | 'error'
+  'warning' | 'success' | 'info' | 'default' | 'error'
 > = {
   active: 'warning',
   controlled: 'success',
+  remission: 'info',
   resolved: 'default',
   discarded: 'error',
 }
+
+// Estados "vigentes" (se muestran por defecto en el expediente).
+export const ACTIVE_DISEASE_STATUSES: DiseaseStatus[] = [
+  'active',
+  'controlled',
+  'remission',
+]
 
 export const ADHERENCE_LABELS: Record<MedicationAdherence, string> = {
   good: 'Buena',

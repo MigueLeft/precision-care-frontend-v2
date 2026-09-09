@@ -1,26 +1,25 @@
 import { Box, Chip, Stack, Typography } from '@mui/material'
 import LinkIcon from '@mui/icons-material/Link'
 import { SectionCard } from '@/components/ui/SectionCard'
-import { AppButton } from '@/components/AppButton'
 import { formatShortDate } from '@/utils/format-date'
 import { usePrescriptionsByConsultation } from '@/features/patient-medications'
 import {
-  useConsultationDiagnoses,
   useConsultationSymptoms,
+  useConsultationRecorded,
 } from '../hooks/useConsultationDetail'
-import { DIAGNOSIS_TYPE_LABELS } from '../utils/consultation-format'
+import {
+  ADHERENCE_LABELS,
+  DISEASE_STATUS_COLORS,
+  DISEASE_STATUS_LABELS,
+  RAM_LABELS,
+} from '../utils/consultation-format'
 import type { Consultation } from '../types'
 
 interface ConsultationDetailProps {
   consultation: Consultation
 }
 
-interface BlockProps {
-  title: string
-  children: React.ReactNode
-}
-
-function Block({ title, children }: BlockProps) {
+function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Box>
       <Typography sx={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em', color: 'text.secondary' }}>
@@ -31,39 +30,32 @@ function Block({ title, children }: BlockProps) {
   )
 }
 
+const Empty = () => <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>—</Typography>
+
 export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
-  const { data: diagnoses = [] } = useConsultationDiagnoses(consultation.id)
   const { data: symptoms = [] } = useConsultationSymptoms(consultation.id)
+  const { data: recorded } = useConsultationRecorded(consultation.id)
   const { data: prescriptions = [] } = usePrescriptionsByConsultation(consultation.id)
+
+  const diseases = recorded?.diseases ?? []
+  const medications = recorded?.medications ?? []
 
   return (
     <SectionCard
       title={
         <Box>
-          <Typography variant="h3">
-            {consultation.consultationReason ?? 'Consulta'}
-          </Typography>
+          <Typography variant="h3">{consultation.consultationReason ?? 'Consulta'}</Typography>
           <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
             {formatShortDate(consultation.startAt)}
             {consultation.specialistName ? ` · ${consultation.specialistName}` : ''}
           </Typography>
         </Box>
       }
-      action={
-        <Stack direction="row" spacing={1}>
-          <AppButton size="small" variant="outlined" disabled>
-            Editar
-          </AppButton>
-          <AppButton size="small" variant="outlined" disabled>
-            Versiones
-          </AppButton>
-        </Stack>
-      }
     >
       <Stack spacing={2.5}>
         <Block title="SÍNTOMAS">
           {symptoms.length === 0 ? (
-            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>—</Typography>
+            <Empty />
           ) : (
             <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
               {symptoms.map((symptom) => (
@@ -82,42 +74,94 @@ export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
           )}
         </Block>
 
-        <Block title="DIAGNÓSTICOS">
-          {diagnoses.length === 0 ? (
-            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>—</Typography>
+        <Block title="ENFERMEDADES / DIAGNÓSTICOS">
+          {diseases.length === 0 ? (
+            <Empty />
           ) : (
-            <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
-              {diagnoses.map((diagnosis) => (
-                <Chip
-                  key={diagnosis.id}
-                  label={`${diagnosis.name} · ${DIAGNOSIS_TYPE_LABELS[diagnosis.type]}`}
-                  size="small"
-                  variant="outlined"
-                />
+            <Stack spacing={0.5}>
+              {diseases.map((disease) => (
+                <Stack key={disease.id} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                  <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>
+                    {disease.name ?? '—'}
+                  </Typography>
+                  {disease.code && (
+                    <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>{disease.code}</Typography>
+                  )}
+                  <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                    {disease.bodySystemName ?? ''}
+                  </Typography>
+                  <Chip
+                    size="small"
+                    label={DISEASE_STATUS_LABELS[disease.status]}
+                    color={DISEASE_STATUS_COLORS[disease.status]}
+                  />
+                </Stack>
               ))}
             </Stack>
           )}
         </Block>
 
         <Block title="ENFERMEDAD ACTUAL">
-          <Typography sx={{ fontSize: '13px' }}>
+          <Typography sx={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>
             {consultation.currentIllness ?? '—'}
           </Typography>
         </Block>
 
-        <Block title="NOTA EVOLUTIVA">
-          <Typography sx={{ fontSize: '13px' }}>{consultation.evolution ?? '—'}</Typography>
+        <Block title="TRATAMIENTO ACTUAL">
+          {medications.length === 0 ? (
+            <Empty />
+          ) : (
+            <Stack spacing={0.75}>
+              {medications.map((medication) => (
+                <Box key={medication.id}>
+                  <Typography sx={{ fontSize: '13px' }}>
+                    <Box component="span" sx={{ fontWeight: 600 }}>
+                      {medication.brandName ?? medication.genericName ?? 'Medicamento'}
+                    </Box>
+                    {medication.dose ? ` ${medication.dose}` : ''}
+                    {medication.frequency ? ` · ${medication.frequency}` : ''}
+                  </Typography>
+                  {(medication.adherence ||
+                    (medication.ramStatus && medication.ramStatus !== 'none')) && (
+                    <Stack direction="row" spacing={0.5} sx={{ mt: 0.25, flexWrap: 'wrap' }}>
+                      {medication.adherence && (
+                        <Chip size="small" label={`Adherencia: ${ADHERENCE_LABELS[medication.adherence]}`} />
+                      )}
+                      {medication.ramStatus && medication.ramStatus !== 'none' && (
+                        <Chip
+                          size="small"
+                          color={medication.ramStatus === 'confirmed' ? 'error' : 'warning'}
+                          label={`RAM: ${RAM_LABELS[medication.ramStatus]}`}
+                        />
+                      )}
+                    </Stack>
+                  )}
+                  {(medication.adherenceNotes || medication.ramNotes) && (
+                    <Typography sx={{ fontSize: '12px', fontStyle: 'italic', color: 'text.secondary' }}>
+                      {[medication.adherenceNotes, medication.ramNotes].filter(Boolean).join(' · ')}
+                    </Typography>
+                  )}
+                </Box>
+              ))}
+            </Stack>
+          )}
         </Block>
 
-        <Block title="PLAN">
-          <Typography sx={{ fontSize: '13px' }}>
+        <Block title="NOTA EVOLUTIVA">
+          <Typography sx={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>
+            {consultation.evolution ?? '—'}
+          </Typography>
+        </Block>
+
+        <Block title="PLAN DE TRATAMIENTO">
+          <Typography sx={{ fontSize: '13px', whiteSpace: 'pre-wrap' }}>
             {consultation.treatmentPlan ?? consultation.diagnosticPlan ?? '—'}
           </Typography>
         </Block>
 
         <Block title="PRESCRIPCIONES">
           {prescriptions.length === 0 ? (
-            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>—</Typography>
+            <Empty />
           ) : (
             <Stack spacing={0.75}>
               {prescriptions.map((prescription) => (

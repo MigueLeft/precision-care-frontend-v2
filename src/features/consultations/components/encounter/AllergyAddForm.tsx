@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import {
   Autocomplete,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -12,34 +14,40 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { useAllergyCatalog, useAllergySeverities, useAllergyTypes } from '@/features/catalogs'
+import type { AllergyCatalog } from '@/features/catalogs'
 import type { AddAllergyInput } from '../../types'
 
 interface AllergyAddFormProps {
   onAdd: (input: AddAllergyInput) => void
   isAdding: boolean
+  // Ids de alergia (catálogo) ya capturadas en esta consulta, para no repetirlas.
+  usedCatalogIds: Set<number>
 }
 
-export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
+export function AllergyAddForm({ onAdd, isAdding, usedCatalogIds }: AllergyAddFormProps) {
   const { data: catalog = [] } = useAllergyCatalog()
   const { data: types = [] } = useAllergyTypes()
   const { data: severities = [] } = useAllergySeverities()
 
+  const [manual, setManual] = useState(false)
   const [typeId, setTypeId] = useState<number | ''>('')
-  const [name, setName] = useState('')
-  const [catalogId, setCatalogId] = useState<number | undefined>(undefined)
+  const [selected, setSelected] = useState<AllergyCatalog | null>(null)
+  const [manualName, setManualName] = useState('')
   const [severityId, setSeverityId] = useState<number | ''>('')
   const [onsetYear, setOnsetYear] = useState('')
   const [reaction, setReaction] = useState('')
 
-  // Si hay un tipo elegido, el catálogo de agentes se limita a ese tipo.
   const options = catalog.filter(
-    (item) => item.active && (typeId === '' || item.typeId === typeId),
+    (item) =>
+      item.active &&
+      !usedCatalogIds.has(item.id) &&
+      (typeId === '' || item.typeId === typeId),
   )
 
   function reset() {
     setTypeId('')
-    setName('')
-    setCatalogId(undefined)
+    setSelected(null)
+    setManualName('')
     setSeverityId('')
     setOnsetYear('')
     setReaction('')
@@ -50,15 +58,19 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
       toast.error('Selecciona la gravedad de la alergia.')
       return
     }
-    if (!catalogId && (!name.trim() || !typeId)) {
+    if (manual && (!manualName.trim() || !typeId)) {
       toast.error('Indica el agente causal y su tipo.')
+      return
+    }
+    if (!manual && !selected) {
+      toast.error('Elige una alergia del catálogo o marca "escribir manualmente".')
       return
     }
     const year = onsetYear ? Number(onsetYear) : undefined
     onAdd({
-      allergyCatalogId: catalogId,
-      name: catalogId ? undefined : name.trim(),
-      typeId: catalogId ? undefined : Number(typeId),
+      allergyCatalogId: manual ? undefined : selected!.id,
+      name: manual ? manualName.trim() : undefined,
+      typeId: manual ? Number(typeId) : undefined,
       severityId: Number(severityId),
       reaction: reaction.trim() || undefined,
       onsetYear: year && !Number.isNaN(year) ? year : undefined,
@@ -69,20 +81,15 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
   return (
     <Stack spacing={1} sx={{ mt: 1 }}>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-        <FormControl size="small" sx={{ minWidth: 150 }} disabled={!!catalogId}>
+        <FormControl size="small" sx={{ minWidth: 150 }} disabled={!manual && !!selected}>
           <InputLabel id="allergy-type">Tipo</InputLabel>
           <Select<number | ''>
             labelId="allergy-type"
             label="Tipo"
             value={typeId}
             onChange={(event) => {
-              const next = event.target.value === '' ? '' : Number(event.target.value)
-              setTypeId(next)
-              // Al cambiar el tipo a mano se limpia el agente elegido de otro tipo.
-              if (catalogId) {
-                setCatalogId(undefined)
-                setName('')
-              }
+              setTypeId(event.target.value === '' ? '' : Number(event.target.value))
+              if (selected) setSelected(null)
             }}
           >
             {types
@@ -95,27 +102,29 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
           </Select>
         </FormControl>
 
-        <Autocomplete
-          freeSolo
-          sx={{ flex: 1, minWidth: 200 }}
-          options={options}
-          getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
-          inputValue={name}
-          onInputChange={(_event, value) => {
-            setName(value)
-            setCatalogId(undefined)
-          }}
-          onChange={(_event, option) => {
-            if (option && typeof option !== 'string') {
-              setCatalogId(option.id)
-              setName(option.name)
-              setTypeId(option.typeId)
-            }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} size="small" placeholder="Agente causal…" />
-          )}
-        />
+        {manual ? (
+          <TextField
+            size="small"
+            sx={{ flex: 1, minWidth: 200 }}
+            placeholder="Agente causal…"
+            value={manualName}
+            onChange={(event) => setManualName(event.target.value)}
+          />
+        ) : (
+          <Autocomplete
+            sx={{ flex: 1, minWidth: 200 }}
+            options={options}
+            getOptionLabel={(option) => option.name}
+            value={selected}
+            onChange={(_event, option) => {
+              setSelected(option)
+              if (option) setTypeId(option.typeId)
+            }}
+            renderInput={(params) => (
+              <TextField {...params} size="small" placeholder="Buscar agente…" />
+            )}
+          />
+        )}
 
         <FormControl size="small" sx={{ minWidth: 130 }}>
           <InputLabel id="allergy-severity">Gravedad</InputLabel>
@@ -146,6 +155,22 @@ export function AllergyAddForm({ onAdd, isAdding }: AllergyAddFormProps) {
           sx={{ width: 90 }}
         />
       </Stack>
+
+      <FormControlLabel
+        control={
+          <Checkbox
+            size="small"
+            checked={manual}
+            onChange={(event) => {
+              setManual(event.target.checked)
+              setSelected(null)
+              setManualName('')
+            }}
+          />
+        }
+        label="El agente no está en el catálogo · escribir manualmente"
+        sx={{ '& .MuiFormControlLabel-label': { fontSize: '12px', color: 'text.secondary' } }}
+      />
 
       <Stack direction="row" spacing={1}>
         <TextField

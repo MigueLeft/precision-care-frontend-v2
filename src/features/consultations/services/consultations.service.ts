@@ -258,3 +258,17 @@ export async function fetchConsultationMedicationHistory(
   }>(`/consultations/${id}/medication-history`)
   return data.history
 }
+
+export interface ConsultationRecorded {
+  diseases: ConsultationDisease[]
+  medications: ConsultationMedication[]
+}
+
+export async function fetchConsultationRecorded(
+  id: number,
+): Promise<ConsultationRecorded> {
+  const { data } = await api.get<ConsultationRecorded>(
+    `/consultations/${id}/recorded`,
+  )
+  return data
+}

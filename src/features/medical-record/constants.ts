@@ -5,6 +5,7 @@ import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
 import SickOutlinedIcon from '@mui/icons-material/SickOutlined'
+import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
@@ -25,6 +26,7 @@ export type MedicalRecordTabTo =
   | '/pacientes/$patientId/antecedentes'
   | '/pacientes/$patientId/consultas'
   | '/pacientes/$patientId/sintomas'
+  | '/pacientes/$patientId/enfermedades'
   | '/pacientes/$patientId/paraclinicos'
   | '/pacientes/$patientId/medicamentos'
   | '/pacientes/$patientId/examen-fisico'
@@ -67,6 +69,12 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
     to: '/pacientes/$patientId/sintomas',
     label: 'Síntomas',
     icon: SickOutlinedIcon,
+  },
+  {
+    slug: 'enfermedades',
+    to: '/pacientes/$patientId/enfermedades',
+    label: 'Enfermedades / Dx',
+    icon: CoronavirusOutlinedIcon,
   },
   {
     slug: 'paraclinicos',

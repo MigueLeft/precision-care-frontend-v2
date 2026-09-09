@@ -1,7 +1,9 @@
 import { Fragment, useState } from 'react'
 import {
   Box,
+  Chip,
   Collapse,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -10,15 +12,54 @@ import {
   Typography,
 } from '@mui/material'
 import { EmptyState } from '@/components/EmptyState'
-import { formatMonthYear } from '@/utils/format-date'
+import { formatShortDate } from '@/utils/format-date'
 import type { PatientMedication } from '../types'
-import { getMedicationDisplayName } from '../utils/medication-helpers'
+import {
+  getMedicationDisplayName,
+  ADHERENCE_LABELS,
+  RAM_LABELS,
+} from '../utils/medication-helpers'
 
 interface PreviousMedicationsTableProps {
   medications: PatientMedication[]
 }
 
-const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Hasta', 'Motivo de suspensión']
+const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Hasta', 'Motivo de suspensión', '']
+
+function Detail({ medication }: { medication: PatientMedication }) {
+  return (
+    <Stack spacing={0.5} sx={{ py: 1.25, px: 1 }}>
+      <Typography sx={{ fontSize: '13px' }}>
+        <Box component="span" sx={{ fontWeight: 600 }}>
+          Motivo:
+        </Box>{' '}
+        {medication.discontinuationReason ?? 'No especificado'}
+      </Typography>
+      <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
+        Desde {formatShortDate(medication.startAt)} hasta {formatShortDate(medication.endAt)}
+      </Typography>
+      {(medication.adherence || (medication.ramStatus && medication.ramStatus !== 'none')) && (
+        <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
+          {medication.adherence && (
+            <Chip size="small" label={`Adherencia: ${ADHERENCE_LABELS[medication.adherence]}`} />
+          )}
+          {medication.ramStatus && medication.ramStatus !== 'none' && (
+            <Chip
+              size="small"
+              color={medication.ramStatus === 'confirmed' ? 'error' : 'warning'}
+              label={`RAM: ${RAM_LABELS[medication.ramStatus]}`}
+            />
+          )}
+        </Stack>
+      )}
+      {[medication.adherenceNotes, medication.ramNotes].filter(Boolean).map((note, index) => (
+        <Typography key={index} sx={{ fontSize: '13px', fontStyle: 'italic', color: 'text.secondary' }}>
+          {note}
+        </Typography>
+      ))}
+    </Stack>
+  )
+}
 
 export function PreviousMedicationsTable({ medications }: PreviousMedicationsTableProps) {
   const [openId, setOpenId] = useState<number | null>(null)
@@ -32,9 +73,9 @@ export function PreviousMedicationsTable({ medications }: PreviousMedicationsTab
       <Table size="small">
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.50' }}>
-            {HEADERS.map((header) => (
+            {HEADERS.map((header, index) => (
               <TableCell
-                key={header}
+                key={`${header}-${index}`}
                 sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}
               >
                 {header}
@@ -44,16 +85,10 @@ export function PreviousMedicationsTable({ medications }: PreviousMedicationsTab
         </TableHead>
         <TableBody>
           {medications.map((medication) => {
-            const notes = [medication.adherenceNotes, medication.ramNotes].filter(Boolean)
-            const hasNotes = notes.length > 0
             const isOpen = openId === medication.id
             return (
               <Fragment key={medication.id}>
-                <TableRow
-                  hover={hasNotes}
-                  sx={{ cursor: hasNotes ? 'pointer' : 'default' }}
-                  onClick={() => hasNotes && setOpenId(isOpen ? null : medication.id)}
-                >
+                <TableRow hover sx={{ cursor: 'pointer' }} onClick={() => setOpenId(isOpen ? null : medication.id)}>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary' }}>
                     {getMedicationDisplayName(medication)}
                   </TableCell>
@@ -64,35 +99,24 @@ export function PreviousMedicationsTable({ medications }: PreviousMedicationsTab
                     {medication.frequency ?? '—'}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary' }}>
-                    {formatMonthYear(medication.endAt)}
+                    {formatShortDate(medication.endAt)}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
                     {medication.discontinuationReason ?? '—'}
-                    {hasNotes && (
-                      <Typography component="span" sx={{ fontSize: '11px', color: 'primary.main', ml: 1 }}>
-                        {isOpen ? 'ocultar notas' : 'ver notas'}
-                      </Typography>
-                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography sx={{ fontSize: '12px', color: 'primary.main', fontWeight: 600 }}>
+                      {isOpen ? 'Ocultar' : 'Ver detalle'}
+                    </Typography>
                   </TableCell>
                 </TableRow>
-                {hasNotes && (
-                  <TableRow>
-                    <TableCell colSpan={HEADERS.length} sx={{ py: 0, border: 0 }}>
-                      <Collapse in={isOpen} unmountOnExit>
-                        <Box sx={{ py: 1.5, px: 1 }}>
-                          {notes.map((note, index) => (
-                            <Typography
-                              key={index}
-                              sx={{ fontSize: '13px', fontStyle: 'italic', color: 'text.secondary' }}
-                            >
-                              {note}
-                            </Typography>
-                          ))}
-                        </Box>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                )}
+                <TableRow>
+                  <TableCell colSpan={HEADERS.length} sx={{ py: 0, border: 0 }}>
+                    <Collapse in={isOpen} unmountOnExit>
+                      <Detail medication={medication} />
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
               </Fragment>
             )
           })}

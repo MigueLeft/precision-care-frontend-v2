@@ -46,6 +46,7 @@ export function AllergiesSection({
   const flagMutation = useSetNoKnownAllergies(consultationId)
 
   const severe = allergies.find(isSevere)
+  const usedCatalogIds = new Set(allergies.map((allergy) => allergy.allergyCatalogId))
 
   return (
     <CollapsibleSection
@@ -125,7 +126,11 @@ export function AllergiesSection({
       </Stack>
 
       {!readOnly && (
-        <AllergyAddForm onAdd={addMutation.mutate} isAdding={addMutation.isPending} />
+        <AllergyAddForm
+          onAdd={addMutation.mutate}
+          isAdding={addMutation.isPending}
+          usedCatalogIds={usedCatalogIds}
+        />
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>

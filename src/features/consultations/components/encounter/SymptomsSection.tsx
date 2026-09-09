@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  Autocomplete,
   FormControl,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'sonner'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
+import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
 import { useBodySystems, useSymptoms } from '@/features/catalogs'
 import { useDebouncedCallback } from '@/hooks/useDebouncedCallback'
 import { formatShortDate } from '@/utils/format-date'
@@ -52,7 +51,6 @@ export function SymptomsSection({
   const replaceMutation = useReplaceConsultationSymptoms(consultationId)
 
   const [rows, setRows] = useState<SymptomRow[]>([])
-  const [inputValue, setInputValue] = useState('')
   const dirtyRef = useRef(false)
 
   useEffect(() => {
@@ -168,46 +166,18 @@ export function SymptomsSection({
       </Stack>
 
       {!readOnly && (
-        <Autocomplete
+        <CatalogSearchInput
           sx={{ mt: 2 }}
-          freeSolo
-          options={availableOptions}
-          getOptionLabel={(option) =>
-            typeof option === 'string' ? option : option.name
-          }
-          value={null}
-          inputValue={inputValue}
-          onInputChange={(_event, value) => setInputValue(value)}
-          blurOnSelect
-          clearOnBlur
-          onChange={(_event, option) => {
-            if (!option) return
-            if (typeof option === 'string') addSymptom(option)
-            else addSymptom(option.name, option.id)
-            setInputValue('')
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder="Buscar o agregar síntoma…"
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  const value = (event.target as HTMLInputElement).value
-                  if (value.trim()) {
-                    addSymptom(value)
-                    setInputValue('')
-                    ;(event.target as HTMLInputElement).blur()
-                  }
-                }
-              }}
-            />
-          )}
+          options={availableOptions.map((s) => ({ id: s.id, name: s.name }))}
+          placeholder="Buscar síntoma…"
+          onAdd={(name, id) => addSymptom(name, id)}
+          manualLabel="El síntoma no está en el catálogo · escribir manualmente"
         />
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
-        Síntomas del catálogo configurable. Si no existe, se agrega al catálogo (sin duplicar). El
-        aparato/sistema que elijas queda asociado solo a esta consulta.
+        Síntomas del catálogo configurable. Si no existe, marca la casilla para escribirlo (se agrega
+        al catálogo sin duplicar). El aparato/sistema que elijas queda asociado solo a esta consulta.
       </Typography>
     </CollapsibleSection>
   )

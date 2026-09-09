@@ -88,19 +88,26 @@ export interface AddAllergyInput {
 
 // ─── Enfermedades / diagnósticos en la consulta ─────────────────────────────
 
-export type DiseaseStatus = 'active' | 'controlled' | 'resolved' | 'discarded'
+export type DiseaseStatus =
+  | 'active'
+  | 'controlled'
+  | 'remission'
+  | 'resolved'
+  | 'discarded'
 
 export interface ConsultationDisease {
   id: number
   patientId: number
   diseaseCatalogId: number
   name: string | null
+  code: string | null
   isChronic: boolean | null
   bodySystemId: number
   bodySystemName: string | null
   consultationId: number | null
   status: DiseaseStatus
   dxDate: string | null
+  notes: string | null
   createdAt: string
 }
 
@@ -111,6 +118,7 @@ export interface AddDiseaseInput {
   bodySystemId: number
   status?: DiseaseStatus
   dxDate?: string
+  notes?: string
 }
 
 export interface UpdateDiseaseInput {

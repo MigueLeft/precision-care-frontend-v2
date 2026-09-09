@@ -42,6 +42,7 @@ export function DiseasesSection({
   const removeMutation = useRemoveConsultationDisease(consultationId)
 
   const groups = groupBySystem(diseases)
+  const usedCatalogIds = new Set(diseases.map((disease) => disease.diseaseCatalogId))
 
   return (
     <CollapsibleSection
@@ -114,12 +115,16 @@ export function DiseasesSection({
       </Stack>
 
       {!readOnly && (
-        <DiseaseAddForm onAdd={addMutation.mutate} isAdding={addMutation.isPending} />
+        <DiseaseAddForm
+          onAdd={addMutation.mutate}
+          isAdding={addMutation.isPending}
+          usedCatalogIds={usedCatalogIds}
+        />
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
         Cada enfermedad se asocia a un aparato o sistema del catálogo; el listado se agrupa por
-        sistema. Texto libre permitido si no existe en el catálogo.
+        sistema. Marca la casilla para escribir una que no esté en el catálogo.
       </Typography>
     </CollapsibleSection>
   )

@@ -1,4 +1,20 @@
-import type { PatientMedication } from '../types'
+import type {
+  MedicationAdherence,
+  MedicationRamStatus,
+  PatientMedication,
+} from '../types'
+
+export const ADHERENCE_LABELS: Record<MedicationAdherence, string> = {
+  good: 'Buena',
+  partial: 'Parcial',
+  poor: 'Mala',
+}
+
+export const RAM_LABELS: Record<MedicationRamStatus, string> = {
+  none: 'No',
+  suspected: 'Sospecha',
+  confirmed: 'Confirmada',
+}
 
 // Nombre a mostrar sin concentración (columna "Medicamento").
 export function getMedicationDisplayName(medication: PatientMedication): string {

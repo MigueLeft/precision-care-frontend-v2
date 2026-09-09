@@ -62,6 +62,22 @@ export function DiseaseFormModal({
             )}
           />
           <Controller
+            name="code"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                value={field.value ?? ''}
+                label="Código (opcional)"
+                placeholder="Ej. E11.9"
+                fullWidth
+                error={!!error}
+                helperText={error?.message}
+                slotProps={{ htmlInput: { maxLength: 20 } }}
+              />
+            )}
+          />
+          <Controller
             name="isChronic"
             control={control}
             render={({ field }) => (

@@ -14,42 +14,52 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { useBodySystems, useDiseases } from '@/features/catalogs'
+import type { Disease } from '@/features/catalogs'
 import { DISEASE_STATUS_LABELS } from '../../utils/consultation-format'
 import type { AddDiseaseInput, DiseaseStatus } from '../../types'
 
 interface DiseaseAddFormProps {
   onAdd: (input: AddDiseaseInput) => void
   isAdding: boolean
+  usedCatalogIds: Set<number>
 }
 
 const STATUSES = Object.keys(DISEASE_STATUS_LABELS) as DiseaseStatus[]
 
-export function DiseaseAddForm({ onAdd, isAdding }: DiseaseAddFormProps) {
+export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFormProps) {
   const { data: catalog = [] } = useDiseases()
   const { data: bodySystems = [] } = useBodySystems()
 
+  const [manual, setManual] = useState(false)
   const [onlyChronic, setOnlyChronic] = useState(false)
-  const [name, setName] = useState('')
-  const [catalogId, setCatalogId] = useState<number | undefined>(undefined)
+  const [selected, setSelected] = useState<Disease | null>(null)
+  const [manualName, setManualName] = useState('')
   const [bodySystemId, setBodySystemId] = useState<number | ''>('')
   const [status, setStatus] = useState<DiseaseStatus>('active')
   const [dxDate, setDxDate] = useState('')
 
   const options = catalog.filter(
-    (disease) => disease.active && (!onlyChronic || disease.isChronic),
+    (disease) =>
+      disease.active &&
+      !usedCatalogIds.has(disease.id) &&
+      (!onlyChronic || disease.isChronic),
   )
 
   function reset() {
-    setName('')
-    setCatalogId(undefined)
+    setSelected(null)
+    setManualName('')
     setBodySystemId('')
     setStatus('active')
     setDxDate('')
   }
 
   function submit() {
-    if (!catalogId && !name.trim()) {
+    if (manual && !manualName.trim()) {
       toast.error('Indica la enfermedad o diagnóstico.')
+      return
+    }
+    if (!manual && !selected) {
+      toast.error('Elige una enfermedad del catálogo o marca "escribir manualmente".')
       return
     }
     if (!bodySystemId) {
@@ -57,8 +67,8 @@ export function DiseaseAddForm({ onAdd, isAdding }: DiseaseAddFormProps) {
       return
     }
     onAdd({
-      diseaseCatalogId: catalogId,
-      name: catalogId ? undefined : name.trim(),
+      diseaseCatalogId: manual ? undefined : selected!.id,
+      name: manual ? manualName.trim() : undefined,
       bodySystemId: Number(bodySystemId),
       status,
       dxDate: dxDate.trim() || undefined,
@@ -68,37 +78,55 @@ export function DiseaseAddForm({ onAdd, isAdding }: DiseaseAddFormProps) {
 
   return (
     <Stack spacing={1} sx={{ mt: 1 }}>
-      <FormControlLabel
-        control={
-          <Checkbox
-            size="small"
-            checked={onlyChronic}
-            onChange={(event) => setOnlyChronic(event.target.checked)}
-          />
-        }
-        label="Solo enfermedades crónicas"
-      />
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-        <Autocomplete
-          freeSolo
-          sx={{ flex: 1, minWidth: 220 }}
-          options={options}
-          getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
-          inputValue={name}
-          onInputChange={(_event, value) => {
-            setName(value)
-            setCatalogId(undefined)
-          }}
-          onChange={(_event, option) => {
-            if (option && typeof option !== 'string') {
-              setCatalogId(option.id)
-              setName(option.name)
-            }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} size="small" placeholder="Enfermedad o diagnóstico…" />
-          )}
+      <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={onlyChronic}
+              onChange={(event) => setOnlyChronic(event.target.checked)}
+            />
+          }
+          label="Solo enfermedades crónicas"
         />
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={manual}
+              onChange={(event) => {
+                setManual(event.target.checked)
+                setSelected(null)
+                setManualName('')
+              }}
+            />
+          }
+          label="No está en el catálogo · escribir manualmente"
+          sx={{ '& .MuiFormControlLabel-label': { fontSize: '12px', color: 'text.secondary' } }}
+        />
+      </Stack>
+
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+        {manual ? (
+          <TextField
+            size="small"
+            sx={{ flex: 1, minWidth: 220 }}
+            placeholder="Enfermedad o diagnóstico…"
+            value={manualName}
+            onChange={(event) => setManualName(event.target.value)}
+          />
+        ) : (
+          <Autocomplete
+            sx={{ flex: 1, minWidth: 220 }}
+            options={options}
+            getOptionLabel={(option) => option.name}
+            value={selected}
+            onChange={(_event, option) => setSelected(option)}
+            renderInput={(params) => (
+              <TextField {...params} size="small" placeholder="Buscar enfermedad…" />
+            )}
+          />
+        )}
 
         <FormControl size="small" sx={{ minWidth: 190 }}>
           <InputLabel id="disease-system">Aparato / sistema</InputLabel>

@@ -162,12 +162,14 @@ export type UpdateAllergyCatalogPayload = Partial<CreateAllergyCatalogPayload>
 export interface Disease {
   id: number
   name: string
+  code: string | null
   isChronic: boolean
   active: boolean
 }
 
 export interface CreateDiseasePayload {
   name: string
+  code?: string
   isChronic: boolean
 }
 export type UpdateDiseasePayload = Partial<CreateDiseasePayload>
