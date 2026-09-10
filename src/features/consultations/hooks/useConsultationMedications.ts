@@ -62,8 +62,8 @@ export function useCaptureConsultationMedication(id: number) {
     onSuccess: (medication) => {
       invalidate()
       toast.success(
-        medication.ramStatus === 'confirmed'
-          ? 'Medicamento suspendido por RAM confirmado'
+        medication.status === 'previous'
+          ? 'Tratamiento finalizado'
           : 'Registro guardado',
       )
     },

@@ -282,6 +282,7 @@ export async function fetchConsultationMedicationHistory(
 }
 
 export interface ConsultationRecorded {
+  symptoms: ConsultationSymptom[]
   diseases: ConsultationDisease[]
   medications: ConsultationMedication[]
 }

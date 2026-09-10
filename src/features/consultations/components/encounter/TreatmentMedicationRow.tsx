@@ -2,7 +2,9 @@ import { useState } from 'react'
 import {
   Autocomplete,
   Box,
+  Checkbox,
   Chip,
+  FormControlLabel,
   Stack,
   TextField,
   ToggleButton,
@@ -10,6 +12,7 @@ import {
   Typography,
 } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined'
 import { AppButton } from '@/components/AppButton'
 import { useMedications } from '@/features/catalogs'
 import type { Medication } from '@/features/catalogs'
@@ -25,19 +28,23 @@ import type {
   MedicationRamStatus,
 } from '../../types'
 
+interface CaptureInput {
+  dose?: string
+  frequency?: string
+  adherence?: MedicationAdherence
+  adherenceNotes?: string
+  ramStatus?: MedicationRamStatus
+  ramNotes?: string
+  replacementMedicationId?: number
+  discontinue?: boolean
+  discontinuationReason?: string
+}
+
 interface TreatmentMedicationRowProps {
   medication: ConsultationMedication
   readOnly: boolean
   isSaving: boolean
-  onSave: (input: {
-    dose?: string
-    frequency?: string
-    adherence?: MedicationAdherence
-    adherenceNotes?: string
-    ramStatus?: MedicationRamStatus
-    ramNotes?: string
-    replacementMedicationId?: number
-  }) => void
+  onSave: (input: CaptureInput) => void
 }
 
 function catalogLabel(m: Medication) {
@@ -64,7 +71,6 @@ export function TreatmentMedicationRow({
     medication.adherence != null ||
     (medication.ramStatus != null && medication.ramStatus !== 'none')
 
-  // Si ya hay captura se muestra el resumen; "Editar" abre los controles.
   const { data: medicationCatalog = [] } = useMedications()
 
   const [capturing, setCapturing] = useState(!hasCapture && !suspended)
@@ -80,6 +86,9 @@ export function TreatmentMedicationRow({
   )
   const [adherenceNotes, setAdherenceNotes] = useState(medication.adherenceNotes ?? '')
   const [ramNotes, setRamNotes] = useState(medication.ramNotes ?? '')
+  const [suspendForRam, setSuspendForRam] = useState(false)
+  const [finishing, setFinishing] = useState(false)
+  const [finishReason, setFinishReason] = useState('')
 
   const doseChanged = editingMed && dose.trim() !== (medication.dose ?? '')
   const freqChanged = editingMed && frequency.trim() !== (medication.frequency ?? '')
@@ -87,7 +96,12 @@ export function TreatmentMedicationRow({
     editingMed && replacement != null && replacement.id !== medication.medicationId
   const canSave =
     !readOnly &&
-    (adherence !== null || ramStatus !== null || doseChanged || freqChanged || medChanged)
+    (adherence !== null ||
+      ramStatus !== null ||
+      doseChanged ||
+      freqChanged ||
+      medChanged ||
+      suspendForRam)
 
   function save() {
     onSave({
@@ -98,6 +112,15 @@ export function TreatmentMedicationRow({
       ramStatus: ramStatus ?? undefined,
       ramNotes: ramStatus && ramStatus !== 'none' ? ramNotes.trim() || undefined : undefined,
       replacementMedicationId: medChanged ? replacement!.id : undefined,
+      discontinue: suspendForRam ? true : undefined,
+      discontinuationReason: suspendForRam ? 'RAM confirmado' : undefined,
+    })
+  }
+
+  function finalize() {
+    onSave({
+      discontinue: true,
+      discontinuationReason: finishReason.trim() || 'Tratamiento finalizado',
     })
   }
 
@@ -111,14 +134,14 @@ export function TreatmentMedicationRow({
         bgcolor: suspended ? (theme) => theme.palette.error.light + '14' : 'transparent',
       }}
     >
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', gap: 1 }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', gap: 1, flexWrap: 'wrap' }}>
         <Box>
           <Typography sx={{ fontSize: '14px', fontWeight: 700, color: suspended ? 'error.main' : 'text.primary' }}>
             {medname(medication)}
           </Typography>
           {editingMed ? (
             <Stack spacing={1} sx={{ mt: 0.5 }}>
-              <Stack direction="row" spacing={1}>
+              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
                 <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
                 <TextField
                   size="small"
@@ -146,31 +169,59 @@ export function TreatmentMedicationRow({
           )}
         </Box>
         {!readOnly && !suspended && (
-          <AppButton
-            size="small"
-            variant="text"
-            startIcon={<EditOutlinedIcon sx={{ fontSize: 15 }} />}
-            onClick={() => setEditingMed((prev) => !prev)}
-          >
-            {editingMed ? 'Cancelar' : 'Editar / reemplazar'}
-          </AppButton>
+          <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
+            <AppButton
+              size="small"
+              variant="text"
+              startIcon={<EditOutlinedIcon sx={{ fontSize: 15 }} />}
+              onClick={() => setEditingMed((prev) => !prev)}
+            >
+              {editingMed ? 'Cancelar' : 'Editar / reemplazar'}
+            </AppButton>
+            <AppButton
+              size="small"
+              variant="text"
+              color="error"
+              startIcon={<StopCircleOutlinedIcon sx={{ fontSize: 16 }} />}
+              onClick={() => setFinishing((prev) => !prev)}
+            >
+              {finishing ? 'Cancelar' : 'Finalizar tratamiento'}
+            </AppButton>
+          </Stack>
         )}
       </Stack>
 
       {suspended && (
         <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'error.main', mt: 0.5 }}>
-          Suspendido por RAM confirmado
-          {medication.ramNotes ? ` · ${medication.ramNotes}` : ''}
+          Finalizado
+          {medication.discontinuationReason ? ` · ${medication.discontinuationReason}` : ''}
         </Typography>
+      )}
+
+      {finishing && !suspended && (
+        <Stack spacing={1} sx={{ mt: 1, p: 1.25, borderRadius: 1, bgcolor: 'action.hover' }}>
+          <TextField
+            size="small"
+            fullWidth
+            label="Motivo (opcional)"
+            placeholder="Fin de esquema, sin indicación…"
+            value={finishReason}
+            onChange={(e) => setFinishReason(e.target.value)}
+          />
+          <Stack direction="row" spacing={1}>
+            <AppButton size="small" variant="contained" color="error" loading={isSaving} onClick={finalize}>
+              Finalizar tratamiento
+            </AppButton>
+            <AppButton size="small" variant="text" onClick={() => setFinishing(false)}>
+              Cancelar
+            </AppButton>
+          </Stack>
+        </Stack>
       )}
 
       {/* Resumen simplificado de la captura ya guardada */}
       {!suspended && hasCapture && !capturing && (
-        <Stack
-          direction="row"
-          spacing={0.75}
-          sx={{ mt: 1, flexWrap: 'wrap', alignItems: 'center' }}
-        >
+        <Stack direction="row" spacing={0.75} sx={{ mt: 1, flexWrap: 'wrap', alignItems: 'center' }}>
           {medication.adherence && (
             <Chip
               size="small"
@@ -240,7 +291,10 @@ export function TreatmentMedicationRow({
               size="small"
               exclusive
               value={ramStatus}
-              onChange={(_e, value: MedicationRamStatus | null) => setRamStatus(value)}
+              onChange={(_e, value: MedicationRamStatus | null) => {
+                setRamStatus(value)
+                if (value !== 'confirmed') setSuspendForRam(false)
+              }}
             >
               {RAMS.map((value) => (
                 <ToggleButton
@@ -263,9 +317,22 @@ export function TreatmentMedicationRow({
               />
             )}
             {ramStatus === 'confirmed' && (
-              <Typography sx={{ fontSize: '11px', color: 'error.main', mt: 0.5 }}>
-                Al guardar, el medicamento queda suspendido por RAM confirmado (se muestra en rojo).
-              </Typography>
+              <FormControlLabel
+                sx={{ mt: 0.5 }}
+                control={
+                  <Checkbox
+                    size="small"
+                    color="error"
+                    checked={suspendForRam}
+                    onChange={(e) => setSuspendForRam(e.target.checked)}
+                  />
+                }
+                label={
+                  <Typography sx={{ fontSize: '12px' }}>
+                    Suspender el medicamento por esta RAM confirmada
+                  </Typography>
+                }
+              />
             )}
           </Box>
 

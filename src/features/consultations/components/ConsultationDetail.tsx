@@ -3,10 +3,7 @@ import LinkIcon from '@mui/icons-material/Link'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { formatShortDate } from '@/utils/format-date'
 import { usePrescriptionsByConsultation } from '@/features/patient-medications'
-import {
-  useConsultationSymptoms,
-  useConsultationRecorded,
-} from '../hooks/useConsultationDetail'
+import { useConsultationRecorded } from '../hooks/useConsultationDetail'
 import {
   ADHERENCE_LABELS,
   DISEASE_STATUS_COLORS,
@@ -34,10 +31,10 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
 const Empty = () => <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>—</Typography>
 
 export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
-  const { data: symptoms = [] } = useConsultationSymptoms(consultation.id)
   const { data: recorded } = useConsultationRecorded(consultation.id)
   const { data: prescriptions = [] } = usePrescriptionsByConsultation(consultation.id)
 
+  const symptoms = recorded?.symptoms ?? []
   const diseases = recorded?.diseases ?? []
   const medications = recorded?.medications ?? []
 
@@ -124,9 +121,15 @@ export function ConsultationDetail({ consultation }: ConsultationDetailProps) {
                     </Box>
                     {medication.dose ? ` ${medication.dose}` : ''}
                     {medication.frequency ? ` · ${medication.frequency}` : ''}
-                    {medication.discontinuationReason
-                      ? ` — ${medication.discontinuationReason}`
-                      : ''}
+                    {medication.status === 'previous' && (
+                      <Box component="span" sx={{ color: 'error.main', fontWeight: 600 }}>
+                        {' '}
+                        · Finalizado
+                        {medication.discontinuationReason
+                          ? ` (${medication.discontinuationReason})`
+                          : ''}
+                      </Box>
+                    )}
                   </Typography>
                   {(medication.adherence ||
                     (medication.ramStatus && medication.ramStatus !== 'none')) && (

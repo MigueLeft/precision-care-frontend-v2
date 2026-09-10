@@ -78,44 +78,54 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
 
   return (
     <Stack spacing={1} sx={{ mt: 1 }}>
-      <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap' }}>
-        <FormControlLabel
-          control={
-            <Checkbox
-              size="small"
-              checked={onlyChronic}
-              onChange={(event) => setOnlyChronic(event.target.checked)}
-            />
-          }
-          label="Solo enfermedades crónicas"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              size="small"
-              checked={manual}
-              onChange={(event) => {
-                setManual(event.target.checked)
-                setSelected(null)
-                setManualName('')
-              }}
-            />
-          }
-          label="No está en el catálogo · escribir manualmente"
-          sx={{ '& .MuiFormControlLabel-label': { fontSize: '12px', color: 'text.secondary' } }}
-        />
-      </Stack>
+      <FormControlLabel
+        control={
+          <Checkbox
+            size="small"
+            checked={onlyChronic}
+            onChange={(event) => setOnlyChronic(event.target.checked)}
+          />
+        }
+        label="Solo enfermedades crónicas"
+      />
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
-        {manual ? (
-          <>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <Stack spacing={0.25} sx={{ flex: '1 1 240px', minWidth: 220 }}>
+          {manual ? (
             <TextField
               size="small"
-              sx={{ flex: 1, minWidth: 220 }}
               placeholder="Enfermedad o diagnóstico…"
               value={manualName}
               onChange={(event) => setManualName(event.target.value)}
             />
+          ) : (
+            <Autocomplete
+              options={options}
+              getOptionLabel={(option) => option.name}
+              value={selected}
+              onChange={(_event, option) => setSelected(option)}
+              renderInput={(params) => (
+                <TextField {...params} size="small" placeholder="Buscar enfermedad…" />
+              )}
+            />
+          )}
+          {/* El check para escribir libremente va debajo del select. */}
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={manual}
+                onChange={(event) => {
+                  setManual(event.target.checked)
+                  setSelected(null)
+                  setManualName('')
+                }}
+              />
+            }
+            label="No está en el catálogo · escribir manualmente"
+            sx={{ '& .MuiFormControlLabel-label': { fontSize: '12px', color: 'text.secondary' } }}
+          />
+          {manual && (
             <FormControlLabel
               control={
                 <Checkbox
@@ -125,20 +135,10 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
                 />
               }
               label="Crónica"
+              sx={{ '& .MuiFormControlLabel-label': { fontSize: '12px', color: 'text.secondary' } }}
             />
-          </>
-        ) : (
-          <Autocomplete
-            sx={{ flex: 1, minWidth: 220 }}
-            options={options}
-            getOptionLabel={(option) => option.name}
-            value={selected}
-            onChange={(_event, option) => setSelected(option)}
-            renderInput={(params) => (
-              <TextField {...params} size="small" placeholder="Buscar enfermedad…" />
-            )}
-          />
-        )}
+          )}
+        </Stack>
 
         <FormControl size="small" sx={{ minWidth: 150 }}>
           <InputLabel id="disease-status">Estado</InputLabel>

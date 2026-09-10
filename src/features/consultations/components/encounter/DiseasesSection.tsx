@@ -1,4 +1,5 @@
 import {
+  Chip,
   FormControl,
   IconButton,
   MenuItem,
@@ -61,55 +62,71 @@ export function DiseasesSection({
         CAPTURA DE ESTA CONSULTA · {formatShortDate(consultationDate)}
       </Typography>
 
-      <Stack spacing={0.75} sx={{ my: 1.5 }}>
-        {diseases.map((disease) => (
-          <Stack
-            key={disease.id}
-            direction="row"
-            spacing={1}
-            sx={{ alignItems: 'center' }}
-          >
-            <Typography sx={{ fontSize: '14px', flex: 1 }}>
-              {disease.name ?? '—'}
-              {disease.code && (
-                <Typography component="span" sx={{ fontSize: '12px', color: 'text.secondary', ml: 0.75 }}>
-                  {disease.code}
+      <Stack spacing={1} sx={{ my: 1.5 }}>
+        {diseases.map((disease) => {
+          const options = diseaseStatusOptions(disease.isChronic)
+          const statusOptions = options.includes(disease.status)
+            ? options
+            : [disease.status, ...options]
+          return (
+            <Stack
+              key={disease.id}
+              direction="row"
+              spacing={1}
+              useFlexGap
+              sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+            >
+              <Typography sx={{ fontSize: '14px', flex: '1 1 200px', minWidth: 160 }}>
+                {disease.name ?? '—'}
+                {disease.code && (
+                  <Typography component="span" sx={{ fontSize: '12px', color: 'text.secondary', ml: 0.75 }}>
+                    {disease.code}
+                  </Typography>
+                )}
+                {disease.consultationId != null &&
+                  disease.consultationId !== consultationId && (
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label="De consulta previa"
+                      sx={{ ml: 0.75 }}
+                    />
+                  )}
+              </Typography>
+              {disease.dxDate && (
+                <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                  dx {formatFreeDate(disease.dxDate)}
                 </Typography>
               )}
-            </Typography>
-            {disease.dxDate && (
-              <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                dx {formatFreeDate(disease.dxDate)}
-              </Typography>
-            )}
-            <FormControl size="small" sx={{ minWidth: 150 }} disabled={readOnly || updateMutation.isPending}>
-              <Select<DiseaseStatus>
-                value={disease.status}
-                onChange={(event) =>
-                  updateMutation.mutate({
-                    diseaseId: disease.id,
-                    input: { status: event.target.value as DiseaseStatus },
-                  })
-                }
-              >
-                {diseaseStatusOptions(disease.isChronic).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {DISEASE_STATUS_LABELS[value]}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {!readOnly && (
-              <IconButton
-                size="small"
-                aria-label="Quitar enfermedad"
-                onClick={() => removeMutation.mutate(disease.id)}
-              >
-                <CloseIcon sx={{ fontSize: 18 }} />
-              </IconButton>
-            )}
-          </Stack>
-        ))}
+              <FormControl size="small" sx={{ minWidth: 150 }} disabled={readOnly || updateMutation.isPending}>
+                <Select<DiseaseStatus>
+                  value={disease.status}
+                  onChange={(event) =>
+                    updateMutation.mutate({
+                      diseaseId: disease.id,
+                      input: { status: event.target.value as DiseaseStatus },
+                    })
+                  }
+                >
+                  {statusOptions.map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {DISEASE_STATUS_LABELS[value]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {!readOnly && (
+                <IconButton
+                  size="small"
+                  aria-label="Quitar enfermedad"
+                  onClick={() => removeMutation.mutate(disease.id)}
+                >
+                  <CloseIcon sx={{ fontSize: 18 }} />
+                </IconButton>
+              )}
+            </Stack>
+          )
+        })}
       </Stack>
 
       {!readOnly && (

@@ -250,6 +250,9 @@ export interface CaptureMedicationInput {
   ramNotes?: string
   // Reemplazo por otro fármaco del catálogo.
   replacementMedicationId?: number
+  // Finalizar / suspender el tratamiento (no es automático al confirmar RAM).
+  discontinue?: boolean
+  discontinuationReason?: string
 }
 
 export interface MedicationHistoryItem {
