@@ -1,7 +1,8 @@
 import { Stack } from '@mui/material'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { useLifestyleByPatient } from '../hooks/useLifestyleByPatient'
-import { LifeEssential8Card, LifeEssential8Empty } from './LifeEssential8Card'
+import { buildMockLifestyleAssessment } from '../utils/lifestyle-mock'
+import { LifeEssential8Card } from './LifeEssential8Card'
 
 interface LifestylePanelProps {
   patientId: number
@@ -20,13 +21,13 @@ export function LifestylePanel({ patientId }: LifestylePanelProps) {
     )
   }
 
-  if (!latest) {
-    return <LifeEssential8Empty />
-  }
+  // Aún no existe captura real; mientras tanto se muestra el diseño con
+  // datos de ejemplo (ver comentario en lifestyle-mock.ts).
+  const assessment = latest ?? buildMockLifestyleAssessment(patientId)
 
   return (
     <Stack spacing={3}>
-      <LifeEssential8Card assessment={latest} />
+      <LifeEssential8Card assessment={assessment} />
     </Stack>
   )
 }
