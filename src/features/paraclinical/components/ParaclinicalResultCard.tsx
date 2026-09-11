@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import {
-  Box,
   Chip,
   Collapse,
+  IconButton,
   Paper,
   Stack,
-  Table,
   TableBody,
-  TableCell,
   TableHead,
   TableRow,
   Typography,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import { AppButton } from '@/components/AppButton'
+import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
 import { formatShortDate } from '@/utils/format-date'
 import type { ParaclinicalResult } from '../types'
 import {
@@ -24,9 +24,10 @@ import {
 
 interface ParaclinicalResultCardProps {
   result: ParaclinicalResult
+  onRemove?: () => void
 }
 
-export function ParaclinicalResultCard({ result }: ParaclinicalResultCardProps) {
+export function ParaclinicalResultCard({ result, onRemove }: ParaclinicalResultCardProps) {
   const [expanded, setExpanded] = useState(true)
 
   return (
@@ -67,51 +68,57 @@ export function ParaclinicalResultCard({ result }: ParaclinicalResultCardProps) 
           <AppButton size="small" variant="outlined" disabled>
             PDF
           </AppButton>
+          {onRemove && (
+            <IconButton
+              size="small"
+              aria-label="Eliminar resultado"
+              onClick={(event) => {
+                event.stopPropagation()
+                onRemove()
+              }}
+            >
+              <DeleteOutlineIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+          )}
         </Stack>
       </Stack>
 
       <Collapse in={expanded} unmountOnExit>
-        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', overflowX: 'auto' }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ bgcolor: 'grey.50' }}>
-                {['Analito', 'Resultado', 'Unidad', 'Referencia', 'Estado'].map((h) => (
-                  <TableCell key={h} sx={{ fontSize: '12px', fontWeight: 600, color: 'grey.700' }}>
-                    {h}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {result.values.map((value, index) => (
-                <TableRow key={`${value.paraclinicalCatalogId}-${index}`}>
-                  <TableCell sx={{ fontSize: '13px' }}>
-                    {value.paraclinicalName ?? '—'}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '13px', fontWeight: 600 }}>
-                    {value.numericValue ?? value.textValue ?? '—'}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                    {value.unit ?? '—'}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                    {formatReferenceRange(value)}
-                  </TableCell>
-                  <TableCell>
-                    {value.status && (
-                      <Chip
-                        label={PARACLINICAL_VALUE_STATUS_LABELS[value.status]}
-                        size="small"
-                        color={PARACLINICAL_VALUE_STATUS_COLORS[value.status]}
-                        variant="outlined"
-                      />
-                    )}
-                  </TableCell>
-                </TableRow>
+        <DataTable>
+          <TableHead>
+            <TableRow>
+              {['Analito', 'Resultado', 'Unidad', 'Referencia', 'Estado'].map((h) => (
+                <HeadCell key={h}>{h}</HeadCell>
               ))}
-            </TableBody>
-          </Table>
-        </Box>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {result.values.map((value, index) => (
+              <TableRow key={`${value.paraclinicalCatalogId}-${index}`}>
+                <DataCell>{value.paraclinicalName ?? '—'}</DataCell>
+                <DataCell sx={{ fontWeight: 600 }}>
+                  {value.numericValue ?? value.textValue ?? '—'}
+                </DataCell>
+                <DataCell sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                  {value.unit ?? '—'}
+                </DataCell>
+                <DataCell sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                  {formatReferenceRange(value)}
+                </DataCell>
+                <DataCell>
+                  {value.status && (
+                    <Chip
+                      label={PARACLINICAL_VALUE_STATUS_LABELS[value.status]}
+                      size="small"
+                      color={PARACLINICAL_VALUE_STATUS_COLORS[value.status]}
+                      variant="outlined"
+                    />
+                  )}
+                </DataCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </DataTable>
       </Collapse>
     </Paper>
   )

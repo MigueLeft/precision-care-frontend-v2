@@ -6,7 +6,11 @@ export {
   deleteAntecedent,
 } from './services/antecedents.service'
 export { useAntecedentsByPatient } from './hooks/useAntecedentsByPatient'
+export { useCreateAntecedent } from './hooks/useCreateAntecedent'
+export { useDeleteAntecedent } from './hooks/useDeleteAntecedent'
 export { AntecedentsPanel } from './components/AntecedentsPanel'
+export { AntecedentListTable } from './components/AntecedentListTable'
+export { SurgeryHospitalizationList } from './components/SurgeryHospitalizationList'
 export {
   ANTECEDENT_STATUS_LABELS,
   ANTECEDENT_STATUS_COLORS,
@@ -18,4 +22,5 @@ export type {
   AntecedentStatus,
   AntecedentSurgeryDetail,
   AntecedentHospitalizationDetail,
+  CreateAntecedentPayload,
 } from './types'

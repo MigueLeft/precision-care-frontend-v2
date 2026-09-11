@@ -31,6 +31,23 @@ export interface ParaclinicalOrderItem {
   instructions: string | null
 }
 
+export interface CreateParaclinicalResultValueInput {
+  paraclinicalCatalogId: number
+  numericValue?: number
+  textValue?: string
+  unit?: string
+  referenceMin?: number
+  referenceMax?: number
+  status?: ParaclinicalValueStatus
+}
+
+export interface CreateParaclinicalResultInput {
+  patientId: number
+  resultDate: string
+  laboratory?: string
+  values: CreateParaclinicalResultValueInput[]
+}
+
 export interface ParaclinicalOrder {
   id: number
   patientId: number

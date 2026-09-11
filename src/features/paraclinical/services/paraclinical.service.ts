@@ -1,5 +1,9 @@
 import { api } from '@/utils/api'
-import type { ParaclinicalOrder, ParaclinicalResult } from '../types'
+import type {
+  CreateParaclinicalResultInput,
+  ParaclinicalOrder,
+  ParaclinicalResult,
+} from '../types'
 
 export async function fetchParaclinicalResultsByPatient(
   patientId: number,
@@ -17,4 +21,18 @@ export async function fetchParaclinicalOrdersByPatient(
     `/paraclinical-orders/patient/${patientId}`,
   )
   return data.paraclinicalOrders
+}
+
+export async function createParaclinicalResult(
+  input: CreateParaclinicalResultInput,
+): Promise<ParaclinicalResult> {
+  const { data } = await api.post<{ paraclinicalResult: ParaclinicalResult }>(
+    '/paraclinical-results',
+    input,
+  )
+  return data.paraclinicalResult
+}
+
+export async function removeParaclinicalResult(id: number): Promise<void> {
+  await api.delete(`/paraclinical-results/${id}`)
 }

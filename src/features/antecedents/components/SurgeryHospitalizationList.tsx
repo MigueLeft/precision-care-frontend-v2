@@ -7,7 +7,7 @@ import { ANTECEDENT_TYPE_LABELS } from '../utils/antecedent-format'
 
 interface SurgeryHospitalizationListProps {
   antecedents: Antecedent[]
-  onEdit: (antecedent: Antecedent) => void
+  onEdit?: (antecedent: Antecedent) => void
   onDelete: (antecedent: Antecedent) => void
 }
 
@@ -58,9 +58,11 @@ export function SurgeryHospitalizationList({
                     CIE-10: {cie10}
                   </Typography>
                 )}
-                <IconButton size="small" onClick={() => onEdit(antecedent)} aria-label="Editar">
-                  <EditOutlinedIcon sx={{ fontSize: 16 }} />
-                </IconButton>
+                {onEdit && (
+                  <IconButton size="small" onClick={() => onEdit(antecedent)} aria-label="Editar">
+                    <EditOutlinedIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                )}
                 <IconButton size="small" onClick={() => onDelete(antecedent)} aria-label="Eliminar">
                   <DeleteOutlineIcon sx={{ fontSize: 16 }} />
                 </IconButton>

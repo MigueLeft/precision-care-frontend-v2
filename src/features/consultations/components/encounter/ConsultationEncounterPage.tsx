@@ -12,6 +12,9 @@ import { PhysicalExamSection } from '@/features/physical-exam'
 import { BodyCompositionSection } from '@/features/body-composition'
 import { PlaceholderSection } from './PlaceholderSection'
 import { ProblemsSection } from './ProblemsSection'
+import { AntecedentsSection } from './AntecedentsSection'
+import { ParaclinicalSection } from './ParaclinicalSection'
+import { LifeEssential8Section } from './LifeEssential8Section'
 import { AutosaveTextField } from './AutosaveTextField'
 
 interface ConsultationEncounterPageProps {
@@ -67,43 +70,44 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
 
           <GroupTitle>PARTE MÉDICA</GroupTitle>
           <Stack spacing={1.5}>
+            <AntecedentsSection index={1} patientId={consultation.patientId} readOnly={readOnly} />
             <SymptomsSection
-              index={1}
-              consultationId={consultationId}
-              consultationDate={consultation.startAt}
-              readOnly={readOnly}
-            />
-            <AllergiesSection
               index={2}
               consultationId={consultationId}
               consultationDate={consultation.startAt}
               readOnly={readOnly}
             />
-            <DiseasesSection
+            <AllergiesSection
               index={3}
               consultationId={consultationId}
               consultationDate={consultation.startAt}
               readOnly={readOnly}
             />
-            <TreatmentSection index={4} consultation={consultation} readOnly={readOnly} />
-            <BodyCompositionSection
-              index={5}
+            <DiseasesSection
+              index={4}
               consultationId={consultationId}
-              patientId={consultation.patientId}
               consultationDate={consultation.startAt}
               readOnly={readOnly}
             />
-            <PhysicalExamSection
+            <TreatmentSection index={5} consultation={consultation} readOnly={readOnly} />
+            <BodyCompositionSection
               index={6}
               consultationId={consultationId}
               patientId={consultation.patientId}
               consultationDate={consultation.startAt}
               readOnly={readOnly}
             />
-            <PlaceholderSection
+            <PhysicalExamSection
               index={7}
-              title="Paraclínicos"
-              subtitle="Laboratorio, imagen, cardiología"
+              consultationId={consultationId}
+              patientId={consultation.patientId}
+              consultationDate={consultation.startAt}
+              readOnly={readOnly}
+            />
+            <ParaclinicalSection
+              index={8}
+              patientId={consultation.patientId}
+              readOnly={readOnly}
             />
           </Stack>
 
@@ -114,11 +118,7 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
               title="Nutrición"
               subtitle="Respuestas de ingreso · asignación de plan"
             />
-            <PlaceholderSection
-              index={2}
-              title="Life's Essential 8"
-              subtitle="Puntaje de salud cardiovascular"
-            />
+            <LifeEssential8Section index={2} patientId={consultation.patientId} />
           </Stack>
 
           <GroupTitle>CIERRE CLÍNICO</GroupTitle>
