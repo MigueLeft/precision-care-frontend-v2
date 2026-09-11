@@ -7,6 +7,7 @@ import {
   AntecedentListTable,
   useCreateAntecedent,
   useDeleteAntecedent,
+  isMockAntecedent,
 } from '@/features/antecedents'
 import type { Antecedent } from '@/features/antecedents'
 
@@ -76,7 +77,13 @@ export function FamilyAntecedentsBlock({
       <AntecedentListTable
         antecedents={antecedents}
         variant="family"
-        onDelete={(antecedent) => !readOnly && deleteMutation.mutate(antecedent.id)}
+        onDelete={(antecedent) => {
+          if (isMockAntecedent(antecedent)) {
+            toast.info('Este es un registro de ejemplo.')
+            return
+          }
+          if (!readOnly) deleteMutation.mutate(antecedent.id)
+        }}
       />
 
       {!readOnly && (
