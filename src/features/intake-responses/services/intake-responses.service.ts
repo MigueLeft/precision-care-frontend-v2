@@ -13,8 +13,8 @@ export async function fetchIntakeResponsesByPatient(
 export async function fetchIntakeResponseDetail(
   id: number,
 ): Promise<IntakeResponseDetail> {
-  const { data } = await api.get<IntakeResponseDetail>(
+  const { data } = await api.get<{ response: IntakeResponseDetail }>(
     `/intake-responses/${id}/detail`,
   )
-  return data
+  return data.response
 }

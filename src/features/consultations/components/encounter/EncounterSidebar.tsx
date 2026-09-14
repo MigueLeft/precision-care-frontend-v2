@@ -1,6 +1,7 @@
 import { Box, Divider, Stack, Typography } from '@mui/material'
 import { AutosaveTextField } from './AutosaveTextField'
 import { GenerarEntregablesPanel } from './GenerarEntregablesPanel'
+import { IntakeResponsesSection } from './IntakeResponsesSection'
 import { useUpdateConsultation } from '../../hooks/useConsultationDetail'
 import type { Consultation } from '../../types'
 
@@ -58,6 +59,10 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
             minRows={4}
           />
         </div>
+
+        <Divider />
+
+        <IntakeResponsesSection patientId={consultation.patientId} />
 
         <Divider />
 
