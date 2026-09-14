@@ -7,6 +7,7 @@ export { useIntakeResponsesByPatient } from './hooks/useIntakeResponsesByPatient
 export { useIntakeResponseDetail } from './hooks/useIntakeResponseDetail'
 export { IntakeResponsesPanel } from './components/IntakeResponsesPanel'
 export { IntakeResponseDetailDrawer } from './components/IntakeResponseDetailDrawer'
+export { IntakeResponseDetailContent } from './components/IntakeResponseDetailContent'
 export type {
   IntakeResponse,
   IntakeResponseDetail,

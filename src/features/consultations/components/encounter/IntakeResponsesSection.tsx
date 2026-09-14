@@ -1,18 +1,18 @@
-import { useState } from 'react'
 import { Paper, Stack, Typography } from '@mui/material'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
-import { useIntakeResponsesByPatient } from '@/features/intake-responses/hooks/useIntakeResponsesByPatient'
-import { IntakeResponseDetailDrawer } from '@/features/intake-responses/components/IntakeResponseDetailDrawer'
+import { useIntakeResponsesByPatient } from '@/features/intake-responses'
 
 interface IntakeResponsesSectionProps {
   patientId: number
+  onSelect: (responseId: number) => void
 }
 
 // Lista compacta de ingresables del paciente para consultarlos sin salir del
 // encuentro (misma info que el tab "Ingresables" del expediente, resumida).
-export function IntakeResponsesSection({ patientId }: IntakeResponsesSectionProps) {
+// Al seleccionar uno completado, el padre (EncounterSidebar) reemplaza el
+// contenido de la barra con sus respuestas.
+export function IntakeResponsesSection({ patientId, onSelect }: IntakeResponsesSectionProps) {
   const { data: responses = [] } = useIntakeResponsesByPatient(patientId)
-  const [openResponseId, setOpenResponseId] = useState<number | null>(null)
 
   return (
     <div>
@@ -29,7 +29,7 @@ export function IntakeResponsesSection({ patientId }: IntakeResponsesSectionProp
           {responses.map((response) => (
             <Paper
               key={response.id}
-              onClick={() => response.completed && setOpenResponseId(response.id)}
+              onClick={() => response.completed && onSelect(response.id)}
               sx={{
                 p: 1.25,
                 borderRadius: '8px',
@@ -54,12 +54,6 @@ export function IntakeResponsesSection({ patientId }: IntakeResponsesSectionProp
           ))}
         </Stack>
       )}
-
-      <IntakeResponseDetailDrawer
-        responseId={openResponseId}
-        open={openResponseId != null}
-        onClose={() => setOpenResponseId(null)}
-      />
     </div>
   )
 }
