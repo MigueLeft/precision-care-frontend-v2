@@ -78,6 +78,22 @@ export { useDiseases } from './hooks/useDiseases'
 export { useCreateDisease } from './hooks/useCreateDisease'
 export { useUpdateDisease } from './hooks/useUpdateDisease'
 export { useToggleDiseaseActive } from './hooks/useToggleDiseaseActive'
+export { useAntecedentFamilyCatalog } from './hooks/useAntecedentFamilyCatalog'
+export { useCreateAntecedentFamily } from './hooks/useCreateAntecedentFamily'
+export { useUpdateAntecedentFamily } from './hooks/useUpdateAntecedentFamily'
+export { useToggleAntecedentFamilyActive } from './hooks/useToggleAntecedentFamilyActive'
+export { useAntecedentPersonalCatalog } from './hooks/useAntecedentPersonalCatalog'
+export { useCreateAntecedentPersonal } from './hooks/useCreateAntecedentPersonal'
+export { useUpdateAntecedentPersonal } from './hooks/useUpdateAntecedentPersonal'
+export { useToggleAntecedentPersonalActive } from './hooks/useToggleAntecedentPersonalActive'
+export { useSurgeryCatalog } from './hooks/useSurgeryCatalog'
+export { useCreateSurgery } from './hooks/useCreateSurgery'
+export { useUpdateSurgery } from './hooks/useUpdateSurgery'
+export { useToggleSurgeryActive } from './hooks/useToggleSurgeryActive'
+export { useHospitalizationCatalog } from './hooks/useHospitalizationCatalog'
+export { useCreateHospitalization } from './hooks/useCreateHospitalization'
+export { useUpdateHospitalization } from './hooks/useUpdateHospitalization'
+export { useToggleHospitalizationActive } from './hooks/useToggleHospitalizationActive'
 export {
   fetchCountries,
   fetchStates,
@@ -116,4 +132,8 @@ export type {
   Disease,
   CreateDiseasePayload,
   UpdateDiseasePayload,
+  AntecedentFamilyCatalog,
+  AntecedentPersonalCatalog,
+  SurgeryCatalog,
+  HospitalizationCatalog,
 } from './types'

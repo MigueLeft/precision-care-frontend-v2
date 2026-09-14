@@ -23,4 +23,8 @@ export const catalogsKeys = {
   symptomSeverities: ['catalogs', 'symptom-severities'] as const,
   allergies: ['catalogs', 'allergies'] as const,
   diseases: ['catalogs', 'diseases'] as const,
+  antecedentFamily: ['catalogs', 'antecedent-family'] as const,
+  antecedentPersonal: ['catalogs', 'antecedent-personal'] as const,
+  surgeries: ['catalogs', 'surgeries'] as const,
+  hospitalizationReasons: ['catalogs', 'hospitalization-reasons'] as const,
 }

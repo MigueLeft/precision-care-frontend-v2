@@ -181,3 +181,27 @@ export interface CreateDiseasePayload {
   bodySystemId?: number | null
 }
 export type UpdateDiseasePayload = Partial<CreateDiseasePayload>
+
+export interface AntecedentFamilyCatalog {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface AntecedentPersonalCatalog {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface SurgeryCatalog {
+  id: number
+  name: string
+  active: boolean
+}
+
+export interface HospitalizationCatalog {
+  id: number
+  name: string
+  active: boolean
+}
