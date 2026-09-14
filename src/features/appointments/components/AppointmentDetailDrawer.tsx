@@ -10,11 +10,11 @@ import {
   Link,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import { useAppointment } from '../hooks/useAppointments'
 import { AppointmentActions } from './AppointmentActions'
+import { AppointmentNotificationsSection } from './AppointmentNotificationsSection'
 import {
   APPOINTMENT_MODALITY_LABELS,
   APPOINTMENT_STATUS_COLORS,
@@ -151,35 +151,7 @@ export function AppointmentDetailDrawer({
 
             <Divider sx={{ my: 3 }} />
 
-            <Typography sx={{ fontSize: '13px', fontWeight: 700, mb: 1 }}>
-              Recordatorios enviados
-            </Typography>
-            {appointment.reminders && appointment.reminders.length > 0 ? (
-              <Stack spacing={0.75}>
-                {appointment.reminders.map((reminder) => (
-                  <Stack
-                    key={reminder.id}
-                    direction="row"
-                    spacing={1}
-                    sx={{ alignItems: 'center' }}
-                  >
-                    <CheckCircleOutlineIcon sx={{ fontSize: 16, color: 'success.main' }} />
-                    <Typography sx={{ fontSize: '12px' }}>
-                      {reminder.channel === 'email' ? 'Email' : 'WhatsApp'} ·{' '}
-                      {new Date(reminder.sentAt).toLocaleString('es-MX', {
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                      })}{' '}
-                      · {reminder.recipient}
-                    </Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            ) : (
-              <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                Sin recordatorios enviados.
-              </Typography>
-            )}
+            <AppointmentNotificationsSection appointment={appointment} />
 
             <Divider sx={{ my: 3 }} />
 

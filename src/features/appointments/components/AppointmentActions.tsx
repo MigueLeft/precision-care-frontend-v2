@@ -10,10 +10,8 @@ import { useMe } from '@/features/identity'
 import { useConsultationByAppointment } from '@/features/consultations'
 import type { Appointment } from '../types'
 import { getPrimarySpecialist, isCancelled } from '../utils/appointment-helpers'
-import {
-  useStartConsultation,
-  useSendReminder,
-} from '../hooks/useAppointmentMutations'
+import { useStartConsultation, useSendReminder } from '../hooks/useAppointmentMutations'
+import { SendIntakeAssignmentButton } from './SendIntakeAssignmentButton'
 
 interface AppointmentActionsProps {
   appointment: Appointment
@@ -113,6 +111,7 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
           >
             Enviar recordatorio manual
           </AppButton>
+          <SendIntakeAssignmentButton appointmentId={appointment.id} />
         </>
       )}
     </Stack>

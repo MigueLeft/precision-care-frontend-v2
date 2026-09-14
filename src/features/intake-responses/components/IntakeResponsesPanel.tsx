@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined'
@@ -8,6 +9,7 @@ import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { formatShortDate } from '@/utils/format-date'
 import { formatNumber } from '@/utils/parse-numeric'
 import { useIntakeResponsesByPatient } from '../hooks/useIntakeResponsesByPatient'
+import { IntakeResponseDetailDrawer } from './IntakeResponseDetailDrawer'
 
 interface IntakeResponsesPanelProps {
   patientId: number
@@ -18,6 +20,7 @@ export function IntakeResponsesPanel({
 }: IntakeResponsesPanelProps) {
   const { data: responses = [], isLoading, isError, error } =
     useIntakeResponsesByPatient(patientId)
+  const [openResponseId, setOpenResponseId] = useState<number | null>(null)
 
   return (
     <QueryBoundary isLoading={isLoading} isError={isError} error={error}>
@@ -81,9 +84,19 @@ export function IntakeResponsesPanel({
                 </Typography>
               )}
             </Box>
-            <AppButton size="small" variant="outlined" disabled>
-              {response.completed ? 'Ver respuestas' : 'Enviar recordatorio'}
-            </AppButton>
+            {response.completed ? (
+              <AppButton
+                size="small"
+                variant="outlined"
+                onClick={() => setOpenResponseId(response.id)}
+              >
+                Ver respuestas
+              </AppButton>
+            ) : (
+              <AppButton size="small" variant="outlined" disabled>
+                Enviar recordatorio
+              </AppButton>
+            )}
           </Stack>
         </Paper>
       ))}
@@ -93,6 +106,12 @@ export function IntakeResponsesPanel({
         llenarlos en consulta.
       </Typography>
       </Stack>
+
+      <IntakeResponseDetailDrawer
+        responseId={openResponseId}
+        open={openResponseId != null}
+        onClose={() => setOpenResponseId(null)}
+      />
     </QueryBoundary>
   )
 }

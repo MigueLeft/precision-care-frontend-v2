@@ -5,6 +5,7 @@ import {
   updateAppointment,
   startConsultationForAppointment,
   sendAppointmentReminder,
+  sendIntakeAssignment,
 } from '../services/appointments.service'
 import { appointmentsKeys } from './appointments.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
@@ -99,6 +100,31 @@ export function useSendReminder(options?: { onSuccess?: () => void }) {
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al enviar el recordatorio'))
+    },
+  })
+}
+
+export function useSendIntakeAssignment(options?: { onSuccess?: () => void }) {
+  const invalidate = useInvalidateAppointments()
+  return useMutation({
+    mutationFn: ({
+      appointmentId,
+      intakeVersionId,
+    }: {
+      appointmentId: number
+      intakeVersionId: number
+    }) => sendIntakeAssignment(appointmentId, intakeVersionId),
+    onSuccess: ({ sent }) => {
+      invalidate()
+      toast.success(
+        sent
+          ? 'Ingresable enviado por email'
+          : 'Ingresable asignado (no se pudo notificar por email)',
+      )
+      options?.onSuccess?.()
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Error al asignar el ingresable'))
     },
   })
 }

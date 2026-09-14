@@ -68,3 +68,14 @@ export async function sendAppointmentReminder(
   }>(`/appointments/${id}/reminders`, { channel: 'email' })
   return data
 }
+
+export async function sendIntakeAssignment(
+  appointmentId: number,
+  intakeVersionId: number,
+): Promise<{ response: unknown; sent: boolean }> {
+  const { data } = await api.post<{
+    response: unknown
+    sent: boolean
+  }>(`/appointments/${appointmentId}/intake-assignments`, { intakeVersionId })
+  return data
+}

@@ -33,6 +33,17 @@ export interface AppointmentReminder {
   sentAt: string
 }
 
+export interface IntakeAssignment {
+  id: number
+  intakeName: string | null
+  versionNumber: number | null
+  completed: boolean
+  startAt: string
+  completedAt: string | null
+  score: string | null
+  interpretation: string | null
+}
+
 export interface Appointment {
   id: number
   patientId: number
@@ -49,6 +60,7 @@ export interface Appointment {
   specialists: AppointmentSpecialist[]
   patientName: string | null
   reminders?: AppointmentReminder[]
+  intakeAssignments: IntakeAssignment[]
   createdAt: string
   updatedAt: string
 }
