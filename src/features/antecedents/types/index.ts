@@ -17,6 +17,7 @@ export interface AntecedentSurgeryDetail {
   institution: string | null
   complications: string | null
   treatingPhysician: string | null
+  procedureCatalogId: number | null
 }
 
 export interface AntecedentHospitalizationDetail {
@@ -26,6 +27,7 @@ export interface AntecedentHospitalizationDetail {
   reason: string | null
   institution: string | null
   dischargeDiagnosisCie10: string | null
+  reasonCatalogId: number | null
 }
 
 export interface Antecedent {
@@ -38,6 +40,8 @@ export interface Antecedent {
   eventDate: string | null
   relationship: string | null
   status: AntecedentStatus | null
+  familyCatalogId: number | null
+  personalCatalogId: number | null
   surgeryDetail: AntecedentSurgeryDetail | null
   hospitalizationDetail: AntecedentHospitalizationDetail | null
   createdAt: string
@@ -53,11 +57,14 @@ export interface CreateAntecedentPayload {
   eventDate?: string
   relationship?: string
   status?: AntecedentStatus
+  familyCatalogId?: number
+  personalCatalogId?: number
   surgeryDetail?: {
     procedure?: string
     institution?: string
     complications?: string
     treatingPhysician?: string
+    procedureCatalogId?: number
   }
   hospitalizationDetail?: {
     admissionDate?: string
@@ -65,6 +72,7 @@ export interface CreateAntecedentPayload {
     reason?: string
     institution?: string
     dischargeDiagnosisCie10?: string
+    reasonCatalogId?: number
   }
 }
 

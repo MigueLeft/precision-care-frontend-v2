@@ -12,7 +12,7 @@ function trimmed(value: string | undefined): string | undefined {
 }
 
 // Construye un objeto solo con los pares cuyo valor no es undefined.
-function compact<T extends Record<string, string | undefined>>(
+function compact<T extends Record<string, string | number | undefined>>(
   obj: T,
 ): Partial<T> {
   return Object.fromEntries(
@@ -33,6 +33,10 @@ export function mapFormToPayload(
     relationship:
       values.type === 'family' ? trimmed(values.relationship) : undefined,
     status: values.type === 'personal' ? values.status : undefined,
+    familyCatalogId:
+      values.type === 'family' ? values.familyCatalogId : undefined,
+    personalCatalogId:
+      values.type === 'personal' ? values.personalCatalogId : undefined,
   }
 
   if (values.type === 'surgery') {
@@ -41,6 +45,7 @@ export function mapFormToPayload(
       institution: trimmed(values.surgeryInstitution),
       complications: trimmed(values.surgeryComplications),
       treatingPhysician: trimmed(values.surgeryTreatingPhysician),
+      procedureCatalogId: values.surgeryProcedureCatalogId,
     })
   }
 
@@ -53,6 +58,7 @@ export function mapFormToPayload(
       dischargeDiagnosisCie10: trimmed(
         values.hospitalizationDischargeDiagnosisCie10,
       ),
+      reasonCatalogId: values.hospitalizationReasonCatalogId,
     })
   }
 
@@ -75,6 +81,12 @@ export function mapAntecedentToForm(antecedent: Antecedent): AntecedentFormValue
     cie10Code: antecedent.cie10Code ?? '',
     relationship: antecedent.relationship ?? '',
     status: antecedent.status ?? undefined,
+    familyCatalogId: antecedent.familyCatalogId ?? undefined,
+    personalCatalogId: antecedent.personalCatalogId ?? undefined,
+    surgeryProcedureCatalogId:
+      antecedent.surgeryDetail?.procedureCatalogId ?? undefined,
+    hospitalizationReasonCatalogId:
+      antecedent.hospitalizationDetail?.reasonCatalogId ?? undefined,
     surgeryProcedure: antecedent.surgeryDetail?.procedure ?? '',
     surgeryInstitution: antecedent.surgeryDetail?.institution ?? '',
     surgeryComplications: antecedent.surgeryDetail?.complications ?? '',

@@ -16,6 +16,8 @@ function mock(overrides: Partial<Antecedent> & { id: number; type: Antecedent['t
     eventDate: null,
     relationship: null,
     status: null,
+    familyCatalogId: null,
+    personalCatalogId: null,
     surgeryDetail: null,
     hospitalizationDetail: null,
     createdAt: '2026-05-23T12:00:00.000Z',
@@ -89,6 +91,7 @@ export const MOCK_SURGICAL_ANTECEDENTS: Antecedent[] = [
       institution: 'Hospital General',
       complications: 'Ninguna',
       treatingPhysician: 'Dr. Ramírez',
+      procedureCatalogId: null,
     },
   }),
   mock({
@@ -102,6 +105,7 @@ export const MOCK_SURGICAL_ANTECEDENTS: Antecedent[] = [
       reason: 'Neumonía adquirida en la comunidad',
       institution: 'Hospital Ángeles',
       dischargeDiagnosisCie10: 'J18.9',
+      reasonCatalogId: null,
     },
   }),
 ]

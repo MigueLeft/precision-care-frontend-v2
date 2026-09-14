@@ -30,7 +30,7 @@ export function AntecedentFormModal({
   onClose,
 }: AntecedentFormModalProps) {
   const values = initialValues ?? antecedentFormDefaultValues
-  const { control, handleSubmit, reset } = useForm<AntecedentFormValues>({
+  const { control, handleSubmit, reset, setValue } = useForm<AntecedentFormValues>({
     resolver: zodResolver(antecedentFormSchema),
     defaultValues: values,
   })
@@ -45,7 +45,7 @@ export function AntecedentFormModal({
         {mode === 'create' ? 'Nuevo antecedente' : 'Editar antecedente'}
       </DialogTitle>
       <DialogContent>
-        <AntecedentFormFields control={control} lockType={lockType} />
+        <AntecedentFormFields control={control} setValue={setValue} lockType={lockType} />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} disabled={isSubmitting}>

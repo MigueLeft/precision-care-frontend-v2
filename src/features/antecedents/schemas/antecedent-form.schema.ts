@@ -19,6 +19,12 @@ export const antecedentFormSchema = z
     status: z
       .enum(['active', 'in_follow_up', 'resolved', 'inactive'])
       .optional(),
+    // Ids resueltos contra los catálogos vía CatalogSearchInput (opcional:
+    // se limpian cuando `type` cambia o cuando se escribe manualmente).
+    familyCatalogId: z.number().int().positive().optional(),
+    personalCatalogId: z.number().int().positive().optional(),
+    surgeryProcedureCatalogId: z.number().int().positive().optional(),
+    hospitalizationReasonCatalogId: z.number().int().positive().optional(),
     // Detalle de cirugía
     surgeryProcedure: z.string().optional(),
     surgeryInstitution: z.string().optional(),
@@ -51,6 +57,10 @@ export const antecedentFormDefaultValues: AntecedentFormValues = {
   cie10Code: '',
   relationship: '',
   status: undefined,
+  familyCatalogId: undefined,
+  personalCatalogId: undefined,
+  surgeryProcedureCatalogId: undefined,
+  hospitalizationReasonCatalogId: undefined,
   surgeryProcedure: '',
   surgeryInstitution: '',
   surgeryComplications: '',
