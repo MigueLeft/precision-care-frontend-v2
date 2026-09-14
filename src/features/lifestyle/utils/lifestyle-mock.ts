@@ -1,6 +1,6 @@
 import type { LifestyleAssessment, LifestyleComponentType } from '../types'
 
-// Contenido ficticio: aún no existe un flujo de captura real (cuestionario →
+// Contenido ficticio: aún no existe un flujo de captura real (ingresable →
 // lifestyle_assessment) en el frontend, así que este panel muestra sólo el
 // diseño con datos de ejemplo hasta que se construya esa captura.
 function component(component: LifestyleComponentType, score: number, note: string) {
@@ -13,7 +13,7 @@ export function buildMockLifestyleAssessment(patientId: number): LifestyleAssess
     patientId,
     assessmentDate: '2026-05-23T12:00:00.000Z',
     globalScore: '54',
-    questionnaireResponseId: null,
+    intakeResponseId: null,
     components: [
       component('diet', 42, 'Alta en carbohidratos refinados. Sin adherencia a plan nutricional.'),
       component('physical_activity', 35, 'Sedentaria. Camina <30 min/semana.'),

@@ -7,7 +7,7 @@ interface LifeEssential8SectionProps {
   patientId: number
 }
 
-// Sólo lectura: la captura del cuestionario de estilo de vida vive en su propio
+// Sólo lectura: la captura del ingresable de estilo de vida vive en su propio
 // flujo; aquí se muestra la última evaluación disponible del paciente. Mientras
 // no exista una captura real se muestra el diseño con datos de ejemplo.
 export function LifeEssential8Section({ index, patientId }: LifeEssential8SectionProps) {

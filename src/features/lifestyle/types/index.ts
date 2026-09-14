@@ -19,7 +19,7 @@ export interface LifestyleAssessment {
   patientId: number
   assessmentDate: string
   globalScore: string | null
-  questionnaireResponseId: number | null
+  intakeResponseId: number | null
   components: LifestyleComponent[]
   createdAt: string
   updatedAt: string

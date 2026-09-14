@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { QuestionnaireResponsesPanel } from '@/features/questionnaire-responses'
+import { IntakeResponsesPanel } from '@/features/intake-responses'
 
 export const Route = createFileRoute('/_app/pacientes_/$patientId/ingresables')({
   component: IngresablesRoute,
@@ -7,5 +7,5 @@ export const Route = createFileRoute('/_app/pacientes_/$patientId/ingresables')(
 
 function IngresablesRoute() {
   const { patientId } = Route.useParams()
-  return <QuestionnaireResponsesPanel patientId={Number(patientId)} />
+  return <IntakeResponsesPanel patientId={Number(patientId)} />
 }

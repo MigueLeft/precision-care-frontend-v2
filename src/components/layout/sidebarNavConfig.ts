@@ -31,7 +31,7 @@ export const sidebarNavConfig: SidebarNavSection[] = [
       { label: 'Pacientes', icon: PeopleAltOutlinedIcon, to: '/pacientes' },
       { label: 'Citas', icon: EventOutlinedIcon, to: '/citas' },
       { label: 'Calendario', icon: CalendarMonthOutlinedIcon },
-      { label: 'Cuestionarios', icon: AssignmentOutlinedIcon, to: '/cuestionarios' },
+      { label: 'Ingresables', icon: AssignmentOutlinedIcon, to: '/ingresables' },
       { label: 'Entregables', icon: DescriptionOutlinedIcon },
     ],
   },

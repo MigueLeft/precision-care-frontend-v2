@@ -15,13 +15,13 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-roles'
 import { Route as AppPacientesRouteImport } from './routes/_app/pacientes'
+import { Route as AppIngresablesRouteImport } from './routes/_app/ingresables'
 import { Route as AppEspecialistasRouteImport } from './routes/_app/especialistas'
-import { Route as AppCuestionariosRouteImport } from './routes/_app/cuestionarios'
 import { Route as AppCitasRouteImport } from './routes/_app/citas'
 import { Route as AppCatalogosRouteImport } from './routes/_app/catalogos'
+import { Route as AppIngresablesIdRouteImport } from './routes/_app/ingresables_.$id'
 import { Route as AppEspecialistasNuevoRouteImport } from './routes/_app/especialistas_.nuevo'
 import { Route as AppEspecialistasSpecialistIdRouteImport } from './routes/_app/especialistas_.$specialistId'
-import { Route as AppCuestionariosIdRouteImport } from './routes/_app/cuestionarios_.$id'
 import { Route as AppConsultasConsultationIdRouteImport } from './routes/_app/consultas_.$consultationId'
 import { Route as AppPacientesPatientIdRouteRouteImport } from './routes/_app/pacientes_.$patientId/route'
 import { Route as AppPacientesPatientIdIndexRouteImport } from './routes/_app/pacientes_.$patientId/index'
@@ -67,14 +67,14 @@ const AppPacientesRoute = AppPacientesRouteImport.update({
   path: '/pacientes',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppIngresablesRoute = AppIngresablesRouteImport.update({
+  id: '/ingresables',
+  path: '/ingresables',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppEspecialistasRoute = AppEspecialistasRouteImport.update({
   id: '/especialistas',
   path: '/especialistas',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppCuestionariosRoute = AppCuestionariosRouteImport.update({
-  id: '/cuestionarios',
-  path: '/cuestionarios',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppCitasRoute = AppCitasRouteImport.update({
@@ -85,6 +85,11 @@ const AppCitasRoute = AppCitasRouteImport.update({
 const AppCatalogosRoute = AppCatalogosRouteImport.update({
   id: '/catalogos',
   path: '/catalogos',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppIngresablesIdRoute = AppIngresablesIdRouteImport.update({
+  id: '/ingresables_/$id',
+  path: '/ingresables/$id',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppEspecialistasNuevoRoute = AppEspecialistasNuevoRouteImport.update({
@@ -98,11 +103,6 @@ const AppEspecialistasSpecialistIdRoute =
     path: '/especialistas/$specialistId',
     getParentRoute: () => AppRouteRoute,
   } as any)
-const AppCuestionariosIdRoute = AppCuestionariosIdRouteImport.update({
-  id: '/cuestionarios_/$id',
-  path: '/cuestionarios/$id',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppConsultasConsultationIdRoute =
   AppConsultasConsultationIdRouteImport.update({
     id: '/consultas_/$consultationId',
@@ -204,16 +204,16 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
   '/citas': typeof AppCitasRoute
-  '/cuestionarios': typeof AppCuestionariosRoute
   '/especialistas': typeof AppEspecialistasRoute
+  '/ingresables': typeof AppIngresablesRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
-  '/cuestionarios/$id': typeof AppCuestionariosIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
+  '/ingresables/$id': typeof AppIngresablesIdRoute
   '/especialistas/$specialistId/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/pacientes/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
@@ -233,15 +233,15 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
   '/citas': typeof AppCitasRoute
-  '/cuestionarios': typeof AppCuestionariosRoute
   '/especialistas': typeof AppEspecialistasRoute
+  '/ingresables': typeof AppIngresablesRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
-  '/cuestionarios/$id': typeof AppCuestionariosIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
+  '/ingresables/$id': typeof AppIngresablesIdRoute
   '/especialistas/$specialistId/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/pacientes/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
@@ -263,17 +263,17 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_app/catalogos': typeof AppCatalogosRoute
   '/_app/citas': typeof AppCitasRoute
-  '/_app/cuestionarios': typeof AppCuestionariosRoute
   '/_app/especialistas': typeof AppEspecialistasRoute
+  '/_app/ingresables': typeof AppIngresablesRoute
   '/_app/pacientes': typeof AppPacientesRoute
   '/_app/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_app/': typeof AppIndexRoute
   '/_app/pacientes_/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
   '/_app/consultas_/$consultationId': typeof AppConsultasConsultationIdRoute
-  '/_app/cuestionarios_/$id': typeof AppCuestionariosIdRoute
   '/_app/especialistas_/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/_app/especialistas_/nuevo': typeof AppEspecialistasNuevoRoute
+  '/_app/ingresables_/$id': typeof AppIngresablesIdRoute
   '/_app/especialistas_/$specialistId_/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/_app/pacientes_/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/_app/pacientes_/$patientId/composicion-corporal': typeof AppPacientesPatientIdComposicionCorporalRoute
@@ -295,16 +295,16 @@ export interface FileRouteTypes {
     | '/'
     | '/catalogos'
     | '/citas'
-    | '/cuestionarios'
     | '/especialistas'
+    | '/ingresables'
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
     | '/pacientes/$patientId'
     | '/consultas/$consultationId'
-    | '/cuestionarios/$id'
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
+    | '/ingresables/$id'
     | '/especialistas/$specialistId/editar'
     | '/pacientes/$patientId/antecedentes'
     | '/pacientes/$patientId/composicion-corporal'
@@ -324,15 +324,15 @@ export interface FileRouteTypes {
     | '/'
     | '/catalogos'
     | '/citas'
-    | '/cuestionarios'
     | '/especialistas'
+    | '/ingresables'
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
     | '/consultas/$consultationId'
-    | '/cuestionarios/$id'
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
+    | '/ingresables/$id'
     | '/especialistas/$specialistId/editar'
     | '/pacientes/$patientId/antecedentes'
     | '/pacientes/$patientId/composicion-corporal'
@@ -353,17 +353,17 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_app/catalogos'
     | '/_app/citas'
-    | '/_app/cuestionarios'
     | '/_app/especialistas'
+    | '/_app/ingresables'
     | '/_app/pacientes'
     | '/_app/usuarios-y-roles'
     | '/_auth/login'
     | '/_app/'
     | '/_app/pacientes_/$patientId'
     | '/_app/consultas_/$consultationId'
-    | '/_app/cuestionarios_/$id'
     | '/_app/especialistas_/$specialistId'
     | '/_app/especialistas_/nuevo'
+    | '/_app/ingresables_/$id'
     | '/_app/especialistas_/$specialistId_/editar'
     | '/_app/pacientes_/$patientId/antecedentes'
     | '/_app/pacientes_/$patientId/composicion-corporal'
@@ -429,18 +429,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPacientesRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/ingresables': {
+      id: '/_app/ingresables'
+      path: '/ingresables'
+      fullPath: '/ingresables'
+      preLoaderRoute: typeof AppIngresablesRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/especialistas': {
       id: '/_app/especialistas'
       path: '/especialistas'
       fullPath: '/especialistas'
       preLoaderRoute: typeof AppEspecialistasRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/cuestionarios': {
-      id: '/_app/cuestionarios'
-      path: '/cuestionarios'
-      fullPath: '/cuestionarios'
-      preLoaderRoute: typeof AppCuestionariosRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/citas': {
@@ -457,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCatalogosRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/ingresables_/$id': {
+      id: '/_app/ingresables_/$id'
+      path: '/ingresables/$id'
+      fullPath: '/ingresables/$id'
+      preLoaderRoute: typeof AppIngresablesIdRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/especialistas_/nuevo': {
       id: '/_app/especialistas_/nuevo'
       path: '/especialistas/nuevo'
@@ -469,13 +476,6 @@ declare module '@tanstack/react-router' {
       path: '/especialistas/$specialistId'
       fullPath: '/especialistas/$specialistId'
       preLoaderRoute: typeof AppEspecialistasSpecialistIdRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/cuestionarios_/$id': {
-      id: '/_app/cuestionarios_/$id'
-      path: '/cuestionarios/$id'
-      fullPath: '/cuestionarios/$id'
-      preLoaderRoute: typeof AppCuestionariosIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/consultas_/$consultationId': {
@@ -643,32 +643,32 @@ const AppPacientesPatientIdRouteRouteWithChildren =
 interface AppRouteRouteChildren {
   AppCatalogosRoute: typeof AppCatalogosRoute
   AppCitasRoute: typeof AppCitasRoute
-  AppCuestionariosRoute: typeof AppCuestionariosRoute
   AppEspecialistasRoute: typeof AppEspecialistasRoute
+  AppIngresablesRoute: typeof AppIngresablesRoute
   AppPacientesRoute: typeof AppPacientesRoute
   AppUsuariosYRolesRoute: typeof AppUsuariosYRolesRoute
   AppIndexRoute: typeof AppIndexRoute
   AppPacientesPatientIdRouteRoute: typeof AppPacientesPatientIdRouteRouteWithChildren
   AppConsultasConsultationIdRoute: typeof AppConsultasConsultationIdRoute
-  AppCuestionariosIdRoute: typeof AppCuestionariosIdRoute
   AppEspecialistasSpecialistIdRoute: typeof AppEspecialistasSpecialistIdRoute
   AppEspecialistasNuevoRoute: typeof AppEspecialistasNuevoRoute
+  AppIngresablesIdRoute: typeof AppIngresablesIdRoute
   AppEspecialistasSpecialistIdEditarRoute: typeof AppEspecialistasSpecialistIdEditarRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppCatalogosRoute: AppCatalogosRoute,
   AppCitasRoute: AppCitasRoute,
-  AppCuestionariosRoute: AppCuestionariosRoute,
   AppEspecialistasRoute: AppEspecialistasRoute,
+  AppIngresablesRoute: AppIngresablesRoute,
   AppPacientesRoute: AppPacientesRoute,
   AppUsuariosYRolesRoute: AppUsuariosYRolesRoute,
   AppIndexRoute: AppIndexRoute,
   AppPacientesPatientIdRouteRoute: AppPacientesPatientIdRouteRouteWithChildren,
   AppConsultasConsultationIdRoute: AppConsultasConsultationIdRoute,
-  AppCuestionariosIdRoute: AppCuestionariosIdRoute,
   AppEspecialistasSpecialistIdRoute: AppEspecialistasSpecialistIdRoute,
   AppEspecialistasNuevoRoute: AppEspecialistasNuevoRoute,
+  AppIngresablesIdRoute: AppIngresablesIdRoute,
   AppEspecialistasSpecialistIdEditarRoute:
     AppEspecialistasSpecialistIdEditarRoute,
 }
