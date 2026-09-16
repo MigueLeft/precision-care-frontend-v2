@@ -95,7 +95,7 @@ export function PersonalAntecedentFields({ control, setValue }: PersonalAntecede
       </Grid>
       <Grid size={{ xs: 12 }}>
         <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
-          Los antecedentes personales patológicos aparecen en la tabla con su estado.
+          Los antecedentes personales aparecen en la tabla con su estado.
         </Typography>
       </Grid>
     </>

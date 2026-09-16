@@ -136,7 +136,7 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
         </CollapsibleSection>
 
         <CollapsibleSection
-          title="Antecedentes personales patológicos"
+          title="Antecedentes personales"
           defaultExpanded
         >
           <Stack spacing={2}>
