@@ -28,6 +28,7 @@ export interface IntakeResponseDetailResult {
   score: string
   interpretation: string | null
   destinationType: string
+  destinationField: string | null
 }
 
 export interface IntakeResponseDetailQuestionOption {

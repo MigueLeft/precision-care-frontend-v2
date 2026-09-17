@@ -10,6 +10,7 @@ import { formatShortDate } from '@/utils/format-date'
 import { formatNumber } from '@/utils/parse-numeric'
 import { useIntakeResponsesByPatient } from '../hooks/useIntakeResponsesByPatient'
 import { IntakeResponseDetailDrawer } from './IntakeResponseDetailDrawer'
+import { SendIntakeDialog } from './SendIntakeDialog'
 
 interface IntakeResponsesPanelProps {
   patientId: number
@@ -21,6 +22,7 @@ export function IntakeResponsesPanel({
   const { data: responses = [], isLoading, isError, error } =
     useIntakeResponsesByPatient(patientId)
   const [openResponseId, setOpenResponseId] = useState<number | null>(null)
+  const [sendDialogOpen, setSendDialogOpen] = useState(false)
 
   return (
     <QueryBoundary isLoading={isLoading} isError={isError} error={error}>
@@ -29,9 +31,9 @@ export function IntakeResponsesPanel({
         <AppButton
           variant="contained"
           startIcon={<AddIcon sx={{ fontSize: 16 }} />}
-          disabled
+          onClick={() => setSendDialogOpen(true)}
         >
-          Asignar ingresable
+          Enviar ingresable
         </AppButton>
       </Box>
 
@@ -111,6 +113,11 @@ export function IntakeResponsesPanel({
         responseId={openResponseId}
         open={openResponseId != null}
         onClose={() => setOpenResponseId(null)}
+      />
+      <SendIntakeDialog
+        open={sendDialogOpen}
+        patientId={patientId}
+        onClose={() => setSendDialogOpen(false)}
       />
     </QueryBoundary>
   )

@@ -18,3 +18,21 @@ export async function fetchIntakeResponseDetail(
   )
   return data.response
 }
+
+export interface SendIntakeResult {
+  response: IntakeResponse
+  link: string
+}
+
+// Crea la respuesta y devuelve el link público para llenarla sin iniciar
+// sesión. No se envía por correo — se copia/pega manualmente (WhatsApp, SMS, etc.).
+export async function sendIntakeToPatient(
+  patientId: number,
+  intakeVersionId: number,
+): Promise<SendIntakeResult> {
+  const { data } = await api.post<SendIntakeResult>('/intake-responses/send', {
+    patientId,
+    intakeVersionId,
+  })
+  return data
+}

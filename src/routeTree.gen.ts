@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as IngresablePublicoTokenRouteImport } from './routes/ingresable-publico.$token'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-roles'
 import { Route as AppPacientesRouteImport } from './routes/_app/pacientes'
@@ -51,6 +52,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const IngresablePublicoTokenRoute = IngresablePublicoTokenRouteImport.update({
+  id: '/ingresable-publico/$token',
+  path: '/ingresable-publico/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
@@ -209,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
+  '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
@@ -238,6 +245,7 @@ export interface FileRoutesByTo {
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
+  '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/_app/pacientes': typeof AppPacientesRoute
   '/_app/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/_app/': typeof AppIndexRoute
   '/_app/pacientes_/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
   '/_app/consultas_/$consultationId': typeof AppConsultasConsultationIdRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
+    | '/ingresable-publico/$token'
     | '/pacientes/$patientId'
     | '/consultas/$consultationId'
     | '/especialistas/$specialistId'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
+    | '/ingresable-publico/$token'
     | '/consultas/$consultationId'
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
@@ -358,6 +369,7 @@ export interface FileRouteTypes {
     | '/_app/pacientes'
     | '/_app/usuarios-y-roles'
     | '/_auth/login'
+    | '/ingresable-publico/$token'
     | '/_app/'
     | '/_app/pacientes_/$patientId'
     | '/_app/consultas_/$consultationId'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  IngresablePublicoTokenRoute: typeof IngresablePublicoTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -407,6 +420,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/ingresable-publico/$token': {
+      id: '/ingresable-publico/$token'
+      path: '/ingresable-publico/$token'
+      fullPath: '/ingresable-publico/$token'
+      preLoaderRoute: typeof IngresablePublicoTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
       id: '/_auth/login'
@@ -692,6 +712,7 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  IngresablePublicoTokenRoute: IngresablePublicoTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
