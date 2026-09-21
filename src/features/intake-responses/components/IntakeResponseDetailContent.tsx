@@ -3,6 +3,7 @@ import { Box, Stack, Typography, Chip, Divider, CircularProgress } from '@mui/ma
 import { formatShortDate } from '@/utils/format-date'
 import { useIntakeResponseDetail } from '../hooks/useIntakeResponseDetail'
 import { isInformativeResult } from '../utils/format-result'
+import { getSavedAnswerSex, isGroupApplicable, resolveEffectiveSex } from '../utils/response-sex'
 import { IntakeResponseDetailGroupSection } from './IntakeResponseDetailGroupSection'
 import { IntakeResultLine } from './IntakeResultLine'
 
@@ -22,6 +23,11 @@ export function IntakeResponseDetailContent({
 }: IntakeResponseDetailContentProps) {
   const { data: detail, isLoading } = useIntakeResponseDetail(responseId, { enabled: true })
   const informativeResults = detail?.results.filter(isInformativeResult) ?? []
+  // Las secciones exclusivas de un sexo (ej. embarazo) no se listan al otro.
+  const sex = detail
+    ? resolveEffectiveSex(getSavedAnswerSex(detail.groups), detail.patient?.sex ?? null)
+    : null
+  const applicableGroups = detail?.groups.filter((group) => isGroupApplicable(group, sex)) ?? []
 
   return (
     <>
@@ -77,7 +83,7 @@ export function IntakeResponseDetailContent({
           <Divider sx={{ my: 2 }} />
 
           <Stack spacing={1.5}>
-            {detail.groups.map((group, index) => (
+            {applicableGroups.map((group, index) => (
               <IntakeResponseDetailGroupSection
                 key={group.id}
                 group={group}

@@ -1,6 +1,7 @@
-import type {
-  IntakePatientSex,
-  IntakeResponseDetailGroup,
+import {
+  isGroupApplicable,
+  type IntakePatientSex,
+  type IntakeResponseDetailGroup,
 } from '@/features/intake-responses'
 
 export interface IntakeStep {
@@ -11,15 +12,15 @@ export interface IntakeStep {
 const DEFAULT_STEP_TITLE = 'Formulario'
 
 // Agrupa las secciones en pasos (A, B, C…) según `stepTitle`. Las secciones
-// restringidas a un sexo distinto al del paciente se omiten, y un paso sin
-// secciones visibles no se genera.
+// restringidas a un sexo distinto a `sex` se omiten (o todas las restringidas
+// si aún no se conoce), y un paso sin secciones visibles no se genera.
 export function buildIntakeSteps(
   groups: IntakeResponseDetailGroup[],
-  patientSex: IntakePatientSex | null,
+  sex: IntakePatientSex | null,
 ): IntakeStep[] {
   const steps: IntakeStep[] = []
   for (const group of groups) {
-    if (group.sexRestriction && group.sexRestriction !== patientSex) continue
+    if (!isGroupApplicable(group, sex)) continue
 
     const title = group.stepTitle ?? DEFAULT_STEP_TITLE
     const last = steps[steps.length - 1]

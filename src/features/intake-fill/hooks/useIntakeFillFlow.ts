@@ -1,6 +1,11 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
-import type { IntakeResponseDetail } from '@/features/intake-responses'
+import {
+  findSexQuestion,
+  resolveEffectiveSex,
+  sexFromOptionId,
+  type IntakeResponseDetail,
+} from '@/features/intake-responses'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import { completePublicIntakeResponse, submitPublicAnswer } from '../services/intake-fill.service'
 import type { AnswerDraft, AnswerMap } from '../types'
@@ -15,7 +20,14 @@ export function useIntakeFillFlow(token: string, response: IntakeResponseDetail 
   const [submitting, setSubmitting] = useState(false)
   const [justCompleted, setJustCompleted] = useState(false)
 
-  const steps = response ? buildIntakeSteps(response.groups, response.patient?.sex ?? null) : []
+  // Las secciones con sexRestriction (ej. embarazo) dependen de la respuesta a "Sexo".
+  const sexQuestion = response ? findSexQuestion(response.groups) : undefined
+  const sexDraft = sexQuestion ? answers[sexQuestion.id] : undefined
+  const answeredSex =
+    sexQuestion && sexDraft?.kind === 'option' ? sexFromOptionId(sexQuestion, sexDraft.optionId) : null
+  const sex = resolveEffectiveSex(answeredSex, response?.patient?.sex ?? null)
+
+  const steps = response ? buildIntakeSteps(response.groups, sex) : []
   const questionIndex = buildQuestionIndex(steps.flatMap((step) => step.groups))
   const isLastStep = stepIndex >= steps.length - 1
 
