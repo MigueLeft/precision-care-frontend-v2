@@ -25,6 +25,8 @@ export type IntakeResponseQuestionType =
 
 export interface IntakeResponseDetailResult {
   mappingId: number
+  /** Nombre legible del score (ej. "Calidad de sueño (SQS)"). */
+  name: string | null
   score: string
   interpretation: string | null
   destinationType: string
@@ -42,18 +44,53 @@ export interface IntakeResponseDetailAnswer {
   selectedOptionIds: number[]
 }
 
+export type IntakeQuestionDisplayVariant = 'short_text' | 'select' | 'inline'
+
+export type IntakeConditionOperator =
+  | 'eq'
+  | 'neq'
+  | 'gt'
+  | 'lt'
+  | 'gte'
+  | 'lte'
+  | 'in'
+  | 'not_in'
+
+// La pregunta solo se muestra si la respuesta a `dependsOnQuestionId` cumple la
+// condición. `value`: 'true'/'false' (boolean), `value` de la opción (choice),
+// número (numeric); lista separada por comas para 'in' / 'not_in'.
+export interface IntakeResponseDetailCondition {
+  dependsOnQuestionId: number
+  operator: IntakeConditionOperator
+  value: string
+}
+
 export interface IntakeResponseDetailQuestion {
   id: number
   text: string
   type: IntakeResponseQuestionType
+  displayVariant: IntakeQuestionDisplayVariant | null
+  conditions: IntakeResponseDetailCondition[]
   options: IntakeResponseDetailQuestionOption[] | null
   answer: IntakeResponseDetailAnswer | null
 }
 
+export type IntakePatientSex = 'male' | 'female'
+
 export interface IntakeResponseDetailGroup {
   id: number
   title: string
+  /** Paso del formulario público al que pertenece (ej. "A. Datos generales"). */
+  stepTitle: string | null
+  /** Si se define, la sección solo aplica a pacientes de ese sexo. */
+  sexRestriction: IntakePatientSex | null
   questions: IntakeResponseDetailQuestion[]
+}
+
+export interface IntakeResponseDetailPatient {
+  firstName: string
+  lastName: string
+  sex: IntakePatientSex | null
 }
 
 export interface IntakeResponseDetail {
@@ -63,6 +100,7 @@ export interface IntakeResponseDetail {
   completed: boolean
   startAt: string
   completedAt: string | null
+  patient: IntakeResponseDetailPatient | null
   results: IntakeResponseDetailResult[]
   groups: IntakeResponseDetailGroup[]
 }

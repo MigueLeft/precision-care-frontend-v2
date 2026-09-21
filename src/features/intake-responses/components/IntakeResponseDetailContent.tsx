@@ -6,6 +6,12 @@ import { useIntakeResponseDetail } from '../hooks/useIntakeResponseDetail'
 import { IntakeResponseDetailGroupSection } from './IntakeResponseDetailGroupSection'
 import type { IntakeResponseDetailResult } from '../types'
 
+// Nombre del score: el del mapeo; si no tiene (versiones anteriores), el
+// campo destino.
+function getResultName(result: IntakeResponseDetailResult): string {
+  return result.name ?? result.destinationField ?? 'Resultado'
+}
+
 interface IntakeResponseDetailContentProps {
   responseId: number
   /** Botón de acción a la derecha del título (cerrar drawer, volver, etc.). */
@@ -78,7 +84,7 @@ export function IntakeResponseDetailContent({
                 {informativeResults.map((result) => (
                   <Typography key={result.mappingId} sx={{ fontSize: '13px' }}>
                     <Box component="span" sx={{ fontWeight: 700 }}>
-                      Score: {formatNumber(result.score, 0)}
+                      {getResultName(result)}: {formatNumber(result.score, 0)}
                     </Box>
                     {result.interpretation ? (
                       <Box component="span" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>

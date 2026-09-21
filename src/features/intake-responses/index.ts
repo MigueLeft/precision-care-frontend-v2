@@ -10,7 +10,9 @@ export { IntakeResponseDetailDrawer } from './components/IntakeResponseDetailDra
 export { IntakeResponseDetailContent } from './components/IntakeResponseDetailContent'
 export type {
   IntakeResponse,
+  IntakePatientSex,
   IntakeResponseDetail,
+  IntakeResponseDetailCondition,
   IntakeResponseDetailGroup,
   IntakeResponseDetailQuestion,
   IntakeResponseDetailResult,

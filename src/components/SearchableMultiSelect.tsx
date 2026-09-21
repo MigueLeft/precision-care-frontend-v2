@@ -10,7 +10,12 @@ interface SearchableMultiSelectProps {
   error?: boolean
   helperText?: string
   placeholder?: string
+  /** Máximo de opciones visibles en la lista antes de hacer scroll. */
+  maxVisibleOptions?: number
 }
+
+// Alto de cada fila de la lista (px); coincide con el `minHeight` fijado abajo.
+const OPTION_HEIGHT = 40
 
 // Variante múltiple de `SearchableSelect` — para "Otras especialidades" y
 // campos similares de selección múltiple con búsqueda.
@@ -23,6 +28,7 @@ export function SearchableMultiSelect({
   error,
   helperText,
   placeholder,
+  maxVisibleOptions,
 }: SearchableMultiSelectProps) {
   const selected = options.filter((option) => value.includes(option.id))
 
@@ -36,6 +42,18 @@ export function SearchableMultiSelect({
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, val) => option.id === val.id}
       onChange={(_event, next) => onChange(next.map((option) => option.id))}
+      slotProps={
+        maxVisibleOptions
+          ? {
+              listbox: {
+                sx: {
+                  maxHeight: maxVisibleOptions * OPTION_HEIGHT + 16,
+                  '& .MuiAutocomplete-option': { minHeight: OPTION_HEIGHT },
+                },
+              },
+            }
+          : undefined
+      }
       renderValue={(items, getItemProps) =>
         items.map((option, index) => {
           const { key, ...itemProps } = getItemProps({ index })
