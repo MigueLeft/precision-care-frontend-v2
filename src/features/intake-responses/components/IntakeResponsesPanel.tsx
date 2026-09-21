@@ -7,9 +7,10 @@ import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { formatShortDate } from '@/utils/format-date'
-import { formatNumber } from '@/utils/parse-numeric'
 import { useIntakeResponsesByPatient } from '../hooks/useIntakeResponsesByPatient'
+import { isInformativeResult } from '../utils/format-result'
 import { IntakeResponseDetailDrawer } from './IntakeResponseDetailDrawer'
+import { IntakeResultLine } from './IntakeResultLine'
 import { SendIntakeDialog } from './SendIntakeDialog'
 
 interface IntakeResponsesPanelProps {
@@ -72,19 +73,12 @@ export function IntakeResponsesPanel({
                   ? ` · Completado: ${formatShortDate(response.completedAt)}`
                   : ''}
               </Typography>
-              {response.completed && response.score !== null && (
-                <Typography sx={{ fontSize: '13px', mt: 0.5 }}>
-                  <Box component="span" sx={{ fontWeight: 700 }}>
-                    Score: {formatNumber(response.score, 0)}
+              {response.completed &&
+                response.results.filter(isInformativeResult).map((result) => (
+                  <Box key={result.mappingId} sx={{ mt: 0.5 }}>
+                    <IntakeResultLine {...result} />
                   </Box>
-                  {response.interpretation ? (
-                    <Box component="span" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                      {' '}
-                      · {response.interpretation}
-                    </Box>
-                  ) : null}
-                </Typography>
-              )}
+                ))}
             </Box>
             {response.completed ? (
               <AppButton

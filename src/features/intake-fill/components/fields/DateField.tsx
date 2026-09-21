@@ -9,7 +9,10 @@ export function DateField({ value, onChange }: QuestionFieldProps) {
       size="small"
       value={current}
       onChange={(e) => onChange({ kind: 'date', value: e.target.value })}
-      slotProps={{ inputLabel: { shrink: true } }}
+      slotProps={{
+        inputLabel: { shrink: true },
+        htmlInput: { max: new Date().toLocaleDateString('en-CA') },
+      }}
       sx={{ maxWidth: 240 }}
     />
   )

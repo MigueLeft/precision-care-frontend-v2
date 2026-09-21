@@ -1,29 +1,15 @@
 import type { ReactNode } from 'react'
 import { Box, Stack, Typography, Chip, Divider, CircularProgress } from '@mui/material'
 import { formatShortDate } from '@/utils/format-date'
-import { formatNumber } from '@/utils/parse-numeric'
 import { useIntakeResponseDetail } from '../hooks/useIntakeResponseDetail'
+import { isInformativeResult } from '../utils/format-result'
 import { IntakeResponseDetailGroupSection } from './IntakeResponseDetailGroupSection'
-import type { IntakeResponseDetailResult } from '../types'
-
-// Nombre del score: el del mapeo; si no tiene (versiones anteriores), el
-// campo destino.
-function getResultName(result: IntakeResponseDetailResult): string {
-  return result.name ?? result.destinationField ?? 'Resultado'
-}
+import { IntakeResultLine } from './IntakeResultLine'
 
 interface IntakeResponseDetailContentProps {
   responseId: number
   /** Botón de acción a la derecha del título (cerrar drawer, volver, etc.). */
   headerAction: ReactNode
-}
-
-// Un resultado se omite del resumen cuando no tiene interpretación y su
-// score es 0 o no numérico (poco informativo para el especialista).
-function isInformativeResult(result: IntakeResponseDetailResult): boolean {
-  if (result.interpretation) return true
-  const score = Number(result.score)
-  return !Number.isNaN(score) && score !== 0
 }
 
 // Cuerpo del detalle de un ingresable (título, score/interpretación por
@@ -82,17 +68,7 @@ export function IntakeResponseDetailContent({
               <Divider sx={{ my: 2 }} />
               <Stack spacing={1}>
                 {informativeResults.map((result) => (
-                  <Typography key={result.mappingId} sx={{ fontSize: '13px' }}>
-                    <Box component="span" sx={{ fontWeight: 700 }}>
-                      {getResultName(result)}: {formatNumber(result.score, 0)}
-                    </Box>
-                    {result.interpretation ? (
-                      <Box component="span" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                        {' '}
-                        · {result.interpretation}
-                      </Box>
-                    ) : null}
-                  </Typography>
+                  <IntakeResultLine key={result.mappingId} {...result} />
                 ))}
               </Stack>
             </>

@@ -42,6 +42,7 @@ export function LifeEssential8Section({ index, patientId }: LifeEssential8Sectio
           <LifeEssential8Card assessment={latest ?? buildMockLifestyleAssessment(patientId)} />
           <ClinicalRiskScoresCard
             scores={clinicalScores.map((r) => ({
+              name: r.name,
               destinationField: r.destinationField as string,
               score: r.score,
               interpretation: r.interpretation,

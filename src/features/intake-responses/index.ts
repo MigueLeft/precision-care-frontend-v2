@@ -8,8 +8,11 @@ export { useIntakeResponseDetail } from './hooks/useIntakeResponseDetail'
 export { IntakeResponsesPanel } from './components/IntakeResponsesPanel'
 export { IntakeResponseDetailDrawer } from './components/IntakeResponseDetailDrawer'
 export { IntakeResponseDetailContent } from './components/IntakeResponseDetailContent'
+export { getResultName, getResultScoreText } from './utils/format-result'
 export type {
   IntakeResponse,
+  IntakeResponseListResult,
+  IntakeQuestionDisplayVariant,
   IntakePatientSex,
   IntakeResponseDetail,
   IntakeResponseDetailCondition,

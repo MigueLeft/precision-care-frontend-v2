@@ -39,7 +39,8 @@ export function LifestylePanel({ patientId }: LifestylePanelProps) {
       <LifeEssential8Card assessment={assessment} />
       <ClinicalRiskScoresCard
         scores={clinicalScores.map((r) => ({
-          destinationField: r.destinationField as string,
+          name: r.name,
+        destinationField: r.destinationField as string,
           score: r.score,
           interpretation: r.interpretation,
         }))}

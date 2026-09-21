@@ -1,3 +1,12 @@
+export interface IntakeResponseListResult {
+  mappingId: number
+  name: string | null
+  score: string
+  interpretation: string | null
+  destinationType: string
+  destinationField: string | null
+}
+
 export interface IntakeResponse {
   id: number
   intakeVersionId: number
@@ -12,6 +21,8 @@ export interface IntakeResponse {
   versionNumber: number | null
   score: string | null
   interpretation: string | null
+  // Todos los resultados del ingresable, con el nombre de cada score.
+  results: IntakeResponseListResult[]
 }
 
 export type IntakeResponseQuestionType =
@@ -44,7 +55,15 @@ export interface IntakeResponseDetailAnswer {
   selectedOptionIds: number[]
 }
 
-export type IntakeQuestionDisplayVariant = 'short_text' | 'select' | 'inline'
+// letters_only: sin números; phone: solo dígitos y símbolos de teléfono;
+// computed_age: edad calculada desde la fecha de nacimiento de su sección.
+export type IntakeQuestionDisplayVariant =
+  | 'short_text'
+  | 'select'
+  | 'inline'
+  | 'letters_only'
+  | 'phone'
+  | 'computed_age'
 
 export type IntakeConditionOperator =
   | 'eq'

@@ -5,6 +5,7 @@ import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import { completePublicIntakeResponse, submitPublicAnswer } from '../services/intake-fill.service'
 import type { AnswerDraft, AnswerMap } from '../types'
 import { collectPayloads } from '../utils/answer-payloads'
+import { calculateAge } from '../utils/calculate-age'
 import { buildIntakeSteps } from '../utils/intake-steps'
 import { buildQuestionIndex } from '../utils/question-visibility'
 
@@ -19,8 +20,25 @@ export function useIntakeFillFlow(token: string, response: IntakeResponseDetail 
   const questionIndex = buildQuestionIndex(steps.flatMap((step) => step.groups))
   const isLastStep = stepIndex >= steps.length - 1
 
+  // Al cambiar una fecha, recalcula la edad (`computed_age`) de su sección.
   function setAnswer(questionId: number, draft: AnswerDraft) {
-    setAnswers((prev) => ({ ...prev, [questionId]: draft }))
+    const ageQuestion =
+      draft.kind === 'date'
+        ? steps
+            .flatMap((step) => step.groups)
+            .find((group) => group.questions.some((q) => q.id === questionId))
+            ?.questions.find((q) => q.displayVariant === 'computed_age')
+        : undefined
+
+    setAnswers((prev) => {
+      const next = { ...prev, [questionId]: draft }
+      if (ageQuestion && draft.kind === 'date') {
+        const age = calculateAge(draft.value)
+        if (age === null) delete next[ageQuestion.id]
+        else next[ageQuestion.id] = { kind: 'numeric', value: String(age) }
+      }
+      return next
+    })
   }
 
   function goToStep(next: number) {

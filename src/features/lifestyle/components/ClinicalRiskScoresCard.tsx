@@ -1,7 +1,9 @@
 import { Box, Chip, Grid, Stack, Typography } from '@mui/material'
+import { getResultScoreText } from '@/features/intake-responses'
 import { CLINICAL_RISK_SCORE_LABELS, riskTone } from '../utils/lifestyle-format'
 
 export interface ClinicalRiskScoreItem {
+  name: string | null
   destinationField: string
   score: string
   interpretation: string | null
@@ -9,6 +11,12 @@ export interface ClinicalRiskScoreItem {
 
 interface ClinicalRiskScoresCardProps {
   scores: ClinicalRiskScoreItem[]
+}
+
+// Puntaje (si lo tiene) e interpretación; nunca queda vacío.
+function formatScoreLabel(item: ClinicalRiskScoreItem): string {
+  const parts = [getResultScoreText(item), item.interpretation].filter(Boolean)
+  return parts.length > 0 ? parts.join(' · ') : item.score
 }
 
 // Desglose de los scores del ingresable IM1 que no son uno de los 8
@@ -41,13 +49,13 @@ export function ClinicalRiskScoresCard({ scores }: ClinicalRiskScoresCardProps) 
               }}
             >
               <Typography sx={{ fontSize: '13px', fontWeight: 500 }}>
-                {CLINICAL_RISK_SCORE_LABELS[item.destinationField]}
+                {item.name ?? CLINICAL_RISK_SCORE_LABELS[item.destinationField]}
               </Typography>
               <Chip
                 size="small"
                 variant="outlined"
                 color={riskTone(item.interpretation) ?? 'default'}
-                label={item.interpretation ?? item.score}
+                label={formatScoreLabel(item)}
               />
             </Stack>
           </Grid>
