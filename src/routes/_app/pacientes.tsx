@@ -4,11 +4,12 @@ import { catalogsKeys, fetchCountries } from '@/features/catalogs'
 
 export const Route = createFileRoute('/_app/pacientes')({
   validateSearch: (search) => patientsListSearchSchema.parse(search),
-  loader: ({ context: { queryClient } }) =>
-    Promise.all([
-      queryClient.ensureQueryData({ queryKey: patientsKeys.lists(), queryFn: fetchPatients }),
-      queryClient.ensureQueryData({ queryKey: catalogsKeys.countries, queryFn: fetchCountries }),
-    ]),
+  loader: ({ context: { queryClient } }) => {
+    // Los países solo enriquecen la tabla (la página usa `= []` mientras llegan):
+    // se precargan sin bloquear la navegación.
+    void queryClient.prefetchQuery({ queryKey: catalogsKeys.countries, queryFn: fetchCountries })
+    return queryClient.ensureQueryData({ queryKey: patientsKeys.lists(), queryFn: fetchPatients })
+  },
   component: PacientesRoute,
 })
 
