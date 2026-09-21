@@ -55,15 +55,13 @@ export interface IntakeResponseDetailAnswer {
   selectedOptionIds: number[]
 }
 
-// letters_only: sin números; phone: solo dígitos y símbolos de teléfono;
-// computed_age: edad calculada desde la fecha de nacimiento de su sección.
+// letters_only: sin números; phone: solo dígitos y símbolos de teléfono.
 export type IntakeQuestionDisplayVariant =
   | 'short_text'
   | 'select'
   | 'inline'
   | 'letters_only'
   | 'phone'
-  | 'computed_age'
 
 export type IntakeConditionOperator =
   | 'eq'

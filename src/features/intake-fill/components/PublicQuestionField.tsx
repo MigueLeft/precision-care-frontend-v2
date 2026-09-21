@@ -3,7 +3,6 @@ import type { QuestionFieldProps } from '../types'
 import { BooleanField } from './fields/BooleanField'
 import { CheckboxGroupField } from './fields/CheckboxGroupField'
 import { ChoiceField } from './fields/ChoiceField'
-import { ComputedAgeField } from './fields/ComputedAgeField'
 import { DateField } from './fields/DateField'
 import { NumericField } from './fields/NumericField'
 import { ScaleField } from './fields/ScaleField'
@@ -16,7 +15,6 @@ function QuestionInput(props: QuestionFieldProps) {
   const { question } = props
   const hasOptions = (question.options?.length ?? 0) > 0
 
-  if (question.displayVariant === 'computed_age') return <ComputedAgeField {...props} />
   if (question.type === 'boolean') return <BooleanField {...props} />
   if (question.type === 'multiple_choice') {
     return question.displayVariant === 'select' ? (
