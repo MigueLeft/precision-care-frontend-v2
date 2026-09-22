@@ -4,8 +4,8 @@ import { useIntakeResponsesByPatient, useIntakeResponseDetail } from '@/features
 import {
   useLifestyleByPatient,
   LifeEssential8Card,
+  LifeEssential8Empty,
   ClinicalRiskScoresCard,
-  buildMockLifestyleAssessment,
 } from '@/features/lifestyle'
 
 interface LifeEssential8SectionProps {
@@ -19,7 +19,7 @@ interface LifeEssential8SectionProps {
 // resto de los scores del IM1 que no son uno de los 8 componentes de Life's
 // Essential 8 (educación, nivel socioeconómico, antecedentes familiares,
 // apnea del sueño, ansiedad, depresión, alcohol, tabaquismo, drogas...).
-// Mientras no exista una captura real se muestra el diseño con datos de ejemplo.
+// Sin una captura real (IM1 completado), no se muestra nada — nunca datos de ejemplo.
 export function LifeEssential8Section({ index, patientId }: LifeEssential8SectionProps) {
   const { data: evaluations = [], isLoading, isError, error } = useLifestyleByPatient(patientId)
   const latest = evaluations[0]
@@ -39,7 +39,7 @@ export function LifeEssential8Section({ index, patientId }: LifeEssential8Sectio
         </QueryBoundary>
       ) : (
         <>
-          <LifeEssential8Card assessment={latest ?? buildMockLifestyleAssessment(patientId)} />
+          {latest ? <LifeEssential8Card assessment={latest} /> : <LifeEssential8Empty />}
           <ClinicalRiskScoresCard
             scores={clinicalScores.map((r) => ({
               name: r.name,
