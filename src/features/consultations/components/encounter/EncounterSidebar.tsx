@@ -33,7 +33,10 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
         maxHeight: { lg: 'calc(100vh - 32px)' },
         overflowY: { lg: 'auto' },
         overscrollBehavior: 'contain',
-        pr: { lg: 1 },
+        // Scroll funcional pero sin barra visible (Firefox, Edge legacy, Chromium/Safari).
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        '&::-webkit-scrollbar': { display: 'none' },
       }}
     >
       {viewingResponseId != null ? (
