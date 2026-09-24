@@ -3,6 +3,8 @@ import { MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
+import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
+import { useAntecedentFamilyCatalog } from '@/features/catalogs'
 import {
   AntecedentListTable,
   useCreateAntecedent,
@@ -37,13 +39,14 @@ export function FamilyAntecedentsBlock({
 }: FamilyAntecedentsBlockProps) {
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
+  const { data: catalog = [] } = useAntecedentFamilyCatalog()
   const [relationship, setRelationship] = useState('')
-  const [condition, setCondition] = useState('')
+  const [condition, setCondition] = useState<CatalogPick | null>(null)
   const [notes, setNotes] = useState('')
 
   function reset() {
     setRelationship('')
-    setCondition('')
+    setCondition(null)
     setNotes('')
   }
 
@@ -52,15 +55,16 @@ export function FamilyAntecedentsBlock({
       toast.error('Selecciona el parentesco.')
       return
     }
-    if (!condition.trim()) {
-      toast.error('Indica la condición.')
+    if (!condition?.name.trim()) {
+      toast.error('Selecciona la condición del catálogo.')
       return
     }
     createMutation.mutate({
       patientId,
       type: 'family',
       relationship,
-      name: condition.trim(),
+      name: condition.name.trim(),
+      familyCatalogId: condition.catalogId,
       description: notes.trim() || undefined,
     })
   }
@@ -87,7 +91,7 @@ export function FamilyAntecedentsBlock({
       />
 
       {!readOnly && (
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
           <Select
             size="small"
             displayEmpty
@@ -102,12 +106,12 @@ export function FamilyAntecedentsBlock({
               </MenuItem>
             ))}
           </Select>
-          <TextField
-            size="small"
-            placeholder="Condición…"
+          <CatalogPicker
+            options={catalog.filter((item) => item.active)}
             value={condition}
-            onChange={(event) => setCondition(event.target.value)}
-            sx={{ flex: '1 1 200px', minWidth: 180 }}
+            onChange={setCondition}
+            placeholder="Buscar condición…"
+            sx={{ flex: '1 1 240px', minWidth: 200 }}
           />
           <TextField
             size="small"

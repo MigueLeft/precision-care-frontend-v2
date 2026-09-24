@@ -1,18 +1,15 @@
-import { useMemo, useState } from 'react'
-import { IconButton, Tab, Tabs, TableBody, TableHead, TableRow, Typography } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { Stack, Typography } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
-import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
+import { CollapsibleGroup } from '@/components/ui/CollapsibleGroup'
 import { useParaclinicalCategories, useParaclinicals } from '@/features/catalogs'
+import type { ParaclinicalCategoryCatalog } from '@/features/catalogs'
 import {
   useParaclinicalResultsByPatient,
   useCreateParaclinicalResult,
   useRemoveParaclinicalResult,
   AddParaclinicalResultForm,
-  PARACLINICAL_VALUE_STATUS_COLORS,
-  formatReferenceRange,
 } from '@/features/paraclinical'
-import { formatShortDate } from '@/utils/format-date'
+import { ParaclinicalResultsTable, type ParaclinicalRow } from './ParaclinicalResultsTable'
 
 interface ParaclinicalSectionProps {
   index: number
@@ -20,18 +17,35 @@ interface ParaclinicalSectionProps {
   readOnly: boolean
 }
 
+// Sube por parentId hasta la categoría raíz (Laboratorio, Imagen…), para que
+// los estudios de una subcategoría (p. ej. Química sanguínea) caigan en su raíz.
+function findRootCategoryId(
+  categoryId: number | undefined,
+  byId: Map<number, ParaclinicalCategoryCatalog>,
+): number | null {
+  let current = categoryId !== undefined ? byId.get(categoryId) : undefined
+  while (current?.parentId != null && byId.has(current.parentId)) {
+    current = byId.get(current.parentId)
+  }
+  return current?.id ?? null
+}
+
 // Aplana los resultados del paciente en filas por analito, más recientes primero.
-function useFlattenedResults(patientId: number) {
+function useParaclinicalRows(patientId: number, categories: ParaclinicalCategoryCatalog[]) {
   const { data: results = [] } = useParaclinicalResultsByPatient(patientId)
   const { data: catalog = [] } = useParaclinicals()
+  const categoryById = new Map(categories.map((category) => [category.id, category]))
   const categoryByStudy = new Map(catalog.map((item) => [item.id, item.categoryId]))
 
   return results
-    .flatMap((result) =>
+    .flatMap((result): ParaclinicalRow[] =>
       result.values.map((value, index) => ({
         rowId: `${result.id}-${index}`,
         resultId: result.id,
-        categoryId: categoryByStudy.get(value.paraclinicalCatalogId) ?? null,
+        rootCategoryId: findRootCategoryId(
+          categoryByStudy.get(value.paraclinicalCatalogId),
+          categoryById,
+        ),
         date: result.resultDate,
         value,
       })),
@@ -39,17 +53,25 @@ function useFlattenedResults(patientId: number) {
     .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
+// Un desplegable por categoría raíz de paraclínicos (sin vista "Todos").
 export function ParaclinicalSection({ index, patientId, readOnly }: ParaclinicalSectionProps) {
-  const [categoryId, setCategoryId] = useState<number | 'all'>('all')
   const { data: categories = [] } = useParaclinicalCategories()
-  const rows = useFlattenedResults(patientId)
+  const rows = useParaclinicalRows(patientId, categories)
   const createMutation = useCreateParaclinicalResult(patientId)
   const removeMutation = useRemoveParaclinicalResult(patientId)
 
-  const filtered = useMemo(
-    () => (categoryId === 'all' ? rows : rows.filter((row) => row.categoryId === categoryId)),
-    [rows, categoryId],
-  )
+  const rootCategories = categories.filter((category) => category.active && category.parentId == null)
+  const uncategorized = rows.filter((row) => row.rootCategoryId == null)
+  const groups = [
+    ...rootCategories.map((category) => ({
+      key: String(category.id),
+      title: category.name,
+      rows: rows.filter((row) => row.rootCategoryId === category.id),
+    })),
+    ...(uncategorized.length > 0
+      ? [{ key: 'none', title: 'Sin categoría', rows: uncategorized }]
+      : []),
+  ]
 
   return (
     <CollapsibleSection
@@ -61,64 +83,32 @@ export function ParaclinicalSection({ index, patientId, readOnly }: Paraclinical
       }
       defaultExpanded
     >
-      <Tabs
-        value={categoryId}
-        onChange={(_e, value) => setCategoryId(value)}
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{ mb: 1.5, minHeight: 32, '& .MuiTab-root': { minHeight: 32, fontSize: '13px' } }}
-      >
-        <Tab label={`Todos ${rows.length}`} value="all" />
-        {categories.map((category) => (
-          <Tab
-            key={category.id}
-            label={`${category.name} ${rows.filter((r) => r.categoryId === category.id).length}`}
-            value={category.id}
-          />
+      <Stack spacing={1}>
+        {groups.map((group) => (
+          <CollapsibleGroup
+            key={group.key}
+            title={group.title}
+            headerMeta={
+              <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                {group.rows.length}
+              </Typography>
+            }
+            defaultExpanded={group.rows.length > 0}
+          >
+            {group.rows.length > 0 ? (
+              <ParaclinicalResultsTable
+                rows={group.rows}
+                readOnly={readOnly}
+                onRemove={(resultId) => removeMutation.mutate(resultId)}
+              />
+            ) : (
+              <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
+                Sin resultados registrados.
+              </Typography>
+            )}
+          </CollapsibleGroup>
         ))}
-      </Tabs>
-
-      {filtered.length > 0 && (
-        <DataTable minWidth={640}>
-          <TableHead>
-            <TableRow>
-              {['Estudio', 'Resultado', 'Unidad', 'Referencia', 'Fecha', ''].map((h) => (
-                <HeadCell key={h}>{h}</HeadCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filtered.map((row) => {
-              const abnormal = row.value.status && row.value.status !== 'normal'
-              return (
-                <TableRow key={row.rowId}>
-                  <DataCell>{row.value.paraclinicalName ?? '—'}</DataCell>
-                  <DataCell
-                    sx={{ fontWeight: 700, color: abnormal ? `${PARACLINICAL_VALUE_STATUS_COLORS[row.value.status!]}.main` : undefined }}
-                  >
-                    {row.value.numericValue ?? row.value.textValue ?? '—'}
-                  </DataCell>
-                  <DataCell sx={{ color: 'text.secondary' }}>{row.value.unit ?? '—'}</DataCell>
-                  <DataCell sx={{ color: 'text.secondary' }}>{formatReferenceRange(row.value)}</DataCell>
-                  <DataCell sx={{ color: 'text.secondary' }}>{formatShortDate(row.date)}</DataCell>
-                  <DataCell align="right">
-                    {!readOnly && (
-                      <IconButton
-                        size="small"
-                        aria-label="Quitar resultado"
-                        onClick={() => removeMutation.mutate(row.resultId)}
-                      >
-                        <CloseIcon sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    )}
-                  </DataCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </DataTable>
-      )}
-
+      </Stack>
       {!readOnly && (
         <AddParaclinicalResultForm
           patientId={patientId}

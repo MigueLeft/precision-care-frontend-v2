@@ -19,6 +19,8 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
   const [viewingResponseId, setViewingResponseId] = useState<number | null>(null)
 
   return (
+    // En pantallas anchas la barra queda fija al hacer scroll y desplaza su
+    // propio contenido (scroll interno) sin mover la página.
     <Box
       sx={{
         width: { xs: '100%', lg: 340 },
@@ -26,6 +28,12 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
         borderLeft: { lg: '1px solid' },
         borderColor: { lg: 'divider' },
         pl: { lg: 3 },
+        position: { lg: 'sticky' },
+        top: { lg: 16 },
+        maxHeight: { lg: 'calc(100vh - 32px)' },
+        overflowY: { lg: 'auto' },
+        overscrollBehavior: 'contain',
+        pr: { lg: 1 },
       }}
     >
       {viewingResponseId != null ? (

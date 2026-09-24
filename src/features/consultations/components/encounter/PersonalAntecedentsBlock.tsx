@@ -3,6 +3,8 @@ import { MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
+import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
+import { useAntecedentPersonalCatalog } from '@/features/catalogs'
 import {
   AntecedentListTable,
   useCreateAntecedent,
@@ -27,25 +29,27 @@ export function PersonalAntecedentsBlock({
 }: PersonalAntecedentsBlockProps) {
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
-  const [condition, setCondition] = useState('')
+  const { data: catalog = [] } = useAntecedentPersonalCatalog()
+  const [condition, setCondition] = useState<CatalogPick | null>(null)
   const [since, setSince] = useState('')
   const [status, setStatus] = useState<AntecedentStatus>('active')
 
   function reset() {
-    setCondition('')
+    setCondition(null)
     setSince('')
     setStatus('active')
   }
 
   function submit() {
-    if (!condition.trim()) {
-      toast.error('Indica la condición o padecimiento.')
+    if (!condition?.name.trim()) {
+      toast.error('Selecciona la condición o padecimiento del catálogo.')
       return
     }
     createMutation.mutate({
       patientId,
       type: 'personal',
-      name: condition.trim(),
+      name: condition.name.trim(),
+      personalCatalogId: condition.catalogId,
       eventDate: since || undefined,
       status,
     })
@@ -73,13 +77,13 @@ export function PersonalAntecedentsBlock({
       />
 
       {!readOnly && (
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
-          <TextField
-            size="small"
-            placeholder="Condición o padecimiento…"
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
+          <CatalogPicker
+            options={catalog.filter((item) => item.active)}
             value={condition}
-            onChange={(event) => setCondition(event.target.value)}
-            sx={{ flex: '1 1 220px', minWidth: 200 }}
+            onChange={setCondition}
+            placeholder="Buscar condición o padecimiento…"
+            sx={{ flex: '1 1 260px', minWidth: 220 }}
           />
           <TextField
             size="small"
