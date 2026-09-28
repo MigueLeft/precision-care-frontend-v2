@@ -27,4 +27,6 @@ export const consultationsKeys = {
     [...consultationsKeys.all, 'detail', id, 'medication-history'] as const,
   recorded: (id: number) =>
     [...consultationsKeys.all, 'detail', id, 'recorded'] as const,
+  evolution: (id: number) =>
+    [...consultationsKeys.all, 'detail', id, 'evolution'] as const,
 }

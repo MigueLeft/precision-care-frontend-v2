@@ -63,7 +63,7 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
       return
     }
     if (!manual && !selected) {
-      toast.error('Elige una enfermedad del catálogo o marca "escribir manualmente".')
+      toast.error('Elige un diagnóstico del catálogo o marca "escribir manualmente".')
       return
     }
     onAdd({
@@ -86,7 +86,7 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
             onChange={(event) => setOnlyChronic(event.target.checked)}
           />
         }
-        label="Solo enfermedades crónicas"
+        label="Solo diagnósticos crónicos"
       />
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
@@ -105,7 +105,7 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
               value={selected}
               onChange={(_event, option) => setSelected(option)}
               renderInput={(params) => (
-                <TextField {...params} size="small" placeholder="Buscar enfermedad…" />
+                <TextField {...params} size="small" placeholder="Buscar diagnóstico…" />
               )}
             />
           )}

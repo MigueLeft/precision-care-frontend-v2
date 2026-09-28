@@ -1,18 +1,17 @@
-import { useState } from 'react'
 import {
   Box,
   Chip,
   FormControl,
   IconButton,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { OnsetDateField } from './OnsetDateField'
+import { SymptomDiseaseLinks } from './SymptomDiseaseLinks'
 import {
   SYMPTOM_STATUSES,
   SYMPTOM_STATUS_LABELS,
@@ -38,8 +37,8 @@ interface SymptomRowProps {
   onRemove: () => void
 }
 
-// Tarjeta de un síntoma: nombre arriba y, debajo, los selects de Enfermedad,
-// Severidad, Estado e Inicio (se acomodan sin desbordar en laptop).
+// Tarjeta de un síntoma: nombre arriba; debajo Severidad, Estado e Inicio (se
+// acomodan sin desbordar en laptop) y los diagnósticos asociados con su estado.
 export function SymptomRow({
   symptom,
   severities,
@@ -48,12 +47,6 @@ export function SymptomRow({
   onCapture,
   onRemove,
 }: SymptomRowProps) {
-  const [onset, setOnset] = useState(symptom.onsetDate ?? '')
-
-  const commitOnset = (value: string) => {
-    if (value.trim() !== (symptom.onsetDate ?? '')) onCapture({ onsetDate: value.trim() })
-  }
-
   const fieldSx = { flex: '1 1 160px', minWidth: 140 }
 
   return (
@@ -85,28 +78,6 @@ export function SymptomRow({
         useFlexGap
         sx={{ mt: 1, flexWrap: 'wrap', alignItems: 'flex-start' }}
       >
-        <FormControl size="small" sx={fieldSx} disabled={readOnly}>
-          <InputLabel id={`dis-${symptom.id}`}>Enfermedad</InputLabel>
-          <Select<number | ''>
-            labelId={`dis-${symptom.id}`}
-            label="Enfermedad"
-            value={symptom.patientDiseaseId ?? ''}
-            onChange={(event) =>
-              onCapture({
-                patientDiseaseId:
-                  event.target.value === '' ? null : Number(event.target.value),
-              })
-            }
-          >
-            <MenuItem value="">Sin asignar</MenuItem>
-            {diseases.map((disease) => (
-              <MenuItem key={disease.id} value={disease.id}>
-                {disease.name ?? '—'}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
         <FormControl size="small" sx={fieldSx} disabled={readOnly}>
           <InputLabel id={`sev-${symptom.id}`}>Severidad</InputLabel>
           <Select<number | ''>
@@ -145,36 +116,20 @@ export function SymptomRow({
           </Select>
         </FormControl>
 
-        <TextField
-          size="small"
-          label="Inicio"
-          placeholder="2026-05 · 2019"
-          value={onset}
+        <OnsetDateField
+          value={symptom.onsetDate}
           disabled={readOnly}
-          onChange={(event) => setOnset(event.target.value)}
-          onBlur={() => commitOnset(onset)}
           sx={fieldSx}
-          slotProps={{
-            input: {
-              endAdornment: onset ? (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    aria-label="Borrar fecha de inicio"
-                    onClick={() => {
-                      setOnset('')
-                      commitOnset('')
-                    }}
-                    disabled={readOnly}
-                  >
-                    <CloseIcon sx={{ fontSize: 15 }} />
-                  </IconButton>
-                </InputAdornment>
-              ) : undefined,
-            },
-          }}
+          onCommit={(onsetDate) => onCapture({ onsetDate })}
         />
       </Stack>
+
+      <SymptomDiseaseLinks
+        links={symptom.diseases}
+        patientDiseases={diseases}
+        readOnly={readOnly}
+        onChange={(next) => onCapture({ diseases: next })}
+      />
     </Box>
   )
 }

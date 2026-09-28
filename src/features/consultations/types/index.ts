@@ -2,6 +2,9 @@ export type ConsultationStatus = 'in_progress' | 'completed'
 
 export type VisitType = 'first' | 'subsequent'
 
+// Motivo de una consulta subsecuente: control o motivo nuevo (texto libre).
+export type ConsultationReasonType = 'control' | 'new'
+
 export type DiagnosisType =
   | 'primary'
   | 'secondary'
@@ -23,6 +26,7 @@ export interface Consultation {
   startAt: string
   endAt: string | null
   consultationReason: string | null
+  reasonType: ConsultationReasonType | null
   currentIllness: string | null
   diagnosticPlan: string | null
   treatmentPlan: string | null
@@ -51,6 +55,19 @@ export type SymptomStatus =
   | 'controlled'
   | 'resolved'
 
+// Diagnóstico asociado a un síntoma, con su propio estado (p. ej. descartado).
+export interface SymptomDiseaseLink {
+  diseaseCatalogId: number
+  name: string | null
+  code: string | null
+  status: SymptomStatus
+}
+
+export interface SymptomDiseaseInput {
+  diseaseCatalogId: number
+  status: SymptomStatus
+}
+
 export interface ConsultationSymptom {
   id: number
   consultationId: number | null
@@ -59,8 +76,7 @@ export interface ConsultationSymptom {
   name: string | null
   symptomSeverityId: number | null
   severityName: string | null
-  patientDiseaseId: number | null
-  diseaseName: string | null
+  diseases: SymptomDiseaseLink[]
   status: SymptomStatus
   // Fecha de inicio (texto libre); por defecto la de la consulta.
   onsetDate: string | null
@@ -74,7 +90,7 @@ export interface AddSymptomInput {
   symptomCatalogId?: number
   name?: string
   symptomSeverityId?: number
-  patientDiseaseId?: number
+  diseases?: SymptomDiseaseInput[]
   status?: SymptomStatus
   onsetDate?: string
   notes?: string
@@ -82,7 +98,7 @@ export interface AddSymptomInput {
 
 export interface CaptureSymptomInput {
   symptomSeverityId?: number | null
-  patientDiseaseId?: number | null
+  diseases?: SymptomDiseaseInput[]
   status?: SymptomStatus
   onsetDate?: string
   notes?: string
@@ -91,7 +107,7 @@ export interface CaptureSymptomInput {
 export interface SymptomHistoryItem {
   name: string | null
   severityName: string | null
-  diseaseName: string | null
+  diseases: SymptomDiseaseLink[]
   status: SymptomStatus
   onsetDate: string | null
 }
@@ -102,7 +118,7 @@ export interface PatientSymptom {
   symptomCatalogId: number
   name: string | null
   severityName: string | null
-  diseaseName: string | null
+  diseases: SymptomDiseaseLink[]
   status: SymptomStatus
   createdAt: string
   onsetDate: string | null
@@ -110,7 +126,7 @@ export interface PatientSymptom {
     id: number
     consultationId: number | null
     severityName: string | null
-    diseaseName: string | null
+    diseases: SymptomDiseaseLink[]
     status: SymptomStatus
     onsetDate: string | null
     notes: string | null
@@ -266,3 +282,5 @@ export interface MedicationHistoryItem {
   ramNotes: string | null
   discontinuationReason: string | null
 }
+
+export type * from './evolution'

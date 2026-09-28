@@ -46,7 +46,7 @@ export function DiseasesSection({
 
   return (
     <CollapsibleSection
-      title={`${index}. Enfermedades`}
+      title={`${index}. Diagnósticos`}
       headerMeta={
         diseases.length > 0 ? (
           <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
@@ -118,7 +118,7 @@ export function DiseasesSection({
               {!readOnly && (
                 <IconButton
                   size="small"
-                  aria-label="Quitar enfermedad"
+                  aria-label="Quitar diagnóstico"
                   onClick={() => removeMutation.mutate(disease.id)}
                 >
                   <CloseIcon sx={{ fontSize: 18 }} />

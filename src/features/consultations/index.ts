@@ -22,6 +22,7 @@ export {
 } from './hooks/useConsultationDetail'
 export { ConsultationsPanel } from './components/ConsultationsPanel'
 export { PatientSymptomsPanel } from './components/PatientSymptomsPanel'
+export { EvolutionPanel } from './components/evolution/EvolutionPanel'
 export { ConsultationEncounterPage } from './components/encounter/ConsultationEncounterPage'
 export {
   CONSULTATION_STATUS_LABELS,

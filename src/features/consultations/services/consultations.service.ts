@@ -20,6 +20,7 @@ import type {
   AddMedicationInput,
   CaptureMedicationInput,
   MedicationHistoryItem,
+  ConsultationEvolution,
 } from '../types'
 
 export async function fetchConsultationsByPatient(
@@ -51,6 +52,7 @@ export type UpdateConsultationPatch = Partial<
   Pick<
     Consultation,
     | 'consultationReason'
+    | 'reasonType'
     | 'currentIllness'
     | 'diagnosticPlan'
     | 'treatmentPlan'
@@ -292,6 +294,16 @@ export async function fetchConsultationRecorded(
 ): Promise<ConsultationRecorded> {
   const { data } = await api.get<ConsultationRecorded>(
     `/consultations/${id}/recorded`,
+  )
+  return data
+}
+
+// Nota evolutiva automática: cambios respecto a la consulta anterior.
+export async function fetchConsultationEvolution(
+  id: number,
+): Promise<ConsultationEvolution> {
+  const { data } = await api.get<ConsultationEvolution>(
+    `/consultations/${id}/evolution`,
   )
   return data
 }

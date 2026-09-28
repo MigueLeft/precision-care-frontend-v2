@@ -1,8 +1,11 @@
 import type {
+  Consultation,
+  ConsultationReasonType,
   ConsultationStatus,
   DiagnosisType,
   DiseaseStatus,
   SymptomStatus,
+  SymptomDiseaseLink,
   MedicationAdherence,
   MedicationRamStatus,
 } from '../types'
@@ -115,4 +118,28 @@ export const RAM_COLORS: Record<
   none: 'success',
   suspected: 'warning',
   confirmed: 'error',
+}
+
+// "Migraña (Bajo investigación) · HTA (Descartado)" — diagnósticos de un síntoma.
+export function formatSymptomDiseases(links: SymptomDiseaseLink[]): string {
+  return links
+    .map((link) => `${link.name ?? '—'} (${SYMPTOM_STATUS_LABELS[link.status]})`)
+    .join(' · ')
+}
+
+export const REASON_TYPE_LABELS: Record<ConsultationReasonType, string> = {
+  control: 'Control',
+  new: 'Nuevo',
+}
+
+// Motivo legible: "Control", "Nuevo · <texto>" o el texto libre (primera vez).
+export function formatConsultationReason(
+  consultation: Pick<Consultation, 'reasonType' | 'consultationReason'>,
+): string {
+  const text = consultation.consultationReason?.trim() ?? ''
+  if (consultation.reasonType === 'control') return REASON_TYPE_LABELS.control
+  if (consultation.reasonType === 'new') {
+    return text ? `${REASON_TYPE_LABELS.new} · ${text}` : REASON_TYPE_LABELS.new
+  }
+  return text
 }

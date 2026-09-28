@@ -3,10 +3,10 @@ import { Box, Divider, Stack, Typography } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { AppButton } from '@/components/AppButton'
 import { IntakeResponseDetailContent } from '@/features/intake-responses'
-import { AutosaveTextField } from './AutosaveTextField'
+import { EvolutionChanges } from '../evolution/EvolutionChanges'
 import { GenerarEntregablesPanel } from './GenerarEntregablesPanel'
 import { IntakeResponsesSection } from './IntakeResponsesSection'
-import { useUpdateConsultation } from '../../hooks/useConsultationDetail'
+import { SidebarClinicalFields } from './SidebarClinicalFields'
 import type { Consultation } from '../../types'
 
 interface EncounterSidebarProps {
@@ -14,9 +14,23 @@ interface EncounterSidebarProps {
   readOnly: boolean
 }
 
+// Vista activa de la barra: los campos, una respuesta de ingresable o los
+// cambios respecto a la consulta anterior (nota evolutiva automática).
+type SidebarView = { kind: 'fields' } | { kind: 'intake'; responseId: number } | { kind: 'evolution' }
+
 export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarProps) {
-  const update = useUpdateConsultation(consultation.id)
-  const [viewingResponseId, setViewingResponseId] = useState<number | null>(null)
+  const [view, setView] = useState<SidebarView>({ kind: 'fields' })
+
+  const backButton = (
+    <AppButton
+      size="small"
+      variant="text"
+      startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />}
+      onClick={() => setView({ kind: 'fields' })}
+    >
+      Volver
+    </AppButton>
+  )
 
   return (
     // En pantallas anchas la barra queda fija al hacer scroll y desplaza su
@@ -39,63 +53,33 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
         '&::-webkit-scrollbar': { display: 'none' },
       }}
     >
-      {viewingResponseId != null ? (
-        <IntakeResponseDetailContent
-          responseId={viewingResponseId}
-          headerAction={
-            <AppButton
-              size="small"
-              variant="text"
-              startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />}
-              onClick={() => setViewingResponseId(null)}
-            >
-              Volver
-            </AppButton>
-          }
-        />
-      ) : (
+      {view.kind === 'intake' && (
+        <IntakeResponseDetailContent responseId={view.responseId} headerAction={backButton} />
+      )}
+
+      {view.kind === 'evolution' && (
+        <Stack spacing={1.5}>
+          <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="h3">Cambios vs. consulta anterior</Typography>
+            {backButton}
+          </Stack>
+          <EvolutionChanges consultationId={consultation.id} />
+        </Stack>
+      )}
+
+      {view.kind === 'fields' && (
         <Stack spacing={2.5}>
-          <div>
-            <Typography sx={{ fontSize: '13px', fontWeight: 700, mb: 0.5 }}>
-              Enfermedad actual
-            </Typography>
-            <AutosaveTextField
-              value={consultation.currentIllness ?? ''}
-              onSave={(currentIllness) => update.mutate({ currentIllness })}
-              disabled={readOnly}
-              minRows={3}
-            />
-          </div>
-
-          <div>
-            <Typography sx={{ fontSize: '13px', fontWeight: 700, mb: 0.5 }}>
-              Nota evolutiva
-            </Typography>
-            <AutosaveTextField
-              value={consultation.evolution ?? ''}
-              onSave={(evolution) => update.mutate({ evolution })}
-              disabled={readOnly}
-              minRows={6}
-            />
-          </div>
-
-          <div>
-            <Typography sx={{ fontSize: '13px', fontWeight: 700, mb: 0.5 }}>
-              Plan de tratamiento
-            </Typography>
-            <AutosaveTextField
-              value={consultation.treatmentPlan ?? ''}
-              onSave={(treatmentPlan) => update.mutate({ treatmentPlan })}
-              disabled={readOnly}
-              minRows={4}
-            />
-          </div>
+          <SidebarClinicalFields
+            consultation={consultation}
+            readOnly={readOnly}
+            onShowEvolution={() => setView({ kind: 'evolution' })}
+          />
 
           <Divider />
 
           <IntakeResponsesSection
             patientId={consultation.patientId}
-            onSelect={setViewingResponseId}
+            onSelect={(responseId) => setView({ kind: 'intake', responseId })}
           />
 
           <Divider />

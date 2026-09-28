@@ -7,8 +7,9 @@ import { usePatientSymptoms } from '../hooks/usePatientSymptoms'
 import {
   SYMPTOM_STATUS_COLORS,
   SYMPTOM_STATUS_LABELS,
+  formatSymptomDiseases,
 } from '../utils/consultation-format'
-import type { SymptomStatus } from '../types'
+import type { SymptomDiseaseLink, SymptomStatus } from '../types'
 
 interface PatientSymptomsPanelProps {
   patientId: number
@@ -19,7 +20,7 @@ interface DateGroupItem {
   name: string | null
   status: SymptomStatus
   severityName: string | null
-  diseaseName: string | null
+  diseases: SymptomDiseaseLink[]
   onsetDate: string | null
   notes: string | null
 }
@@ -41,7 +42,7 @@ function groupByDate(
       consultationId: number | null
       status: SymptomStatus
       severityName: string | null
-      diseaseName: string | null
+      diseases: SymptomDiseaseLink[]
       onsetDate: string | null
       notes: string | null
       createdAt: string
@@ -63,7 +64,7 @@ function groupByDate(
         name: symptom.name,
         status: version.status,
         severityName: version.severityName,
-        diseaseName: version.diseaseName,
+        diseases: version.diseases,
         onsetDate: version.onsetDate,
         notes: version.notes,
       })
@@ -117,9 +118,9 @@ export function PatientSymptomsPanel({ patientId }: PatientSymptomsPanelProps) {
                       {item.severityName}
                     </Typography>
                   )}
-                  {item.diseaseName && (
+                  {item.diseases.length > 0 && (
                     <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                      · {item.diseaseName}
+                      · {formatSymptomDiseases(item.diseases)}
                     </Typography>
                   )}
                   {item.onsetDate && (

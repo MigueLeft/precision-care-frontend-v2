@@ -8,16 +8,40 @@ import {
 } from '../../hooks/useConsultationDetail'
 import { useConsultationDiseases } from '../../hooks/useConsultationDiseases'
 import { ProblemsList } from './ProblemsList'
-import type { Consultation, ConsultationProblems } from '../../types'
+import {
+  DISEASE_STATUS_LABELS,
+  formatSymptomDiseases,
+} from '../../utils/consultation-format'
+import type {
+  Consultation,
+  ConsultationDisease,
+  ConsultationProblems,
+  ConsultationSymptom,
+} from '../../types'
+
+// "Hipertensión arterial (I10) — Activa"
+const diseaseNote = (disease: ConsultationDisease) =>
+  `${disease.name ?? '—'}${disease.code ? ` (${disease.code})` : ''} — ${DISEASE_STATUS_LABELS[disease.status]}`
+
+// "Cefalea (Moderada) — Migraña (Bajo investigación) · HTA (Descartado)"
+const symptomNote = (symptom: ConsultationSymptom) =>
+  [
+    `${symptom.name}${symptom.severityName ? ` (${symptom.severityName})` : ''}`,
+    symptom.diseases.length > 0 ? formatSymptomDiseases(symptom.diseases) : null,
+  ]
+    .filter(Boolean)
+    .join(' — ')
 
 interface ProblemsSectionProps {
+  index: number
   consultation: Consultation
   readOnly: boolean
 }
 
-// "Problemas" del Cierre Clínico: precargado con los síntomas + enfermedades de
-// esta consulta y editable para añadir notas específicas.
-export function ProblemsSection({ consultation, readOnly }: ProblemsSectionProps) {
+// "Notas de diagnósticos" del Cierre Clínico (se guarda en consultation.problems):
+// el sistema las precarga con los síntomas + diagnósticos de esta consulta y cada
+// nota se puede editar para agregar detalles.
+export function ProblemsSection({ index, consultation, readOnly }: ProblemsSectionProps) {
   const consultationId = consultation.id
   const { data: symptoms = [] } = useConsultationSymptoms(consultationId)
   const { data: diseases = [] } = useConsultationDiseases(consultationId)
@@ -45,10 +69,8 @@ export function ProblemsSection({ consultation, readOnly }: ProblemsSectionProps
     }
     seeded.current = true
     const actuales = [
-      ...symptoms.map((s) => s.name ?? '').filter(Boolean),
-      ...diseases.map((d) =>
-        [d.name, d.code ? `(${d.code})` : null].filter(Boolean).join(' '),
-      ),
+      ...diseases.map(diseaseNote),
+      ...symptoms.filter((s) => s.name).map(symptomNote),
     ]
     const next = { actuales, previos: [] as string[] }
     setProblems(next)
@@ -62,7 +84,7 @@ export function ProblemsSection({ consultation, readOnly }: ProblemsSectionProps
 
   return (
     <CollapsibleSection
-      title="Problemas"
+      title={`${index}. Notas de diagnósticos`}
       headerMeta={
         <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
           {problems.actuales.length + problems.previos.length}
@@ -83,8 +105,8 @@ export function ProblemsSection({ consultation, readOnly }: ProblemsSectionProps
         <ProblemsList
           items={problems.actuales}
           readOnly={readOnly}
-          placeholder="Agregar problema actual…"
-          emptyLabel="Sin problemas actuales."
+          placeholder="Agregar nota…"
+          emptyLabel="Sin notas de diagnóstico."
           onChange={(actuales) => commit({ ...problems, actuales })}
         />
       </Box>
@@ -92,15 +114,15 @@ export function ProblemsSection({ consultation, readOnly }: ProblemsSectionProps
         <ProblemsList
           items={problems.previos}
           readOnly={readOnly}
-          placeholder="Agregar problema previo…"
-          emptyLabel="Sin problemas previos."
+          placeholder="Agregar nota previa…"
+          emptyLabel="Sin notas previas."
           onChange={(previos) => commit({ ...problems, previos })}
         />
       </Box>
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1.5 }}>
-        Se precarga con los síntomas y enfermedades registrados en esta consulta. Puedes pegar varias
-        líneas para agregarlas de una vez.
+        Se precarga con los diagnósticos y síntomas registrados en esta consulta; usa el lápiz para
+        agregar detalles a cada nota. Puedes pegar varias líneas para agregarlas de una vez.
       </Typography>
     </CollapsibleSection>
   )

@@ -3,6 +3,7 @@ import { formatFreeDate } from '@/utils/format-date'
 import {
   SYMPTOM_STATUS_COLORS,
   SYMPTOM_STATUS_LABELS,
+  formatSymptomDiseases,
 } from '../../utils/consultation-format'
 import { useConsultationSymptomHistory } from '../../hooks/useConsultationDetail'
 import { ConsultationHistoryTable } from './ConsultationHistoryTable'
@@ -38,9 +39,9 @@ export function SymptomHistory({ consultationId }: SymptomHistoryProps) {
                     {item.severityName}
                   </Typography>
                 )}
-                {item.diseaseName && (
+                {item.diseases.length > 0 && (
                   <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-                    · {item.diseaseName}
+                    · {formatSymptomDiseases(item.diseases)}
                   </Typography>
                 )}
                 {item.onsetDate && (

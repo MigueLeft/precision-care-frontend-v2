@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Box, IconButton, Stack, TextField, Typography } from '@mui/material'
+import { IconButton, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import CloseIcon from '@mui/icons-material/Close'
+import { ProblemItem } from './ProblemItem'
 
 interface ProblemsListProps {
   items: string[]
@@ -11,8 +11,8 @@ interface ProblemsListProps {
   onChange: (items: string[]) => void
 }
 
-// Lista editable de problemas: alta por Enter/＋, baja por ✕, pegado multilínea
-// que se separa en varias entradas (portado de precision-system).
+// Lista editable de notas: alta por Enter/＋, edición en línea, baja por ✕ y
+// pegado multilínea que se separa en varias entradas (portado de precision-system).
 export function ProblemsList({
   items,
   readOnly,
@@ -49,30 +49,13 @@ export function ProblemsList({
       ) : (
         <Stack spacing={0.5}>
           {items.map((item, index) => (
-            <Stack
+            <ProblemItem
               key={`${index}-${item}`}
-              direction="row"
-              spacing={1}
-              sx={{
-                alignItems: 'center',
-                bgcolor: 'action.hover',
-                borderRadius: 1,
-                px: 1.5,
-                py: 0.75,
-              }}
-            >
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: 'primary.main', flexShrink: 0 }} />
-              <Typography sx={{ fontSize: '13px', flex: 1 }}>{item}</Typography>
-              {!readOnly && (
-                <IconButton
-                  size="small"
-                  aria-label="Quitar problema"
-                  onClick={() => onChange(items.filter((_, i) => i !== index))}
-                >
-                  <CloseIcon sx={{ fontSize: 16 }} />
-                </IconButton>
-              )}
-            </Stack>
+              value={item}
+              readOnly={readOnly}
+              onChange={(next) => onChange(items.map((current, i) => (i === index ? next : current)))}
+              onRemove={() => onChange(items.filter((_, i) => i !== index))}
+            />
           ))}
         </Stack>
       )}

@@ -36,7 +36,7 @@ export function TreatmentSection({ index, consultation, readOnly }: TreatmentSec
 
   return (
     <CollapsibleSection
-      title={`${index}. Tratamiento actual`}
+      title={`${index}. Tratamiento`}
       headerMeta={
         <Chip
           size="small"

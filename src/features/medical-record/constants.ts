@@ -1,5 +1,6 @@
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
+import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined'
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
@@ -25,6 +26,7 @@ export type MedicalRecordTabTo =
   | '/pacientes/$patientId/resumen'
   | '/pacientes/$patientId/antecedentes'
   | '/pacientes/$patientId/consultas'
+  | '/pacientes/$patientId/nota-evolutiva'
   | '/pacientes/$patientId/sintomas'
   | '/pacientes/$patientId/enfermedades'
   | '/pacientes/$patientId/paraclinicos'
@@ -65,6 +67,12 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
     countKey: 'consultas',
   },
   {
+    slug: 'nota-evolutiva',
+    to: '/pacientes/$patientId/nota-evolutiva',
+    label: 'Nota evolutiva',
+    icon: TimelineOutlinedIcon,
+  },
+  {
     slug: 'sintomas',
     to: '/pacientes/$patientId/sintomas',
     label: 'Síntomas',
@@ -73,7 +81,7 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
   {
     slug: 'enfermedades',
     to: '/pacientes/$patientId/enfermedades',
-    label: 'Enfermedades',
+    label: 'Diagnósticos',
     icon: CoronavirusOutlinedIcon,
   },
   {

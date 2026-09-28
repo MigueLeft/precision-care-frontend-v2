@@ -9,7 +9,6 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined'
-import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { formatShortDate } from '@/utils/format-date'
 import {
   useConsultationAllergies,
@@ -21,8 +20,7 @@ import { AllergyHistory } from './AllergyHistory'
 import { AllergyAddForm } from './AllergyAddForm'
 import type { ConsultationAllergy } from '../../types'
 
-interface AllergiesSectionProps {
-  index: number
+interface AllergiesBlockProps {
   consultationId: number
   consultationDate: string
   readOnly: boolean
@@ -31,12 +29,12 @@ interface AllergiesSectionProps {
 const isSevere = (allergy: ConsultationAllergy) =>
   /grave|severa/i.test(allergy.severityName ?? '')
 
-export function AllergiesSection({
-  index,
+// Bloque "Alergias" dentro de Antecedentes (se guardan a nivel paciente).
+export function AllergiesBlock({
   consultationId,
   consultationDate,
   readOnly,
-}: AllergiesSectionProps) {
+}: AllergiesBlockProps) {
   const { data } = useConsultationAllergies(consultationId)
   const allergies = data?.allergies ?? []
   const noKnownAllergies = data?.noKnownAllergies ?? false
@@ -49,20 +47,19 @@ export function AllergiesSection({
   const usedCatalogIds = new Set(allergies.map((allergy) => allergy.allergyCatalogId))
 
   return (
-    <CollapsibleSection
-      title={`${index}. Alergias`}
-      headerMeta={
-        severe ? (
+    <Stack spacing={1}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+        <Typography sx={{ fontSize: '13px', fontWeight: 700 }}>Alergias</Typography>
+        {severe && (
           <Chip
             size="small"
             color="error"
             icon={<WarningAmberOutlinedIcon sx={{ fontSize: 14 }} />}
             label={`${severe.name} — ${severe.severityName?.toLowerCase() ?? ''}`}
           />
-        ) : undefined
-      }
-      defaultExpanded
-    >
+        )}
+      </Stack>
+
       <AllergyHistory consultationId={consultationId} />
 
       <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'primary.main', mb: 1 }}>
@@ -133,10 +130,9 @@ export function AllergiesSection({
         />
       )}
 
-      <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1 }}>
-        Las alergias se guardan en el expediente, no solo en esta consulta. Las de severidad grave se
-        muestran en la barra del paciente y validan las prescripciones.
+      <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic' }}>
+        Las de severidad grave se muestran en la barra del paciente y validan las prescripciones.
       </Typography>
-    </CollapsibleSection>
+    </Stack>
   )
 }
