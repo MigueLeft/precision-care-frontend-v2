@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material'
+import { Divider, Stack, Typography } from '@mui/material'
 import { useBodyCompositionByConsultation } from '@/features/body-composition'
 import { usePhysicalExamByConsultation } from '@/features/physical-exam'
 import { formatNumber } from '@/utils/parse-numeric'
@@ -12,17 +12,25 @@ import {
 } from '../../utils/measurement-snapshots'
 import { NoteBlock, NoteEmpty } from './NoteBlock'
 
+// Un valor por renglón: etiqueta a la izquierda, valor y unidad a la derecha.
 function ValueList({ values }: { values: MeasurementValue[] }) {
   if (values.length === 0) return <NoteEmpty />
   return (
-    <Typography sx={{ fontSize: '13px' }}>
-      {values.map((item, index) => (
-        <span key={item.key}>
-          {index > 0 && ' · '}
-          {item.label} <strong>{formatNumber(item.value)}</strong> {item.unit}
-        </span>
+    <Stack divider={<Divider flexItem />} sx={{ maxWidth: 480 }}>
+      {values.map((item) => (
+        <Stack
+          key={item.key}
+          direction="row"
+          spacing={2}
+          sx={{ py: 0.5, justifyContent: 'space-between', alignItems: 'baseline' }}
+        >
+          <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>{item.label}</Typography>
+          <Typography sx={{ fontSize: '13px', whiteSpace: 'nowrap' }}>
+            <strong>{formatNumber(item.value)}</strong> {item.unit}
+          </Typography>
+        </Stack>
       ))}
-    </Typography>
+    </Stack>
   )
 }
 
