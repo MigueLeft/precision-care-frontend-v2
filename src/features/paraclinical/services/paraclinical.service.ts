@@ -36,3 +36,8 @@ export async function createParaclinicalResult(
 export async function removeParaclinicalResult(id: number): Promise<void> {
   await api.delete(`/paraclinical-results/${id}`)
 }
+
+// Quita un solo estudio de un resultado (si era el único, se elimina el resultado).
+export async function removeParaclinicalValue(resultId: number, valueId: number): Promise<void> {
+  await api.delete(`/paraclinical-results/${resultId}/values/${valueId}`)
+}

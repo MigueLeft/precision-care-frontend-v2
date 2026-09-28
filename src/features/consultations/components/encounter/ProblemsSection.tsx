@@ -9,28 +9,12 @@ import {
 import { useConsultationDiseases } from '../../hooks/useConsultationDiseases'
 import { ProblemsList } from './ProblemsList'
 import {
-  DISEASE_STATUS_LABELS,
-  formatSymptomDiseases,
-} from '../../utils/consultation-format'
-import type {
-  Consultation,
-  ConsultationDisease,
-  ConsultationProblems,
-  ConsultationSymptom,
-} from '../../types'
-
-// "Hipertensión arterial (I10) — Activa"
-const diseaseNote = (disease: ConsultationDisease) =>
-  `${disease.name ?? '—'}${disease.code ? ` (${disease.code})` : ''} — ${DISEASE_STATUS_LABELS[disease.status]}`
-
-// "Cefalea (Moderada) — Migraña (Bajo investigación) · HTA (Descartado)"
-const symptomNote = (symptom: ConsultationSymptom) =>
-  [
-    `${symptom.name}${symptom.severityName ? ` (${symptom.severityName})` : ''}`,
-    symptom.diseases.length > 0 ? formatSymptomDiseases(symptom.diseases) : null,
-  ]
-    .filter(Boolean)
-    .join(' — ')
+  buildProblemSources,
+  sameProblems,
+  seedProblems,
+  syncProblems,
+} from '../../utils/problems-sync'
+import type { Consultation, ConsultationProblems } from '../../types'
 
 interface ProblemsSectionProps {
   index: number
@@ -40,7 +24,8 @@ interface ProblemsSectionProps {
 
 // "Notas de diagnósticos" del Cierre Clínico (se guarda en consultation.problems):
 // el sistema las precarga con los síntomas + diagnósticos de esta consulta y cada
-// nota se puede editar para agregar detalles.
+// nota se puede editar para agregar detalles. En "Actuales" solo quedan los que
+// están activos; al cambiar de estado, la nota pasa a "Previos" (y viceversa).
 export function ProblemsSection({ index, consultation, readOnly }: ProblemsSectionProps) {
   const consultationId = consultation.id
   const { data: symptoms = [] } = useConsultationSymptoms(consultationId)
@@ -57,25 +42,18 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
     update.mutate({ problems: next })
   }, 700)
 
-  // Precarga única: si aún no hay problemas guardados, sembrar con la captura.
+  // Precarga única (si aún no hay problemas guardados) y, después, reubicación de
+  // cada nota según el estado vigente de su diagnóstico o síntoma.
   useEffect(() => {
-    if (
-      seeded.current ||
-      readOnly ||
-      consultation.problems ||
-      (symptoms.length === 0 && diseases.length === 0)
-    ) {
-      return
-    }
+    if (readOnly || (symptoms.length === 0 && diseases.length === 0)) return
+    const sources = buildProblemSources(diseases, symptoms)
+    const shouldSeed = !seeded.current && !consultation.problems
     seeded.current = true
-    const actuales = [
-      ...diseases.map(diseaseNote),
-      ...symptoms.filter((s) => s.name).map(symptomNote),
-    ]
-    const next = { actuales, previos: [] as string[] }
+    const next = shouldSeed ? seedProblems(sources) : syncProblems(problems, sources)
+    if (sameProblems(next, problems)) return
     setProblems(next)
     save(next)
-  }, [readOnly, consultation.problems, symptoms, diseases, save])
+  }, [readOnly, consultation.problems, symptoms, diseases, problems, save])
 
   const commit = (next: ConsultationProblems) => {
     setProblems(next)
@@ -121,8 +99,9 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
       </Box>
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1.5 }}>
-        Se precarga con los diagnósticos y síntomas registrados en esta consulta; usa el lápiz para
-        agregar detalles a cada nota. Puedes pegar varias líneas para agregarlas de una vez.
+        Se precarga con los diagnósticos y síntomas registrados en esta consulta: los activos van a
+        "Actuales" y los de otro estado a "Previos". Usa el lápiz para agregar detalles a cada nota.
+        Puedes pegar varias líneas para agregarlas de una vez.
       </Typography>
     </CollapsibleSection>
   )

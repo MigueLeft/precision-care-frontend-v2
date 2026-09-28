@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { useDiseases } from '@/features/catalogs'
+import { isLettersOnly } from '@/utils/text-validation'
 import type { Disease } from '@/features/catalogs'
 import {
   DISEASE_STATUS_LABELS,
@@ -49,8 +50,11 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
   const isChronic = manual ? manualChronic : (selected?.isChronic ?? false)
   const statusOptions = diseaseStatusOptions(isChronic)
 
+  // Tras añadir, el formulario (incluidas las casillas) vuelve a su estado inicial.
   function reset() {
     setSelected(null)
+    setManual(false)
+    setOnlyChronic(false)
     setManualName('')
     setManualChronic(false)
     setStatus('active')
@@ -60,6 +64,10 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
   function submit() {
     if (manual && !manualName.trim()) {
       toast.error('Indica la enfermedad o diagnóstico.')
+      return
+    }
+    if (manual && !isLettersOnly(manualName.trim())) {
+      toast.error('La enfermedad solo puede contener letras, sin números ni caracteres especiales.')
       return
     }
     if (!manual && !selected) {
@@ -96,7 +104,8 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
               size="small"
               placeholder="Enfermedad o diagnóstico…"
               value={manualName}
-              onChange={(event) => setManualName(event.target.value)}
+              // Los números no se admiten en el nombre de la enfermedad.
+              onChange={(event) => setManualName(event.target.value.replace(/\d/g, ''))}
             />
           ) : (
             <Autocomplete

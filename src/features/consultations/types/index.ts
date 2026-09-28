@@ -63,8 +63,11 @@ export interface SymptomDiseaseLink {
   status: SymptomStatus
 }
 
+// Diagnóstico asociado a un síntoma: del catálogo o un nombre libre (el backend
+// lo da de alta en el catálogo al guardar).
 export interface SymptomDiseaseInput {
-  diseaseCatalogId: number
+  diseaseCatalogId?: number
+  name?: string
   status: SymptomStatus
 }
 
@@ -250,8 +253,16 @@ export interface ConsultationMedication {
   presentationName: string | null
 }
 
+// Medicamento que no está en el catálogo (se da de alta al registrarlo).
+export interface NewMedicationInput {
+  name: string
+  presentationId: number
+  concentration?: string
+}
+
 export interface AddMedicationInput {
-  medicationId: number
+  medicationId?: number
+  newMedication?: NewMedicationInput
   dose?: string
   frequency?: string
   startAt?: string

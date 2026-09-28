@@ -2,11 +2,16 @@ import { useState } from 'react'
 import { Grid, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { StatTile } from '@/components/ui/StatTile'
-import { toNumber, formatNumber } from '@/utils/parse-numeric'
+import { formatNumber } from '@/utils/parse-numeric'
 import type { BodyComposition, BodySegment } from '../types'
-import { BODY_SEGMENT_LABELS, getSegment } from '../utils/body-composition-helpers'
+import {
+  BODY_SEGMENT_LABELS,
+  getSegment,
+  skeletalMuscleKg,
+} from '../utils/body-composition-helpers'
 import { SegmentSummaryTable } from './SegmentSummaryTable'
 import { BodyFigure } from './BodyFigure'
+import { GeneralMeasurementCard } from './GeneralMeasurementCard'
 
 interface CurrentMeasurementProps {
   composition: BodyComposition
@@ -25,10 +30,11 @@ export function CurrentMeasurement({ composition }: CurrentMeasurementProps) {
   const [segment, setSegment] = useState<BodySegment>('total')
   const current = getSegment(composition, segment)
 
-  const skeletal = toNumber(current?.skeletalMuscleMassKg ?? null)
+  const skeletal = skeletalMuscleKg(current)
 
   return (
     <Stack spacing={3}>
+      <GeneralMeasurementCard composition={composition} />
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ alignItems: 'flex-start' }}>
         <SectionCard title="Selecciona un segmento" sx={{ width: { xs: '100%', md: 240 }, flexShrink: 0 }}>
           <Stack spacing={1.5} sx={{ alignItems: 'center' }}>

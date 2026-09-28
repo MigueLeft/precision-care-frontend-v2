@@ -12,6 +12,8 @@ import { AppButton } from '@/components/AppButton'
 export interface CatalogOption {
   id: number
   name: string
+  /** Si alguna opción trae grupo, el buscador las muestra agrupadas. */
+  group?: string
 }
 
 interface CatalogSearchInputProps {
@@ -45,7 +47,11 @@ export function CatalogSearchInput({
     if (!clean) return
     onAdd(clean)
     setManualText('')
+    // Tras agregar, la casilla vuelve a su estado inicial (buscar en catálogo).
+    setManual(false)
   }
+
+  const grouped = options.some((option) => option.group)
 
   return (
     <Stack spacing={0.75} sx={sx}>
@@ -74,6 +80,7 @@ export function CatalogSearchInput({
       ) : (
         <Autocomplete
           options={options}
+          groupBy={grouped ? (option) => option.group ?? '' : undefined}
           getOptionLabel={(option) => option.name}
           value={null}
           inputValue={inputValue}

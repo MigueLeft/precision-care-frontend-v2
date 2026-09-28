@@ -274,6 +274,13 @@ export async function captureConsultationMedication(
   return data.medication
 }
 
+export async function removeConsultationMedication(
+  consultationId: number,
+  medicationId: number,
+): Promise<void> {
+  await api.delete(`/consultations/${consultationId}/medications/${medicationId}`)
+}
+
 export async function fetchConsultationMedicationHistory(
   id: number,
 ): Promise<ConsultationHistoryEntry<MedicationHistoryItem>[]> {

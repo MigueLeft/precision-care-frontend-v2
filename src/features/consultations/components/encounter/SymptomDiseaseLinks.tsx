@@ -1,14 +1,9 @@
-import {
-  Autocomplete,
-  IconButton,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { IconButton, MenuItem, Select, Stack, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'sonner'
+import { CatalogSearchInput, type CatalogOption } from '@/components/ui/CatalogSearchInput'
 import { useDiseases } from '@/features/catalogs'
+import { isLettersOnly } from '@/utils/text-validation'
 import {
   SYMPTOM_STATUSES,
   SYMPTOM_STATUS_LABELS,
@@ -19,12 +14,6 @@ import type {
   SymptomDiseaseLink,
   SymptomStatus,
 } from '../../types'
-
-interface DiseaseOption {
-  id: number
-  name: string
-  group: string
-}
 
 interface SymptomDiseaseLinksProps {
   links: SymptomDiseaseLink[]
@@ -49,8 +38,8 @@ export function SymptomDiseaseLinks({
 
   const linkedIds = new Set(links.map((link) => link.diseaseCatalogId))
   const patientIds = new Set(patientDiseases.map((d) => d.diseaseCatalogId))
-  const rank = (option: DiseaseOption) => (option.group === PATIENT_GROUP ? 0 : 1)
-  const options: DiseaseOption[] = catalog
+  const rank = (option: CatalogOption) => (option.group === PATIENT_GROUP ? 0 : 1)
+  const options: CatalogOption[] = catalog
     .filter((disease) => disease.active && !linkedIds.has(disease.id))
     .map((disease) => ({
       id: disease.id,
@@ -63,6 +52,24 @@ export function SymptomDiseaseLinks({
 
   const setStatus = (diseaseCatalogId: number, status: SymptomStatus) =>
     onChange(current.map((l) => (l.diseaseCatalogId === diseaseCatalogId ? { ...l, status } : l)))
+
+  // Del catálogo llega con id; escrito a mano, solo el nombre (se da de alta al guardar).
+  function add(name: string, catalogId?: number) {
+    if (catalogId) {
+      onChange([...current, { diseaseCatalogId: catalogId, status: DEFAULT_LINK_STATUS }])
+      return
+    }
+    if (!isLettersOnly(name)) {
+      toast.error('El diagnóstico solo puede contener letras, sin números ni caracteres especiales.')
+      return
+    }
+    const lower = name.toLowerCase()
+    if (links.some((link) => link.name?.toLowerCase() === lower)) {
+      toast.error('Ese diagnóstico ya está asociado al síntoma.')
+      return
+    }
+    onChange([...current, { name, status: DEFAULT_LINK_STATUS }])
+  }
 
   return (
     <Stack spacing={0.75} sx={{ mt: 1 }}>
@@ -102,21 +109,11 @@ export function SymptomDiseaseLinks({
       ))}
 
       {!readOnly && (
-        <Autocomplete<DiseaseOption>
-          size="small"
+        <CatalogSearchInput
           options={options}
-          groupBy={(option) => option.group}
-          getOptionLabel={(option) => option.name}
-          value={null}
-          blurOnSelect
-          onChange={(_, option) => {
-            if (option) {
-              onChange([...current, { diseaseCatalogId: option.id, status: DEFAULT_LINK_STATUS }])
-            }
-          }}
-          renderInput={(params) => (
-            <TextField {...params} placeholder="Asociar diagnóstico…" />
-          )}
+          placeholder="Asociar diagnóstico…"
+          onAdd={add}
+          manualLabel="El diagnóstico no está en el catálogo · escribir manualmente"
         />
       )}
     </Stack>

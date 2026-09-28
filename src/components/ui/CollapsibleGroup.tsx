@@ -7,6 +7,8 @@ interface CollapsibleGroupProps {
   /** Contenido a la derecha del título (contador, chip…). */
   headerMeta?: ReactNode
   defaultExpanded?: boolean
+  /** Al cambiar este valor (p. ej. tras agregar un registro), el grupo se despliega. */
+  openSignal?: number
   children: ReactNode
 }
 
@@ -16,9 +18,16 @@ export function CollapsibleGroup({
   title,
   headerMeta,
   defaultExpanded = false,
+  openSignal = 0,
   children,
 }: CollapsibleGroupProps) {
   const [expanded, setExpanded] = useState(defaultExpanded)
+  const [lastSignal, setLastSignal] = useState(openSignal)
+  if (openSignal !== lastSignal) {
+    setLastSignal(openSignal)
+    // Solo un valor mayor despliega (volver a 0 no cambia nada).
+    if (openSignal > lastSignal) setExpanded(true)
+  }
 
   return (
     <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1.5, overflow: 'hidden' }}>

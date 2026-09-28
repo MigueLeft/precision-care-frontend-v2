@@ -3,6 +3,7 @@ export type ParaclinicalValueStatus = 'normal' | 'high' | 'low' | 'critical'
 export type ParaclinicalOrderStatus = 'pending' | 'completed' | 'cancelled'
 
 export interface ParaclinicalResultValue {
+  id: number
   paraclinicalCatalogId: number
   paraclinicalName: string | null
   numericValue: string | null
@@ -23,6 +24,15 @@ export interface ParaclinicalResult {
   values: ParaclinicalResultValue[]
   createdAt: string
   updatedAt: string
+}
+
+// Resultados de una misma fecha (y laboratorio) mostrados como una sola sección.
+export interface ParaclinicalResultGroup {
+  key: string
+  resultDate: string
+  laboratory: string | null
+  resultIds: number[]
+  values: Array<ParaclinicalResultValue & { resultId: number }>
 }
 
 export interface ParaclinicalOrderItem {

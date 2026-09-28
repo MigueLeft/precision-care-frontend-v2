@@ -1,48 +1,25 @@
 import { useState } from 'react'
 import {
-  Box,
   Grid,
   Stack,
   TableBody,
   TableHead,
   TableRow,
-  Typography,
   useTheme,
 } from '@mui/material'
 import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
 import { SectionCard } from '@/components/ui/SectionCard'
-import { Sparkline } from '@/components/ui/Sparkline'
 import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { toNumber, formatNumber } from '@/utils/parse-numeric'
-import { formatMonthYear, formatShortDate } from '@/utils/format-date'
+import { formatShortDate } from '@/utils/format-date'
 import type { BodyComposition } from '../types'
-import { getSegment } from '../utils/body-composition-helpers'
+import { getSegment, skeletalMuscleKg } from '../utils/body-composition-helpers'
 import { CurrentMeasurement } from './CurrentMeasurement'
+import { Trend } from './Trend'
 
 interface HistoryViewProps {
   compositions: BodyComposition[]
-}
-
-interface TrendProps {
-  label: string
-  values: number[]
-  color: string
-}
-
-function Trend({ label, values, color }: TrendProps) {
-  const last = values[values.length - 1]
-  return (
-    <Box>
-      <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-        <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>{label}</Typography>
-        <Typography sx={{ fontSize: '13px', fontWeight: 700, color }}>
-          {last !== undefined ? formatNumber(last) : '—'}
-        </Typography>
-      </Stack>
-      <Sparkline values={values} color={color} width={200} />
-    </Box>
-  )
 }
 
 export function HistoryView({ compositions }: HistoryViewProps) {
@@ -54,7 +31,7 @@ export function HistoryView({ compositions }: HistoryViewProps) {
     return <EmptyState message="Sin mediciones históricas." />
   }
 
-  // El backend ordena desc; para la tendencia necesitamos ascendente.
+  // Llegan de la más reciente a la más antigua; para la tendencia, ascendente.
   const chronological = [...compositions].reverse()
   const totals = chronological.map((c) => getSegment(c, 'total'))
 
@@ -65,7 +42,7 @@ export function HistoryView({ compositions }: HistoryViewProps) {
     .map((s) => toNumber(s?.leanMassKg ?? null))
     .filter((v): v is number => v !== null)
   const musclesSeries = totals
-    .map((s) => toNumber(s?.skeletalMuscleMassKg ?? null))
+    .map((s) => skeletalMuscleKg(s))
     .filter((v): v is number => v !== null)
 
   return (
@@ -97,10 +74,22 @@ export function HistoryView({ compositions }: HistoryViewProps) {
       </SectionCard>
 
       <SectionCard title="Histórico de mediciones totales" disableBodyPadding>
-        <DataTable minWidth={560}>
+        <DataTable minWidth={880}>
           <TableHead>
             <TableRow>
-              {['Fecha', 'Peso', 'Grasa %', 'Grasa kg', 'Magra kg', 'Musc. esq.', ''].map(
+              {[
+                'Fecha',
+                'Peso',
+                'Talla',
+                'IMC',
+                'MB kcal',
+                'Agua kg',
+                'Grasa %',
+                'Grasa kg',
+                'Magra kg',
+                'Musc. esq.',
+                '',
+              ].map(
                 (h, index) => (
                   <HeadCell key={`${h}-${index}`}>{h}</HeadCell>
                 ),
@@ -113,13 +102,17 @@ export function HistoryView({ compositions }: HistoryViewProps) {
               return (
                 <TableRow key={composition.id}>
                   <DataCell sx={{ fontWeight: 600 }}>
-                    {formatMonthYear(composition.assessmentDate)}
+                    {formatShortDate(composition.assessmentDate)}
                   </DataCell>
                   <DataCell>{formatNumber(composition.weightKg)} kg</DataCell>
+                  <DataCell>{formatNumber(composition.heightCm)} cm</DataCell>
+                  <DataCell>{formatNumber(composition.bmi)}</DataCell>
+                  <DataCell>{formatNumber(composition.basalMetabolismKcal)}</DataCell>
+                  <DataCell>{formatNumber(composition.totalWaterKg)}</DataCell>
                   <DataCell>{formatNumber(total?.fatMassPct)}%</DataCell>
                   <DataCell>{formatNumber(total?.fatMassKg)}</DataCell>
                   <DataCell>{formatNumber(total?.leanMassKg)}</DataCell>
-                  <DataCell calc>{formatNumber(total?.skeletalMuscleMassKg)}</DataCell>
+                  <DataCell calc>{formatNumber(skeletalMuscleKg(total))}</DataCell>
                   <DataCell align="right">
                     <AppButton
                       size="small"

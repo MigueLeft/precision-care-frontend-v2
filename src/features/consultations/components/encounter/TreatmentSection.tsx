@@ -1,4 +1,4 @@
-import { Box, Chip, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Chip, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { formatShortDate } from '@/utils/format-date'
 import { useUpdateConsultation } from '../../hooks/useConsultationDetail'
@@ -6,21 +6,18 @@ import {
   useConsultationMedications,
   useAddConsultationMedication,
   useCaptureConsultationMedication,
+  useRemoveConsultationMedication,
 } from '../../hooks/useConsultationMedications'
 import { MedicationHistory } from './MedicationHistory'
 import { MedicationAddForm } from './MedicationAddForm'
 import { TreatmentMedicationRow } from './TreatmentMedicationRow'
-import type { Consultation, ConsultationMedication, VisitType } from '../../types'
+import { BaseMedicationRow } from './BaseMedicationRow'
+import type { Consultation, VisitType } from '../../types'
 
 interface TreatmentSectionProps {
   index: number
   consultation: Consultation
   readOnly: boolean
-}
-
-function medname(m: ConsultationMedication) {
-  const base = m.brandName ?? m.genericName ?? 'Medicamento'
-  return m.concentration ? `${base} ${m.concentration}` : base
 }
 
 export function TreatmentSection({ index, consultation, readOnly }: TreatmentSectionProps) {
@@ -31,6 +28,7 @@ export function TreatmentSection({ index, consultation, readOnly }: TreatmentSec
   const { data: medications = [] } = useConsultationMedications(consultationId)
   const addMutation = useAddConsultationMedication(consultationId)
   const captureMutation = useCaptureConsultationMedication(consultationId)
+  const removeMutation = useRemoveConsultationMedication(consultationId)
 
   const isSubsequent = visitType === 'subsequent'
 
@@ -102,20 +100,17 @@ export function TreatmentSection({ index, consultation, readOnly }: TreatmentSec
               />
             ))
           : medications.map((medication) => (
-              <Box
+              <BaseMedicationRow
                 key={medication.id}
-                sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1.5, px: 1.5, py: 1 }}
-              >
-                <Typography sx={{ fontSize: '14px' }}>
-                  <Box component="span" sx={{ fontWeight: 700 }}>
-                    {medname(medication)}
-                  </Box>
-                  <Box component="span" sx={{ color: 'text.secondary' }}>
-                    {medication.dose ? `  ${medication.dose}` : ''}
-                    {medication.frequency ? `  ${medication.frequency}` : ''}
-                  </Box>
-                </Typography>
-              </Box>
+                medication={medication}
+                readOnly={readOnly}
+                isSaving={captureMutation.isPending}
+                isRemoving={removeMutation.isPending}
+                onSave={(input) =>
+                  captureMutation.mutate({ medicationId: medication.id, input })
+                }
+                onRemove={() => removeMutation.mutate(medication.id)}
+              />
             ))}
       </Stack>
 

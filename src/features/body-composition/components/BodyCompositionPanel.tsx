@@ -16,7 +16,7 @@ import {
   useBodyCompositionsByPatient,
   useSaveBodyComposition,
 } from '../hooks/useBodyComposition'
-import { getLatestBodyComposition } from '../utils/body-composition-helpers'
+import { sortBodyCompositions } from '../utils/body-composition-helpers'
 import { CurrentMeasurement } from './CurrentMeasurement'
 import { HistoryView } from './HistoryView'
 import { BodyCompositionForm } from './BodyCompositionForm'
@@ -28,10 +28,10 @@ interface BodyCompositionPanelProps {
 export function BodyCompositionPanel({ patientId }: BodyCompositionPanelProps) {
   const [view, setView] = useState<'current' | 'history'>('current')
   const [editing, setEditing] = useState<'new' | number | null>(null)
-  const { data: compositions = [], isLoading, isError, error } =
-    useBodyCompositionsByPatient(patientId)
-
-  const latest = getLatestBodyComposition(compositions)
+  const { data = [], isLoading, isError, error } = useBodyCompositionsByPatient(patientId)
+  // De la más reciente a la más antigua (la primera es la medición actual).
+  const compositions = sortBodyCompositions(data)
+  const latest = compositions[0]
   const editTarget =
     typeof editing === 'number'
       ? compositions.find((c) => c.id === editing)

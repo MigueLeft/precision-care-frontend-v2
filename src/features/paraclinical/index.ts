@@ -4,11 +4,13 @@ export {
   fetchParaclinicalOrdersByPatient,
   createParaclinicalResult,
   removeParaclinicalResult,
+  removeParaclinicalValue,
 } from './services/paraclinical.service'
 export { useParaclinicalResultsByPatient } from './hooks/useParaclinicalResultsByPatient'
 export { useParaclinicalOrdersByPatient } from './hooks/useParaclinicalOrdersByPatient'
 export { useCreateParaclinicalResult } from './hooks/useCreateParaclinicalResult'
 export { useRemoveParaclinicalResult } from './hooks/useRemoveParaclinicalResult'
+export { useRemoveParaclinicalValue } from './hooks/useRemoveParaclinicalValue'
 export { ParaclinicalPanel } from './components/ParaclinicalPanel'
 export { AddParaclinicalResultForm } from './components/AddParaclinicalResultForm'
 export {
@@ -18,10 +20,12 @@ export {
   PARACLINICAL_ORDER_STATUS_COLORS,
   formatReferenceRange,
   getLatestAnalytes,
+  groupResultsByDay,
 } from './utils/paraclinical-helpers'
 export type {
   ParaclinicalResult,
   ParaclinicalResultValue,
+  ParaclinicalResultGroup,
   ParaclinicalValueStatus,
   ParaclinicalOrder,
   ParaclinicalOrderItem,

@@ -19,7 +19,7 @@ export interface ParaclinicalRow {
 interface ParaclinicalResultsTableProps {
   rows: ParaclinicalRow[]
   readOnly: boolean
-  onRemove: (resultId: number) => void
+  onRemove: (resultId: number, valueId: number) => void
 }
 
 export function ParaclinicalResultsTable({ rows, readOnly, onRemove }: ParaclinicalResultsTableProps) {
@@ -54,7 +54,7 @@ export function ParaclinicalResultsTable({ rows, readOnly, onRemove }: Paraclini
               <DataCell sx={{ color: 'text.secondary' }}>{formatShortDate(row.date)}</DataCell>
               <DataCell align="right">
                 {!readOnly && (
-                  <IconButton size="small" aria-label="Quitar resultado" onClick={() => onRemove(row.resultId)}>
+                  <IconButton size="small" aria-label="Quitar resultado" onClick={() => onRemove(row.resultId, row.value.id)}>
                     <CloseIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 )}

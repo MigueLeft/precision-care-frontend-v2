@@ -12,10 +12,11 @@ import {
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
+import CloseIcon from '@mui/icons-material/Close'
 import { AppButton } from '@/components/AppButton'
 import { DataTable, DataCell, HeadCell } from '@/components/ui/DataTable'
 import { formatShortDate } from '@/utils/format-date'
-import type { ParaclinicalResult } from '../types'
+import type { ParaclinicalResultGroup } from '../types'
 import {
   PARACLINICAL_VALUE_STATUS_COLORS,
   PARACLINICAL_VALUE_STATUS_LABELS,
@@ -23,11 +24,16 @@ import {
 } from '../utils/paraclinical-helpers'
 
 interface ParaclinicalResultCardProps {
-  result: ParaclinicalResult
+  result: ParaclinicalResultGroup
+  /** Elimina toda la sección (todos los resultados de esa fecha). */
   onRemove?: () => void
+  /** Elimina un solo estudio de la sección. */
+  onRemoveValue?: (resultId: number, valueId: number) => void
 }
 
-export function ParaclinicalResultCard({ result, onRemove }: ParaclinicalResultCardProps) {
+// Sección de "Resultados de paraclínicos" de una fecha: reúne los estudios de
+// todos los resultados capturados ese día.
+export function ParaclinicalResultCard({ result, onRemove, onRemoveValue }: ParaclinicalResultCardProps) {
   const [expanded, setExpanded] = useState(true)
 
   return (
@@ -52,7 +58,7 @@ export function ParaclinicalResultCard({ result, onRemove }: ParaclinicalResultC
             }}
           />
           <Typography sx={{ fontSize: '14px', fontWeight: 700 }}>
-            {result.laboratory ?? 'Resultado de paraclínico'}
+            {result.laboratory ?? 'Resultados de paraclínicos'}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
@@ -87,14 +93,14 @@ export function ParaclinicalResultCard({ result, onRemove }: ParaclinicalResultC
         <DataTable>
           <TableHead>
             <TableRow>
-              {['Analito', 'Resultado', 'Unidad', 'Referencia', 'Estado'].map((h) => (
+              {['Analito', 'Resultado', 'Unidad', 'Referencia', 'Estado', ''].map((h) => (
                 <HeadCell key={h}>{h}</HeadCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {result.values.map((value, index) => (
-              <TableRow key={`${value.paraclinicalCatalogId}-${index}`}>
+            {result.values.map((value) => (
+              <TableRow key={value.id}>
                 <DataCell>{value.paraclinicalName ?? '—'}</DataCell>
                 <DataCell sx={{ fontWeight: 600 }}>
                   {value.numericValue ?? value.textValue ?? '—'}
@@ -113,6 +119,17 @@ export function ParaclinicalResultCard({ result, onRemove }: ParaclinicalResultC
                       color={PARACLINICAL_VALUE_STATUS_COLORS[value.status]}
                       variant="outlined"
                     />
+                  )}
+                </DataCell>
+                <DataCell align="right">
+                  {onRemoveValue && (
+                    <IconButton
+                      size="small"
+                      aria-label="Eliminar estudio"
+                      onClick={() => onRemoveValue(value.resultId, value.id)}
+                    >
+                      <CloseIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
                   )}
                 </DataCell>
               </TableRow>

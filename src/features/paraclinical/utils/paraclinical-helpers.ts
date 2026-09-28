@@ -1,6 +1,7 @@
 import type {
   ParaclinicalOrderStatus,
   ParaclinicalResult,
+  ParaclinicalResultGroup,
   ParaclinicalResultValue,
   ParaclinicalValueStatus,
 } from '../types'
@@ -64,4 +65,27 @@ export function getLatestAnalytes(
       })),
     )
     .slice(0, limit)
+}
+
+// Agrupa los resultados por día (y laboratorio) para mostrarlos en una sola
+// sección por fecha, de la más reciente a la más antigua.
+export function groupResultsByDay(results: ParaclinicalResult[]): ParaclinicalResultGroup[] {
+  const groups = new Map<string, ParaclinicalResultGroup>()
+  const sorted = [...results].sort(
+    (a, b) => b.resultDate.localeCompare(a.resultDate) || b.id - a.id,
+  )
+  for (const result of sorted) {
+    const key = `${result.resultDate.slice(0, 10)}|${result.laboratory ?? ''}`
+    const group = groups.get(key) ?? {
+      key,
+      resultDate: result.resultDate,
+      laboratory: result.laboratory,
+      resultIds: [],
+      values: [],
+    }
+    group.resultIds.push(result.id)
+    group.values.push(...result.values.map((value) => ({ ...value, resultId: result.id })))
+    groups.set(key, group)
+  }
+  return [...groups.values()]
 }

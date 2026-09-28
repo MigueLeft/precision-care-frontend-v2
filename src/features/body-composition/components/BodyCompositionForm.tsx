@@ -100,6 +100,8 @@ export function BodyCompositionForm({
       fatMassPct: n(values.totalFatPct),
       fatMassKg: n(values.totalFatKg),
       leanMassKg: n(values.totalLeanKg),
+      // La masa muscular esquelética total se calcula igual que la de cada segmento.
+      skeletalMuscleMassKg: segmentSkeletalKg(n(values.totalLeanKg)),
     }
     if (
       total.fatMassPct !== undefined ||

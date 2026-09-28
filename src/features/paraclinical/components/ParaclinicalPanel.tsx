@@ -14,6 +14,8 @@ import { useParaclinicalResultsByPatient } from '../hooks/useParaclinicalResults
 import { useParaclinicalOrdersByPatient } from '../hooks/useParaclinicalOrdersByPatient'
 import { useCreateParaclinicalResult } from '../hooks/useCreateParaclinicalResult'
 import { useRemoveParaclinicalResult } from '../hooks/useRemoveParaclinicalResult'
+import { useRemoveParaclinicalValue } from '../hooks/useRemoveParaclinicalValue'
+import { groupResultsByDay } from '../utils/paraclinical-helpers'
 import { ParaclinicalResultCard } from './ParaclinicalResultCard'
 import { ParaclinicalOrderCard } from './ParaclinicalOrderCard'
 import { AddParaclinicalResultForm } from './AddParaclinicalResultForm'
@@ -33,6 +35,8 @@ export function ParaclinicalPanel({ patientId }: ParaclinicalPanelProps) {
   const { data: orders = [] } = ordersQuery
   const createMutation = useCreateParaclinicalResult(patientId)
   const removeMutation = useRemoveParaclinicalResult(patientId)
+  const removeValueMutation = useRemoveParaclinicalValue(patientId)
+  const groups = groupResultsByDay(results)
 
   const active = view === 'lab' ? resultsQuery : ordersQuery
   const isLoading = active.isLoading
@@ -89,11 +93,14 @@ export function ParaclinicalPanel({ patientId }: ParaclinicalPanelProps) {
           <EmptyState message="Sin resultados de laboratorio." />
         ) : (
           <Stack spacing={1.5}>
-            {results.map((result) => (
+            {groups.map((group) => (
               <ParaclinicalResultCard
-                key={result.id}
-                result={result}
-                onRemove={() => removeMutation.mutate(result.id)}
+                key={group.key}
+                result={group}
+                onRemove={() => group.resultIds.forEach((id) => removeMutation.mutate(id))}
+                onRemoveValue={(resultId, valueId) =>
+                  removeValueMutation.mutate({ resultId, valueId })
+                }
               />
             ))}
           </Stack>

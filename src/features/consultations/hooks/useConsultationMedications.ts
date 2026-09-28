@@ -5,10 +5,12 @@ import {
   fetchConsultationMedicationHistory,
   addConsultationMedication,
   captureConsultationMedication,
+  removeConsultationMedication,
 } from '../services/consultations.service'
 import { consultationsKeys } from './consultations.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import { patientMedicationsKeys } from '@/features/patient-medications'
+import { catalogsKeys } from '@/features/catalogs'
 import type { AddMedicationInput, CaptureMedicationInput } from '../types'
 
 export function useConsultationMedications(id: number) {
@@ -31,6 +33,8 @@ function useInvalidateMedications(id: number) {
     queryClient.invalidateQueries({ queryKey: consultationsKeys.medications(id) })
     queryClient.invalidateQueries({ queryKey: consultationsKeys.medicationHistory(id) })
     queryClient.invalidateQueries({ queryKey: patientMedicationsKeys.all })
+    // Un medicamento escrito a mano se da de alta en el catálogo.
+    queryClient.invalidateQueries({ queryKey: catalogsKeys.medications })
   }
 }
 
@@ -69,6 +73,20 @@ export function useCaptureConsultationMedication(id: number) {
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al guardar el registro'))
+    },
+  })
+}
+
+export function useRemoveConsultationMedication(id: number) {
+  const invalidate = useInvalidateMedications(id)
+  return useMutation({
+    mutationFn: (medicationId: number) => removeConsultationMedication(id, medicationId),
+    onSuccess: () => {
+      invalidate()
+      toast.success('Medicamento quitado del expediente')
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Error al quitar el medicamento'))
     },
   })
 }

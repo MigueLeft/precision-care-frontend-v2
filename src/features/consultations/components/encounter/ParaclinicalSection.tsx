@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Stack, Typography } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { CollapsibleGroup } from '@/components/ui/CollapsibleGroup'
@@ -6,8 +7,9 @@ import type { ParaclinicalCategoryCatalog } from '@/features/catalogs'
 import {
   useParaclinicalResultsByPatient,
   useCreateParaclinicalResult,
-  useRemoveParaclinicalResult,
+  useRemoveParaclinicalValue,
   AddParaclinicalResultForm,
+  type CreateParaclinicalResultInput,
 } from '@/features/paraclinical'
 import { ParaclinicalResultsTable, type ParaclinicalRow } from './ParaclinicalResultsTable'
 
@@ -30,35 +32,46 @@ function findRootCategoryId(
   return current?.id ?? null
 }
 
-// Aplana los resultados del paciente en filas por analito, más recientes primero.
+// Aplana los resultados del paciente en filas por analito, más recientes primero
+// (a igual fecha, el último capturado arriba). `rootOf` da la categoría raíz de
+// un estudio del catálogo.
 function useParaclinicalRows(patientId: number, categories: ParaclinicalCategoryCatalog[]) {
   const { data: results = [] } = useParaclinicalResultsByPatient(patientId)
   const { data: catalog = [] } = useParaclinicals()
   const categoryById = new Map(categories.map((category) => [category.id, category]))
   const categoryByStudy = new Map(catalog.map((item) => [item.id, item.categoryId]))
+  const rootOf = (studyId: number) => findRootCategoryId(categoryByStudy.get(studyId), categoryById)
 
-  return results
+  const rows = results
     .flatMap((result): ParaclinicalRow[] =>
-      result.values.map((value, index) => ({
-        rowId: `${result.id}-${index}`,
+      result.values.map((value) => ({
+        rowId: `${result.id}-${value.id}`,
         resultId: result.id,
-        rootCategoryId: findRootCategoryId(
-          categoryByStudy.get(value.paraclinicalCatalogId),
-          categoryById,
-        ),
+        rootCategoryId: rootOf(value.paraclinicalCatalogId),
         date: result.resultDate,
         value,
       })),
     )
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.value.id - a.value.id)
+  return { rows, rootOf }
 }
 
 // Un desplegable por categoría raíz de paraclínicos (sin vista "Todos").
 export function ParaclinicalSection({ index, patientId, readOnly }: ParaclinicalSectionProps) {
   const { data: categories = [] } = useParaclinicalCategories()
-  const rows = useParaclinicalRows(patientId, categories)
+  const { rows, rootOf } = useParaclinicalRows(patientId, categories)
   const createMutation = useCreateParaclinicalResult(patientId)
-  const removeMutation = useRemoveParaclinicalResult(patientId)
+  const removeMutation = useRemoveParaclinicalValue(patientId)
+  // Grupo que se despliega tras agregar un estudio (para ver lo recién capturado).
+  const [opened, setOpened] = useState({ key: '', signal: 0 })
+
+  function add(input: CreateParaclinicalResultInput) {
+    const studyId = input.values[0]?.paraclinicalCatalogId
+    const key = String(studyId !== undefined ? (rootOf(studyId) ?? 'none') : 'none')
+    createMutation.mutate(input, {
+      onSuccess: () => setOpened((prev) => ({ key, signal: prev.signal + 1 })),
+    })
+  }
 
   const rootCategories = categories.filter((category) => category.active && category.parentId == null)
   const uncategorized = rows.filter((row) => row.rootCategoryId == null)
@@ -94,12 +107,13 @@ export function ParaclinicalSection({ index, patientId, readOnly }: Paraclinical
               </Typography>
             }
             defaultExpanded={group.rows.length > 0}
+            openSignal={opened.key === group.key ? opened.signal : 0}
           >
             {group.rows.length > 0 ? (
               <ParaclinicalResultsTable
                 rows={group.rows}
                 readOnly={readOnly}
-                onRemove={(resultId) => removeMutation.mutate(resultId)}
+                onRemove={(resultId, valueId) => removeMutation.mutate({ resultId, valueId })}
               />
             ) : (
               <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
@@ -113,7 +127,7 @@ export function ParaclinicalSection({ index, patientId, readOnly }: Paraclinical
         <AddParaclinicalResultForm
           patientId={patientId}
           isAdding={createMutation.isPending}
-          onAdd={(input) => createMutation.mutate(input)}
+          onAdd={add}
         />
       )}
     </CollapsibleSection>
