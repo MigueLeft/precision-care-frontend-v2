@@ -10,7 +10,6 @@ import {
   useCreateAntecedent,
   useDeleteAntecedent,
   ANTECEDENT_STATUS_LABELS,
-  isMockAntecedent,
 } from '@/features/antecedents'
 import type { Antecedent, AntecedentStatus } from '@/features/antecedents'
 
@@ -68,10 +67,6 @@ export function PersonalAntecedentsBlock({
         antecedents={antecedents}
         variant="personal"
         onDelete={(antecedent) => {
-          if (isMockAntecedent(antecedent)) {
-            toast.info('Este es un registro de ejemplo.')
-            return
-          }
           if (!readOnly) deleteMutation.mutate(antecedent.id)
         }}
       />

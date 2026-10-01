@@ -295,3 +295,20 @@ export interface MedicationHistoryItem {
 }
 
 export type * from './evolution'
+
+// Resultado de aterrizar el formulario de ingreso en la consulta: por cada
+// categoría, cuántos registros se agregaron y cuántos ya existían.
+export interface IntakeLandingCount {
+  added: number
+  skipped: number
+}
+
+export interface IntakeLandingResult {
+  intakeResponseId: number
+  symptoms: IntakeLandingCount
+  familyAntecedents: IntakeLandingCount
+  personalAntecedents: IntakeLandingCount
+  surgeries: IntakeLandingCount
+  hospitalizations: IntakeLandingCount
+  medications: IntakeLandingCount
+}

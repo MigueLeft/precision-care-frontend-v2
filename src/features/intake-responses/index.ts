@@ -9,6 +9,7 @@ export { IntakeResponsesPanel } from './components/IntakeResponsesPanel'
 export { IntakeResponseDetailDrawer } from './components/IntakeResponseDetailDrawer'
 export { IntakeResponseDetailContent } from './components/IntakeResponseDetailContent'
 export { getResultName, getResultScoreText } from './utils/format-result'
+export { copyIntakeLink } from './utils/copy-intake-link'
 export {
   findSexQuestion,
   getSavedAnswerSex,
@@ -25,5 +26,6 @@ export type {
   IntakeResponseDetailCondition,
   IntakeResponseDetailGroup,
   IntakeResponseDetailQuestion,
+  IntakeResponseDetailQuestionOption,
   IntakeResponseDetailResult,
 } from './types'

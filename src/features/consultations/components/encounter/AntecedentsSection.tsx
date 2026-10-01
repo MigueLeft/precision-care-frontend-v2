@@ -13,8 +13,7 @@ interface AntecedentsSectionProps {
 }
 
 // Los antecedentes (y alergias) se guardan en el expediente, no por consulta;
-// aquí se confirman o actualizan. Mientras no haya captura real por categoría
-// se muestra el diseño con datos de ejemplo (mismo criterio que lifestyle-mock.ts).
+// aquí se confirman o actualizan.
 export function AntecedentsSection({
   index,
   patientId,
@@ -41,7 +40,6 @@ export function AntecedentsSection({
         consultationId={consultationId}
         consultationDate={consultationDate}
         readOnly={readOnly}
-        withExamples
       />
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1.5 }}>

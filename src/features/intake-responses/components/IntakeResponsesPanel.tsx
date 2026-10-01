@@ -3,11 +3,13 @@ import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined'
 import AddIcon from '@mui/icons-material/Add'
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
 import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { formatShortDate } from '@/utils/format-date'
 import { useIntakeResponsesByPatient } from '../hooks/useIntakeResponsesByPatient'
+import { copyIntakeLink } from '../utils/copy-intake-link'
 import { isInformativeResult } from '../utils/format-result'
 import { IntakeResponseDetailDrawer } from './IntakeResponseDetailDrawer'
 import { IntakeResultLine } from './IntakeResultLine'
@@ -89,8 +91,14 @@ export function IntakeResponsesPanel({
                 Ver respuestas
               </AppButton>
             ) : (
-              <AppButton size="small" variant="outlined" disabled>
-                Enviar recordatorio
+              <AppButton
+                size="small"
+                variant="outlined"
+                startIcon={<ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />}
+                disabled={!response.link}
+                onClick={() => response.link && copyIntakeLink(response.link)}
+              >
+                Copiar enlace
               </AppButton>
             )}
           </Stack>
@@ -98,8 +106,8 @@ export function IntakeResponsesPanel({
       ))}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
-        Los ingresables pendientes se envían al portal del paciente; el especialista también puede
-        llenarlos en consulta.
+        Un ingresable pendiente no se puede volver a enviar hasta que el paciente lo complete;
+        mientras tanto puedes copiar su enlace y compartirlo de nuevo.
       </Typography>
       </Stack>
 

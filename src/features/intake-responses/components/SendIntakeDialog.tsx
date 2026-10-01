@@ -17,6 +17,9 @@ import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import { useIntakes } from '@/features/intake'
+import { getApiErrorMessage } from '@/utils/get-api-error-message'
+import { useIntakeResponsesByPatient } from '../hooks/useIntakeResponsesByPatient'
+import { copyIntakeLink } from '../utils/copy-intake-link'
 import { useSendIntakeToPatient } from '../hooks/useSendIntakeToPatient'
 import type { SendIntakeResult } from '../services/intake-responses.service'
 
@@ -32,7 +35,16 @@ export function SendIntakeDialog({ open, patientId, onClose }: SendIntakeDialogP
   const [result, setResult] = useState<SendIntakeResult | null>(null)
   const sendMutation = useSendIntakeToPatient(patientId)
 
-  const sendableIntakes = intakes.filter((intake) => intake.active && intake.currentVersionId !== null)
+  const { data: responses = [] } = useIntakeResponsesByPatient(patientId)
+
+  // Un ingresable pendiente no se puede volver a enviar hasta completarse.
+  const pendingIntakeIds = new Set(
+    responses.filter((response) => !response.completed).map((response) => response.intakeId),
+  )
+  const sendableIntakes = intakes.filter(
+    (intake) =>
+      intake.active && intake.currentVersionId !== null && !pendingIntakeIds.has(intake.id),
+  )
   const selectedIntake = sendableIntakes.find((intake) => intake.id === intakeId)
 
   function handleClose() {
@@ -48,20 +60,14 @@ export function SendIntakeDialog({ open, patientId, onClose }: SendIntakeDialogP
         setResult(data)
         toast.success('Enlace generado. Cópialo y compártelo con el paciente.')
       },
-      onError: () => {
-        toast.error('No se pudo generar el ingresable.')
+      onError: (error) => {
+        toast.error(getApiErrorMessage(error, 'No se pudo generar el ingresable.'))
       },
     })
   }
 
-  async function handleCopyLink() {
-    if (!result) return
-    try {
-      await navigator.clipboard.writeText(result.link)
-      toast.success('Enlace copiado.')
-    } catch {
-      toast.error('No se pudo copiar el enlace.')
-    }
+  function handleCopyLink() {
+    if (result) void copyIntakeLink(result.link)
   }
 
   return (
@@ -75,6 +81,12 @@ export function SendIntakeDialog({ open, patientId, onClose }: SendIntakeDialogP
                 Selecciona el formulario que quieres enviar al paciente. Se generará un enlace para
                 que lo llene sin necesidad de iniciar sesión.
               </Typography>
+              {pendingIntakeIds.size > 0 && (
+                <Alert severity="info">
+                  Los ingresables que el paciente tiene pendientes no aparecen en la lista: copia
+                  su enlace desde el expediente.
+                </Alert>
+              )}
               <SearchableSelect
                 label="Ingresable"
                 options={sendableIntakes.map((intake) => ({ id: intake.id, label: intake.name }))}

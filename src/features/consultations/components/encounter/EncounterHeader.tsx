@@ -5,6 +5,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useUpdateConsultation } from '../../hooks/useConsultationDetail'
+import { LandIntakeButton } from './LandIntakeButton'
 import type { Consultation } from '../../types'
 
 interface EncounterHeaderProps {
@@ -61,6 +62,9 @@ export function EncounterHeader({ consultation, readOnly }: EncounterHeaderProps
           <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
             Duración {duration}
           </Typography>
+        )}
+        {!readOnly && consultation.visitType === 'first' && (
+          <LandIntakeButton consultation={consultation} />
         )}
         {!readOnly && (
           <AppButton

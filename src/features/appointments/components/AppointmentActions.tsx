@@ -111,7 +111,10 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
           >
             Enviar recordatorio manual
           </AppButton>
-          <SendIntakeAssignmentButton appointmentId={appointment.id} />
+          <SendIntakeAssignmentButton
+            appointmentId={appointment.id}
+            patientId={appointment.patientId}
+          />
         </>
       )}
     </Stack>

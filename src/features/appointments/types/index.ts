@@ -35,6 +35,9 @@ export interface AppointmentReminder {
 
 export interface IntakeAssignment {
   id: number
+  intakeId: number | null
+  /** Enlace público para llenarlo; solo viene mientras está pendiente. */
+  link: string | null
   intakeName: string | null
   versionNumber: number | null
   completed: boolean

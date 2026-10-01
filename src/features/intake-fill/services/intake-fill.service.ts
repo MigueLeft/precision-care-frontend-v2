@@ -1,5 +1,6 @@
 import { api } from '@/utils/api'
 import type { IntakeResponseDetail } from '@/features/intake-responses'
+import type { PublicIntakeCatalogs } from '../types'
 
 export interface PublicAnswerPayload {
   questionId: number
@@ -17,6 +18,15 @@ export async function fetchPublicIntakeResponse(
     `/public/intake-responses/${token}`,
   )
   return data.response
+}
+
+export async function fetchPublicIntakeCatalogs(
+  token: string,
+): Promise<PublicIntakeCatalogs> {
+  const { data } = await api.get<{ catalogs: PublicIntakeCatalogs }>(
+    `/public/intake-responses/${token}/catalogs`,
+  )
+  return data.catalogs
 }
 
 export async function submitPublicAnswer(

@@ -8,7 +8,11 @@ function draftToPayloads(questionId: number, draft: AnswerDraft): PublicAnswerPa
     case 'option':
       return [{ questionId, optionId: draft.optionId }]
     case 'options':
-      return draft.optionIds.map((optionId) => ({ questionId, optionId }))
+      return draft.optionIds.map((optionId) => ({
+        questionId,
+        optionId,
+        textValue: draft.texts?.[optionId]?.trim() || undefined,
+      }))
     case 'text':
       return draft.value.trim() ? [{ questionId, textValue: draft.value.trim() }] : []
     case 'numeric': {

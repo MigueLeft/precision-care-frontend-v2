@@ -12,6 +12,7 @@ import type { AnswerDraft, AnswerMap } from '../types'
 import { collectPayloads } from '../utils/answer-payloads'
 import { buildIntakeSteps } from '../utils/intake-steps'
 import { buildQuestionIndex } from '../utils/question-visibility'
+import { validateStep } from '../utils/step-validation'
 
 // Estado del formulario público por pasos: respuestas, paso actual y envío.
 export function useIntakeFillFlow(token: string, response: IntakeResponseDetail | undefined) {
@@ -40,7 +41,17 @@ export function useIntakeFillFlow(token: string, response: IntakeResponseDetail 
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // Un paso con datos incompletos (ej. antecedente familiar sin parentesco)
+  // no deja avanzar ni enviar.
+  function isCurrentStepValid(): boolean {
+    const step = steps[stepIndex]
+    const error = step ? validateStep(step, questionIndex, answers) : null
+    if (error) toast.error(error)
+    return !error
+  }
+
   async function submit() {
+    if (!isCurrentStepValid()) return
     setSubmitting(true)
     try {
       for (const payload of collectPayloads(steps, questionIndex, answers)) {
@@ -65,7 +76,9 @@ export function useIntakeFillFlow(token: string, response: IntakeResponseDetail 
     submitting,
     justCompleted,
     setAnswer,
-    next: () => goToStep(stepIndex + 1),
+    next: () => {
+      if (isCurrentStepValid()) goToStep(stepIndex + 1)
+    },
     back: () => goToStep(stepIndex - 1),
     submit,
   }

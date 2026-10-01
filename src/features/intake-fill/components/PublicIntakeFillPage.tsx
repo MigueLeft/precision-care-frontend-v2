@@ -1,6 +1,11 @@
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { EmptyState } from '@/components/EmptyState'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
+import {
+  EMPTY_INTAKE_CATALOGS,
+  IntakeCatalogsContext,
+  usePublicIntakeCatalogs,
+} from '../hooks/useIntakeCatalogs'
 import { useIntakeFillFlow } from '../hooks/useIntakeFillFlow'
 import { usePublicIntakeResponse } from '../hooks/usePublicIntakeResponse'
 import { IntakeCompletedCard } from './IntakeCompletedCard'
@@ -14,6 +19,7 @@ interface PublicIntakeFillPageProps {
 
 export function PublicIntakeFillPage({ token }: PublicIntakeFillPageProps) {
   const { data: response, isLoading, isError, error } = usePublicIntakeResponse(token)
+  const { data: catalogs } = usePublicIntakeCatalogs(token)
   const flow = useIntakeFillFlow(token, response)
   const patient = response?.patient
   const patientName = patient ? `${patient.firstName} ${patient.lastName}`.trim() : null
@@ -46,12 +52,14 @@ export function PublicIntakeFillPage({ token }: PublicIntakeFillPageProps) {
               stepIndex={flow.stepIndex}
               totalSteps={flow.steps.length}
             />
-            <IntakeStepContent
-              step={flow.step}
-              answers={flow.answers}
-              questionIndex={flow.questionIndex}
-              onAnswer={flow.setAnswer}
-            />
+            <IntakeCatalogsContext value={catalogs ?? EMPTY_INTAKE_CATALOGS}>
+              <IntakeStepContent
+                step={flow.step}
+                answers={flow.answers}
+                questionIndex={flow.questionIndex}
+                onAnswer={flow.setAnswer}
+              />
+            </IntakeCatalogsContext>
             <IntakeStepActions
               isFirstStep={flow.stepIndex === 0}
               isLastStep={flow.isLastStep}

@@ -15,6 +15,8 @@ export interface IntakeResponse {
   completed: boolean
   startAt: string
   completedAt: string | null
+  /** Enlace público para llenarlo; solo viene mientras está pendiente. */
+  link: string | null
   // Adjuntado por el backend (join a intake / version / result).
   intakeId: number | null
   intakeName: string | null
@@ -53,15 +55,25 @@ export interface IntakeResponseDetailQuestionOption {
 export interface IntakeResponseDetailAnswer {
   text: string | null
   selectedOptionIds: number[]
+  /** Texto adjunto a cada opción elegida (ej. parentesco), por id de opción. */
+  optionTexts: Record<number, string>
 }
 
-// letters_only: sin números; phone: solo dígitos y símbolos de teléfono.
+// letters_only: sin números; phone: solo dígitos y símbolos de teléfono;
+// country / nationality: selector del catálogo de países;
+// family_relationship: cada opción elegida pide el parentesco;
+// surgery_list / hospitalization_list: captura estructurada como en la consulta.
 export type IntakeQuestionDisplayVariant =
   | 'short_text'
   | 'select'
   | 'inline'
   | 'letters_only'
   | 'phone'
+  | 'country'
+  | 'nationality'
+  | 'family_relationship'
+  | 'surgery_list'
+  | 'hospitalization_list'
 
 export type IntakeConditionOperator =
   | 'eq'

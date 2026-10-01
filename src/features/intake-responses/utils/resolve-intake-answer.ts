@@ -3,7 +3,8 @@ import type { IntakeResponseDetailQuestion } from '../types'
 // Resuelve el texto a mostrar para la respuesta de una pregunta del detalle
 // de un ingresable. Para 'multiple_choice' con varias opciones seleccionadas,
 // concatena los textos de las opciones resueltas por id; en el resto de los
-// casos usa el texto ya resuelto por el backend.
+// casos usa el texto ya resuelto por el backend. Si la opción trae un texto
+// adjunto (ej. parentesco) se muestra entre paréntesis.
 export function resolveIntakeAnswerText(
   question: IntakeResponseDetailQuestion,
 ): string | null {
@@ -12,7 +13,11 @@ export function resolveIntakeAnswerText(
 
   if (type === 'multiple_choice' && answer.selectedOptionIds.length > 0 && options) {
     const labels = answer.selectedOptionIds
-      .map((optionId) => options.find((option) => option.id === optionId)?.text)
+      .map((optionId) => {
+        const label = options.find((option) => option.id === optionId)?.text
+        const extra = answer.optionTexts?.[optionId]
+        return label && extra ? `${label} (${extra})` : label
+      })
       .filter((text): text is string => Boolean(text))
     if (labels.length > 0) return labels.join(', ')
   }

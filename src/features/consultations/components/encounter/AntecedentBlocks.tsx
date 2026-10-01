@@ -1,12 +1,6 @@
 import { Divider, Stack } from '@mui/material'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
-import {
-  useAntecedentsByPatient,
-  MOCK_FAMILY_ANTECEDENTS,
-  MOCK_PERSONAL_ANTECEDENTS,
-  MOCK_SURGICAL_ANTECEDENTS,
-  type Antecedent,
-} from '@/features/antecedents'
+import { useAntecedentsByPatient } from '@/features/antecedents'
 import { groupAntecedents } from '../../utils/antecedent-groups'
 import { AllergiesBlock } from './AllergiesBlock'
 import { FamilyAntecedentsBlock } from './FamilyAntecedentsBlock'
@@ -18,17 +12,15 @@ type AntecedentBlocksProps = {
   consultationId: number
   consultationDate: string
   readOnly: boolean
-  // Mostrar datos de ejemplo cuando una categoría aún no tiene captura real.
-  withExamples?: boolean
 }
 
-// Familiares, personales, quirúrgicos/hospitalizaciones y alergias.
+// Familiares, personales, quirúrgicos/hospitalizaciones y alergias. Solo se
+// muestra lo registrado en el expediente: una consulta nueva inicia vacía.
 export function AntecedentBlocks({
   patientId,
   consultationId,
   consultationDate,
   readOnly,
-  withExamples = false,
 }: AntecedentBlocksProps) {
   const { data: antecedents = [], isLoading, isError, error } = useAntecedentsByPatient(patientId)
 
@@ -40,25 +32,23 @@ export function AntecedentBlocks({
     )
   }
 
-  const real = groupAntecedents(antecedents)
-  const pick = (list: Antecedent[], mock: Antecedent[]) =>
-    withExamples && list.length === 0 ? mock : list
+  const groups = groupAntecedents(antecedents)
 
   return (
     <Stack spacing={2.5} divider={<Divider />}>
       <FamilyAntecedentsBlock
         patientId={patientId}
-        antecedents={pick(real.family, MOCK_FAMILY_ANTECEDENTS)}
+        antecedents={groups.family}
         readOnly={readOnly}
       />
       <PersonalAntecedentsBlock
         patientId={patientId}
-        antecedents={pick(real.personal, MOCK_PERSONAL_ANTECEDENTS)}
+        antecedents={groups.personal}
         readOnly={readOnly}
       />
       <SurgicalAntecedentsBlock
         patientId={patientId}
-        antecedents={pick(real.surgical, MOCK_SURGICAL_ANTECEDENTS)}
+        antecedents={groups.surgical}
         readOnly={readOnly}
       />
       <AllergiesBlock

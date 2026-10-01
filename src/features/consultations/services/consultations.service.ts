@@ -21,6 +21,7 @@ import type {
   CaptureMedicationInput,
   MedicationHistoryItem,
   ConsultationEvolution,
+  IntakeLandingResult,
 } from '../types'
 
 export async function fetchConsultationsByPatient(
@@ -313,4 +314,13 @@ export async function fetchConsultationEvolution(
     `/consultations/${id}/evolution`,
   )
   return data
+}
+
+// Vuelca en la primera consulta lo respondido en el formulario de ingreso
+// (síntomas, antecedentes, cirugías, hospitalizaciones y medicamentos).
+export async function landConsultationIntake(id: number): Promise<IntakeLandingResult> {
+  const { data } = await api.post<{ landing: IntakeLandingResult }>(
+    `/consultations/${id}/land-intake`,
+  )
+  return data.landing
 }

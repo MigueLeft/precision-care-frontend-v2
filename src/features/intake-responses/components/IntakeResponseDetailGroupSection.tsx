@@ -28,6 +28,8 @@ export function IntakeResponseDetailGroupSection({
                   fontWeight: answerText ? 600 : 400,
                   color: answerText ? 'text.primary' : 'text.disabled',
                   fontStyle: answerText ? 'normal' : 'italic',
+                  // Las listas (cirugías, hospitalizaciones) traen un evento por línea.
+                  whiteSpace: 'pre-line',
                 }}
               >
                 {answerText ?? 'Sin respuesta'}

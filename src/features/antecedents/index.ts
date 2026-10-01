@@ -16,12 +16,7 @@ export {
   ANTECEDENT_STATUS_COLORS,
   ANTECEDENT_TYPE_LABELS,
 } from './utils/antecedent-format'
-export {
-  isMockAntecedent,
-  MOCK_FAMILY_ANTECEDENTS,
-  MOCK_PERSONAL_ANTECEDENTS,
-  MOCK_SURGICAL_ANTECEDENTS,
-} from './utils/antecedent-mock'
+export { FAMILY_RELATIONSHIPS } from './utils/family-relationships'
 export type {
   Antecedent,
   AntecedentType,

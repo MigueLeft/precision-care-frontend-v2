@@ -1,4 +1,6 @@
-import { Stack, Typography, Chip } from '@mui/material'
+import { Stack, Typography, Chip, IconButton, Tooltip } from '@mui/material'
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
+import { copyIntakeLink } from '@/features/intake-responses'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import HourglassEmptyOutlinedIcon from '@mui/icons-material/HourglassEmptyOutlined'
 import type { Appointment } from '../types'
@@ -65,6 +67,17 @@ export function AppointmentNotificationsSection({
                 color={assignment.completed ? 'success' : 'warning'}
                 variant="outlined"
               />
+              {assignment.link && (
+                <Tooltip title="Copiar enlace">
+                  <IconButton
+                    size="small"
+                    aria-label="Copiar enlace del ingresable"
+                    onClick={() => assignment.link && copyIntakeLink(assignment.link)}
+                  >
+                    <ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
           ))}
         </Stack>

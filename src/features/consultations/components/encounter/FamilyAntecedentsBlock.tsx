@@ -9,22 +9,9 @@ import {
   AntecedentListTable,
   useCreateAntecedent,
   useDeleteAntecedent,
-  isMockAntecedent,
+  FAMILY_RELATIONSHIPS,
 } from '@/features/antecedents'
 import type { Antecedent } from '@/features/antecedents'
-
-const RELATIONSHIPS = [
-  'Padre',
-  'Madre',
-  'Hermano/a',
-  'Abuelo paterno',
-  'Abuela paterna',
-  'Abuelo materno',
-  'Abuela materna',
-  'Tío/a',
-  'Hijo/a',
-  'Otro',
-]
 
 interface FamilyAntecedentsBlockProps {
   patientId: number
@@ -82,10 +69,6 @@ export function FamilyAntecedentsBlock({
         antecedents={antecedents}
         variant="family"
         onDelete={(antecedent) => {
-          if (isMockAntecedent(antecedent)) {
-            toast.info('Este es un registro de ejemplo.')
-            return
-          }
           if (!readOnly) deleteMutation.mutate(antecedent.id)
         }}
       />
@@ -100,7 +83,7 @@ export function FamilyAntecedentsBlock({
             sx={{ minWidth: 140 }}
           >
             <MenuItem value="">Parentesco…</MenuItem>
-            {RELATIONSHIPS.map((option) => (
+            {FAMILY_RELATIONSHIPS.map((option) => (
               <MenuItem key={option} value={option}>
                 {option}
               </MenuItem>

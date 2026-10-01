@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Stack, Box } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { toast } from 'sonner'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
@@ -18,12 +17,6 @@ import {
   mapFormToUpdatePayload,
   mapAntecedentToForm,
 } from '../utils/antecedent-mappers'
-import {
-  isMockAntecedent,
-  MOCK_FAMILY_ANTECEDENTS,
-  MOCK_PERSONAL_ANTECEDENTS,
-  MOCK_SURGICAL_ANTECEDENTS,
-} from '../utils/antecedent-mock'
 import { antecedentFormDefaultValues } from '../schemas/antecedent-form.schema'
 import type { AntecedentFormValues } from '../schemas/antecedent-form.schema'
 import type { Antecedent, AntecedentType } from '../types'
@@ -65,33 +58,11 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
     onSuccess: () => setDeleting(null),
   })
 
-  const familyReal = antecedents.filter((a) => a.type === 'family')
-  const personalReal = antecedents.filter((a) => a.type === 'personal' || a.type === 'other')
-  const surgicalReal = antecedents.filter(
+  const family = antecedents.filter((a) => a.type === 'family')
+  const personal = antecedents.filter((a) => a.type === 'personal' || a.type === 'other')
+  const surgical = antecedents.filter(
     (a) => a.type === 'surgery' || a.type === 'hospitalization',
   )
-
-  // Mientras no haya captura real por categoría se muestra el diseño con
-  // datos de ejemplo (mismo criterio que lifestyle-mock.ts).
-  const family = familyReal.length > 0 ? familyReal : MOCK_FAMILY_ANTECEDENTS
-  const personal = personalReal.length > 0 ? personalReal : MOCK_PERSONAL_ANTECEDENTS
-  const surgical = surgicalReal.length > 0 ? surgicalReal : MOCK_SURGICAL_ANTECEDENTS
-
-  function handleEdit(antecedent: Antecedent) {
-    if (isMockAntecedent(antecedent)) {
-      toast.info('Este es un registro de ejemplo.')
-      return
-    }
-    setEditing(antecedent)
-  }
-
-  function handleDelete(antecedent: Antecedent) {
-    if (isMockAntecedent(antecedent)) {
-      toast.info('Este es un registro de ejemplo.')
-      return
-    }
-    setDeleting(antecedent)
-  }
 
   function handleSubmit(values: AntecedentFormValues) {
     if (editing) {
@@ -129,8 +100,8 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
             <AntecedentListTable
               antecedents={family}
               variant="family"
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+              onEdit={setEditing}
+              onDelete={setDeleting}
             />
           </Stack>
         </CollapsibleSection>
@@ -146,8 +117,8 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
             <AntecedentListTable
               antecedents={personal}
               variant="personal"
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+              onEdit={setEditing}
+              onDelete={setDeleting}
             />
           </Stack>
         </CollapsibleSection>
@@ -159,8 +130,8 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
             </Box>
             <SurgeryHospitalizationList
               antecedents={surgical}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+              onEdit={setEditing}
+              onDelete={setDeleting}
             />
           </Stack>
         </CollapsibleSection>
