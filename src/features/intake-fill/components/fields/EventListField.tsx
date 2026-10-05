@@ -53,21 +53,20 @@ export function EventListField({ question, value, onChange }: QuestionFieldProps
         onRemove={(index) => onChange(toEventListDraft(entries.filter((_, i) => i !== index)))}
       />
 
+      {/* El selector va solo en su renglón; fecha, complicaciones y "Añadir" debajo. */}
+      <CatalogPicker
+        key={pickerKey}
+        options={isSurgery ? catalogs.surgeries : catalogs.hospitalizations}
+        value={event}
+        onChange={setEvent}
+        placeholder={isSurgery ? 'Buscar procedimiento…' : 'Buscar motivo…'}
+        manualLabel="No está en la lista · escribir manualmente"
+      />
       <Stack
-        direction={{ xs: 'column', md: 'row' }}
-        spacing={1}
-        useFlexGap
-        sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1.5}
+        sx={{ alignItems: { xs: 'stretch', sm: 'flex-start' } }}
       >
-        <CatalogPicker
-          key={pickerKey}
-          options={isSurgery ? catalogs.surgeries : catalogs.hospitalizations}
-          value={event}
-          onChange={setEvent}
-          placeholder={isSurgery ? 'Buscar procedimiento…' : 'Buscar motivo…'}
-          manualLabel="No está en la lista · escribir manualmente"
-          sx={{ flex: '1 1 240px', minWidth: 220 }}
-        />
         <TextField
           size="small"
           type="date"
@@ -75,16 +74,21 @@ export function EventListField({ question, value, onChange }: QuestionFieldProps
           slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: TODAY } }}
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          sx={{ width: 160 }}
+          sx={{ width: { xs: '100%', sm: 170 }, flexShrink: 0 }}
         />
         <TextField
           size="small"
           placeholder="Complicaciones…"
           value={complications}
           onChange={(e) => setComplications(e.target.value)}
-          sx={{ flex: '1 1 200px', minWidth: 180 }}
+          sx={{ flex: 1 }}
         />
-        <AppButton variant="outlined" startIcon={<AddIcon sx={{ fontSize: 18 }} />} onClick={add}>
+        <AppButton
+          variant="outlined"
+          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+          onClick={add}
+          sx={{ flexShrink: 0 }}
+        >
           Añadir
         </AppButton>
       </Stack>

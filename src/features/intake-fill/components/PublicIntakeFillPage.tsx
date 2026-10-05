@@ -12,6 +12,7 @@ import { IntakeCompletedCard } from './IntakeCompletedCard'
 import { IntakeStepActions } from './IntakeStepActions'
 import { IntakeStepContent } from './IntakeStepContent'
 import { IntakeStepHeader } from './IntakeStepHeader'
+import { IntakeSubmittingCard } from './IntakeSubmittingCard'
 
 interface PublicIntakeFillPageProps {
   token: string
@@ -43,7 +44,9 @@ export function PublicIntakeFillPage({ token }: PublicIntakeFillPageProps) {
 
         {response && (response.completed || flow.justCompleted) && <IntakeCompletedCard />}
 
-        {response && !response.completed && !flow.justCompleted && flow.step && (
+        {flow.submitting && <IntakeSubmittingCard />}
+
+        {response && !response.completed && !flow.justCompleted && !flow.submitting && flow.step && (
           <Stack spacing={2.5}>
             <IntakeStepHeader
               intakeName={response.intakeName ?? 'Formulario'}
