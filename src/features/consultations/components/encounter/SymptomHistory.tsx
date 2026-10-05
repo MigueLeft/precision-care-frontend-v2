@@ -29,6 +29,7 @@ export function SymptomHistory({ consultationId }: SymptomHistoryProps) {
                 key={`${entry.consultationId}-${index}`}
                 direction="row"
                 spacing={1}
+                useFlexGap
                 sx={{ alignItems: 'center', flexWrap: 'wrap' }}
               >
                 <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>
@@ -55,6 +56,13 @@ export function SymptomHistory({ consultationId }: SymptomHistoryProps) {
                   color={SYMPTOM_STATUS_COLORS[item.status]}
                   label={SYMPTOM_STATUS_LABELS[item.status]}
                 />
+                {item.notes && (
+                  <Typography
+                    sx={{ fontSize: '12px', fontStyle: 'italic', color: 'text.secondary', width: '100%' }}
+                  >
+                    {item.notes}
+                  </Typography>
+                )}
               </Stack>
             ))}
           </Stack>

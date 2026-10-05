@@ -113,6 +113,7 @@ export interface SymptomHistoryItem {
   diseases: SymptomDiseaseLink[]
   status: SymptomStatus
   onsetDate: string | null
+  notes: string | null
 }
 
 // Expediente: una entrada por síntoma con su historial de versiones.

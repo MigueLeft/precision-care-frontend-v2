@@ -101,6 +101,21 @@ export function syncProblems(
   return next
 }
 
+// Quita las notas de los diagnósticos o síntomas que se eliminaron de la
+// consulta (`removedPrefixes`), aunque el médico les haya agregado detalles.
+export function dropRemovedSources(
+  problems: ConsultationProblems,
+  removedPrefixes: string[],
+): ConsultationProblems {
+  if (removedPrefixes.length === 0) return problems
+  const keep = (note: string) =>
+    !removedPrefixes.some((prefix) => matchesPrefix(note, prefix))
+  return {
+    actuales: problems.actuales.filter(keep),
+    previos: problems.previos.filter(keep),
+  }
+}
+
 export function sameProblems(a: ConsultationProblems, b: ConsultationProblems) {
   return JSON.stringify(a) === JSON.stringify(b)
 }

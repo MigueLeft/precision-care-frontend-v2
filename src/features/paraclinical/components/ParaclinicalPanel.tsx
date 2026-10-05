@@ -12,7 +12,6 @@ import { EmptyState } from '@/components/EmptyState'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { useParaclinicalResultsByPatient } from '../hooks/useParaclinicalResultsByPatient'
 import { useParaclinicalOrdersByPatient } from '../hooks/useParaclinicalOrdersByPatient'
-import { useCreateParaclinicalResult } from '../hooks/useCreateParaclinicalResult'
 import { useRemoveParaclinicalResult } from '../hooks/useRemoveParaclinicalResult'
 import { useRemoveParaclinicalValue } from '../hooks/useRemoveParaclinicalValue'
 import { groupResultsByDay } from '../utils/paraclinical-helpers'
@@ -33,7 +32,6 @@ export function ParaclinicalPanel({ patientId }: ParaclinicalPanelProps) {
   const ordersQuery = useParaclinicalOrdersByPatient(patientId)
   const { data: results = [] } = resultsQuery
   const { data: orders = [] } = ordersQuery
-  const createMutation = useCreateParaclinicalResult(patientId)
   const removeMutation = useRemoveParaclinicalResult(patientId)
   const removeValueMutation = useRemoveParaclinicalValue(patientId)
   const groups = groupResultsByDay(results)
@@ -70,11 +68,7 @@ export function ParaclinicalPanel({ patientId }: ParaclinicalPanelProps) {
 
       {addingResult && (
         <SectionCard title="Nuevo resultado">
-          <AddParaclinicalResultForm
-            patientId={patientId}
-            isAdding={createMutation.isPending}
-            onAdd={(input) => createMutation.mutate(input)}
-          />
+          <AddParaclinicalResultForm patientId={patientId} />
         </SectionCard>
       )}
 

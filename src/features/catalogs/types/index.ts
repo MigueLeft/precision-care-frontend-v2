@@ -168,6 +168,8 @@ export type UpdateAllergyCatalogPayload = Partial<CreateAllergyCatalogPayload>
 export interface Disease {
   id: number
   name: string
+  // Nombre cotidiano: como suele conocer el paciente a la enfermedad (el del IM1).
+  commonName: string | null
   code: string | null
   isChronic: boolean
   bodySystemId: number | null
@@ -176,23 +178,12 @@ export interface Disease {
 
 export interface CreateDiseasePayload {
   name: string
+  commonName?: string | null
   code?: string
   isChronic: boolean
   bodySystemId?: number | null
 }
 export type UpdateDiseasePayload = Partial<CreateDiseasePayload>
-
-export interface AntecedentFamilyCatalog {
-  id: number
-  name: string
-  active: boolean
-}
-
-export interface AntecedentPersonalCatalog {
-  id: number
-  name: string
-  active: boolean
-}
 
 export interface SurgeryCatalog {
   id: number

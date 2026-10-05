@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Autocomplete, Checkbox, FormControlLabel, Stack, TextField } from '@mui/material'
+import { CatalogOptionItem } from './CatalogOptionItem'
+import { filterCatalogOptions } from './catalog-option-filter'
 import type { CatalogOption } from './CatalogSearchInput'
 
 export interface CatalogPick {
@@ -50,6 +52,10 @@ export function CatalogPicker({
         <Autocomplete
           options={options}
           getOptionLabel={(option) => option.name}
+          filterOptions={filterCatalogOptions}
+          renderOption={({ key, ...props }, option) => (
+            <CatalogOptionItem key={key} option={option} {...props} />
+          )}
           isOptionEqualToValue={(option, current) => option.id === current.id}
           value={selected}
           onChange={(_event, option) =>

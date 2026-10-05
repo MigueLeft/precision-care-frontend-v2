@@ -21,6 +21,12 @@ function Condition({ antecedent }: { antecedent: Antecedent }) {
   return (
     <>
       {antecedent.name}
+      {antecedent.commonName &&
+        antecedent.commonName.toLowerCase() !== antecedent.name.toLowerCase() && (
+          <Typography component="span" sx={{ ml: 1, fontSize: '11px', color: 'text.secondary' }}>
+            · {antecedent.commonName}
+          </Typography>
+        )}
       {antecedent.cie10Code && (
         <Typography component="span" sx={{ ml: 1, fontSize: '11px', color: 'text.secondary' }}>
           ({antecedent.cie10Code})
@@ -89,7 +95,7 @@ export function AntecedentListTable({
               </DataCell>
             )}
             <DataCell sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-              {antecedent.description ?? '—'}
+              {antecedent.description || '—'}
             </DataCell>
             <DataCell align="right">
               <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'flex-end' }}>

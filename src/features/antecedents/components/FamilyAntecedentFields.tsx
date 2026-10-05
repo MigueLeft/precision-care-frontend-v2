@@ -2,7 +2,7 @@ import { Controller } from 'react-hook-form'
 import type { Control, UseFormSetValue } from 'react-hook-form'
 import { Grid, Typography, FormHelperText } from '@mui/material'
 import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
-import { useAntecedentFamilyCatalog } from '@/features/catalogs'
+import { useAntecedentDiseaseOptions } from '../hooks/useAntecedentDiseaseOptions'
 import type { AntecedentFormValues } from '../schemas/antecedent-form.schema'
 import { FormText } from './AntecedentTextField'
 
@@ -11,10 +11,10 @@ interface FamilyAntecedentFieldsProps {
   setValue: UseFormSetValue<AntecedentFormValues>
 }
 
-// Campos específicos de antecedentes tipo "family": condición (buscada en
-// antecedent_family_catalog, con opción de escribir manualmente) y parentesco.
+// Campos específicos de antecedentes tipo "family": condición (buscada en el
+// catálogo de enfermedades, con opción de escribir manualmente) y parentesco.
 export function FamilyAntecedentFields({ control, setValue }: FamilyAntecedentFieldsProps) {
-  const { data: familyCatalog = [] } = useAntecedentFamilyCatalog()
+  const diseaseOptions = useAntecedentDiseaseOptions()
 
   return (
     <>
@@ -25,11 +25,11 @@ export function FamilyAntecedentFields({ control, setValue }: FamilyAntecedentFi
           render={({ field, fieldState: { error } }) => (
             <>
               <CatalogSearchInput
-                options={familyCatalog}
+                options={diseaseOptions}
                 placeholder="Buscar antecedente familiar…"
                 onAdd={(name, catalogId) => {
                   field.onChange(name)
-                  setValue('familyCatalogId', catalogId)
+                  setValue('diseaseCatalogId', catalogId)
                 }}
                 manualLabel="No está en el catálogo · escribir manualmente"
               />

@@ -21,7 +21,7 @@ interface DiseasesTableProps {
   onToggleActive: (id: number) => void
 }
 
-const HEADERS = ['Nombre', 'Cronicidad', 'Estado', '']
+const HEADERS = ['Nombre', 'Nombre cotidiano', 'Cronicidad', 'Estado', '']
 
 export function DiseasesTable({ items, onEdit, onToggleActive }: DiseasesTableProps) {
   if (items.length === 0) {
@@ -44,6 +44,9 @@ export function DiseasesTable({ items, onEdit, onToggleActive }: DiseasesTablePr
           {items.map((item) => (
             <TableRow key={item.id} hover sx={{ '&:last-child td': { borderBottom: 0 } }}>
               <TableCell sx={{ fontSize: '14px', fontWeight: 600 }}>{item.name}</TableCell>
+              <TableCell sx={{ fontSize: '13px', color: 'text.secondary' }}>
+                {item.commonName || '—'}
+              </TableCell>
               <TableCell>
                 <Chip
                   label={item.isChronic ? 'Crónica' : 'Aguda'}

@@ -23,8 +23,6 @@ import type {
   Disease,
   CreateDiseasePayload,
   UpdateDiseasePayload,
-  AntecedentFamilyCatalog,
-  AntecedentPersonalCatalog,
   SurgeryCatalog,
   HospitalizationCatalog,
 } from '../types'
@@ -476,73 +474,6 @@ export async function updateDisease(
 export async function toggleDiseaseActive(id: number): Promise<Disease> {
   const { data } = await api.patch<{ disease: Disease }>(`/catalogs/diseases/${id}/toggle-active`)
   return data.disease
-}
-
-// ─── Antecedentes familiares (catálogo) ─────────────────────────────────────
-
-export async function fetchAntecedentFamilyCatalog(): Promise<AntecedentFamilyCatalog[]> {
-  const { data } = await api.get<{ antecedentFamily: AntecedentFamilyCatalog[] }>(
-    '/catalogs/antecedent-family',
-  )
-  return data.antecedentFamily
-}
-
-export async function createAntecedentFamily(name: string): Promise<AntecedentFamilyCatalog> {
-  const { data } = await api.post<{ antecedentFamily: AntecedentFamilyCatalog }>(
-    '/catalogs/antecedent-family',
-    { name },
-  )
-  return data.antecedentFamily
-}
-
-export async function updateAntecedentFamily(id: number, name: string): Promise<AntecedentFamilyCatalog> {
-  const { data } = await api.patch<{ antecedentFamily: AntecedentFamilyCatalog }>(
-    `/catalogs/antecedent-family/${id}`,
-    { name },
-  )
-  return data.antecedentFamily
-}
-
-export async function toggleAntecedentFamilyActive(id: number): Promise<AntecedentFamilyCatalog> {
-  const { data } = await api.patch<{ antecedentFamily: AntecedentFamilyCatalog }>(
-    `/catalogs/antecedent-family/${id}/toggle-active`,
-  )
-  return data.antecedentFamily
-}
-
-// ─── Antecedentes personales (catálogo) ─────────────────────────────────────
-
-export async function fetchAntecedentPersonalCatalog(): Promise<AntecedentPersonalCatalog[]> {
-  const { data } = await api.get<{ antecedentPersonal: AntecedentPersonalCatalog[] }>(
-    '/catalogs/antecedent-personal',
-  )
-  return data.antecedentPersonal
-}
-
-export async function createAntecedentPersonal(name: string): Promise<AntecedentPersonalCatalog> {
-  const { data } = await api.post<{ antecedentPersonal: AntecedentPersonalCatalog }>(
-    '/catalogs/antecedent-personal',
-    { name },
-  )
-  return data.antecedentPersonal
-}
-
-export async function updateAntecedentPersonal(
-  id: number,
-  name: string,
-): Promise<AntecedentPersonalCatalog> {
-  const { data } = await api.patch<{ antecedentPersonal: AntecedentPersonalCatalog }>(
-    `/catalogs/antecedent-personal/${id}`,
-    { name },
-  )
-  return data.antecedentPersonal
-}
-
-export async function toggleAntecedentPersonalActive(id: number): Promise<AntecedentPersonalCatalog> {
-  const { data } = await api.patch<{ antecedentPersonal: AntecedentPersonalCatalog }>(
-    `/catalogs/antecedent-personal/${id}/toggle-active`,
-  )
-  return data.antecedentPersonal
 }
 
 // ─── Cirugías (catálogo) ─────────────────────────────────────────────────────

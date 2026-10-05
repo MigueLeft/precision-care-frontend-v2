@@ -17,7 +17,7 @@ type EncounterMainSectionsProps = {
 
 // Contenido principal de la consulta. Primera vez abre con Antecedentes;
 // subsecuente abre con la nota de la consulta anterior (los antecedentes pasan
-// a la barra lateral). El resto del orden es el mismo.
+// a la barra lateral). El resto del orden es el mismo y termina en Diagnósticos.
 export function EncounterMainSections({ consultation, readOnly }: EncounterMainSectionsProps) {
   const consultationId = consultation.id
   const patientId = consultation.patientId
@@ -52,15 +52,6 @@ export function EncounterMainSections({ consultation, readOnly }: EncounterMainS
       <TreatmentSection key="treatment" index={index} consultation={consultation} readOnly={readOnly} />
     ),
     (index) => (
-      <DiseasesSection
-        key="diagnoses"
-        index={index}
-        consultationId={consultationId}
-        consultationDate={consultationDate}
-        readOnly={readOnly}
-      />
-    ),
-    (index) => (
       <PhysicalExamSection
         key="physical-exam"
         index={index}
@@ -82,6 +73,17 @@ export function EncounterMainSections({ consultation, readOnly }: EncounterMainS
     ),
     (index) => (
       <ParaclinicalSection key="paraclinical" index={index} patientId={patientId} readOnly={readOnly} />
+    ),
+    // Los diagnósticos cierran la parte médica: se establecen después de revisar
+    // síntomas, tratamiento, exploración y estudios.
+    (index) => (
+      <DiseasesSection
+        key="diagnoses"
+        index={index}
+        consultationId={consultationId}
+        consultationDate={consultationDate}
+        readOnly={readOnly}
+      />
     ),
   ]
 

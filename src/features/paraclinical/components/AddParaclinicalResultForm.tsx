@@ -11,31 +11,24 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useParaclinicalCategories, useParaclinicals } from '@/features/catalogs'
 import type { ParaclinicalCatalog } from '@/features/catalogs'
-import { todayIsoDate } from '@/utils/format-date'
+import { formatShortDate, todayIsoDate } from '@/utils/format-date'
+import { useAddParaclinicalResult } from '../hooks/useAddParaclinicalResult'
+import { buildSingleStudyInput, formatStudyValue } from '../utils/single-study-result'
 import type { CreateParaclinicalResultInput } from '../types'
 
 interface AddParaclinicalResultFormProps {
   patientId: number
-  isAdding: boolean
-  onAdd: (input: CreateParaclinicalResultInput) => void
-}
-
-function computeStatus(value: number | undefined, min?: number, max?: number) {
-  if (value === undefined) return undefined
-  if (min !== undefined && value < min) return 'low' as const
-  if (max !== undefined && value > max) return 'high' as const
-  return 'normal' as const
+  /** Se llama cuando el resultado quedó registrado. */
+  onAdded?: (input: CreateParaclinicalResultInput) => void
 }
 
 // Alta rápida de un estudio: se crea como un resultado independiente con un
-// solo analito (el modelo de paraclínicos no exige una orden previa).
-export function AddParaclinicalResultForm({
-  patientId,
-  isAdding,
-  onAdd,
-}: AddParaclinicalResultFormProps) {
+// solo analito (el modelo de paraclínicos no exige una orden previa). Si el
+// estudio ya tiene resultado en esa fecha, se ofrece reemplazarlo.
+export function AddParaclinicalResultForm({ patientId, onAdded }: AddParaclinicalResultFormProps) {
   const { data: categories = [] } = useParaclinicalCategories()
   const { data: catalog = [] } = useParaclinicals()
 
@@ -45,15 +38,20 @@ export function AddParaclinicalResultForm({
   const [unit, setUnit] = useState('')
   const [date, setDate] = useState(todayIsoDate())
 
+  const { add, isAdding, pending, confirmReplace, cancelReplace } = useAddParaclinicalResult(
+    patientId,
+    (input) => {
+      // El formulario se limpia solo cuando el resultado quedó guardado.
+      setStudy(null)
+      setResult('')
+      setUnit('')
+      onAdded?.(input)
+    },
+  )
+
   const options = catalog.filter(
     (item) => item.active && (categoryId === '' || item.categoryId === categoryId),
   )
-
-  function reset() {
-    setStudy(null)
-    setResult('')
-    setUnit('')
-  }
 
   function submit() {
     if (!study) {
@@ -64,27 +62,7 @@ export function AddParaclinicalResultForm({
       toast.error('Indica el resultado.')
       return
     }
-    const numericValue = Number(result.replace(',', '.'))
-    const isNumeric = result.trim() !== '' && !Number.isNaN(numericValue)
-    const referenceMin = study.referenceMin ? Number(study.referenceMin) : undefined
-    const referenceMax = study.referenceMax ? Number(study.referenceMax) : undefined
-
-    onAdd({
-      patientId,
-      resultDate: new Date(`${date}T12:00:00.000Z`).toISOString(),
-      values: [
-        {
-          paraclinicalCatalogId: study.id,
-          numericValue: isNumeric ? numericValue : undefined,
-          textValue: isNumeric ? undefined : result.trim(),
-          unit: unit.trim() || study.defaultUnit || undefined,
-          referenceMin,
-          referenceMax,
-          status: isNumeric ? computeStatus(numericValue, referenceMin, referenceMax) : undefined,
-        },
-      ],
-    })
-    reset()
+    add(buildSingleStudyInput({ patientId, study, result, unit, date }))
   }
 
   return (
@@ -152,6 +130,21 @@ export function AddParaclinicalResultForm({
       >
         Añadir
       </AppButton>
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Este estudio ya está registrado"
+        description={
+          pending
+            ? `${pending.existing.value.paraclinicalName ?? 'El estudio'} ya tiene un resultado del ${formatShortDate(pending.existing.resultDate)} (${formatStudyValue(pending.existing.value)}). ¿Quieres reemplazarlo por el nuevo?`
+            : ''
+        }
+        confirmLabel="Reemplazar"
+        color="primary"
+        isConfirming={isAdding}
+        onConfirm={confirmReplace}
+        onClose={cancelReplace}
+      />
     </Stack>
   )
 }

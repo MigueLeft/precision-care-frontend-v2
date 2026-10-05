@@ -47,8 +47,7 @@ export function AntecedentFormFields({ control, setValue, lockType }: Antecedent
                   field.onChange(event)
                   // Los ids de catálogo son específicos de cada tipo; al
                   // cambiar de tipo dejan de ser válidos.
-                  setValue('familyCatalogId', undefined)
-                  setValue('personalCatalogId', undefined)
+                  setValue('diseaseCatalogId', undefined)
                   setValue('surgeryProcedureCatalogId', undefined)
                   setValue('hospitalizationReasonCatalogId', undefined)
                 }}

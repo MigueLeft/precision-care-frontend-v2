@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from '@mui/material'
 import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
-import { useAntecedentPersonalCatalog } from '@/features/catalogs'
+import { useAntecedentDiseaseOptions } from '../hooks/useAntecedentDiseaseOptions'
 import type { AntecedentFormValues } from '../schemas/antecedent-form.schema'
 import { FormText } from './AntecedentTextField'
 import { ANTECEDENT_STATUS_LABELS } from '../utils/antecedent-format'
@@ -28,10 +28,10 @@ interface PersonalAntecedentFieldsProps {
   setValue: UseFormSetValue<AntecedentFormValues>
 }
 
-// Campos específicos de antecedentes tipo "personal": condición (buscada en
-// antecedent_personal_catalog), fecha de inicio, estado clínico y CIE-10.
+// Campos específicos de antecedentes tipo "personal": condición (buscada en el
+// catálogo de enfermedades), fecha de inicio, estado clínico y CIE-10.
 export function PersonalAntecedentFields({ control, setValue }: PersonalAntecedentFieldsProps) {
-  const { data: personalCatalog = [] } = useAntecedentPersonalCatalog()
+  const diseaseOptions = useAntecedentDiseaseOptions()
 
   return (
     <>
@@ -42,11 +42,11 @@ export function PersonalAntecedentFields({ control, setValue }: PersonalAntecede
           render={({ field, fieldState: { error } }) => (
             <>
               <CatalogSearchInput
-                options={personalCatalog}
+                options={diseaseOptions}
                 placeholder="Buscar antecedente personal…"
                 onAdd={(name, catalogId) => {
                   field.onChange(name)
-                  setValue('personalCatalogId', catalogId)
+                  setValue('diseaseCatalogId', catalogId)
                 }}
                 manualLabel="No está en el catálogo · escribir manualmente"
               />

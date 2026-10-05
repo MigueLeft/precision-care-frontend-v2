@@ -26,6 +26,7 @@ export interface AntecedentHospitalizationDetail {
   dischargeDate: string | null
   reason: string | null
   institution: string | null
+  complications: string | null
   dischargeDiagnosisCie10: string | null
   reasonCatalogId: number | null
 }
@@ -40,8 +41,10 @@ export interface Antecedent {
   eventDate: string | null
   relationship: string | null
   status: AntecedentStatus | null
-  familyCatalogId: number | null
-  personalCatalogId: number | null
+  // Enfermedad del catálogo (antecedentes familiares y personales) y su nombre
+  // cotidiano, el que ve el paciente en el formulario de ingreso.
+  diseaseCatalogId: number | null
+  commonName?: string | null
   surgeryDetail: AntecedentSurgeryDetail | null
   hospitalizationDetail: AntecedentHospitalizationDetail | null
   createdAt: string
@@ -57,8 +60,7 @@ export interface CreateAntecedentPayload {
   eventDate?: string
   relationship?: string
   status?: AntecedentStatus
-  familyCatalogId?: number
-  personalCatalogId?: number
+  diseaseCatalogId?: number
   surgeryDetail?: {
     procedure?: string
     institution?: string
@@ -71,6 +73,7 @@ export interface CreateAntecedentPayload {
     dischargeDate?: string
     reason?: string
     institution?: string
+    complications?: string
     dischargeDiagnosisCie10?: string
     reasonCatalogId?: number
   }

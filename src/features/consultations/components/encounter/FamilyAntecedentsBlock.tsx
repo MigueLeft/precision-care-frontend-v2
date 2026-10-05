@@ -4,9 +4,9 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
-import { useAntecedentFamilyCatalog } from '@/features/catalogs'
 import {
   AntecedentListTable,
+  useAntecedentDiseaseOptions,
   useCreateAntecedent,
   useDeleteAntecedent,
   FAMILY_RELATIONSHIPS,
@@ -17,16 +17,18 @@ interface FamilyAntecedentsBlockProps {
   patientId: number
   antecedents: Antecedent[]
   readOnly: boolean
+  onEdit: (antecedent: Antecedent) => void
 }
 
 export function FamilyAntecedentsBlock({
   patientId,
   antecedents,
   readOnly,
+  onEdit,
 }: FamilyAntecedentsBlockProps) {
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
-  const { data: catalog = [] } = useAntecedentFamilyCatalog()
+  const diseaseOptions = useAntecedentDiseaseOptions()
   const [relationship, setRelationship] = useState('')
   const [condition, setCondition] = useState<CatalogPick | null>(null)
   const [notes, setNotes] = useState('')
@@ -51,7 +53,7 @@ export function FamilyAntecedentsBlock({
       type: 'family',
       relationship,
       name: condition.name.trim(),
-      familyCatalogId: condition.catalogId,
+      diseaseCatalogId: condition.catalogId,
       description: notes.trim() || undefined,
     })
   }
@@ -68,6 +70,7 @@ export function FamilyAntecedentsBlock({
       <AntecedentListTable
         antecedents={antecedents}
         variant="family"
+        onEdit={readOnly ? undefined : onEdit}
         onDelete={(antecedent) => {
           if (!readOnly) deleteMutation.mutate(antecedent.id)
         }}
@@ -90,7 +93,7 @@ export function FamilyAntecedentsBlock({
             ))}
           </Select>
           <CatalogPicker
-            options={catalog.filter((item) => item.active)}
+            options={diseaseOptions}
             value={condition}
             onChange={setCondition}
             placeholder="Buscar condición…"

@@ -20,30 +20,36 @@ function compact<T extends Record<string, string | number | undefined>>(
   ) as Partial<T>
 }
 
+const usesDiseaseCatalog = (type: AntecedentFormValues['type']) =>
+  type === 'family' || type === 'personal'
+
 // Convierte los valores planos del formulario al payload anidado del backend.
+// Con `keepEmpty` (edición) las notas y complicaciones vacías se envían como
+// texto vacío para poder borrarlas.
 export function mapFormToPayload(
   values: AntecedentFormValues,
+  keepEmpty = false,
 ): Omit<CreateAntecedentPayload, 'patientId'> {
+  const clearable = (value: string | undefined) =>
+    keepEmpty ? (value ?? '').trim() : trimmed(value)
+
   const payload: Omit<CreateAntecedentPayload, 'patientId'> = {
     type: values.type,
     name: values.name.trim(),
     eventDate: trimmed(values.eventDate),
-    description: trimmed(values.description),
+    description: clearable(values.description),
     cie10Code: trimmed(values.cie10Code),
     relationship:
       values.type === 'family' ? trimmed(values.relationship) : undefined,
     status: values.type === 'personal' ? values.status : undefined,
-    familyCatalogId:
-      values.type === 'family' ? values.familyCatalogId : undefined,
-    personalCatalogId:
-      values.type === 'personal' ? values.personalCatalogId : undefined,
+    diseaseCatalogId: usesDiseaseCatalog(values.type) ? values.diseaseCatalogId : undefined,
   }
 
   if (values.type === 'surgery') {
     payload.surgeryDetail = compact({
       procedure: trimmed(values.surgeryProcedure),
       institution: trimmed(values.surgeryInstitution),
-      complications: trimmed(values.surgeryComplications),
+      complications: clearable(values.surgeryComplications),
       treatingPhysician: trimmed(values.surgeryTreatingPhysician),
       procedureCatalogId: values.surgeryProcedureCatalogId,
     })
@@ -55,6 +61,7 @@ export function mapFormToPayload(
       dischargeDate: trimmed(values.hospitalizationDischargeDate),
       reason: trimmed(values.hospitalizationReason),
       institution: trimmed(values.hospitalizationInstitution),
+      complications: clearable(values.hospitalizationComplications),
       dischargeDiagnosisCie10: trimmed(
         values.hospitalizationDischargeDiagnosisCie10,
       ),
@@ -68,7 +75,7 @@ export function mapFormToPayload(
 export function mapFormToUpdatePayload(
   values: AntecedentFormValues,
 ): UpdateAntecedentPayload {
-  return mapFormToPayload(values)
+  return mapFormToPayload(values, true)
 }
 
 export function mapAntecedentToForm(antecedent: Antecedent): AntecedentFormValues {
@@ -81,8 +88,7 @@ export function mapAntecedentToForm(antecedent: Antecedent): AntecedentFormValue
     cie10Code: antecedent.cie10Code ?? '',
     relationship: antecedent.relationship ?? '',
     status: antecedent.status ?? undefined,
-    familyCatalogId: antecedent.familyCatalogId ?? undefined,
-    personalCatalogId: antecedent.personalCatalogId ?? undefined,
+    diseaseCatalogId: antecedent.diseaseCatalogId ?? undefined,
     surgeryProcedureCatalogId:
       antecedent.surgeryDetail?.procedureCatalogId ?? undefined,
     hospitalizationReasonCatalogId:
@@ -98,6 +104,8 @@ export function mapAntecedentToForm(antecedent: Antecedent): AntecedentFormValue
     hospitalizationReason: antecedent.hospitalizationDetail?.reason ?? '',
     hospitalizationInstitution:
       antecedent.hospitalizationDetail?.institution ?? '',
+    hospitalizationComplications:
+      antecedent.hospitalizationDetail?.complications ?? '',
     hospitalizationDischargeDiagnosisCie10:
       antecedent.hospitalizationDetail?.dischargeDiagnosisCie10 ?? '',
   }

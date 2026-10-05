@@ -52,6 +52,13 @@ export function HospitalizationAntecedentFields({
         />
       </Grid>
       <Grid size={{ xs: 12 }}>
+        <FormText
+          control={control}
+          name="hospitalizationComplications"
+          label="Complicaciones"
+        />
+      </Grid>
+      <Grid size={{ xs: 12 }}>
         <Controller
           name="hospitalizationReason"
           control={control}

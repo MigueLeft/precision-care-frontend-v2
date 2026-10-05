@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Box, IconButton, Stack, TextField, Tooltip, Typography } from '@mui/material'
+import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { MedicationDoseFields } from './MedicationDoseFields'
 import type { CaptureMedicationInput, ConsultationMedication } from '../../types'
 
 interface BaseMedicationRowProps {
@@ -80,21 +81,21 @@ export function BaseMedicationRow({
       </Stack>
 
       {editing && (
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} sx={{ mt: 1 }}>
-          <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
-          <TextField
-            size="small"
-            label="Frecuencia"
-            value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            sx={{ flex: 1 }}
+        <Stack spacing={1} sx={{ mt: 1 }}>
+          <MedicationDoseFields
+            dose={dose}
+            frequency={frequency}
+            onDoseChange={setDose}
+            onFrequencyChange={setFrequency}
           />
-          <AppButton size="small" variant="contained" loading={isSaving} disabled={!changed} onClick={save}>
-            Guardar
-          </AppButton>
-          <AppButton size="small" variant="text" onClick={() => setEditing(false)}>
-            Cancelar
-          </AppButton>
+          <Stack direction="row" spacing={1}>
+            <AppButton size="small" variant="contained" loading={isSaving} disabled={!changed} onClick={save}>
+              Guardar
+            </AppButton>
+            <AppButton size="small" variant="text" onClick={() => setEditing(false)}>
+              Cancelar
+            </AppButton>
+          </Stack>
         </Stack>
       )}
 

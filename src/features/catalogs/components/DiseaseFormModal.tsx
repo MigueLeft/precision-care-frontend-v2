@@ -7,17 +7,13 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   Switch,
   TextField,
 } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
-import { useBodySystems } from '../hooks/useBodySystems'
+import { DiseaseBodySystemField } from './DiseaseBodySystemField'
 import { diseaseFormSchema, type DiseaseFormValues } from '../schemas/disease-form.schema'
 
 interface DiseaseFormModalProps {
@@ -37,7 +33,6 @@ export function DiseaseFormModal({
   onSubmit,
   onClose,
 }: DiseaseFormModalProps) {
-  const { data: bodySystems = [] } = useBodySystems()
   const { control, handleSubmit, reset } = useForm<DiseaseFormValues>({
     resolver: zodResolver(diseaseFormSchema),
     defaultValues: initialValues,
@@ -68,6 +63,24 @@ export function DiseaseFormModal({
             )}
           />
           <Controller
+            name="commonName"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                value={field.value ?? ''}
+                label="Nombre cotidiano (opcional)"
+                placeholder="Ej. Azúcar alta"
+                fullWidth
+                error={!!error}
+                helperText={
+                  error?.message ?? 'Como suele conocerla el paciente; es el nombre del formulario de ingreso.'
+                }
+                slotProps={{ htmlInput: { maxLength: 150 } }}
+              />
+            )}
+          />
+          <Controller
             name="code"
             control={control}
             render={({ field, fieldState: { error } }) => (
@@ -83,30 +96,7 @@ export function DiseaseFormModal({
               />
             )}
           />
-          <Controller
-            name="bodySystemId"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <FormControl fullWidth error={!!error}>
-                <InputLabel id="disease-body-system">Aparato / sistema</InputLabel>
-                <Select<number | ''>
-                  labelId="disease-body-system"
-                  label="Aparato / sistema"
-                  value={field.value ?? ''}
-                  onChange={(event) =>
-                    field.onChange(event.target.value === '' ? null : Number(event.target.value))
-                  }
-                >
-                  <MenuItem value="">Sin asignar</MenuItem>
-                  {bodySystems.map((system) => (
-                    <MenuItem key={system.id} value={system.id}>
-                      {system.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
+          <DiseaseBodySystemField control={control} />
           <Controller
             name="isChronic"
             control={control}

@@ -55,6 +55,9 @@ export interface CreateParaclinicalResultInput {
   patientId: number
   resultDate: string
   laboratory?: string
+  // Un estudio solo puede tener un resultado por día: con true se reemplaza el
+  // que ya exista en esa fecha (sin él, el backend rechaza el duplicado).
+  replaceExisting?: boolean
   values: CreateParaclinicalResultValueInput[]
 }
 

@@ -11,6 +11,7 @@ import {
   useDeleteAntecedent,
 } from '@/features/antecedents'
 import type { Antecedent, AntecedentType } from '@/features/antecedents'
+import { buildSurgicalAntecedentPayload } from '../../utils/surgical-antecedent-payload'
 
 type SurgicalType = Extract<AntecedentType, 'surgery' | 'hospitalization'>
 
@@ -18,12 +19,14 @@ interface SurgicalAntecedentsBlockProps {
   patientId: number
   antecedents: Antecedent[]
   readOnly: boolean
+  onEdit: (antecedent: Antecedent) => void
 }
 
 export function SurgicalAntecedentsBlock({
   patientId,
   antecedents,
   readOnly,
+  onEdit,
 }: SurgicalAntecedentsBlockProps) {
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
@@ -55,25 +58,16 @@ export function SurgicalAntecedentsBlock({
       )
       return
     }
-    createMutation.mutate({
-      patientId,
-      type,
-      name,
-      eventDate: date || undefined,
-      description: complications.trim() || undefined,
-      surgeryDetail:
-        type === 'surgery'
-          ? {
-              procedure: name,
-              procedureCatalogId: event?.catalogId,
-              complications: complications.trim() || undefined,
-            }
-          : undefined,
-      hospitalizationDetail:
-        type === 'hospitalization'
-          ? { reason: name, reasonCatalogId: event?.catalogId, admissionDate: date || undefined }
-          : undefined,
-    })
+    createMutation.mutate(
+      buildSurgicalAntecedentPayload({
+        patientId,
+        type,
+        name,
+        catalogId: event?.catalogId,
+        date,
+        complications,
+      }),
+    )
   }
 
   return (
@@ -87,6 +81,7 @@ export function SurgicalAntecedentsBlock({
 
       <SurgeryHospitalizationList
         antecedents={antecedents}
+        onEdit={readOnly ? undefined : onEdit}
         onDelete={(antecedent) => {
           if (!readOnly) deleteMutation.mutate(antecedent.id)
         }}

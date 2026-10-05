@@ -1,6 +1,11 @@
 import { Divider, Stack } from '@mui/material'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
-import { useAntecedentsByPatient } from '@/features/antecedents'
+import { useState } from 'react'
+import {
+  AntecedentEditDialog,
+  useAntecedentsByPatient,
+  type Antecedent,
+} from '@/features/antecedents'
 import { groupAntecedents } from '../../utils/antecedent-groups'
 import { AllergiesBlock } from './AllergiesBlock'
 import { FamilyAntecedentsBlock } from './FamilyAntecedentsBlock'
@@ -23,6 +28,7 @@ export function AntecedentBlocks({
   readOnly,
 }: AntecedentBlocksProps) {
   const { data: antecedents = [], isLoading, isError, error } = useAntecedentsByPatient(patientId)
+  const [editing, setEditing] = useState<Antecedent | null>(null)
 
   if (isLoading || isError) {
     return (
@@ -35,27 +41,38 @@ export function AntecedentBlocks({
   const groups = groupAntecedents(antecedents)
 
   return (
-    <Stack spacing={2.5} divider={<Divider />}>
-      <FamilyAntecedentsBlock
+    <>
+      <Stack spacing={2.5} divider={<Divider />}>
+        <FamilyAntecedentsBlock
+          patientId={patientId}
+          antecedents={groups.family}
+          readOnly={readOnly}
+          onEdit={setEditing}
+        />
+        <PersonalAntecedentsBlock
+          patientId={patientId}
+          antecedents={groups.personal}
+          readOnly={readOnly}
+          onEdit={setEditing}
+        />
+        <SurgicalAntecedentsBlock
+          patientId={patientId}
+          antecedents={groups.surgical}
+          readOnly={readOnly}
+          onEdit={setEditing}
+        />
+        <AllergiesBlock
+          consultationId={consultationId}
+          consultationDate={consultationDate}
+          readOnly={readOnly}
+        />
+      </Stack>
+
+      <AntecedentEditDialog
         patientId={patientId}
-        antecedents={groups.family}
-        readOnly={readOnly}
+        antecedent={editing}
+        onClose={() => setEditing(null)}
       />
-      <PersonalAntecedentsBlock
-        patientId={patientId}
-        antecedents={groups.personal}
-        readOnly={readOnly}
-      />
-      <SurgicalAntecedentsBlock
-        patientId={patientId}
-        antecedents={groups.surgical}
-        readOnly={readOnly}
-      />
-      <AllergiesBlock
-        consultationId={consultationId}
-        consultationDate={consultationDate}
-        readOnly={readOnly}
-      />
-    </Stack>
+    </>
   )
 }

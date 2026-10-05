@@ -12,6 +12,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import { OnsetDateField } from './OnsetDateField'
 import { SymptomDiseaseLinks } from './SymptomDiseaseLinks'
+import { SymptomNotesField } from './SymptomNotesField'
 import {
   SYMPTOM_STATUSES,
   SYMPTOM_STATUS_LABELS,
@@ -38,7 +39,8 @@ interface SymptomRowProps {
 }
 
 // Tarjeta de un síntoma: nombre arriba; debajo Severidad, Estado e Inicio (se
-// acomodan sin desbordar en laptop) y los diagnósticos asociados con su estado.
+// acomodan sin desbordar en laptop), las notas y los diagnósticos asociados con
+// su estado.
 export function SymptomRow({
   symptom,
   severities,
@@ -123,6 +125,12 @@ export function SymptomRow({
           onCommit={(onsetDate) => onCapture({ onsetDate })}
         />
       </Stack>
+
+      <SymptomNotesField
+        value={symptom.notes}
+        disabled={readOnly}
+        onCommit={(notes) => onCapture({ notes })}
+      />
 
       <SymptomDiseaseLinks
         links={symptom.diseases}

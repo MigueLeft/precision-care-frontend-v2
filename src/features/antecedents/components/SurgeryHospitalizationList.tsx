@@ -2,6 +2,7 @@ import { Box, Chip, IconButton, Stack, Typography } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
 import { EmptyState } from '@/components/EmptyState'
+import { formatFreeDate } from '@/utils/format-date'
 import type { Antecedent } from '../types'
 import { ANTECEDENT_TYPE_LABELS } from '../utils/antecedent-format'
 
@@ -14,13 +15,18 @@ interface SurgeryHospitalizationListProps {
 interface FieldProps {
   label: string
   value: string | null | undefined
+  /** Texto a mostrar cuando no hay valor; sin él, el campo se oculta. */
+  emptyLabel?: string
 }
 
-function Field({ label, value }: FieldProps) {
-  if (!value) return null
+function Field({ label, value, emptyLabel }: FieldProps) {
+  if (!value && !emptyLabel) return null
   return (
     <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-      {label}: <Box component="span" sx={{ color: 'text.primary' }}>{value}</Box>
+      {label}:{' '}
+      <Box component="span" sx={{ color: value ? 'text.primary' : 'text.secondary' }}>
+        {value || emptyLabel}
+      </Box>
     </Typography>
   )
 }
@@ -41,6 +47,10 @@ export function SurgeryHospitalizationList({
         const hospitalization = antecedent.hospitalizationDetail
         const cie10 =
           antecedent.cie10Code ?? hospitalization?.dischargeDiagnosisCie10
+        const complications = surgery?.complications || hospitalization?.complications
+        // Las notas solo se repiten si son distintas de las complicaciones.
+        const notes =
+          antecedent.description !== complications ? antecedent.description : null
 
         return (
           <Box
@@ -72,17 +82,19 @@ export function SurgeryHospitalizationList({
             <Stack spacing={0.25} sx={{ mt: 1 }}>
               <Field label="Procedimiento" value={surgery?.procedure} />
               <Field
+                label="Fecha"
+                value={surgery && antecedent.eventDate ? formatFreeDate(antecedent.eventDate) : null}
+              />
+              <Field
                 label="Institución"
                 value={surgery?.institution ?? hospitalization?.institution}
               />
               <Field label="Ingreso" value={hospitalization?.admissionDate} />
               <Field label="Egreso" value={hospitalization?.dischargeDate} />
               <Field label="Motivo" value={hospitalization?.reason} />
-              <Field
-                label="Complicaciones"
-                value={surgery?.complications}
-              />
               <Field label="Médico tratante" value={surgery?.treatingPhysician} />
+              <Field label="Complicaciones" value={complications} emptyLabel="Sin registrar" />
+              <Field label="Notas" value={notes} />
             </Stack>
           </Box>
         )

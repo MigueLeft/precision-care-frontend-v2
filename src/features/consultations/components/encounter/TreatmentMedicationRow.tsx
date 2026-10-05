@@ -15,6 +15,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined'
 import { AppButton } from '@/components/AppButton'
 import { useMedications } from '@/features/catalogs'
+import { MedicationDoseFields } from './MedicationDoseFields'
 import type { Medication } from '@/features/catalogs'
 import {
   ADHERENCE_COLORS,
@@ -139,30 +140,7 @@ export function TreatmentMedicationRow({
           <Typography sx={{ fontSize: '14px', fontWeight: 700, color: suspended ? 'error.main' : 'text.primary' }}>
             {medname(medication)}
           </Typography>
-          {editingMed ? (
-            <Stack spacing={1} sx={{ mt: 0.5 }}>
-              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
-                <TextField size="small" label="Dosis" value={dose} onChange={(e) => setDose(e.target.value)} />
-                <TextField
-                  size="small"
-                  label="Frecuencia"
-                  value={frequency}
-                  onChange={(e) => setFrequency(e.target.value)}
-                />
-              </Stack>
-              <Autocomplete
-                size="small"
-                options={medicationCatalog.filter((m) => m.active)}
-                getOptionLabel={catalogLabel}
-                value={replacement}
-                onChange={(_e, value) => setReplacement(value)}
-                sx={{ minWidth: 260 }}
-                renderInput={(params) => (
-                  <TextField {...params} label="Reemplazar por otro medicamento (opcional)" />
-                )}
-              />
-            </Stack>
-          ) : (
+          {!editingMed && (
             <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
               {medication.dose ?? '—'} · {medication.frequency ?? '—'}
             </Typography>
@@ -174,7 +152,11 @@ export function TreatmentMedicationRow({
               size="small"
               variant="text"
               startIcon={<EditOutlinedIcon sx={{ fontSize: 15 }} />}
-              onClick={() => setEditingMed((prev) => !prev)}
+              onClick={() => {
+                // Los cambios se guardan con el botón "Guardar" de la captura.
+                if (!editingMed) setCapturing(true)
+                setEditingMed((prev) => !prev)
+              }}
             >
               {editingMed ? 'Cancelar' : 'Editar / reemplazar'}
             </AppButton>
@@ -190,6 +172,30 @@ export function TreatmentMedicationRow({
           </Stack>
         )}
       </Stack>
+
+      {/* Edición en su propio bloque a todo el ancho: los campos no compiten con
+          los botones del encabezado. */}
+      {editingMed && !suspended && (
+        <Stack spacing={1} sx={{ mt: 1 }}>
+          <MedicationDoseFields
+            dose={dose}
+            frequency={frequency}
+            onDoseChange={setDose}
+            onFrequencyChange={setFrequency}
+          />
+          <Autocomplete
+            size="small"
+            fullWidth
+            options={medicationCatalog.filter((m) => m.active)}
+            getOptionLabel={catalogLabel}
+            value={replacement}
+            onChange={(_e, value) => setReplacement(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Reemplazar por otro medicamento (opcional)" />
+            )}
+          />
+        </Stack>
+      )}
 
       {suspended && (
         <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'error.main', mt: 0.5 }}>

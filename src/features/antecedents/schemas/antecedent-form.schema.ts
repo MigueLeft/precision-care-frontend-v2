@@ -21,8 +21,8 @@ export const antecedentFormSchema = z
       .optional(),
     // Ids resueltos contra los catálogos vía CatalogSearchInput (opcional:
     // se limpian cuando `type` cambia o cuando se escribe manualmente).
-    familyCatalogId: z.number().int().positive().optional(),
-    personalCatalogId: z.number().int().positive().optional(),
+    // Familiares y personales comparten el catálogo de enfermedades.
+    diseaseCatalogId: z.number().int().positive().optional(),
     surgeryProcedureCatalogId: z.number().int().positive().optional(),
     hospitalizationReasonCatalogId: z.number().int().positive().optional(),
     // Detalle de cirugía
@@ -35,6 +35,7 @@ export const antecedentFormSchema = z
     hospitalizationDischargeDate: optionalDate,
     hospitalizationReason: z.string().optional(),
     hospitalizationInstitution: z.string().optional(),
+    hospitalizationComplications: z.string().optional(),
     hospitalizationDischargeDiagnosisCie10: z.string().optional(),
   })
   .superRefine((data, ctx) => {
@@ -57,8 +58,7 @@ export const antecedentFormDefaultValues: AntecedentFormValues = {
   cie10Code: '',
   relationship: '',
   status: undefined,
-  familyCatalogId: undefined,
-  personalCatalogId: undefined,
+  diseaseCatalogId: undefined,
   surgeryProcedureCatalogId: undefined,
   hospitalizationReasonCatalogId: undefined,
   surgeryProcedure: '',
@@ -69,5 +69,6 @@ export const antecedentFormDefaultValues: AntecedentFormValues = {
   hospitalizationDischargeDate: '',
   hospitalizationReason: '',
   hospitalizationInstitution: '',
+  hospitalizationComplications: '',
   hospitalizationDischargeDiagnosisCie10: '',
 }

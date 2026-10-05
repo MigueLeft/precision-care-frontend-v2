@@ -28,7 +28,7 @@ const TABS = [
   { label: 'Aparatos / Sistemas', icon: AccessibilityNewOutlinedIcon },
   { label: 'Especialidades', icon: LocalHospitalOutlinedIcon },
   { label: 'Listas demográficas', icon: ListOutlinedIcon },
-  { label: 'Antecedentes y cirugías', icon: HistoryOutlinedIcon },
+  { label: 'Cirugías y hospitalizaciones', icon: HistoryOutlinedIcon },
 ] as const
 
 export function CatalogsPage() {

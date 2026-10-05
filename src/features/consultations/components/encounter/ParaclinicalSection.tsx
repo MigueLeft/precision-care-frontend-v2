@@ -6,7 +6,6 @@ import { useParaclinicalCategories, useParaclinicals } from '@/features/catalogs
 import type { ParaclinicalCategoryCatalog } from '@/features/catalogs'
 import {
   useParaclinicalResultsByPatient,
-  useCreateParaclinicalResult,
   useRemoveParaclinicalValue,
   AddParaclinicalResultForm,
   type CreateParaclinicalResultInput,
@@ -60,17 +59,14 @@ function useParaclinicalRows(patientId: number, categories: ParaclinicalCategory
 export function ParaclinicalSection({ index, patientId, readOnly }: ParaclinicalSectionProps) {
   const { data: categories = [] } = useParaclinicalCategories()
   const { rows, rootOf } = useParaclinicalRows(patientId, categories)
-  const createMutation = useCreateParaclinicalResult(patientId)
   const removeMutation = useRemoveParaclinicalValue(patientId)
   // Grupo que se despliega tras agregar un estudio (para ver lo recién capturado).
   const [opened, setOpened] = useState({ key: '', signal: 0 })
 
-  function add(input: CreateParaclinicalResultInput) {
+  function openGroupOf(input: CreateParaclinicalResultInput) {
     const studyId = input.values[0]?.paraclinicalCatalogId
     const key = String(studyId !== undefined ? (rootOf(studyId) ?? 'none') : 'none')
-    createMutation.mutate(input, {
-      onSuccess: () => setOpened((prev) => ({ key, signal: prev.signal + 1 })),
-    })
+    setOpened((prev) => ({ key, signal: prev.signal + 1 }))
   }
 
   const rootCategories = categories.filter((category) => category.active && category.parentId == null)
@@ -124,11 +120,7 @@ export function ParaclinicalSection({ index, patientId, readOnly }: Paraclinical
         ))}
       </Stack>
       {!readOnly && (
-        <AddParaclinicalResultForm
-          patientId={patientId}
-          isAdding={createMutation.isPending}
-          onAdd={add}
-        />
+        <AddParaclinicalResultForm patientId={patientId} onAdded={openGroupOf} />
       )}
     </CollapsibleSection>
   )

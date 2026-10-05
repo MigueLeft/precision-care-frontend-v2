@@ -4,9 +4,9 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
-import { useAntecedentPersonalCatalog } from '@/features/catalogs'
 import {
   AntecedentListTable,
+  useAntecedentDiseaseOptions,
   useCreateAntecedent,
   useDeleteAntecedent,
   ANTECEDENT_STATUS_LABELS,
@@ -19,24 +19,28 @@ interface PersonalAntecedentsBlockProps {
   patientId: number
   antecedents: Antecedent[]
   readOnly: boolean
+  onEdit: (antecedent: Antecedent) => void
 }
 
 export function PersonalAntecedentsBlock({
   patientId,
   antecedents,
   readOnly,
+  onEdit,
 }: PersonalAntecedentsBlockProps) {
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
-  const { data: catalog = [] } = useAntecedentPersonalCatalog()
+  const diseaseOptions = useAntecedentDiseaseOptions()
   const [condition, setCondition] = useState<CatalogPick | null>(null)
   const [since, setSince] = useState('')
   const [status, setStatus] = useState<AntecedentStatus>('active')
+  const [notes, setNotes] = useState('')
 
   function reset() {
     setCondition(null)
     setSince('')
     setStatus('active')
+    setNotes('')
   }
 
   function submit() {
@@ -48,9 +52,10 @@ export function PersonalAntecedentsBlock({
       patientId,
       type: 'personal',
       name: condition.name.trim(),
-      personalCatalogId: condition.catalogId,
+      diseaseCatalogId: condition.catalogId,
       eventDate: since || undefined,
       status,
+      description: notes.trim() || undefined,
     })
   }
 
@@ -66,6 +71,7 @@ export function PersonalAntecedentsBlock({
       <AntecedentListTable
         antecedents={antecedents}
         variant="personal"
+        onEdit={readOnly ? undefined : onEdit}
         onDelete={(antecedent) => {
           if (!readOnly) deleteMutation.mutate(antecedent.id)
         }}
@@ -74,7 +80,7 @@ export function PersonalAntecedentsBlock({
       {!readOnly && (
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
           <CatalogPicker
-            options={catalog.filter((item) => item.active)}
+            options={diseaseOptions}
             value={condition}
             onChange={setCondition}
             placeholder="Buscar condición o padecimiento…"
@@ -101,6 +107,13 @@ export function PersonalAntecedentsBlock({
               </MenuItem>
             ))}
           </Select>
+          <TextField
+            size="small"
+            placeholder="Notas…"
+            value={notes}
+            onChange={(event) => setNotes(event.target.value)}
+            sx={{ flex: '1 1 200px', minWidth: 180 }}
+          />
           <AppButton
             variant="outlined"
             loading={createMutation.isPending}

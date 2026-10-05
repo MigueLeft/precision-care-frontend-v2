@@ -31,6 +31,7 @@ export function DiseasesTab() {
       ? diseaseFormDefaultValues
       : {
           name: editing.name,
+          commonName: editing.commonName ?? '',
           code: editing.code ?? '',
           isChronic: editing.isChronic,
           bodySystemId: editing.bodySystemId,
@@ -44,6 +45,7 @@ export function DiseasesTab() {
   function handleSubmit(values: DiseaseFormValues) {
     const payload = {
       name: values.name,
+      commonName: values.commonName?.trim() || null,
       code: values.code?.trim() || undefined,
       isChronic: values.isChronic,
       bodySystemId: values.bodySystemId,
@@ -82,6 +84,12 @@ export function DiseasesTab() {
           Agregar
         </AppButton>
       </Stack>
+
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Este catálogo también se usa para los antecedentes familiares y personales. El nombre
+        cotidiano es el que ve el paciente en el formulario de ingreso y permite aterrizar sus
+        respuestas en la consulta.
+      </Typography>
 
       <DiseasesTable
         items={filtered}

@@ -10,6 +10,7 @@ import { useConsultationDiseases } from '../../hooks/useConsultationDiseases'
 import { ProblemsList } from './ProblemsList'
 import {
   buildProblemSources,
+  dropRemovedSources,
   sameProblems,
   seedProblems,
   syncProblems,
@@ -26,6 +27,7 @@ interface ProblemsSectionProps {
 // el sistema las precarga con los síntomas + diagnósticos de esta consulta y cada
 // nota se puede editar para agregar detalles. En "Actuales" solo quedan los que
 // están activos; al cambiar de estado, la nota pasa a "Previos" (y viceversa).
+// Si el síntoma o diagnóstico se quita de la consulta, su nota también se quita.
 export function ProblemsSection({ index, consultation, readOnly }: ProblemsSectionProps) {
   const consultationId = consultation.id
   const { data: symptoms = [] } = useConsultationSymptoms(consultationId)
@@ -33,6 +35,8 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
   const update = useUpdateConsultation(consultationId)
 
   const seeded = useRef(false)
+  // Diagnósticos/síntomas vistos en la pasada anterior, para detectar los que se quitan.
+  const knownPrefixes = useRef<string[]>([])
   const [problems, setProblems] = useState<ConsultationProblems>(() =>
     consultation.problems ?? { actuales: [], previos: [] },
   )
@@ -43,13 +47,21 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
   }, 700)
 
   // Precarga única (si aún no hay problemas guardados) y, después, reubicación de
-  // cada nota según el estado vigente de su diagnóstico o síntoma.
+  // cada nota según el estado vigente de su diagnóstico o síntoma. Las notas de
+  // los que se quitaron de la consulta se eliminan.
   useEffect(() => {
-    if (readOnly || (symptoms.length === 0 && diseases.length === 0)) return
+    if (readOnly) return
     const sources = buildProblemSources(diseases, symptoms)
+    const prefixes = sources.map((source) => source.prefix)
+    const removed = knownPrefixes.current.filter((prefix) => !prefixes.includes(prefix))
+    knownPrefixes.current = prefixes
+    if (sources.length === 0 && removed.length === 0) return
+
     const shouldSeed = !seeded.current && !consultation.problems
     seeded.current = true
-    const next = shouldSeed ? seedProblems(sources) : syncProblems(problems, sources)
+    const next = shouldSeed
+      ? seedProblems(sources)
+      : syncProblems(dropRemovedSources(problems, removed), sources)
     if (sameProblems(next, problems)) return
     setProblems(next)
     save(next)

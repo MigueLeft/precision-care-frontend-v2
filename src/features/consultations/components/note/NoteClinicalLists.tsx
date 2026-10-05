@@ -25,6 +25,14 @@ export function NoteSymptoms({ symptoms }: { symptoms: ConsultationSymptom[] }) 
               — {formatSymptomDiseases(symptom.diseases)}
             </Typography>
           )}
+          {symptom.notes && (
+            <Typography
+              component="span"
+              sx={{ display: 'block', fontSize: '12px', fontStyle: 'italic', color: 'text.secondary' }}
+            >
+              {symptom.notes}
+            </Typography>
+          )}
         </Typography>
       ))}
     </Stack>

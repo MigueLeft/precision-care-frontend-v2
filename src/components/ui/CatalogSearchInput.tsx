@@ -8,12 +8,16 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
+import { CatalogOptionItem } from './CatalogOptionItem'
+import { filterCatalogOptions } from './catalog-option-filter'
 
 export interface CatalogOption {
   id: number
   name: string
   /** Si alguna opción trae grupo, el buscador las muestra agrupadas. */
   group?: string
+  /** Nombre alterno: se muestra bajo el nombre y también sirve para buscar. */
+  alias?: string
 }
 
 interface CatalogSearchInputProps {
@@ -82,6 +86,10 @@ export function CatalogSearchInput({
           options={options}
           groupBy={grouped ? (option) => option.group ?? '' : undefined}
           getOptionLabel={(option) => option.name}
+          filterOptions={filterCatalogOptions}
+          renderOption={({ key, ...props }, option) => (
+            <CatalogOptionItem key={key} option={option} {...props} />
+          )}
           value={null}
           inputValue={inputValue}
           onInputChange={(_event, value, reason) => {
