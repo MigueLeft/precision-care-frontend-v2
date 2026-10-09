@@ -25,10 +25,11 @@ export const ANTECEDENT_TYPE_LABELS: Record<AntecedentType, string> = {
   other: 'Otro',
 }
 
-// "ene 2019" a partir de una fecha AAAA-MM-DD.
+// "ene 2019" a partir de una fecha AAAA-MM o AAAA-MM-DD.
 export function formatEventDate(eventDate: string | null): string {
   if (!eventDate) return '—'
-  const date = new Date(`${eventDate}T00:00:00`)
+  if (!/^\d{4}-\d{2}/.test(eventDate)) return eventDate
+  const date = new Date(`${eventDate.slice(0, 7)}-01T00:00:00`)
   return new Intl.DateTimeFormat('es-MX', {
     month: 'short',
     year: 'numeric',

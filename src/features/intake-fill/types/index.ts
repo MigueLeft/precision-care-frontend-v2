@@ -40,3 +40,9 @@ export interface IntakeEventEntry {
   date?: string
   complications?: string
 }
+
+// Medicamento que no está en la lista, con su frecuencia.
+export interface IntakeMedicationEntry {
+  name: string
+  frequency?: string
+}

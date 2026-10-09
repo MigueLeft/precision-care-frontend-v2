@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
+import { PartialDateField } from '@/components/ui/PartialDateField'
 import { useHospitalizationCatalog, useSurgeryCatalog } from '@/features/catalogs'
 import {
   SurgeryHospitalizationList,
@@ -92,7 +93,7 @@ export function SurgicalAntecedentsBlock({
           direction={{ xs: 'column', md: 'row' }}
           spacing={1}
           useFlexGap
-          sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}
+          sx={{ flexWrap: 'wrap', alignItems: { xs: 'flex-start', md: 'flex-end' } }}
         >
           <Select
             size="small"
@@ -114,15 +115,7 @@ export function SurgicalAntecedentsBlock({
             placeholder={type === 'surgery' ? 'Buscar procedimiento…' : 'Buscar motivo…'}
             sx={{ flex: '1 1 240px', minWidth: 220 }}
           />
-          <TextField
-            size="small"
-            type="date"
-            label="Fecha"
-            slotProps={{ inputLabel: { shrink: true } }}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            sx={{ width: 160 }}
-          />
+          <PartialDateField label="Fecha" value={date} onChange={setDate} sx={{ width: 290 }} />
           <TextField
             size="small"
             placeholder="Complicaciones…"

@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
+import { PartialDateField } from '@/components/ui/PartialDateField'
 import {
   AntecedentListTable,
   useAntecedentDiseaseOptions,
@@ -78,7 +79,7 @@ export function PersonalAntecedentsBlock({
       />
 
       {!readOnly && (
-        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: { xs: 'flex-start', md: 'flex-end' } }}>
           <CatalogPicker
             options={diseaseOptions}
             value={condition}
@@ -86,15 +87,7 @@ export function PersonalAntecedentsBlock({
             placeholder="Buscar condición o padecimiento…"
             sx={{ flex: '1 1 260px', minWidth: 220 }}
           />
-          <TextField
-            size="small"
-            type="date"
-            label="Desde"
-            slotProps={{ inputLabel: { shrink: true } }}
-            value={since}
-            onChange={(event) => setSince(event.target.value)}
-            sx={{ width: 160 }}
-          />
+          <PartialDateField label="Desde" value={since} onChange={setSince} sx={{ width: 290 }} />
           <Select
             size="small"
             value={status}

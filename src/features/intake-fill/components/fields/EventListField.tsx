@@ -4,12 +4,11 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
+import { PartialDateField } from '@/components/ui/PartialDateField'
 import { useIntakeCatalogs } from '../../hooks/useIntakeCatalogs'
 import type { QuestionFieldProps } from '../../types'
 import { parseEventEntries, toEventListDraft } from '../../utils/event-list'
 import { EventEntryList } from './EventEntryList'
-
-const TODAY = new Date().toISOString().slice(0, 10)
 
 // Cirugías u hospitalizaciones previas, capturadas igual que en la consulta:
 // procedimiento/motivo del catálogo (o escrito a mano), fecha y complicaciones.
@@ -65,16 +64,14 @@ export function EventListField({ question, value, onChange }: QuestionFieldProps
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={1.5}
-        sx={{ alignItems: { xs: 'stretch', sm: 'flex-start' } }}
+        sx={{ alignItems: { xs: 'stretch', sm: 'flex-end' } }}
       >
-        <TextField
-          size="small"
-          type="date"
-          label="Fecha"
-          slotProps={{ inputLabel: { shrink: true }, htmlInput: { max: TODAY } }}
+        <PartialDateField
+          key={pickerKey}
+          label="Fecha (el día es opcional)"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
-          sx={{ width: { xs: '100%', sm: 170 }, flexShrink: 0 }}
+          onChange={setDate}
+          sx={{ width: { xs: '100%', sm: 290 }, flexShrink: 0 }}
         />
         <TextField
           size="small"

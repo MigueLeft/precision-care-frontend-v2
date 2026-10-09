@@ -23,3 +23,5 @@ export type {
   CreatePatientMedicationPayload,
   UpdatePatientMedicationPayload,
 } from './types'
+export { MedicationFrequencyField } from './components/MedicationFrequencyField'
+export { MEDICATION_FREQUENCIES } from './utils/medication-frequencies'

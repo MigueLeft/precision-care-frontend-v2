@@ -7,7 +7,8 @@ type EventEntryListProps = {
   onRemove: (index: number) => void
 }
 
-// "2015-06-10" → "10/06/2015" sin pasar por Date (evita el desfase por zona horaria).
+// "2015-06-10" → "10/06/2015" y "2015-06" → "06/2015" sin pasar por Date
+// (evita el desfase por zona horaria).
 function formatEntryDate(date: string): string {
   return date.split('-').reverse().join('/')
 }

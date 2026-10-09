@@ -20,6 +20,7 @@ import {
   medicationFormDefaultValues,
   type MedicationFormValues,
 } from '../schemas/medication-form.schema'
+import { MedicationFrequencyField } from './MedicationFrequencyField'
 
 interface AddMedicationModalProps {
   open: boolean
@@ -117,7 +118,7 @@ export function AddMedicationModal({
               name="frequency"
               control={control}
               render={({ field }) => (
-                <TextField {...field} value={field.value ?? ''} label="Frecuencia" />
+                <MedicationFrequencyField value={field.value ?? ''} onChange={field.onChange} />
               )}
             />
           </Grid>

@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { useMedications } from '@/features/catalogs'
+import { MedicationFrequencyField } from '@/features/patient-medications'
 import { ManualMedicationFields } from './ManualMedicationFields'
 import {
   EMPTY_MANUAL_MEDICATION,
@@ -26,6 +27,8 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
   const [medicationLabel, setMedicationLabel] = useState('')
   const [dose, setDose] = useState('')
   const [frequency, setFrequency] = useState('')
+  // Remonta el selector de frecuencia (cierra el "Otro" abierto) tras añadir.
+  const [resetCount, setResetCount] = useState(0)
 
   const options = catalog.filter((item) => item.active)
 
@@ -37,6 +40,7 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
     setMedicationLabel('')
     setDose('')
     setFrequency('')
+    setResetCount((count) => count + 1)
   }
 
   // Medicamento del catálogo o uno nuevo; null si falta algún dato obligatorio.
@@ -105,11 +109,10 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
           onChange={(event) => setDose(event.target.value)}
           sx={{ width: { md: 120 } }}
         />
-        <TextField
-          size="small"
-          placeholder="Frecuencia"
+        <MedicationFrequencyField
+          key={resetCount}
           value={frequency}
-          onChange={(event) => setFrequency(event.target.value)}
+          onChange={setFrequency}
           sx={{ flex: { md: 1 }, minWidth: 160 }}
         />
         <AppButton

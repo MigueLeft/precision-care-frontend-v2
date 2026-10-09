@@ -62,7 +62,9 @@ export interface IntakeResponseDetailAnswer {
 // letters_only: sin números; phone: solo dígitos y símbolos de teléfono;
 // country / nationality: selector del catálogo de países;
 // family_relationship: cada opción elegida pide el parentesco;
-// surgery_list / hospitalization_list: captura estructurada como en la consulta.
+// surgery_list / hospitalization_list: captura estructurada como en la consulta;
+// select: lista de medicamentos con la frecuencia de cada uno elegido;
+// medication_list: medicamentos escritos a mano, cada uno con su frecuencia.
 export type IntakeQuestionDisplayVariant =
   | 'short_text'
   | 'select'
@@ -74,6 +76,7 @@ export type IntakeQuestionDisplayVariant =
   | 'family_relationship'
   | 'surgery_list'
   | 'hospitalization_list'
+  | 'medication_list'
 
 export type IntakeConditionOperator =
   | 'eq'

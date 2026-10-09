@@ -89,8 +89,14 @@ export function SurgeryHospitalizationList({
                 label="Institución"
                 value={surgery?.institution ?? hospitalization?.institution}
               />
-              <Field label="Ingreso" value={hospitalization?.admissionDate} />
-              <Field label="Egreso" value={hospitalization?.dischargeDate} />
+              <Field
+                label="Ingreso"
+                value={hospitalization?.admissionDate ? formatFreeDate(hospitalization.admissionDate) : null}
+              />
+              <Field
+                label="Egreso"
+                value={hospitalization?.dischargeDate ? formatFreeDate(hospitalization.dischargeDate) : null}
+              />
               <Field label="Motivo" value={hospitalization?.reason} />
               <Field label="Médico tratante" value={surgery?.treatingPhysician} />
               <Field label="Complicaciones" value={complications} emptyLabel="Sin registrar" />

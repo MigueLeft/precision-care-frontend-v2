@@ -1,4 +1,5 @@
 import { Stack, TextField } from '@mui/material'
+import { MedicationFrequencyField } from '@/features/patient-medications'
 
 type MedicationDoseFieldsProps = {
   dose: string
@@ -25,11 +26,9 @@ export function MedicationDoseFields({
         onChange={(event) => onDoseChange(event.target.value)}
         sx={{ flex: '1 1 160px', minWidth: 140 }}
       />
-      <TextField
-        size="small"
-        label="Frecuencia"
+      <MedicationFrequencyField
         value={frequency}
-        onChange={(event) => onFrequencyChange(event.target.value)}
+        onChange={onFrequencyChange}
         sx={{ flex: '2 1 220px', minWidth: 180 }}
       />
     </Stack>

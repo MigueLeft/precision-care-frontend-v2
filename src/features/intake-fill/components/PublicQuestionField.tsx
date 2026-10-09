@@ -8,6 +8,7 @@ import { CountryField } from './fields/CountryField'
 import { DateField } from './fields/DateField'
 import { EventListField } from './fields/EventListField'
 import { FamilyRelationshipField } from './fields/FamilyRelationshipField'
+import { MedicationListField } from './fields/MedicationListField'
 import { NumericField } from './fields/NumericField'
 import { ScaleField } from './fields/ScaleField'
 import { SelectMultiField } from './fields/SelectMultiField'
@@ -35,6 +36,7 @@ function QuestionInput(props: QuestionFieldProps) {
   if (question.type === 'numeric' || question.type === 'scale') return <NumericField {...props} />
   if (question.type === 'date') return <DateField {...props} />
   if (isEventListVariant(question.displayVariant)) return <EventListField {...props} />
+  if (question.displayVariant === 'medication_list') return <MedicationListField {...props} />
   if (question.displayVariant === 'country' || question.displayVariant === 'nationality') {
     return <CountryField {...props} />
   }
