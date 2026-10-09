@@ -1,8 +1,14 @@
 // Formateadores de fecha reutilizables (es-MX).
 
+// Fecha sin hora ("2026-09-09"): se formatea como texto. `new Date()` la lee
+// como medianoche UTC y en México se mostraría un día antes.
+const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/
+
 // Formato día/mes/año numérico ("09/09/2026").
 export function formatShortDate(iso: string | null | undefined): string {
   if (!iso) return '—'
+  const dateOnly = DATE_ONLY.exec(iso.trim())
+  if (dateOnly) return `${dateOnly[3]}/${dateOnly[2]}/${dateOnly[1]}`
   return new Intl.DateTimeFormat('es-MX', {
     day: '2-digit',
     month: '2-digit',

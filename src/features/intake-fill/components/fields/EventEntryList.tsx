@@ -1,16 +1,11 @@
 import { IconButton, Stack, Typography } from '@mui/material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
+import { formatFreeDate } from '@/utils/format-date'
 import type { IntakeEventEntry } from '../../types'
 
 type EventEntryListProps = {
   entries: IntakeEventEntry[]
   onRemove: (index: number) => void
-}
-
-// "2015-06-10" → "10/06/2015" y "2015-06" → "06/2015" sin pasar por Date
-// (evita el desfase por zona horaria).
-function formatEntryDate(date: string): string {
-  return date.split('-').reverse().join('/')
 }
 
 // Eventos (cirugías u hospitalizaciones) ya añadidos por el paciente.
@@ -44,7 +39,7 @@ export function EventEntryList({ entries, onRemove }: EventEntryListProps) {
             <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>{entry.name}</Typography>
             <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
               {[
-                entry.date ? formatEntryDate(entry.date) : null,
+                entry.date ? formatFreeDate(entry.date) : null,
                 entry.complications ? `Complicaciones: ${entry.complications}` : null,
               ]
                 .filter(Boolean)
