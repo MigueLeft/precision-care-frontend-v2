@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import { Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
-import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined'
+import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material'
 import { toast } from 'sonner'
-import { AppButton } from '@/components/AppButton'
 import {
   printDeliverable,
   useConsultationDrafts,
@@ -11,6 +9,7 @@ import {
   type PrescriptionData,
   type PrescriptionDraftItem,
 } from '@/features/deliverables'
+import { DeliverableDialogActions } from './DeliverableDialogActions'
 import { useConsultationMedications } from '../../hooks/useConsultationMedications'
 import type { ConsultationMedication } from '../../types'
 import { PrescriptionLineRow } from './PrescriptionLineRow'
@@ -54,47 +53,40 @@ function PrescriptionContent({ consultationId, readOnly, onClose, initial }: Con
   const print = usePrintConsultationDeliverable(consultationId)
 
   const selected = lines.filter((line) => line.selected)
-  const dirty = JSON.stringify(lines) !== JSON.stringify(initial)
-  const payload = () => ({
-    items: selected.map((line) => ({
-      medicationId: line.medicationId,
-      dose: line.dose.trim(),
-      frequency: line.frequency.trim(),
-      duration: line.duration.trim(),
-      route: line.route.trim() || undefined,
-      instructions: line.instructions.trim() || undefined,
-    })),
-  })
+  // Última versión guardada: define si hay cambios pendientes.
+  const [saved, setSaved] = useState(initial)
+  const dirty = JSON.stringify(lines) !== JSON.stringify(saved)
 
-  function valid() {
-    if (selected.every(isLineComplete)) return true
-    setShowErrors(true)
-    toast.error('Completa dosis, frecuencia y duración de cada medicamento marcado.')
-    return false
-  }
-
-  async function close() {
+  // Guardar reemplaza la receta de esta consulta (los errores se avisan con toast).
+  async function handleSave() {
+    if (!selected.every(isLineComplete)) {
+      setShowErrors(true)
+      toast.error('Completa dosis, frecuencia y duración de cada medicamento marcado.')
+      return
+    }
     try {
-      if (!readOnly && dirty) {
-        if (!valid()) return
-        await save.mutateAsync(payload())
-      }
-      onClose()
+      await save.mutateAsync({
+        items: selected.map((line) => ({
+          medicationId: line.medicationId,
+          dose: line.dose.trim(),
+          frequency: line.frequency.trim(),
+          duration: line.duration.trim(),
+          route: line.route.trim() || undefined,
+          instructions: line.instructions.trim() || undefined,
+        })),
+      })
+      setSaved(lines)
     } catch {
-      /* toast de error */
+      /* toast */
     }
   }
 
   async function handlePrint() {
     try {
-      if (!readOnly && dirty) {
-        if (!valid()) return
-        await save.mutateAsync(payload())
-      }
       const { deliverable } = await print.mutateAsync('prescription')
       printDeliverable('prescription', deliverable.data as unknown as PrescriptionData)
     } catch {
-      /* toast de error */
+      /* toast */
     }
   }
 
@@ -122,20 +114,17 @@ function PrescriptionContent({ consultationId, readOnly, onClose, initial }: Con
           ))
         )}
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <AppButton variant="text" onClick={close} loading={save.isPending && !print.isPending}>
-          Cerrar
-        </AppButton>
-        <AppButton
-          variant="contained"
-          startIcon={<PrintOutlinedIcon sx={{ fontSize: 18 }} />}
-          disabled={selected.length === 0}
-          loading={print.isPending}
-          onClick={handlePrint}
-        >
-          Imprimir
-        </AppButton>
-      </DialogActions>
+      <DeliverableDialogActions
+        readOnly={readOnly}
+        dirty={dirty}
+        hasSaved={saved.some((line) => line.selected)}
+        canSave={selected.length > 0 || saved.some((line) => line.selected)}
+        saving={save.isPending}
+        printing={print.isPending}
+        onClose={onClose}
+        onSave={handleSave}
+        onPrint={handlePrint}
+      />
     </>
   )
 }

@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
-import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined'
-import { AppButton } from '@/components/AppButton'
+import { Dialog, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
 import {
   LabStudiesPicker,
   labStudyOptions,
@@ -17,8 +15,9 @@ import {
   useSaveLabOrder,
   type LabOrderData,
 } from '@/features/deliverables'
+import { DeliverableDialogActions } from './DeliverableDialogActions'
 import { LabProfileChips } from './LabProfileChips'
-import { useLabOrderTitle } from './useLabOrderTitle'
+import { useLabOrderSelection } from './useLabOrderSelection'
 
 type LabOrderDialogProps = {
   consultationId: number
@@ -28,6 +27,7 @@ type LabOrderDialogProps = {
 }
 
 type ContentProps = Omit<LabOrderDialogProps, 'open'> & {
+  profiles: LabProfile[]
   initialIds: number[]
   initialTitle: string
   initialIndications: string
@@ -38,50 +38,41 @@ function LabOrderContent({
   consultationId,
   readOnly,
   onClose,
+  profiles,
   initialIds,
   initialTitle,
   initialIndications,
 }: ContentProps) {
-  const [ids, setIds] = useState(initialIds)
-  const { title, addProfileName, typeTitle } = useLabOrderTitle(initialTitle)
+  const { ids, setIds, selected, toggleProfile, title, typeTitle } =
+    useLabOrderSelection(profiles, initialIds, initialTitle)
   const [indications, setIndications] = useState(initialIndications)
-  const { data: profiles = [] } = useLabProfiles()
   const { data: paraclinicals = [] } = useParaclinicals()
   const { data: categories = [] } = useParaclinicalCategories()
   const save = useSaveLabOrder(consultationId)
   const print = usePrintConsultationDeliverable(consultationId)
 
-  const dirty = ids.join() !== initialIds.join() || title !== initialTitle || indications !== initialIndications
-  const payload = () => ({
-    items: ids.map((paraclinicalCatalogId) => ({ paraclinicalCatalogId })),
-    title: title.trim() || undefined,
-    indications: indications.trim() || undefined,
-  })
+  // Lo último guardado: se compara para saber si hay cambios pendientes.
+  const current = { ids: ids.join(), title, indications }
+  const [saved, setSaved] = useState({ ids: initialIds.join(), title: initialTitle, indications: initialIndications })
+  const dirty = JSON.stringify(current) !== JSON.stringify(saved)
 
-  // Al cerrar, los cambios quedan en espera (los errores se avisan con toast).
-  async function close() {
+  // Guardar reemplaza la orden de esta consulta (los errores se avisan con toast).
+  async function handleSave() {
     try {
-      if (!readOnly && dirty) await save.mutateAsync(payload())
-      onClose()
-    } catch {
-      /* toast */
-    }
+      await save.mutateAsync({
+        items: ids.map((paraclinicalCatalogId) => ({ paraclinicalCatalogId })),
+        title: title.trim() || undefined,
+        indications: indications.trim() || undefined,
+      })
+      setSaved(current)
+    } catch { /* toast */ }
   }
 
   async function handlePrint() {
     try {
-      if (!readOnly && dirty) await save.mutateAsync(payload())
       const { deliverable } = await print.mutateAsync('lab_order')
       printDeliverable('lab_order', deliverable.data as unknown as LabOrderData)
-    } catch {
-      /* toast */
-    }
-  }
-
-  function addProfile(profile: LabProfile) {
-    const profileIds = profile.items.map((item) => item.id)
-    setIds((prev) => [...prev, ...profileIds.filter((id) => !prev.includes(id))])
-    addProfileName(profile.name)
+    } catch { /* toast */ }
   }
 
   return (
@@ -89,10 +80,16 @@ function LabOrderContent({
       <DialogTitle>Orden de laboratorio</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
-          {!readOnly && <LabProfileChips profiles={profiles} onAdd={addProfile} />}
+          <LabProfileChips
+            profiles={profiles}
+            selected={selected}
+            readOnly={readOnly}
+            onToggle={toggleProfile}
+          />
           <TextField
             label="Título de la orden"
             placeholder="Elige un perfil o escribe el nombre de la orden"
+            helperText="Si lo borras, vuelve al nombre de los perfiles seleccionados."
             value={title}
             onChange={(event) => typeTitle(event.target.value)}
             disabled={readOnly}
@@ -116,32 +113,34 @@ function LabOrderContent({
           />
         </Stack>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <AppButton variant="text" onClick={close} loading={save.isPending && !print.isPending}>
-          Cerrar
-        </AppButton>
-        <AppButton
-          variant="contained"
-          startIcon={<PrintOutlinedIcon sx={{ fontSize: 18 }} />}
-          disabled={ids.length === 0}
-          loading={print.isPending}
-          onClick={handlePrint}
-        >
-          Imprimir
-        </AppButton>
-      </DialogActions>
+      <DeliverableDialogActions
+        readOnly={readOnly}
+        dirty={dirty}
+        hasSaved={saved.ids !== ''}
+        // Vaciar una orden ya guardada también se permite (la quita).
+        canSave={ids.length > 0 || saved.ids !== ''}
+        saving={save.isPending}
+        printing={print.isPending}
+        onClose={onClose}
+        onSave={handleSave}
+        onPrint={handlePrint}
+      />
     </>
   )
 }
 
 export function LabOrderDialog({ open, ...props }: LabOrderDialogProps) {
   const { data: drafts } = useConsultationDrafts(props.consultationId)
+  // Los perfiles se necesitan al montar para saber cuáles ya están en la orden.
+  const { data: profiles } = useLabProfiles()
+  const ready = !!drafts && !!profiles
   return (
     // Sin cierre por clic afuera: "Cerrar" guarda los cambios en espera.
-    <Dialog open={open && !!drafts} maxWidth="md" fullWidth>
-      {drafts && (
+    <Dialog open={open && ready} maxWidth="md" fullWidth>
+      {ready && (
         <LabOrderContent
           {...props}
+          profiles={profiles}
           initialIds={drafts.labOrder.items.map((item) => item.paraclinicalCatalogId)}
           initialTitle={drafts.labOrder.title ?? ''}
           initialIndications={drafts.labOrder.indications ?? ''}

@@ -60,7 +60,7 @@ export function usePrintConsultationDeliverable(consultationId: number) {
       queryClient.invalidateQueries({ queryKey: deliverablesKeys.all })
       toast.success(
         created
-          ? 'Entregable registrado en el expediente'
+          ? 'Entregable registrado en el expediente (reemplaza la versión anterior de esta consulta)'
           : 'Reimpresión sin cambios: no se registró de nuevo',
       )
     },
