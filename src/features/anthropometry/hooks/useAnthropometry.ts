@@ -1,0 +1,47 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import {
+  createAnthropometry,
+  fetchAnthropometriesByPatient,
+  fetchAnthropometryByConsultation,
+  updateAnthropometry,
+} from '../services/anthropometry.service'
+import { anthropometryKeys } from './anthropometry.keys'
+import { getApiErrorMessage } from '@/utils/get-api-error-message'
+import type { SaveAnthropometryInput } from '../types'
+
+export function useAnthropometriesByPatient(patientId: number | undefined) {
+  return useQuery({
+    queryKey: anthropometryKeys.byPatient(patientId ?? 0),
+    queryFn: () => fetchAnthropometriesByPatient(patientId as number),
+    enabled: typeof patientId === 'number',
+  })
+}
+
+export function useAnthropometryByConsultation(consultationId: number) {
+  return useQuery({
+    queryKey: anthropometryKeys.byConsultation(consultationId),
+    queryFn: () => fetchAnthropometryByConsultation(consultationId),
+  })
+}
+
+export function useSaveAnthropometry(
+  existingId: number | undefined,
+  options?: { onSuccess?: () => void },
+) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ patientId, consultationId, ...rest }: SaveAnthropometryInput) =>
+      existingId
+        ? updateAnthropometry(existingId, rest)
+        : createAnthropometry({ patientId, consultationId, ...rest }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: anthropometryKeys.all })
+      toast.success('Antropometría guardada')
+      options?.onSuccess?.()
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Error al guardar la antropometría'))
+    },
+  })
+}

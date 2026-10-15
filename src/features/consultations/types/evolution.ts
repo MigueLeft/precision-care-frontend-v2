@@ -45,7 +45,7 @@ export interface SymptomEvolution {
   after: SymptomSnapshot
 }
 
-// Valores numéricos por clave (GENERAL_PARAMS / PHYSICAL_EXAM_PARAMS).
+// Valores numéricos por clave (ANTHROPOMETRY_PARAMS).
 export type NumericSnapshot = Record<string, number | null>
 
 export interface MeasurementEvolution {
@@ -62,6 +62,5 @@ export interface ConsultationEvolution {
   medications: MedicationEvolution[]
   diseases: DiseaseEvolution[]
   symptoms: SymptomEvolution[]
-  bodyComposition: MeasurementEvolution | null
-  physicalExam: MeasurementEvolution | null
+  anthropometry: MeasurementEvolution | null
 }

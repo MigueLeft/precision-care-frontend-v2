@@ -3,10 +3,9 @@ import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { formatShortDate } from '@/utils/format-date'
 import { useConsultationEvolution } from '../../hooks/useConsultationEvolution'
 import {
-  BODY_COMPOSITION_PARAMS,
-  PHYSICAL_PARAMS,
+  MEASUREMENT_PARAMS,
+  anthropometrySnapshot,
   changedMeasurements,
-  physicalExamSnapshot,
 } from '../../utils/measurement-snapshots'
 import { DiseaseChanges, MedicationChanges, SymptomChanges } from './ClinicalChanges'
 import { MeasurementChanges } from './MeasurementChanges'
@@ -22,7 +21,7 @@ const Hint = ({ children }: { children: string }) => (
 )
 
 // Nota evolutiva automática: solo lo que cambió respecto a la consulta anterior
-// (tratamiento, diagnósticos, síntomas, examen físico y composición corporal).
+// (tratamiento, diagnósticos, síntomas y antropometría).
 export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
   const { data: evolution, isLoading, isError, error } = useConsultationEvolution(consultationId)
 
@@ -37,25 +36,20 @@ export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
   const previous = evolution.previousConsultation
   if (!previous) return <Hint>Primera consulta: no hay una consulta anterior para comparar.</Hint>
 
-  const exam = evolution.physicalExam
-  const examChanges = exam
+  const anthropometry = evolution.anthropometry
+  const anthropometryChanges = anthropometry
     ? changedMeasurements(
-        PHYSICAL_PARAMS,
-        exam.before ? physicalExamSnapshot(exam.before) : null,
-        physicalExamSnapshot(exam.after),
+        MEASUREMENT_PARAMS,
+        anthropometry.before ? anthropometrySnapshot(anthropometry.before) : null,
+        anthropometrySnapshot(anthropometry.after),
       )
-    : []
-  const composition = evolution.bodyComposition
-  const compositionChanges = composition
-    ? changedMeasurements(BODY_COMPOSITION_PARAMS, composition.before, composition.after)
     : []
 
   const hasChanges =
     evolution.medications.length +
       evolution.diseases.length +
       evolution.symptoms.length +
-      examChanges.length +
-      compositionChanges.length >
+      anthropometryChanges.length >
     0
 
   return (
@@ -68,8 +62,7 @@ export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
       <MedicationChanges items={evolution.medications} />
       <DiseaseChanges items={evolution.diseases} />
       <SymptomChanges items={evolution.symptoms} />
-      <MeasurementChanges title="EXAMEN FÍSICO" items={examChanges} />
-      <MeasurementChanges title="COMPOSICIÓN CORPORAL" items={compositionChanges} />
+      <MeasurementChanges title="ANTROPOMETRÍA" items={anthropometryChanges} />
     </Stack>
   )
 }

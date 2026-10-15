@@ -4,7 +4,6 @@ import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined'
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
-import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
 import SickOutlinedIcon from '@mui/icons-material/SickOutlined'
 import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 import AccessibilityNewOutlinedIcon from '@mui/icons-material/AccessibilityNewOutlined'
@@ -31,8 +30,7 @@ export type MedicalRecordTabTo =
   | '/pacientes/$patientId/enfermedades'
   | '/pacientes/$patientId/paraclinicos'
   | '/pacientes/$patientId/medicamentos'
-  | '/pacientes/$patientId/examen-fisico'
-  | '/pacientes/$patientId/composicion-corporal'
+  | '/pacientes/$patientId/antropometria'
   | '/pacientes/$patientId/estilo-de-vida'
   | '/pacientes/$patientId/ingresables'
   | '/pacientes/$patientId/entregables'
@@ -99,15 +97,9 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
     countKey: 'medicamentos',
   },
   {
-    slug: 'examen-fisico',
-    to: '/pacientes/$patientId/examen-fisico',
-    label: 'Examen físico',
-    icon: MonitorHeartOutlinedIcon,
-  },
-  {
-    slug: 'composicion-corporal',
-    to: '/pacientes/$patientId/composicion-corporal',
-    label: 'Composición corporal',
+    slug: 'antropometria',
+    to: '/pacientes/$patientId/antropometria',
+    label: 'Antropometría',
     icon: AccessibilityNewOutlinedIcon,
   },
   {

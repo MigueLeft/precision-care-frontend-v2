@@ -1,13 +1,9 @@
 import { Divider, Stack, Typography } from '@mui/material'
-import { useBodyCompositionByConsultation } from '@/features/body-composition'
-import { usePhysicalExamByConsultation } from '@/features/physical-exam'
+import { anthropometryValues, useAnthropometryByConsultation } from '@/features/anthropometry'
 import { formatNumber } from '@/utils/parse-numeric'
 import {
-  BODY_COMPOSITION_PARAMS,
-  PHYSICAL_PARAMS,
-  bodyCompositionSnapshot,
+  MEASUREMENT_PARAMS,
   measurementValues,
-  physicalExamSnapshot,
   type MeasurementValue,
 } from '../../utils/measurement-snapshots'
 import { NoteBlock, NoteEmpty } from './NoteBlock'
@@ -26,7 +22,7 @@ function ValueList({ values }: { values: MeasurementValue[] }) {
         >
           <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>{item.label}</Typography>
           <Typography sx={{ fontSize: '13px', whiteSpace: 'nowrap' }}>
-            <strong>{formatNumber(item.value)}</strong> {item.unit}
+            <strong>{formatNumber(item.value, item.decimals)}</strong> {item.unit}
           </Typography>
         </Stack>
       ))}
@@ -34,24 +30,16 @@ function ValueList({ values }: { values: MeasurementValue[] }) {
   )
 }
 
-// Examen físico y composición corporal registrados en la consulta.
+// Antropometría registrada en la consulta.
 export function NoteMeasurements({ consultationId }: { consultationId: number }) {
-  const { data: exam } = usePhysicalExamByConsultation(consultationId)
-  const { data: composition } = useBodyCompositionByConsultation(consultationId)
-
-  const examValues = exam ? measurementValues(PHYSICAL_PARAMS, physicalExamSnapshot(exam.measurements)) : []
-  const compositionValues = composition
-    ? measurementValues(BODY_COMPOSITION_PARAMS, bodyCompositionSnapshot(composition))
-    : []
+  const { data: anthropometry } = useAnthropometryByConsultation(consultationId)
+  const snapshot = Object.fromEntries(
+    Object.entries(anthropometryValues(anthropometry)).map(([key, value]) => [key, value ?? null]),
+  )
 
   return (
-    <Stack spacing={2.5}>
-      <NoteBlock title="EXAMEN FÍSICO">
-        <ValueList values={examValues} />
-      </NoteBlock>
-      <NoteBlock title="COMPOSICIÓN CORPORAL">
-        <ValueList values={compositionValues} />
-      </NoteBlock>
-    </Stack>
+    <NoteBlock title="ANTROPOMETRÍA">
+      <ValueList values={measurementValues(MEASUREMENT_PARAMS, snapshot)} />
+    </NoteBlock>
   )
 }

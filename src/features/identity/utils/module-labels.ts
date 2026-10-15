@@ -6,8 +6,7 @@ export const MODULE_ORDER = [
   'medicamentos',
   'resultados_paraclinico',
   'ordenes_paraclinico',
-  'examenes_fisicos',
-  'composicion_corporal',
+  'antropometria',
   'estilo_vida',
   'prescripciones',
   'plantillas_nota',
@@ -22,7 +21,7 @@ export const MODULE_ORDER = [
 ]
 
 const MODULE_LABELS: Record<string, string> = {
-  composicion_corporal: 'Composición corporal',
+  antropometria: 'Antropometría',
   antecedentes: 'Antecedentes',
   especialistas: 'Especialistas',
   citas: 'Citas',
@@ -37,7 +36,6 @@ const MODULE_LABELS: Record<string, string> = {
   consultas: 'Consultas',
   medicamentos: 'Medicamentos',
   plantillas_nota: 'Plantillas de nota',
-  examenes_fisicos: 'Examen físico',
   permisos: 'Permisos',
   roles: 'Roles',
   usuarios: 'Usuarios',

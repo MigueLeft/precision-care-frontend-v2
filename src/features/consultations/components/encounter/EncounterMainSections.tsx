@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { Stack } from '@mui/material'
-import { PhysicalExamSection } from '@/features/physical-exam'
-import { BodyCompositionSection } from '@/features/body-composition'
+import { AnthropometrySection } from '@/features/anthropometry'
 import { AntecedentsSection } from './AntecedentsSection'
 import { PreviousConsultationSection } from './PreviousConsultationSection'
 import { SymptomsSection } from './SymptomsSection'
@@ -52,18 +51,8 @@ export function EncounterMainSections({ consultation, readOnly }: EncounterMainS
       <TreatmentSection key="treatment" index={index} consultation={consultation} readOnly={readOnly} />
     ),
     (index) => (
-      <PhysicalExamSection
-        key="physical-exam"
-        index={index}
-        consultationId={consultationId}
-        patientId={patientId}
-        consultationDate={consultationDate}
-        readOnly={readOnly}
-      />
-    ),
-    (index) => (
-      <BodyCompositionSection
-        key="body-composition"
+      <AnthropometrySection
+        key="anthropometry"
         index={index}
         consultationId={consultationId}
         patientId={patientId}
