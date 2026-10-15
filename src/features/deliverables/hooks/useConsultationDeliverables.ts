@@ -58,11 +58,8 @@ export function usePrintConsultationDeliverable(consultationId: number) {
       printConsultationDeliverable(consultationId, type),
     onSuccess: ({ created }) => {
       queryClient.invalidateQueries({ queryKey: deliverablesKeys.all })
-      toast.success(
-        created
-          ? 'Entregable registrado en el expediente (reemplaza la versión anterior de esta consulta)'
-          : 'Reimpresión sin cambios: no se registró de nuevo',
-      )
+      // Solo se avisa si se guardó algo en el expediente (una reimpresión no).
+      if (created) toast.success('Entregable guardado en el expediente')
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'No se pudo generar el entregable'))
