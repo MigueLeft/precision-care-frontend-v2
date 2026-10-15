@@ -10,10 +10,12 @@ export const ADHERENCE_LABELS: Record<MedicationAdherence, string> = {
   poor: 'Mala',
 }
 
-export const RAM_LABELS: Record<MedicationRamStatus, string> = {
-  none: 'No',
-  suspected: 'Sospecha',
-  confirmed: 'Confirmada',
+// Tolerancia al medicamento; reutiliza el campo `ramStatus` del backend
+// (none / suspected / confirmed).
+export const TOLERANCE_LABELS: Record<MedicationRamStatus, string> = {
+  none: 'Buena tolerancia (asintomático)',
+  suspected: 'Intolerancia leve',
+  confirmed: 'Efecto adverso limitante',
 }
 
 // Nombre a mostrar sin concentración (columna "Medicamento").

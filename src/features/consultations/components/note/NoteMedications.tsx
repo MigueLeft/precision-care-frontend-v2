@@ -1,5 +1,5 @@
 import { Box, Chip, Stack, Typography } from '@mui/material'
-import { ADHERENCE_LABELS, RAM_LABELS } from '../../utils/consultation-format'
+import { ADHERENCE_LABELS, TOLERANCE_LABELS } from '../../utils/consultation-format'
 import { NoteEmpty } from './NoteBlock'
 import type { ConsultationMedication } from '../../types'
 
@@ -35,7 +35,7 @@ export function NoteMedications({ medications }: { medications: ConsultationMedi
                 <Chip
                   size="small"
                   color={medication.ramStatus === 'confirmed' ? 'error' : 'warning'}
-                  label={`RAM: ${RAM_LABELS[medication.ramStatus]}`}
+                  label={`Tolerancia: ${TOLERANCE_LABELS[medication.ramStatus]}`}
                 />
               )}
             </Stack>

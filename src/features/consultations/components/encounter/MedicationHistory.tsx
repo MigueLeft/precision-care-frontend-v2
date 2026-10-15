@@ -2,8 +2,8 @@ import { Chip, Stack, Typography } from '@mui/material'
 import {
   ADHERENCE_COLORS,
   ADHERENCE_LABELS,
-  RAM_COLORS,
-  RAM_LABELS,
+  TOLERANCE_COLORS,
+  TOLERANCE_LABELS,
 } from '../../utils/consultation-format'
 import { useConsultationMedicationHistory } from '../../hooks/useConsultationMedications'
 import { ConsultationHistoryTable } from './ConsultationHistoryTable'
@@ -51,8 +51,8 @@ export function MedicationHistory({ consultationId }: MedicationHistoryProps) {
                     <Chip
                       size="small"
                       variant="outlined"
-                      color={RAM_COLORS[item.ramStatus]}
-                      label={`RAM: ${RAM_LABELS[item.ramStatus]}`}
+                      color={TOLERANCE_COLORS[item.ramStatus]}
+                      label={`Tolerancia: ${TOLERANCE_LABELS[item.ramStatus]}`}
                     />
                   )}
                 </Stack>

@@ -35,6 +35,7 @@ export function SpecialistAccessFields({ control }: Props) {
           <Box
             sx={(theme) => ({
               p: 2,
+              mb: 2.5,
               borderRadius: '8px',
               border: '1px solid',
               borderColor: field.value ? 'primary.main' : 'divider',
@@ -54,7 +55,7 @@ export function SpecialistAccessFields({ control }: Props) {
       />
 
       {createUser && (
-        <Grid container spacing={2} sx={{ mt: 0.5 }}>
+        <Grid container spacing={2}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
               name="roleId"

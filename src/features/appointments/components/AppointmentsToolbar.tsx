@@ -104,12 +104,20 @@ export function AppointmentsToolbar({
         sx={{ width: 160 }}
       />
 
-      <FormControl sx={{ minWidth: 190 }}>
+      {/* Ancho fijo: con varios estados seleccionados el texto se recorta con "…" */}
+      <FormControl sx={{ width: 220 }}>
         <InputLabel id="appt-status-label">Estado</InputLabel>
         <Select<AppointmentStatus[]>
           labelId="appt-status-label"
           label="Estado"
           multiple
+          sx={{
+            '& .MuiSelect-select': {
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            },
+          }}
           value={filters.statuses}
           onChange={(e) =>
             onChange({

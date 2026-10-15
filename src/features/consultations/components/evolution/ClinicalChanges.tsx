@@ -2,7 +2,7 @@ import { Stack } from '@mui/material'
 import {
   ADHERENCE_LABELS,
   DISEASE_STATUS_LABELS,
-  RAM_LABELS,
+  TOLERANCE_LABELS,
   SYMPTOM_STATUS_LABELS,
 } from '../../utils/consultation-format'
 import { NoteBlock } from '../note/NoteBlock'
@@ -29,13 +29,13 @@ const FIELD_LABELS: Record<MedicationChangeField, string> = {
   dose: 'Dosis',
   frequency: 'Frecuencia',
   adherence: 'Adherencia',
-  ramStatus: 'RAM',
+  ramStatus: 'Tolerancia',
 }
 
 function fieldValue(field: MedicationChangeField, value: string | null): string {
   if (!value) return '—'
   if (field === 'adherence') return ADHERENCE_LABELS[value as MedicationAdherence] ?? value
-  if (field === 'ramStatus') return RAM_LABELS[value as MedicationRamStatus] ?? value
+  if (field === 'ramStatus') return TOLERANCE_LABELS[value as MedicationRamStatus] ?? value
   return value
 }
 

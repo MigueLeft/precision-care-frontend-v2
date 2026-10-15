@@ -17,7 +17,7 @@ interface EncounterPatientBarProps {
 
 export function EncounterPatientBar({ patient }: EncounterPatientBarProps) {
   const { data: allergies = [] } = usePatientAllergies(patient.id)
-  // En la barra del paciente solo se muestran las alergias graves.
+  // En la barra del paciente solo se muestran las alergias severas.
   const severeAllergies = allergies.filter(isSevereAllergy)
 
   return (

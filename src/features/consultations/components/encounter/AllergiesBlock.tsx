@@ -27,7 +27,7 @@ interface AllergiesBlockProps {
 }
 
 const isSevere = (allergy: ConsultationAllergy) =>
-  /grave|severa/i.test(allergy.severityName ?? '')
+  /sever[oa]|grave/i.test(allergy.severityName ?? '')
 
 // Bloque "Alergias" dentro de Antecedentes (se guardan a nivel paciente).
 export function AllergiesBlock({
@@ -131,7 +131,7 @@ export function AllergiesBlock({
       )}
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic' }}>
-        Las de severidad grave se muestran en la barra del paciente y validan las prescripciones.
+        Las alergias severas se muestran en la barra del paciente y validan las prescripciones.
       </Typography>
     </Stack>
   )

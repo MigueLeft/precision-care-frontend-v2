@@ -17,7 +17,7 @@ import type { PatientMedication } from '../types'
 import {
   getMedicationDisplayName,
   ADHERENCE_LABELS,
-  RAM_LABELS,
+  TOLERANCE_LABELS,
 } from '../utils/medication-helpers'
 
 interface CurrentMedicationsTableProps {
@@ -97,7 +97,7 @@ export function CurrentMedicationsTable({
                           <Chip
                             size="small"
                             color={medication.ramStatus === 'confirmed' ? 'error' : 'warning'}
-                            label={`RAM: ${RAM_LABELS[medication.ramStatus]}`}
+                            label={`Tolerancia: ${TOLERANCE_LABELS[medication.ramStatus]}`}
                           />
                         )}
                         {notes.length > 0 && (

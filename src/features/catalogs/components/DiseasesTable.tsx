@@ -2,6 +2,7 @@ import {
   Chip,
   IconButton,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -62,25 +63,28 @@ export function DiseasesTable({ items, onEdit, onToggleActive }: DiseasesTablePr
                   color={item.active ? 'success' : 'default'}
                 />
               </TableCell>
-              <TableCell align="right">
-                <Tooltip title="Editar">
-                  <IconButton
-                    size="small"
-                    onClick={() => onEdit(item.id)}
-                    aria-label="Editar enfermedad"
-                  >
-                    <EditOutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title={item.active ? 'Desactivar' : 'Activar'}>
-                  <IconButton
-                    size="small"
-                    onClick={() => onToggleActive(item.id)}
-                    aria-label="Cambiar estado de la enfermedad"
-                  >
-                    <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Tooltip>
+              {/* Ancho mínimo y sin salto: los botones quedan uno al lado del otro */}
+              <TableCell align="right" sx={{ width: '1%', whiteSpace: 'nowrap' }}>
+                <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
+                  <Tooltip title="Editar">
+                    <IconButton
+                      size="small"
+                      onClick={() => onEdit(item.id)}
+                      aria-label="Editar enfermedad"
+                    >
+                      <EditOutlinedIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={item.active ? 'Desactivar' : 'Activar'}>
+                    <IconButton
+                      size="small"
+                      onClick={() => onToggleActive(item.id)}
+                      aria-label="Cambiar estado de la enfermedad"
+                    >
+                      <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
               </TableCell>
             </TableRow>
           ))}

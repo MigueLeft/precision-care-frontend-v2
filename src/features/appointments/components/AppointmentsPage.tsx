@@ -54,7 +54,7 @@ export function AppointmentsPage() {
 
   return (
     <Box>
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 0.5 }}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
         <Typography variant="h1">Citas</Typography>
         <AppButton
           variant="contained"

@@ -1,15 +1,16 @@
 import type { Allergy } from '../types'
 
-// La severidad viene del subcatálogo (texto libre); "grave"/"severa" se resalta en rojo.
+// La severidad viene del subcatálogo (texto libre); "severo"/"severa" (o el
+// antiguo "grave") se resalta en rojo.
 export function isSevereAllergy(allergy: Allergy): boolean {
-  return /grave|severa/i.test(allergy.severityName ?? '')
+  return /sever[oa]|grave/i.test(allergy.severityName ?? '')
 }
 
 export function allergySeverityColor(
   severityName: string | null,
 ): 'error' | 'warning' | 'default' {
   if (!severityName) return 'default'
-  return /grave|severa/i.test(severityName) ? 'error' : 'warning'
+  return /sever[oa]|grave/i.test(severityName) ? 'error' : 'warning'
 }
 
 export function formatAllergyLabel(allergy: Allergy): string {

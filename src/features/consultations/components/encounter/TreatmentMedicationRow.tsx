@@ -4,11 +4,10 @@ import {
   Box,
   Checkbox,
   Chip,
+  Grid,
   FormControlLabel,
   Stack,
   TextField,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from '@mui/material'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
@@ -16,12 +15,13 @@ import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined'
 import { AppButton } from '@/components/AppButton'
 import { useMedications } from '@/features/catalogs'
 import { MedicationDoseFields } from './MedicationDoseFields'
+import { CaptureToggleField } from './CaptureToggleField'
 import type { Medication } from '@/features/catalogs'
 import {
   ADHERENCE_COLORS,
   ADHERENCE_LABELS,
-  RAM_COLORS,
-  RAM_LABELS,
+  TOLERANCE_COLORS,
+  TOLERANCE_LABELS,
 } from '../../utils/consultation-format'
 import type {
   ConsultationMedication,
@@ -54,7 +54,7 @@ function catalogLabel(m: Medication) {
 }
 
 const ADHERENCES: MedicationAdherence[] = ['good', 'partial', 'poor']
-const RAMS: MedicationRamStatus[] = ['none', 'suspected', 'confirmed']
+const TOLERANCES: MedicationRamStatus[] = ['none', 'suspected', 'confirmed']
 
 function medname(m: ConsultationMedication) {
   const base = m.brandName ?? m.genericName ?? 'Medicamento'
@@ -114,7 +114,7 @@ export function TreatmentMedicationRow({
       ramNotes: ramStatus && ramStatus !== 'none' ? ramNotes.trim() || undefined : undefined,
       replacementMedicationId: medChanged ? replacement!.id : undefined,
       discontinue: suspendForRam ? true : undefined,
-      discontinuationReason: suspendForRam ? 'RAM confirmado' : undefined,
+      discontinuationReason: suspendForRam ? 'Efecto adverso limitante' : undefined,
     })
   }
 
@@ -238,8 +238,8 @@ export function TreatmentMedicationRow({
           {medication.ramStatus && medication.ramStatus !== 'none' && (
             <Chip
               size="small"
-              color={RAM_COLORS[medication.ramStatus]}
-              label={`RAM: ${RAM_LABELS[medication.ramStatus]}`}
+              color={TOLERANCE_COLORS[medication.ramStatus]}
+              label={`Tolerancia: ${TOLERANCE_LABELS[medication.ramStatus]}`}
             />
           )}
           {(medication.adherenceNotes || medication.ramNotes) && (
@@ -263,84 +263,58 @@ export function TreatmentMedicationRow({
       {/* Controles de captura */}
       {!readOnly && !suspended && capturing && (
         <Stack spacing={1} sx={{ mt: 1.5 }}>
-          <Box>
-            <Typography sx={{ fontSize: '12px', fontWeight: 600, mb: 0.5 }}>Adherencia</Typography>
-            <ToggleButtonGroup
-              size="small"
-              exclusive
-              value={adherence}
-              onChange={(_e, value: MedicationAdherence | null) => setAdherence(value)}
-            >
-              {ADHERENCES.map((value) => (
-                <ToggleButton key={value} value={value}>
-                  {ADHERENCE_LABELS[value]}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-            {adherence && (
-              <TextField
-                size="small"
-                fullWidth
-                placeholder="Notas de adherencia…"
-                value={adherenceNotes}
-                onChange={(e) => setAdherenceNotes(e.target.value)}
-                sx={{ mt: 0.75 }}
+          {/* Adherencia y tolerancia lado a lado para ahorrar espacio */}
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <CaptureToggleField
+                title="Adherencia"
+                options={ADHERENCES}
+                labels={ADHERENCE_LABELS}
+                value={adherence}
+                onChange={setAdherence}
+                showNotes={adherence !== null}
+                notes={adherenceNotes}
+                onNotesChange={setAdherenceNotes}
+                notesPlaceholder="Notas de adherencia…"
               />
-            )}
-          </Box>
-
-          <Box>
-            <Typography sx={{ fontSize: '12px', fontWeight: 600, mb: 0.5 }}>
-              RAM — Reacción adversa
-            </Typography>
-            <ToggleButtonGroup
-              size="small"
-              exclusive
-              value={ramStatus}
-              onChange={(_e, value: MedicationRamStatus | null) => {
-                setRamStatus(value)
-                if (value !== 'confirmed') setSuspendForRam(false)
-              }}
-            >
-              {RAMS.map((value) => (
-                <ToggleButton
-                  key={value}
-                  value={value}
-                  color={value === 'confirmed' ? 'error' : undefined}
-                >
-                  {RAM_LABELS[value]}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-            {ramStatus && ramStatus !== 'none' && (
-              <TextField
-                size="small"
-                fullWidth
-                placeholder="Notas de la RAM…"
-                value={ramNotes}
-                onChange={(e) => setRamNotes(e.target.value)}
-                sx={{ mt: 0.75 }}
-              />
-            )}
-            {ramStatus === 'confirmed' && (
-              <FormControlLabel
-                sx={{ mt: 0.5 }}
-                control={
-                  <Checkbox
-                    size="small"
-                    color="error"
-                    checked={suspendForRam}
-                    onChange={(e) => setSuspendForRam(e.target.checked)}
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <CaptureToggleField
+                title="Tolerancia"
+                options={TOLERANCES}
+                labels={TOLERANCE_LABELS}
+                value={ramStatus}
+                onChange={(value) => {
+                  setRamStatus(value)
+                  if (value !== 'confirmed') setSuspendForRam(false)
+                }}
+                showNotes={ramStatus !== null && ramStatus !== 'none'}
+                notes={ramNotes}
+                onNotesChange={setRamNotes}
+                notesPlaceholder="Notas de tolerancia…"
+                dangerOption="confirmed"
+              >
+                {ramStatus === 'confirmed' && (
+                  <FormControlLabel
+                    sx={{ mt: 0.5 }}
+                    control={
+                      <Checkbox
+                        size="small"
+                        color="error"
+                        checked={suspendForRam}
+                        onChange={(e) => setSuspendForRam(e.target.checked)}
+                      />
+                    }
+                    label={
+                      <Typography sx={{ fontSize: '12px' }}>
+                        Suspender el medicamento por este efecto adverso limitante
+                      </Typography>
+                    }
                   />
-                }
-                label={
-                  <Typography sx={{ fontSize: '12px' }}>
-                    Suspender el medicamento por esta RAM confirmada
-                  </Typography>
-                }
-              />
-            )}
-          </Box>
+                )}
+              </CaptureToggleField>
+            </Grid>
+          </Grid>
 
           <Stack direction="row" spacing={1}>
             <AppButton

@@ -105,13 +105,15 @@ export const ADHERENCE_COLORS: Record<
   poor: 'error',
 }
 
-export const RAM_LABELS: Record<MedicationRamStatus, string> = {
-  none: 'No',
-  suspected: 'Sospecha',
-  confirmed: 'Confirmada',
+// Tolerancia al medicamento; reutiliza el campo `ramStatus` del backend
+// (none / suspected / confirmed).
+export const TOLERANCE_LABELS: Record<MedicationRamStatus, string> = {
+  none: 'Buena tolerancia (asintomático)',
+  suspected: 'Intolerancia leve',
+  confirmed: 'Efecto adverso limitante',
 }
 
-export const RAM_COLORS: Record<
+export const TOLERANCE_COLORS: Record<
   MedicationRamStatus,
   'success' | 'warning' | 'error'
 > = {

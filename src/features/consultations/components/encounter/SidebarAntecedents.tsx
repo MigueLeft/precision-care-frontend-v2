@@ -12,7 +12,7 @@ type SidebarAntecedentsProps = {
   readOnly: boolean
 }
 
-const isSevere = (severityName: string | null) => /grave|severa/i.test(severityName ?? '')
+const isSevere = (severityName: string | null) => /sever[oa]|grave/i.test(severityName ?? '')
 
 // Consulta subsecuente: los antecedentes y alergias del paciente como chips; el
 // botón "Agregar" abre un modal con la captura completa.

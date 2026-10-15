@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
@@ -20,27 +19,25 @@ interface AntecedentFormModalProps {
   onClose: () => void
 }
 
-export function AntecedentFormModal({
-  open,
+type AntecedentFormContentProps = Omit<AntecedentFormModalProps, 'open'>
+
+// El contenido del Dialog se monta cada vez que se abre, así el formulario nace
+// con los valores del antecedente como defaultValues (sin depender de un reset).
+function AntecedentFormContent({
   mode,
   initialValues,
   lockType,
   isSubmitting,
   onSubmit,
   onClose,
-}: AntecedentFormModalProps) {
-  const values = initialValues ?? antecedentFormDefaultValues
-  const { control, handleSubmit, reset, setValue } = useForm<AntecedentFormValues>({
+}: AntecedentFormContentProps) {
+  const { control, handleSubmit, setValue } = useForm<AntecedentFormValues>({
     resolver: zodResolver(antecedentFormSchema),
-    defaultValues: values,
+    defaultValues: initialValues ?? antecedentFormDefaultValues,
   })
 
-  useEffect(() => {
-    if (open) reset(values)
-  }, [open, values, reset])
-
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <>
       <DialogTitle>
         {mode === 'create' ? 'Nuevo antecedente' : 'Editar antecedente'}
       </DialogTitle>
@@ -59,6 +56,14 @@ export function AntecedentFormModal({
           {mode === 'create' ? 'Agregar' : 'Guardar cambios'}
         </AppButton>
       </DialogActions>
+    </>
+  )
+}
+
+export function AntecedentFormModal({ open, ...contentProps }: AntecedentFormModalProps) {
+  return (
+    <Dialog open={open} onClose={contentProps.onClose} maxWidth="sm" fullWidth>
+      <AntecedentFormContent {...contentProps} />
     </Dialog>
   )
 }
