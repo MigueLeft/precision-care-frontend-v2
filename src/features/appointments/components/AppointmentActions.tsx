@@ -7,7 +7,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'
 import { useNavigate } from '@tanstack/react-router'
 import { AppButton } from '@/components/AppButton'
-import { useMe } from '@/features/identity'
+import { useMe, VIEW_ALL_APPOINTMENTS } from '@/features/identity'
 import { useConsultationByAppointment } from '@/features/consultations'
 import type { Appointment } from '../types'
 import { getPrimarySpecialist, isCancelled } from '../utils/appointment-helpers'
@@ -36,6 +36,9 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
   const primary = getPrimarySpecialist(appointment)
   const isAssignedSpecialist =
     me?.specialistId != null && me.specialistId === primary?.specialistId
+  // Con el permiso se puede ver (no editar) la consulta de otro médico.
+  const canViewConsultation =
+    isAssignedSpecialist || !!me?.permissions.includes(VIEW_ALL_APPOINTMENTS)
 
   function goToConsultation() {
     if (!linkedConsultation) return
@@ -66,7 +69,9 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
         </AppButton>
       )}
 
-      {appointment.status === 'completed' && isAssignedSpecialist && (
+      {(appointment.status === 'completed' ||
+        (appointment.status === 'in_progress' && !isAssignedSpecialist)) &&
+        canViewConsultation && (
         <AppButton
           variant="outlined"
           startIcon={<DescriptionOutlinedIcon sx={{ fontSize: 18 }} />}

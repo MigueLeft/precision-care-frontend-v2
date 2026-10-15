@@ -7,7 +7,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
-import { useMe, useSpecialistsLookup } from '@/features/identity'
+import { canViewAllAppointments, useMe, useSpecialistsLookup } from '@/features/identity'
 import { useAppointments } from '../hooks/useAppointments'
 import {
   useCreateAppointment,
@@ -42,7 +42,8 @@ export function AppointmentsPage() {
   const cancelMutation = useCancelAppointment({ onSuccess: () => setCancelingId(null) })
 
   const editing = appointments.find((a) => a.id === editingId) ?? null
-  const filtered = filterAppointments(appointments, filters, me?.specialistId ?? null)
+  const canViewAll = canViewAllAppointments(me)
+  const filtered = filterAppointments(appointments, filters, me?.specialistId ?? null, !canViewAll)
 
   function handleSubmit(values: AppointmentFormValues) {
     if (editingId) {
@@ -84,7 +85,7 @@ export function AppointmentsPage() {
       <AppointmentsToolbar
         filters={filters}
         specialists={specialists}
-        isSpecialist={me?.specialistId != null}
+        isSpecialist={!canViewAll}
         onChange={(patch) => setFilters((prev) => ({ ...prev, ...patch }))}
       />
 

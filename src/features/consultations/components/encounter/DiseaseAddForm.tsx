@@ -10,6 +10,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
+import { PartialDateField } from '@/components/ui/PartialDateField'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
@@ -165,13 +166,12 @@ export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFo
           </Select>
         </FormControl>
 
-        <TextField
-          size="small"
-          label="Fecha dx"
-          placeholder="Vacío = fecha de consulta"
+        {/* Día / Mes / Año (el día es opcional); vacío = fecha de la consulta. */}
+        <PartialDateField
+          label="Fecha dx (vacío = fecha de consulta)"
           value={dxDate}
-          onChange={(event) => setDxDate(event.target.value)}
-          sx={{ width: 160 }}
+          onChange={setDxDate}
+          sx={{ width: 290 }}
         />
 
         <AppButton

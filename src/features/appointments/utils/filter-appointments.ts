@@ -39,10 +39,11 @@ export function filterAppointments(
   appointments: Appointment[],
   filters: AppointmentFilters,
   mySpecialistId: number | null,
+  // Especialista sin permiso para ver todas: solo sus citas.
+  restrictToMine: boolean,
 ): Appointment[] {
   return appointments.filter((appointment) => {
-    // Un especialista solo ve sus propias citas; el resto puede usar el toggle.
-    const onlyMine = mySpecialistId != null || filters.scope === 'mine'
+    const onlyMine = restrictToMine || filters.scope === 'mine'
     if (
       onlyMine &&
       mySpecialistId != null &&

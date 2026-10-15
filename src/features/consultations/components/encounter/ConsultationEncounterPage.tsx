@@ -1,6 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { SectionDensityContext } from '@/components/ui/section-density'
 import { usePatient } from '@/features/patients'
+import { useMe } from '@/features/identity'
 import { useConsultation } from '../../hooks/useConsultationDetail'
 import { EncounterHeader } from './EncounterHeader'
 import { EncounterPatientBar } from './EncounterPatientBar'
@@ -35,10 +36,14 @@ function GroupTitle({ children }: { children: string }) {
 export function ConsultationEncounterPage({ consultationId }: ConsultationEncounterPageProps) {
   const { data: consultation } = useConsultation(consultationId)
   const { data: patient } = usePatient(consultation?.patientId)
+  const { data: me } = useMe()
 
   if (!consultation) return null
 
-  const readOnly = consultation.status === 'completed'
+  // Otro especialista (con permiso para ver todas) solo puede consultarla.
+  const isOtherSpecialist =
+    me?.specialistId != null && me.specialistId !== consultation.specialistId
+  const readOnly = consultation.status === 'completed' || isOtherSpecialist
 
   return (
     <Box sx={{ mx: -4, mt: -4 }}>

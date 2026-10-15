@@ -1,4 +1,4 @@
-import { Box, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Stack, Tooltip, Typography, alpha } from '@mui/material'
 import { Link, useRouterState } from '@tanstack/react-router'
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import { useSession, useLogout } from '@/features/auth'
@@ -51,8 +51,25 @@ export function Sidebar({ compact = false }: SidebarProps) {
         spacing={1.5}
         sx={{ px: compact ? 0 : 3, mb: compact ? 2 : 3, alignItems: 'center', justifyContent: compact ? 'center' : 'flex-start' }}
       >
-        {/* Logo pequeño para dejar más espacio a los iconos de navegación. */}
-        <BrandLogo height={compact ? 22 : 24} />
+        {/* Compacto: el logo ocupa un recuadro del mismo tamaño que el avatar
+            del usuario (32px) para alinearse con los iconos. */}
+        {compact ? (
+          <Box
+            sx={(theme) => ({
+              width: 32,
+              height: 32,
+              borderRadius: '6px',
+              bgcolor: alpha(theme.palette.common.white, 0.08),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            })}
+          >
+            <BrandLogo height={22} />
+          </Box>
+        ) : (
+          <BrandLogo height={24} />
+        )}
         {!compact && (
           <Typography sx={{ fontWeight: 600, fontSize: '15px', color: '#ffffff' }}>
             PrecisionCare
@@ -60,7 +77,16 @@ export function Sidebar({ compact = false }: SidebarProps) {
         )}
       </Stack>
 
-      <Stack spacing={compact ? 1.5 : 3} sx={{ flex: 1, overflowY: 'auto' }}>
+      <Stack
+        spacing={compact ? 1.5 : 3}
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          // Scroll funcional pero sin barra visible.
+          scrollbarWidth: 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
+        }}
+      >
         {sidebarNavConfig.map((section) => (
           <Box key={section.title} sx={{ px: compact ? 1 : 1.5 }}>
             {!compact && (

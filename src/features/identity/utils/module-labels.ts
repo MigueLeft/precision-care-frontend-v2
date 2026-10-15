@@ -1,6 +1,7 @@
 export const MODULE_ORDER = [
   'pacientes',
   'citas',
+  'citas_todas',
   'consultas',
   'antecedentes',
   'medicamentos',
@@ -25,6 +26,7 @@ const MODULE_LABELS: Record<string, string> = {
   antecedentes: 'Antecedentes',
   especialistas: 'Especialistas',
   citas: 'Citas',
+  citas_todas: 'Ver todas las citas y consultas',
   catalogos: 'Catálogos',
   plantillas_entregable: 'Plantillas de entregable',
   entregables: 'Entregables',
