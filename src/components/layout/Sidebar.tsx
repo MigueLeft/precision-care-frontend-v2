@@ -49,11 +49,12 @@ export function Sidebar({ compact = false }: SidebarProps) {
       <Stack
         direction="row"
         spacing={1.5}
-        sx={{ px: compact ? 0 : 3, mb: 4, alignItems: 'center', justifyContent: compact ? 'center' : 'flex-start' }}
+        sx={{ px: compact ? 0 : 3, mb: compact ? 2 : 3, alignItems: 'center', justifyContent: compact ? 'center' : 'flex-start' }}
       >
-        <BrandLogo height={34} />
+        {/* Logo pequeño para dejar más espacio a los iconos de navegación. */}
+        <BrandLogo height={compact ? 22 : 24} />
         {!compact && (
-          <Typography sx={{ fontWeight: 600, fontSize: '16px', color: '#ffffff' }}>
+          <Typography sx={{ fontWeight: 600, fontSize: '15px', color: '#ffffff' }}>
             PrecisionCare
           </Typography>
         )}
