@@ -48,7 +48,8 @@ function labOrderBody(data: LabOrderData) {
         `<tr><td>${i + 1}</td><td>${escape(item.name)}</td><td>${escape(item.loincCode)}</td><td>${escape(item.instructions)}</td></tr>`,
     )
     .join('')
-  return `<table><thead><tr><th>#</th><th>Estudio</th><th>LOINC</th><th>Indicaciones</th></tr></thead><tbody>${rows}</tbody></table>
+  const title = data.title ? `<h2>${escape(data.title)}</h2>` : ''
+  return `${title}<table><thead><tr><th>#</th><th>Estudio</th><th>LOINC</th><th>Indicaciones</th></tr></thead><tbody>${rows}</tbody></table>
   ${data.indications ? `<div class="notes"><label>Indicaciones generales</label><p>${escape(data.indications)}</p></div>` : ''}`
 }
 
@@ -79,6 +80,7 @@ const styles = `
   th { font-size: 11px; color: ${palette.text.secondary}; }
   .rx { padding: 8px 0; border-bottom: 1px solid ${palette.divider}; } .rx p { margin: 2px 0; }
   .notes { margin-top: 16px; }
+  h2 { font-size: 15px; margin: 0 0 8px; color: ${palette.brand.dark}; }
   .signature { margin-top: 72px; width: 260px; border-top: 1px solid ${palette.text.primary}; text-align: center; padding-top: 6px; }
 `
 

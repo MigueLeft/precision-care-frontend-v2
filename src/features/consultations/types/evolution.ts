@@ -53,6 +53,15 @@ export interface MeasurementEvolution {
   after: NumericSnapshot
 }
 
+// Paraclínico con resultado nuevo o distinto desde la consulta anterior.
+export interface ParaclinicalEvolution {
+  paraclinicalCatalogId: number
+  name: string
+  unit: string | null
+  before: { value: string; date: string } | null
+  after: { value: string; date: string }
+}
+
 export interface ConsultationEvolution {
   previousConsultation: {
     id: number
@@ -63,4 +72,6 @@ export interface ConsultationEvolution {
   diseases: DiseaseEvolution[]
   symptoms: SymptomEvolution[]
   anthropometry: MeasurementEvolution | null
+  // Ausente en respuestas de un backend anterior.
+  paraclinicals?: ParaclinicalEvolution[]
 }

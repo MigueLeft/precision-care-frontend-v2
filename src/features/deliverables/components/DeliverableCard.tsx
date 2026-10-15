@@ -34,6 +34,7 @@ export function DeliverableCard({ deliverable }: { deliverable: Deliverable }) {
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
             <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
               {deliverable.templateName ?? 'Entregable'}
+              {data && 'title' in data && data.title ? ` — ${data.title}` : ''}
             </Typography>
             {deliverable.type && (
               <Chip label={DELIVERABLE_TYPE_LABELS[deliverable.type]} size="small" />

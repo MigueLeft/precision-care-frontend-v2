@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Chip, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined'
 import { AppButton } from '@/components/AppButton'
 import {
@@ -8,6 +8,7 @@ import {
   useLabProfiles,
   useParaclinicalCategories,
   useParaclinicals,
+  type LabProfile,
 } from '@/features/catalogs'
 import {
   printDeliverable,
@@ -16,6 +17,8 @@ import {
   useSaveLabOrder,
   type LabOrderData,
 } from '@/features/deliverables'
+import { LabProfileChips } from './LabProfileChips'
+import { useLabOrderTitle } from './useLabOrderTitle'
 
 type LabOrderDialogProps = {
   consultationId: number
@@ -26,12 +29,21 @@ type LabOrderDialogProps = {
 
 type ContentProps = Omit<LabOrderDialogProps, 'open'> & {
   initialIds: number[]
+  initialTitle: string
   initialIndications: string
 }
 
 // Se monta al abrir: nace con el borrador guardado de la consulta.
-function LabOrderContent({ consultationId, readOnly, onClose, initialIds, initialIndications }: ContentProps) {
+function LabOrderContent({
+  consultationId,
+  readOnly,
+  onClose,
+  initialIds,
+  initialTitle,
+  initialIndications,
+}: ContentProps) {
   const [ids, setIds] = useState(initialIds)
+  const { title, addProfileName, typeTitle } = useLabOrderTitle(initialTitle)
   const [indications, setIndications] = useState(initialIndications)
   const { data: profiles = [] } = useLabProfiles()
   const { data: paraclinicals = [] } = useParaclinicals()
@@ -39,20 +51,20 @@ function LabOrderContent({ consultationId, readOnly, onClose, initialIds, initia
   const save = useSaveLabOrder(consultationId)
   const print = usePrintConsultationDeliverable(consultationId)
 
-  const dirty = ids.join() !== initialIds.join() || indications !== initialIndications
+  const dirty = ids.join() !== initialIds.join() || title !== initialTitle || indications !== initialIndications
   const payload = () => ({
     items: ids.map((paraclinicalCatalogId) => ({ paraclinicalCatalogId })),
+    title: title.trim() || undefined,
     indications: indications.trim() || undefined,
   })
 
-  // Al cerrar, los cambios quedan en espera dentro de la consulta.
-  // (los errores ya se muestran con toast en cada mutación).
+  // Al cerrar, los cambios quedan en espera (los errores se avisan con toast).
   async function close() {
     try {
       if (!readOnly && dirty) await save.mutateAsync(payload())
       onClose()
     } catch {
-      /* toast de error */
+      /* toast */
     }
   }
 
@@ -62,38 +74,30 @@ function LabOrderContent({ consultationId, readOnly, onClose, initialIds, initia
       const { deliverable } = await print.mutateAsync('lab_order')
       printDeliverable('lab_order', deliverable.data as unknown as LabOrderData)
     } catch {
-      /* toast de error */
+      /* toast */
     }
   }
 
-  const addProfile = (profileIds: number[]) =>
+  function addProfile(profile: LabProfile) {
+    const profileIds = profile.items.map((item) => item.id)
     setIds((prev) => [...prev, ...profileIds.filter((id) => !prev.includes(id))])
+    addProfileName(profile.name)
+  }
 
   return (
     <>
       <DialogTitle>Orden de laboratorio</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
-          {!readOnly && profiles.some((p) => p.active) && (
-            <Stack spacing={0.75}>
-              <Typography sx={{ fontSize: '12px', fontWeight: 600, color: 'text.secondary' }}>
-                Agregar un perfil completo
-              </Typography>
-              <Stack direction="row" useFlexGap spacing={0.75} sx={{ flexWrap: 'wrap' }}>
-                {profiles
-                  .filter((profile) => profile.active)
-                  .map((profile) => (
-                    <Chip
-                      key={profile.id}
-                      label={`${profile.name} (${profile.items.length})`}
-                      onClick={() => addProfile(profile.items.map((item) => item.id))}
-                      variant="outlined"
-                      color="primary"
-                    />
-                  ))}
-              </Stack>
-            </Stack>
-          )}
+          {!readOnly && <LabProfileChips profiles={profiles} onAdd={addProfile} />}
+          <TextField
+            label="Título de la orden"
+            placeholder="Elige un perfil o escribe el nombre de la orden"
+            value={title}
+            onChange={(event) => typeTitle(event.target.value)}
+            disabled={readOnly}
+            slotProps={{ htmlInput: { maxLength: 150 } }}
+          />
           <LabStudiesPicker
             options={labStudyOptions(paraclinicals, categories, ids)}
             value={ids}
@@ -139,6 +143,7 @@ export function LabOrderDialog({ open, ...props }: LabOrderDialogProps) {
         <LabOrderContent
           {...props}
           initialIds={drafts.labOrder.items.map((item) => item.paraclinicalCatalogId)}
+          initialTitle={drafts.labOrder.title ?? ''}
           initialIndications={drafts.labOrder.indications ?? ''}
         />
       )}

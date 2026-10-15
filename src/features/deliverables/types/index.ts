@@ -46,10 +46,16 @@ export interface PrescriptionLine {
 }
 
 // "Foto" guardada en deliverable.data al imprimir o al finalizar la consulta.
-export type LabOrderData = DeliverableHeader & { indications: string | null; items: LabOrderLine[] }
+export type LabOrderData = DeliverableHeader & {
+  // Nombre del perfil elegido o escrito a mano (registros anteriores no lo tienen).
+  title?: string | null
+  indications: string | null
+  items: LabOrderLine[]
+}
 export type PrescriptionData = DeliverableHeader & { items: PrescriptionLine[] }
 
 export interface LabOrderDraft {
+  title: string | null
   indications: string | null
   items: { paraclinicalCatalogId: number; instructions: string | null; name: string; loincCode: string | null }[]
 }
@@ -73,6 +79,7 @@ export interface ConsultationDrafts {
 
 export interface SaveLabOrderPayload {
   items: { paraclinicalCatalogId: number; instructions?: string }[]
+  title?: string
   indications?: string
 }
 

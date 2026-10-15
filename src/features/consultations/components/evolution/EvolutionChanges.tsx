@@ -9,6 +9,7 @@ import {
 } from '../../utils/measurement-snapshots'
 import { DiseaseChanges, MedicationChanges, SymptomChanges } from './ClinicalChanges'
 import { MeasurementChanges } from './MeasurementChanges'
+import { ParaclinicalChanges } from './ParaclinicalChanges'
 
 type EvolutionChangesProps = {
   consultationId: number
@@ -21,7 +22,7 @@ const Hint = ({ children }: { children: string }) => (
 )
 
 // Nota evolutiva automática: solo lo que cambió respecto a la consulta anterior
-// (tratamiento, diagnósticos, síntomas y antropometría).
+// (tratamiento, diagnósticos, síntomas, antropometría y paraclínicos).
 export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
   const { data: evolution, isLoading, isError, error } = useConsultationEvolution(consultationId)
 
@@ -44,12 +45,14 @@ export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
         anthropometrySnapshot(anthropometry.after),
       )
     : []
+  const paraclinicals = evolution.paraclinicals ?? []
 
   const hasChanges =
     evolution.medications.length +
       evolution.diseases.length +
       evolution.symptoms.length +
-      anthropometryChanges.length >
+      anthropometryChanges.length +
+      paraclinicals.length >
     0
 
   return (
@@ -62,7 +65,13 @@ export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
       <MedicationChanges items={evolution.medications} />
       <DiseaseChanges items={evolution.diseases} />
       <SymptomChanges items={evolution.symptoms} />
-      <MeasurementChanges title="ANTROPOMETRÍA" items={anthropometryChanges} />
+      {/* Antropometría y paraclínicos se muestran siempre, aunque no cambien. */}
+      <MeasurementChanges
+        title="ANTROPOMETRÍA"
+        items={anthropometryChanges}
+        emptyText={anthropometry ? 'Sin cambios.' : 'Sin medición en esta consulta.'}
+      />
+      <ParaclinicalChanges items={paraclinicals} />
     </Stack>
   )
 }

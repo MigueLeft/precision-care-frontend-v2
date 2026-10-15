@@ -6,11 +6,21 @@ import type { MeasurementChange } from '../../utils/measurement-snapshots'
 type MeasurementChangesProps = {
   title: string
   items: MeasurementChange[]
+  // Si se indica, el bloque se muestra aunque no haya cambios.
+  emptyText?: string
 }
 
 // Parámetros numéricos que cambiaron: valor anterior → actual y la diferencia.
-export function MeasurementChanges({ title, items }: MeasurementChangesProps) {
-  if (items.length === 0) return null
+export function MeasurementChanges({ title, items, emptyText }: MeasurementChangesProps) {
+  if (items.length === 0) {
+    return emptyText ? (
+      <NoteBlock title={title}>
+        <Typography sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
+          {emptyText}
+        </Typography>
+      </NoteBlock>
+    ) : null
+  }
   return (
     <NoteBlock title={title}>
       <Stack spacing={0.5}>
