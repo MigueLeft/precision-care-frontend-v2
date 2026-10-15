@@ -4,6 +4,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import { useSession, useLogout } from '@/features/auth'
 import { InitialsAvatar } from '@/components/InitialsAvatar'
 import { AppButton } from '@/components/AppButton'
+import { BrandLogo } from '@/components/BrandLogo'
 import { sidebarNavConfig } from './sidebarNavConfig'
 
 interface SidebarProps {
@@ -33,7 +34,10 @@ export function Sidebar({ compact = false }: SidebarProps) {
       sx={{
         width: compact ? 72 : 260,
         flexShrink: 0,
-        minHeight: '100vh',
+        // Fijo a la altura de la ventana: siempre visible aunque la página sea larga.
+        height: '100vh',
+        position: 'sticky',
+        top: 0,
         bgcolor: 'brand.dark',
         color: '#ffffff',
         display: 'flex',
@@ -47,25 +51,10 @@ export function Sidebar({ compact = false }: SidebarProps) {
         spacing={1.5}
         sx={{ px: compact ? 0 : 3, mb: 4, alignItems: 'center', justifyContent: compact ? 'center' : 'flex-start' }}
       >
-        <Box
-          sx={{
-            width: 36,
-            height: 36,
-            borderRadius: '6px',
-            bgcolor: 'brand.accent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 600,
-            color: 'brand.dark',
-            flexShrink: 0,
-          }}
-        >
-          PC
-        </Box>
+        <BrandLogo height={34} />
         {!compact && (
           <Typography sx={{ fontWeight: 600, fontSize: '16px', color: '#ffffff' }}>
-            Precisión Care
+            PrecisionCare
           </Typography>
         )}
       </Stack>

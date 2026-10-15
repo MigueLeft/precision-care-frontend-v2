@@ -1,6 +1,6 @@
 import { Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Chip, IconButton, Tooltip } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import { EmptyState } from '@/components/EmptyState'
 
 interface SimpleCatalogItem {
@@ -49,11 +49,7 @@ export function SimpleCatalogTable({ items, showIsoCode, onEdit, onToggleActive 
                     <EditOutlinedIcon sx={{ fontSize: 18 }} />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title={item.active ? 'Desactivar' : 'Activar'}>
-                  <IconButton size="small" onClick={() => onToggleActive(item.id)} aria-label="Cambiar estado">
-                    <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Tooltip>
+                <ToggleActiveButton active={item.active} onClick={() => onToggleActive(item.id)} />
               </TableCell>
             </TableRow>
           ))}

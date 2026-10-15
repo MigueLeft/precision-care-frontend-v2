@@ -1,6 +1,6 @@
 import { TableRow, TableCell, Typography, Chip, IconButton, Tooltip } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import type { Medication } from '../types'
 
 interface MedicationRowProps {
@@ -58,11 +58,7 @@ export function MedicationRow({
             <EditOutlinedIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={medication.active ? 'Desactivar' : 'Activar'}>
-          <IconButton size="small" onClick={onToggleActive} aria-label="Cambiar estado del medicamento">
-            <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
+        <ToggleActiveButton active={medication.active} onClick={onToggleActive} />
       </TableCell>
     </TableRow>
   )

@@ -20,3 +20,77 @@ export interface Deliverable {
   type: DeliverableType | null
   templateName: string | null
 }
+
+// ─── Entregables de consulta (orden de laboratorio y receta) ───────────────
+
+export interface DeliverableHeader {
+  patient: { name: string; mrn: string | null; birthDate: string | null }
+  specialist: { name: string; specialty: string | null }
+  // Fecha de la consulta (ISO).
+  date: string
+}
+
+export interface LabOrderLine {
+  name: string
+  loincCode: string | null
+  instructions: string | null
+}
+
+export interface PrescriptionLine {
+  name: string
+  dose: string
+  frequency: string
+  duration: string
+  route: string | null
+  instructions: string | null
+}
+
+// "Foto" guardada en deliverable.data al imprimir o al finalizar la consulta.
+export type LabOrderData = DeliverableHeader & { indications: string | null; items: LabOrderLine[] }
+export type PrescriptionData = DeliverableHeader & { items: PrescriptionLine[] }
+
+export interface LabOrderDraft {
+  indications: string | null
+  items: { paraclinicalCatalogId: number; instructions: string | null; name: string; loincCode: string | null }[]
+}
+
+export interface PrescriptionDraftItem {
+  medicationId: number
+  dose: string
+  frequency: string
+  duration: string
+  route: string | null
+  instructions: string | null
+  brandName: string
+  genericName: string
+  concentration: string | null
+}
+
+export interface ConsultationDrafts {
+  labOrder: LabOrderDraft
+  prescription: { items: PrescriptionDraftItem[] }
+}
+
+export interface SaveLabOrderPayload {
+  items: { paraclinicalCatalogId: number; instructions?: string }[]
+  indications?: string
+}
+
+export interface SavePrescriptionPayload {
+  items: {
+    medicationId: number
+    dose: string
+    frequency: string
+    duration: string
+    route?: string
+    instructions?: string
+  }[]
+}
+
+export type ConsultationDeliverableType = 'prescription' | 'lab_order'
+
+export interface PrintDeliverableResult {
+  deliverable: Deliverable
+  // false = reimpresión sin cambios (no se registró de nuevo).
+  created: boolean
+}

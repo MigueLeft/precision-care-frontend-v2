@@ -10,8 +10,8 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import { EmptyState } from '@/components/EmptyState'
 import type { AllergyCatalog } from '../types'
 
@@ -71,15 +71,7 @@ export function AllergyCatalogTable({
                     <EditOutlinedIcon sx={{ fontSize: 18 }} />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title={item.active ? 'Desactivar' : 'Activar'}>
-                  <IconButton
-                    size="small"
-                    onClick={() => onToggleActive(item.id)}
-                    aria-label="Cambiar estado de la alergia"
-                  >
-                    <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Tooltip>
+                <ToggleActiveButton active={item.active} onClick={() => onToggleActive(item.id)} />
               </TableCell>
             </TableRow>
           ))}

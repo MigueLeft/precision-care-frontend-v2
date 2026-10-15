@@ -76,5 +76,5 @@ export function EncounterMainSections({ consultation, readOnly }: EncounterMainS
     ),
   ]
 
-  return <Stack spacing={1.5}>{sections.map((render, i) => render(i + 1))}</Stack>
+  return <Stack spacing={1}>{sections.map((render, i) => render(i + 1))}</Stack>
 }

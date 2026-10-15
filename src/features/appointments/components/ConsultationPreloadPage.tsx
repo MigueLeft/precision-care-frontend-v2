@@ -5,6 +5,7 @@ import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
+import { SectionDensityContext } from '@/components/ui/section-density'
 import { AnthropometryPreloadSection } from '@/features/anthropometry'
 import { ParaclinicalSection } from '@/features/consultations'
 import { MedicationsPanel } from '@/features/patient-medications'
@@ -44,17 +45,19 @@ export function ConsultationPreloadPage({ appointmentId }: { appointmentId: numb
       </Typography>
 
       {canPreload ? (
-        <Stack spacing={1.5}>
-          <AnthropometryPreloadSection
-            index={1}
-            appointmentId={appointment.id}
-            patientId={appointment.patientId}
-          />
-          <ParaclinicalSection index={2} patientId={appointment.patientId} readOnly={false} />
-          <CollapsibleSection title="3. Tratamiento" defaultExpanded>
-            <MedicationsPanel patientId={appointment.patientId} />
-          </CollapsibleSection>
+          <SectionDensityContext.Provider value="compact">
+          <Stack spacing={1}>
+            <AnthropometryPreloadSection
+              index={1}
+              appointmentId={appointment.id}
+              patientId={appointment.patientId}
+            />
+            <ParaclinicalSection index={2} patientId={appointment.patientId} readOnly={false} />
+            <CollapsibleSection title="3. Tratamiento" defaultExpanded>
+              <MedicationsPanel patientId={appointment.patientId} />
+            </CollapsibleSection>
         </Stack>
+        </SectionDensityContext.Provider>
       ) : (
         <EmptyState message="La consulta de esta cita ya inició o la cita no está vigente: captura los datos dentro de la consulta." />
       )}

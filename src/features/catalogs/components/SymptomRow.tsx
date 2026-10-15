@@ -1,6 +1,6 @@
 import { TableRow, TableCell, Typography, Chip, IconButton, Tooltip } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import type { SymptomCatalog } from '../types'
 
 interface SymptomRowProps {
@@ -24,11 +24,7 @@ export function SymptomRow({ symptom, onEdit, onToggleActive }: SymptomRowProps)
             <EditOutlinedIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={symptom.active ? 'Desactivar' : 'Activar'}>
-          <IconButton size="small" onClick={onToggleActive} aria-label="Cambiar estado del síntoma">
-            <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
+        <ToggleActiveButton active={symptom.active} onClick={onToggleActive} />
       </TableCell>
     </TableRow>
   )

@@ -8,9 +8,9 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import AddIcon from '@mui/icons-material/Add'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRight'
 import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
@@ -76,15 +76,7 @@ function CategoryRow({ category, depth, onEdit, onToggleActive, onAddChild }: Ca
               <EditOutlinedIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Tooltip>
-          <Tooltip title={category.active ? 'Desactivar' : 'Activar'}>
-            <IconButton
-              size="small"
-              onClick={() => onToggleActive(category.id)}
-              aria-label="Cambiar estado"
-            >
-              <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-            </IconButton>
-          </Tooltip>
+          <ToggleActiveButton active={category.active} onClick={() => onToggleActive(category.id)} />
         </Stack>
       </Stack>
       {category.children.map((child) => (

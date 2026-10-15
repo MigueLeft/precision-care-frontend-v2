@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from 'react'
+import { useContext, useState, type ReactNode } from 'react'
 import { Box, Collapse, Paper, Stack, Typography } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { SectionDensityContext } from './section-density'
 
 interface CollapsibleSectionProps {
   title: string
@@ -18,6 +19,7 @@ export function CollapsibleSection({
   children,
 }: CollapsibleSectionProps) {
   const [expanded, setExpanded] = useState(defaultExpanded)
+  const compact = useContext(SectionDensityContext) === 'compact'
 
   return (
     <Paper sx={{ borderRadius: '8px', overflow: 'hidden' }}>
@@ -27,15 +29,15 @@ export function CollapsibleSection({
         sx={{
           alignItems: 'center',
           justifyContent: 'space-between',
-          px: 3,
-          py: 2,
+          px: compact ? 2 : 3,
+          py: compact ? 1 : 2,
           cursor: 'pointer',
           userSelect: 'none',
           '&:hover': { bgcolor: 'action.hover' },
         }}
       >
         <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-          <Typography variant="h3">{title}</Typography>
+          <Typography variant={compact ? 'h4' : 'h3'}>{title}</Typography>
           {headerMeta}
         </Stack>
         <ExpandMoreIcon
@@ -47,7 +49,7 @@ export function CollapsibleSection({
         />
       </Stack>
       <Collapse in={expanded} unmountOnExit>
-        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', p: 3 }}>
+        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', p: compact ? 2 : 3 }}>
           {children}
         </Box>
       </Collapse>

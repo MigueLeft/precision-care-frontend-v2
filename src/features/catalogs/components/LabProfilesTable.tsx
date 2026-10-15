@@ -12,8 +12,8 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import { EmptyState } from '@/components/EmptyState'
 import type { LabProfile } from '../types'
 
@@ -85,15 +85,7 @@ export function LabProfilesTable({ profiles, onEdit, onToggleActive }: LabProfil
                         <EditOutlinedIcon sx={{ fontSize: 18 }} />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title={profile.active ? 'Desactivar' : 'Activar'}>
-                      <IconButton
-                        size="small"
-                        onClick={() => onToggleActive(profile.id)}
-                        aria-label="Cambiar estado del perfil"
-                      >
-                        <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-                      </IconButton>
-                    </Tooltip>
+                    <ToggleActiveButton active={profile.active} onClick={() => onToggleActive(profile.id)} />
                   </Stack>
                 </TableCell>
               </TableRow>

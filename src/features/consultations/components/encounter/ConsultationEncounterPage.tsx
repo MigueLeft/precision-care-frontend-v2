@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material'
+import { SectionDensityContext } from '@/components/ui/section-density'
 import { usePatient } from '@/features/patients'
 import { useConsultation } from '../../hooks/useConsultationDetail'
 import { EncounterHeader } from './EncounterHeader'
@@ -22,8 +23,8 @@ function GroupTitle({ children }: { children: string }) {
         fontWeight: 700,
         letterSpacing: '0.05em',
         color: 'text.secondary',
-        mt: 3,
-        mb: 1,
+        mt: 2,
+        mb: 0.75,
       }}
     >
       {children}
@@ -49,27 +50,30 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
         spacing={3}
         sx={{ p: 4, alignItems: 'flex-start' }}
       >
-        <Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
-          <GroupTitle>CONTENIDO PRINCIPAL</GroupTitle>
-          <EncounterMainSections consultation={consultation} readOnly={readOnly} />
+        {/* Apartados compactos: la consulta tiene muchas secciones. */}
+        <SectionDensityContext.Provider value="compact">
+          <Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
+            <GroupTitle>CONTENIDO PRINCIPAL</GroupTitle>
+            <EncounterMainSections consultation={consultation} readOnly={readOnly} />
 
-          <GroupTitle>PARTE DE ESTILO DE VIDA</GroupTitle>
-          <Stack spacing={1.5}>
-            <PlaceholderSection
-              index={1}
-              title="Nutrición"
-              subtitle="Respuestas de ingreso · asignación de plan"
-            />
-            <LifeEssential8Section index={2} patientId={consultation.patientId} />
-          </Stack>
+            <GroupTitle>PARTE DE ESTILO DE VIDA</GroupTitle>
+            <Stack spacing={1}>
+              <PlaceholderSection
+                index={1}
+                title="Nutrición"
+                subtitle="Respuestas de ingreso · asignación de plan"
+              />
+              <LifeEssential8Section index={2} patientId={consultation.patientId} />
+            </Stack>
 
-          <GroupTitle>CIERRE CLÍNICO</GroupTitle>
-          <Stack spacing={1.5}>
-            <StudyPlanSection index={1} consultation={consultation} readOnly={readOnly} />
-            <ProblemsSection index={2} consultation={consultation} readOnly={readOnly} />
-            <PlaceholderSection index={3} title="Prescripciones" />
-          </Stack>
-        </Box>
+            <GroupTitle>CIERRE CLÍNICO</GroupTitle>
+            <Stack spacing={1}>
+              <StudyPlanSection index={1} consultation={consultation} readOnly={readOnly} />
+              <ProblemsSection index={2} consultation={consultation} readOnly={readOnly} />
+              <PlaceholderSection index={3} title="Prescripciones" />
+            </Stack>
+          </Box>
+        </SectionDensityContext.Provider>
 
         <EncounterSidebar consultation={consultation} readOnly={readOnly} />
       </Stack>

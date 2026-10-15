@@ -52,3 +52,45 @@ export function flattenCategoryOptions(
 
   return options
 }
+
+// Categorías raíz (Laboratorio, Imagen…): las subcategorías van en su propio select.
+export function rootCategories(categories: ParaclinicalCategoryCatalog[]) {
+  return categories
+    .filter((category) => category.parentId == null)
+    .sort((a, b) => a.name.localeCompare(b.name, 'es'))
+}
+
+export function childCategories(categories: ParaclinicalCategoryCatalog[], parentId: number) {
+  return categories
+    .filter((category) => category.parentId === parentId)
+    .sort((a, b) => a.name.localeCompare(b.name, 'es'))
+}
+
+// La categoría y todas sus subcategorías (para filtrar por la raíz).
+export function categoryWithDescendants(
+  categories: ParaclinicalCategoryCatalog[],
+  id: number,
+): Set<number> {
+  const ids = new Set([id])
+  let grew = true
+  while (grew) {
+    grew = false
+    for (const category of categories) {
+      if (category.parentId != null && ids.has(category.parentId) && !ids.has(category.id)) {
+        ids.add(category.id)
+        grew = true
+      }
+    }
+  }
+  return ids
+}
+
+// Raíz de una categoría (sube por parentId).
+export function rootOf(categories: ParaclinicalCategoryCatalog[], id: number): number {
+  const byId = new Map(categories.map((category) => [category.id, category]))
+  let current = byId.get(id)
+  while (current?.parentId != null && byId.has(current.parentId)) {
+    current = byId.get(current.parentId)
+  }
+  return current?.id ?? id
+}

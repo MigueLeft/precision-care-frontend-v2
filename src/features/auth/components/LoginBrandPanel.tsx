@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material'
+import { BrandLogo } from '@/components/BrandLogo'
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined'
-import MedicalServicesIcon from '@mui/icons-material/MedicalServices'
 
 const FEATURES = [
   'Gestión centralizada de pacientes y especialistas',
@@ -30,18 +30,9 @@ export function LoginBrandPanel() {
 
       {/* Logo */}
       <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-        <Box
-          sx={{
-            width: 40, height: 40, borderRadius: '8px',
-            bgcolor: 'rgba(0,204,204,0.15)',
-            border: '1px solid rgba(0,204,204,0.3)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >
-          <MedicalServicesIcon sx={{ color: '#00cccc', fontSize: 20 }} />
-        </Box>
+        <BrandLogo height={40} />
         <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: 18, letterSpacing: '0.02em', fontFamily: "'Montserrat', sans-serif" }}>
-          Precision Care
+          PrecisionCare
         </Typography>
       </Stack>
 

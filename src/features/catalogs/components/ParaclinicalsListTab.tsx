@@ -6,6 +6,7 @@ import { useUpdateParaclinical } from '../hooks/useUpdateParaclinical'
 import { useToggleParaclinicalActive } from '../hooks/useToggleParaclinicalActive'
 import { useParaclinicalCategories } from '../hooks/useParaclinicalCategories'
 import { filterParaclinicals } from '../utils/filter-paraclinicals'
+import { categoryWithDescendants } from '../utils/paraclinical-category-tree'
 import { mapParaclinicalToFormValues } from '../utils/map-paraclinical-to-form-values'
 import { mapParaclinicalFormToPayload } from '../utils/map-paraclinical-form-to-payload'
 import { paraclinicalFormDefaultValues } from '../schemas/paraclinical-form.schema'
@@ -17,6 +18,7 @@ import type { ParaclinicalFormValues } from '../schemas/paraclinical-form.schema
 export function ParaclinicalsListTab() {
   const [q, setQ] = useState('')
   const [categoryId, setCategoryId] = useState<number | ''>('')
+  const [subcategoryId, setSubcategoryId] = useState<number | ''>('')
   const [onlyActive, setOnlyActive] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -27,7 +29,12 @@ export function ParaclinicalsListTab() {
 
   const filtered = filterParaclinicals(paraclinicals, {
     q,
-    categoryId: categoryId || undefined,
+    // La subcategoría filtra exacto; la categoría incluye todas sus subcategorías.
+    categoryIds: subcategoryId
+      ? new Set([subcategoryId])
+      : categoryId
+        ? categoryWithDescendants(categories, categoryId)
+        : undefined,
     onlyActive,
   })
   const editing = paraclinicals.find((e) => e.id === editingId) ?? null
@@ -77,7 +84,12 @@ export function ParaclinicalsListTab() {
         categories={categories}
         onlyActive={onlyActive}
         onQChange={setQ}
-        onCategoryChange={setCategoryId}
+        subcategoryId={subcategoryId}
+        onCategoryChange={(value) => {
+          setCategoryId(value)
+          setSubcategoryId('')
+        }}
+        onSubcategoryChange={setSubcategoryId}
         onOnlyActiveChange={setOnlyActive}
         onAdd={() => setIsCreateOpen(true)}
       />

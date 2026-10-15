@@ -13,15 +13,17 @@ import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
 import type { ParaclinicalCategoryCatalog } from '../types'
-import { flattenCategoryOptions } from '../utils/paraclinical-category-tree'
+import { childCategories, rootCategories } from '../utils/paraclinical-category-tree'
 
 interface ParaclinicalsToolbarProps {
   q: string
   categoryId: number | ''
+  subcategoryId: number | ''
   categories: ParaclinicalCategoryCatalog[]
   onlyActive: boolean
   onQChange: (value: string) => void
   onCategoryChange: (value: number | '') => void
+  onSubcategoryChange: (value: number | '') => void
   onOnlyActiveChange: (value: boolean) => void
   onAdd: () => void
 }
@@ -29,14 +31,18 @@ interface ParaclinicalsToolbarProps {
 export function ParaclinicalsToolbar({
   q,
   categoryId,
+  subcategoryId,
   categories,
   onlyActive,
   onQChange,
   onCategoryChange,
+  onSubcategoryChange,
   onOnlyActiveChange,
   onAdd,
 }: ParaclinicalsToolbarProps) {
-  const options = flattenCategoryOptions(categories)
+  const roots = rootCategories(categories)
+  const subcategories = categoryId ? childCategories(categories, categoryId) : []
+  const toValue = (raw: number | string) => (raw === '' ? '' : Number(raw))
 
   return (
     <Stack direction="row" spacing={2} useFlexGap sx={{ alignItems: 'center', flexWrap: 'wrap', mb: 3 }}>
@@ -62,15 +68,29 @@ export function ParaclinicalsToolbar({
           labelId="paraclinical-category-filter-label"
           label="Categoría"
           value={categoryId}
-          onChange={(event) =>
-            onCategoryChange(event.target.value === '' ? '' : Number(event.target.value))
-          }
+          onChange={(event) => onCategoryChange(toValue(event.target.value))}
         >
           <MenuItem value="">Todas</MenuItem>
-          {options.map((option) => (
-            <MenuItem key={option.id} value={option.id}>
-              {option.depth > 0 ? `${'  '.repeat(option.depth)}— ` : ''}
-              {option.name}
+          {roots.map((category) => (
+            <MenuItem key={category.id} value={category.id}>
+              {category.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <FormControl sx={{ minWidth: 220 }} disabled={subcategories.length === 0}>
+        <InputLabel id="paraclinical-subcategory-filter-label">Subcategoría</InputLabel>
+        <Select<number | ''>
+          labelId="paraclinical-subcategory-filter-label"
+          label="Subcategoría"
+          value={subcategoryId}
+          onChange={(event) => onSubcategoryChange(toValue(event.target.value))}
+        >
+          <MenuItem value="">Todas</MenuItem>
+          {subcategories.map((category) => (
+            <MenuItem key={category.id} value={category.id}>
+              {category.name}
             </MenuItem>
           ))}
         </Select>

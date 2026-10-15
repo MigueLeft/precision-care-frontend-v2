@@ -1,10 +1,6 @@
 import { useState } from 'react'
 import {
   Autocomplete,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   TextField,
 } from '@mui/material'
@@ -12,12 +8,17 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from 'sonner'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { useParaclinicalCategories, useParaclinicals } from '@/features/catalogs'
+import {
+  categoryWithDescendants,
+  useParaclinicalCategories,
+  useParaclinicals,
+} from '@/features/catalogs'
 import type { ParaclinicalCatalog } from '@/features/catalogs'
 import { formatShortDate, todayIsoDate } from '@/utils/format-date'
 import { useAddParaclinicalResult } from '../hooks/useAddParaclinicalResult'
 import { buildSingleStudyInput, formatStudyValue } from '../utils/single-study-result'
 import type { CreateParaclinicalResultInput } from '../types'
+import { RootCategorySelect } from './RootCategorySelect'
 
 interface AddParaclinicalResultFormProps {
   patientId: number
@@ -49,8 +50,10 @@ export function AddParaclinicalResultForm({ patientId, onAdded }: AddParaclinica
     },
   )
 
+  // Elegir una categoría (p. ej. Laboratorio) muestra los estudios de todas sus subcategorías.
+  const inCategory = categoryId === '' ? null : categoryWithDescendants(categories, categoryId)
   const options = catalog.filter(
-    (item) => item.active && (categoryId === '' || item.categoryId === categoryId),
+    (item) => item.active && (!inCategory || inCategory.has(item.categoryId)),
   )
 
   function submit() {
@@ -73,25 +76,14 @@ export function AddParaclinicalResultForm({ patientId, onAdded }: AddParaclinica
       // Separado de la lista de resultados para que no quede pegado.
       sx={{ flexWrap: 'wrap', alignItems: 'flex-start', mt: 2.5 }}
     >
-      <FormControl size="small" sx={{ minWidth: 150 }}>
-        <InputLabel id="paraclinical-category">Categoría</InputLabel>
-        <Select<number | ''>
-          labelId="paraclinical-category"
-          label="Categoría"
-          value={categoryId}
-          onChange={(event) => {
-            setCategoryId(event.target.value === '' ? '' : Number(event.target.value))
-            setStudy(null)
-          }}
-        >
-          <MenuItem value="">Todas</MenuItem>
-          {categories.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
-              {category.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      <RootCategorySelect
+        categories={categories}
+        value={categoryId}
+        onChange={(value) => {
+          setCategoryId(value)
+          setStudy(null)
+        }}
+      />
 
       <Autocomplete
         size="small"

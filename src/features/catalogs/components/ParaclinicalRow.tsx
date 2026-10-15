@@ -1,6 +1,6 @@
 import { TableRow, TableCell, Typography, Chip, IconButton, Tooltip } from '@mui/material'
+import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
-import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import type { ParaclinicalCatalog } from '../types'
 
 interface ParaclinicalRowProps {
@@ -66,15 +66,7 @@ export function ParaclinicalRow({
             <EditOutlinedIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Tooltip>
-        <Tooltip title={paraclinical.active ? 'Desactivar' : 'Activar'}>
-          <IconButton
-            size="small"
-            onClick={onToggleActive}
-            aria-label="Cambiar estado del paraclínico"
-          >
-            <Inventory2OutlinedIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
+        <ToggleActiveButton active={paraclinical.active} onClick={onToggleActive} />
       </TableCell>
     </TableRow>
   )

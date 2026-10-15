@@ -3,8 +3,7 @@ import { Controller, useWatch } from 'react-hook-form'
 import type { Control, UseFormSetValue } from 'react-hook-form'
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { paraclinicalValueTypeOptions } from '../schemas/paraclinical-form.schema'
-import { useParaclinicalCategories } from '../hooks/useParaclinicalCategories'
-import { flattenCategoryOptions } from '../utils/paraclinical-category-tree'
+import { ParaclinicalCategoryFields } from './ParaclinicalCategoryFields'
 import type { ParaclinicalFormValues } from '../schemas/paraclinical-form.schema'
 
 const VALUE_TYPE_LABELS: Record<
@@ -22,8 +21,6 @@ interface ParaclinicalFormFieldsProps {
 }
 
 export function ParaclinicalFormFields({ control, setValue }: ParaclinicalFormFieldsProps) {
-  const { data: categories = [] } = useParaclinicalCategories()
-  const categoryOptions = flattenCategoryOptions(categories)
   const valueType = useWatch({ control, name: 'valueType' })
   const isNumericType = valueType === 'numeric'
 
@@ -36,7 +33,7 @@ export function ParaclinicalFormFields({ control, setValue }: ParaclinicalFormFi
 
   return (
     <Grid container spacing={2}>
-      <Grid size={{ xs: 12, sm: 6 }}>
+      <Grid size={{ xs: 12 }}>
         <Controller
           name="name"
           control={control}
@@ -52,30 +49,7 @@ export function ParaclinicalFormFields({ control, setValue }: ParaclinicalFormFi
           )}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="categoryId"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <FormControl fullWidth error={!!error}>
-              <InputLabel id="paraclinical-category-label">Categoría</InputLabel>
-              <Select
-                labelId="paraclinical-category-label"
-                label="Categoría"
-                value={field.value || ''}
-                onChange={(event) => field.onChange(Number(event.target.value))}
-              >
-                {categoryOptions.map((option) => (
-                  <MenuItem key={option.id} value={option.id}>
-                    {option.depth > 0 ? `${'  '.repeat(option.depth)}— ` : ''}
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        />
-      </Grid>
+      <ParaclinicalCategoryFields control={control} />
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
           name="defaultUnit"

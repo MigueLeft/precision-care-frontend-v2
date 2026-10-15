@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Box, Link, Stack, Typography } from '@mui/material'
+import { BrandLogo } from '@/components/BrandLogo'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { LoginForm } from '@/features/auth/components/LoginForm'
 import { LoginBrandPanel } from '@/features/auth/components/LoginBrandPanel'
@@ -37,17 +38,9 @@ function LoginPage() {
             direction="row" spacing={1}
             sx={{ display: { xs: 'flex', md: 'none' }, mb: 5, alignItems: 'center', justifyContent: 'center' }}
           >
-            <Box
-              sx={{
-                width: 32, height: 32, borderRadius: '6px',
-                bgcolor: 'rgba(4,110,163,0.1)', border: '1px solid rgba(4,110,163,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >
-              <Box component="span" sx={{ color: '#046ea3', fontSize: 18, lineHeight: 1 }}>+</Box>
-            </Box>
+            <BrandLogo height={32} variant="dark" />
             <Typography sx={{ fontWeight: 700, fontSize: 18, color: '#001d4a' }}>
-              Precision Care
+              PrecisionCare
             </Typography>
           </Stack>
 
