@@ -39,6 +39,7 @@ import { Route as AppPacientesPatientIdConsultasRouteImport } from './routes/_ap
 import { Route as AppPacientesPatientIdAntropometriaRouteImport } from './routes/_app/pacientes_.$patientId/antropometria'
 import { Route as AppPacientesPatientIdAntecedentesRouteImport } from './routes/_app/pacientes_.$patientId/antecedentes'
 import { Route as AppEspecialistasSpecialistIdEditarRouteImport } from './routes/_app/especialistas_.$specialistId_.editar'
+import { Route as AppCitasAppointmentIdPrecargaRouteImport } from './routes/_app/citas_.$appointmentId_.precarga'
 
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
@@ -205,6 +206,12 @@ const AppEspecialistasSpecialistIdEditarRoute =
     path: '/especialistas/$specialistId/editar',
     getParentRoute: () => AppRouteRoute,
   } as any)
+const AppCitasAppointmentIdPrecargaRoute =
+  AppCitasAppointmentIdPrecargaRouteImport.update({
+    id: '/citas_/$appointmentId_/precarga',
+    path: '/citas/$appointmentId/precarga',
+    getParentRoute: () => AppRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
   '/ingresables/$id': typeof AppIngresablesIdRoute
+  '/citas/$appointmentId/precarga': typeof AppCitasAppointmentIdPrecargaRoute
   '/especialistas/$specialistId/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/pacientes/$patientId/antropometria': typeof AppPacientesPatientIdAntropometriaRoute
@@ -250,6 +258,7 @@ export interface FileRoutesByTo {
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
   '/ingresables/$id': typeof AppIngresablesIdRoute
+  '/citas/$appointmentId/precarga': typeof AppCitasAppointmentIdPrecargaRoute
   '/especialistas/$specialistId/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/pacientes/$patientId/antropometria': typeof AppPacientesPatientIdAntropometriaRoute
@@ -283,6 +292,7 @@ export interface FileRoutesById {
   '/_app/especialistas_/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/_app/especialistas_/nuevo': typeof AppEspecialistasNuevoRoute
   '/_app/ingresables_/$id': typeof AppIngresablesIdRoute
+  '/_app/citas_/$appointmentId_/precarga': typeof AppCitasAppointmentIdPrecargaRoute
   '/_app/especialistas_/$specialistId_/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/_app/pacientes_/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
   '/_app/pacientes_/$patientId/antropometria': typeof AppPacientesPatientIdAntropometriaRoute
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
     | '/ingresables/$id'
+    | '/citas/$appointmentId/precarga'
     | '/especialistas/$specialistId/editar'
     | '/pacientes/$patientId/antecedentes'
     | '/pacientes/$patientId/antropometria'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
     | '/ingresables/$id'
+    | '/citas/$appointmentId/precarga'
     | '/especialistas/$specialistId/editar'
     | '/pacientes/$patientId/antecedentes'
     | '/pacientes/$patientId/antropometria'
@@ -376,6 +388,7 @@ export interface FileRouteTypes {
     | '/_app/especialistas_/$specialistId'
     | '/_app/especialistas_/nuevo'
     | '/_app/ingresables_/$id'
+    | '/_app/citas_/$appointmentId_/precarga'
     | '/_app/especialistas_/$specialistId_/editar'
     | '/_app/pacientes_/$patientId/antecedentes'
     | '/_app/pacientes_/$patientId/antropometria'
@@ -610,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEspecialistasSpecialistIdEditarRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/citas_/$appointmentId_/precarga': {
+      id: '/_app/citas_/$appointmentId_/precarga'
+      path: '/citas/$appointmentId/precarga'
+      fullPath: '/citas/$appointmentId/precarga'
+      preLoaderRoute: typeof AppCitasAppointmentIdPrecargaRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
@@ -673,6 +693,7 @@ interface AppRouteRouteChildren {
   AppEspecialistasSpecialistIdRoute: typeof AppEspecialistasSpecialistIdRoute
   AppEspecialistasNuevoRoute: typeof AppEspecialistasNuevoRoute
   AppIngresablesIdRoute: typeof AppIngresablesIdRoute
+  AppCitasAppointmentIdPrecargaRoute: typeof AppCitasAppointmentIdPrecargaRoute
   AppEspecialistasSpecialistIdEditarRoute: typeof AppEspecialistasSpecialistIdEditarRoute
 }
 
@@ -689,6 +710,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppEspecialistasSpecialistIdRoute: AppEspecialistasSpecialistIdRoute,
   AppEspecialistasNuevoRoute: AppEspecialistasNuevoRoute,
   AppIngresablesIdRoute: AppIngresablesIdRoute,
+  AppCitasAppointmentIdPrecargaRoute: AppCitasAppointmentIdPrecargaRoute,
   AppEspecialistasSpecialistIdEditarRoute:
     AppEspecialistasSpecialistIdEditarRoute,
 }

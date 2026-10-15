@@ -54,6 +54,7 @@ export { useParaclinicals } from './hooks/useParaclinicals'
 export { useCreateParaclinical } from './hooks/useCreateParaclinical'
 export { useUpdateParaclinical } from './hooks/useUpdateParaclinical'
 export { useToggleParaclinicalActive } from './hooks/useToggleParaclinicalActive'
+export { useLabProfiles } from './hooks/useLabProfiles'
 export { useSymptoms } from './hooks/useSymptoms'
 export { useCreateSymptom } from './hooks/useCreateSymptom'
 export { useUpdateSymptom } from './hooks/useUpdateSymptom'
@@ -114,6 +115,8 @@ export type {
   ParaclinicalValueType,
   CreateParaclinicalPayload,
   UpdateParaclinicalPayload,
+  LabProfile,
+  LabProfileItem,
   SymptomCatalog,
   AllergyType,
   AllergySeverity,

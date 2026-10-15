@@ -17,6 +17,7 @@ export const catalogsKeys = {
   medicalSpecialties: ['catalogs', 'medical-specialties'] as const,
   medications: ['catalogs', 'medications'] as const,
   paraclinicals: ['catalogs', 'paraclinicals'] as const,
+  labProfiles: ['catalogs', 'lab-profiles'] as const,
   symptoms: ['catalogs', 'symptoms'] as const,
   allergyTypes: ['catalogs', 'allergy-types'] as const,
   allergySeverities: ['catalogs', 'allergy-severities'] as const,

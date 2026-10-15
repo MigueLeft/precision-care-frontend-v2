@@ -4,6 +4,7 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'
 import { useNavigate } from '@tanstack/react-router'
 import { AppButton } from '@/components/AppButton'
 import { useMe } from '@/features/identity'
@@ -88,6 +89,18 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
               Iniciar consulta
             </AppButton>
           )}
+          <AppButton
+            variant="outlined"
+            startIcon={<PlaylistAddCheckIcon sx={{ fontSize: 18 }} />}
+            onClick={() =>
+              navigate({
+                to: '/citas/$appointmentId/precarga',
+                params: { appointmentId: String(appointment.id) },
+              })
+            }
+          >
+            Precargar datos de la consulta
+          </AppButton>
           <AppButton
             variant="outlined"
             startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />}

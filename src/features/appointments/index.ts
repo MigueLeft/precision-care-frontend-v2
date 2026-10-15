@@ -14,6 +14,7 @@ export {
   useSendReminder,
 } from './hooks/useAppointmentMutations'
 export { AppointmentsPage } from './components/AppointmentsPage'
+export { ConsultationPreloadPage } from './components/ConsultationPreloadPage'
 export {
   APPOINTMENT_STATUS_LABELS,
   APPOINTMENT_STATUS_COLORS,

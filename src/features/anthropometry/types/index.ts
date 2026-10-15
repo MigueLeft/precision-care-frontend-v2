@@ -79,6 +79,8 @@ export type SegmentInput = { segment: AnthropometrySegmentType } & Partial<
 export type SaveAnthropometryInput = {
   patientId: number
   consultationId?: number
+  // Precarga desde una cita (se liga a la consulta al iniciarla).
+  appointmentId?: number
   assessmentDate?: string
   notes?: string | null
   segments: SegmentInput[]

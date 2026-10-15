@@ -7,6 +7,8 @@ export function mapParaclinicalFormToPayload(
   return {
     name: values.name,
     categoryId: values.categoryId,
+    loincCode: values.loincCode,
+    description: values.description ?? '',
     valueType: values.valueType,
     defaultUnit: values.defaultUnit || undefined,
     referenceMin: values.referenceMin ? Number(values.referenceMin) : undefined,

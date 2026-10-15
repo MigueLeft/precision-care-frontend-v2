@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import {
   createAnthropometry,
   fetchAnthropometriesByPatient,
+  fetchAnthropometryByAppointment,
   fetchAnthropometryByConsultation,
   updateAnthropometry,
 } from '../services/anthropometry.service'
@@ -25,16 +26,23 @@ export function useAnthropometryByConsultation(consultationId: number) {
   })
 }
 
+export function useAnthropometryByAppointment(appointmentId: number) {
+  return useQuery({
+    queryKey: anthropometryKeys.byAppointment(appointmentId),
+    queryFn: () => fetchAnthropometryByAppointment(appointmentId),
+  })
+}
+
 export function useSaveAnthropometry(
   existingId: number | undefined,
   options?: { onSuccess?: () => void },
 ) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ patientId, consultationId, ...rest }: SaveAnthropometryInput) =>
+    mutationFn: ({ patientId, consultationId, appointmentId, ...rest }: SaveAnthropometryInput) =>
       existingId
         ? updateAnthropometry(existingId, rest)
-        : createAnthropometry({ patientId, consultationId, ...rest }),
+        : createAnthropometry({ patientId, consultationId, appointmentId, ...rest }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: anthropometryKeys.all })
       toast.success('Antropometría guardada')

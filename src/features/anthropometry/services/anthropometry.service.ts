@@ -17,6 +17,15 @@ export async function fetchAnthropometryByConsultation(
   return data.anthropometry
 }
 
+export async function fetchAnthropometryByAppointment(
+  appointmentId: number,
+): Promise<Anthropometry | null> {
+  const { data } = await api.get<{ anthropometry: Anthropometry | null }>(
+    `/anthropometry/appointment/${appointmentId}`,
+  )
+  return data.anthropometry
+}
+
 export async function createAnthropometry(input: SaveAnthropometryInput): Promise<Anthropometry> {
   const { data } = await api.post<{ anthropometry: Anthropometry }>('/anthropometry', input)
   return data.anthropometry

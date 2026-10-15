@@ -58,7 +58,11 @@ export function SendIntakeDialog({ open, patientId, onClose }: SendIntakeDialogP
     sendMutation.mutate(selectedIntake.currentVersionId, {
       onSuccess: (data) => {
         setResult(data)
-        toast.success('Enlace generado. Cópialo y compártelo con el paciente.')
+        toast.success(
+          data.sent
+            ? 'Formulario enviado por correo. También puedes copiar el enlace.'
+            : 'Enlace generado (no se envió por correo). Cópialo y compártelo con el paciente.',
+        )
       },
       onError: (error) => {
         toast.error(getApiErrorMessage(error, 'No se pudo generar el ingresable.'))

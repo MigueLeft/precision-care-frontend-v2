@@ -6,6 +6,7 @@ export {
 } from './hooks/useAnthropometry'
 export { AnthropometryPanel } from './components/AnthropometryPanel'
 export { AnthropometrySection } from './components/AnthropometrySection'
+export { AnthropometryPreloadSection } from './components/AnthropometryPreloadSection'
 export { ANTHROPOMETRY_GROUPS, ANTHROPOMETRY_PARAMS } from './config'
 export type { AnthropometryParam } from './config'
 export {

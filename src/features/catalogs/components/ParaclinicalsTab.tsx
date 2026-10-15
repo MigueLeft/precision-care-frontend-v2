@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Box, Tabs, Tab } from '@mui/material'
 import { ParaclinicalsListTab } from './ParaclinicalsListTab'
 import { ParaclinicalCategoriesTab } from './ParaclinicalCategoriesTab'
+import { LabProfilesTab } from './LabProfilesTab'
 
-const SUB_TABS = ['Paraclínicos', 'Categorías'] as const
+const SUB_TABS = ['Paraclínicos', 'Categorías', 'Perfiles de laboratorio'] as const
 
 export function ParaclinicalsTab() {
   const [subTab, setSubTab] = useState(0)
@@ -22,6 +23,7 @@ export function ParaclinicalsTab() {
 
       {subTab === 0 && <ParaclinicalsListTab />}
       {subTab === 1 && <ParaclinicalCategoriesTab />}
+      {subTab === 2 && <LabProfilesTab />}
     </Box>
   )
 }

@@ -82,10 +82,15 @@ export function useAnthropometryForm(existing: Anthropometry | null | undefined)
     })
   }
 
-  function buildInput(patientId: number, consultationId?: number): SaveAnthropometryInput {
+  function buildInput(
+    patientId: number,
+    consultationId?: number,
+    appointmentId?: number,
+  ): SaveAnthropometryInput {
     const input: SaveAnthropometryInput = {
       patientId,
       consultationId,
+      appointmentId,
       assessmentDate: date,
       notes: notes.trim() || null,
       segments: buildSegments(),

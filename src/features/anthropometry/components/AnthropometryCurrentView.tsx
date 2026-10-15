@@ -1,4 +1,4 @@
-import { Grid, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { formatShortDate } from '@/utils/format-date'
 import { ANTHROPOMETRY_GROUPS } from '../config'
@@ -20,13 +20,13 @@ export function AnthropometryCurrentView({ row, previous }: AnthropometryCurrent
   return (
     <Stack spacing={3}>
       <SectionCard title={`Medición — ${formatShortDate(row.assessmentDate)}`}>
-        <Grid container spacing={2}>
+        <Stack spacing={2}>
           {ANTHROPOMETRY_GROUPS.map((group) => (
-            <Grid key={group.id} size={{ xs: 12, lg: 6 }}>
+            <Box key={group.id}>
               <AnthropometryValuesTable group={group} current={current} previous={prev} />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Stack>
         {row.notes && (
           <Typography sx={{ fontSize: '13px', color: 'text.secondary', mt: 2 }}>
             {row.notes}

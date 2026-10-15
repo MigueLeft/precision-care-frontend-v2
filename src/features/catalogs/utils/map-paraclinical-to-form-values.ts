@@ -7,6 +7,8 @@ export function mapParaclinicalToFormValues(
   return {
     name: paraclinical.name,
     categoryId: paraclinical.categoryId,
+    loincCode: paraclinical.loincCode ?? '',
+    description: paraclinical.description ?? '',
     defaultUnit: paraclinical.defaultUnit ?? '',
     valueType: paraclinical.valueType,
     referenceMin: paraclinical.referenceMin ?? '',

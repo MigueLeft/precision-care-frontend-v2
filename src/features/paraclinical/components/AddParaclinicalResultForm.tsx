@@ -66,7 +66,13 @@ export function AddParaclinicalResultForm({ patientId, onAdded }: AddParaclinica
   }
 
   return (
-    <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: 'flex-start' }}>
+    <Stack
+      direction={{ xs: 'column', md: 'row' }}
+      spacing={1.5}
+      useFlexGap
+      // Separado de la lista de resultados para que no quede pegado.
+      sx={{ flexWrap: 'wrap', alignItems: 'flex-start', mt: 2.5 }}
+    >
       <FormControl size="small" sx={{ minWidth: 150 }}>
         <InputLabel id="paraclinical-category">Categoría</InputLabel>
         <Select<number | ''>

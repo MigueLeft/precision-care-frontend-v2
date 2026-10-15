@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import { ParaclinicalFormFields } from './ParaclinicalFormFields'
+import { ParaclinicalLoincFields } from './ParaclinicalLoincFields'
 import { createParaclinicalFormSchema } from '../schemas/paraclinical-form.schema'
 import type { ParaclinicalFormValues } from '../schemas/paraclinical-form.schema'
 
@@ -44,6 +45,7 @@ export function ParaclinicalFormModal({
       <DialogContent>
         <Box sx={{ mt: 2.5 }}>
           <ParaclinicalFormFields control={control} setValue={setValue} />
+          <ParaclinicalLoincFields control={control} />
         </Box>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>

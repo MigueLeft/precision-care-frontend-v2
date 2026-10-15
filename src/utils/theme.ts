@@ -151,8 +151,27 @@ export const theme = createTheme({
         },
       },
     },
+    // Autocomplete a la misma altura que TextField/Select (44px) en ambos
+    // tamaños: 3px de contenedor + 9px de input + 20px de texto.
+    MuiAutocomplete: {
+      styleOverrides: {
+        inputRoot: {
+          '&.MuiOutlinedInput-root, &.MuiOutlinedInput-root.MuiInputBase-sizeSmall': {
+            paddingTop: 3,
+            paddingBottom: 3,
+            paddingLeft: 9,
+          },
+          '&.MuiOutlinedInput-root .MuiAutocomplete-input, &.MuiOutlinedInput-root.MuiInputBase-sizeSmall .MuiAutocomplete-input':
+            { padding: '9px 4px 9px 5px' },
+        },
+      },
+    },
     MuiInputLabel: {
       styleOverrides: {
+        // Etiqueta centrada en el input de 44px, igual en tamaño normal y small.
+        outlined: {
+          '&:not(.MuiInputLabel-shrink)': { transform: 'translate(14px, 12px) scale(1)' },
+        },
         root: {
           fontFamily: "'Montserrat', sans-serif",
           fontWeight: 600,

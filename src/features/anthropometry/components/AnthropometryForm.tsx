@@ -1,4 +1,4 @@
-import { Box, Grid, Stack, TextField, Typography } from '@mui/material'
+import { Box, Stack, TextField, Typography } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import { ANTHROPOMETRY_GROUPS } from '../config'
 import { useAnthropometryForm } from '../hooks/useAnthropometryForm'
@@ -10,6 +10,7 @@ import { SegmentInputsTable } from './SegmentInputsTable'
 type AnthropometryFormProps = {
   patientId: number
   consultationId?: number
+  appointmentId?: number
   existing?: Anthropometry | null
   previous?: ValueMap
   readOnly?: boolean
@@ -23,6 +24,7 @@ type AnthropometryFormProps = {
 export function AnthropometryForm({
   patientId,
   consultationId,
+  appointmentId,
   existing,
   previous,
   readOnly = false,
@@ -47,9 +49,9 @@ export function AnthropometryForm({
         />
       )}
 
-      <Grid container spacing={3}>
+      <Stack spacing={3}>
         {ANTHROPOMETRY_GROUPS.map((group) => (
-          <Grid key={group.id} size={{ xs: 12, lg: 6 }}>
+          <Box key={group.id}>
             <AnthropometryGroupInputs
               group={group}
               raw={form.raw}
@@ -58,9 +60,9 @@ export function AnthropometryForm({
               readOnly={readOnly}
               onChange={form.setField}
             />
-          </Grid>
+          </Box>
         ))}
-      </Grid>
+      </Stack>
 
       <Box>
         <SegmentInputsTable raw={form.raw} readOnly={readOnly} onChange={form.setField} />
@@ -92,7 +94,7 @@ export function AnthropometryForm({
           <AppButton
             variant="contained"
             loading={isSaving}
-            onClick={() => onSave(form.buildInput(patientId, consultationId))}
+            onClick={() => onSave(form.buildInput(patientId, consultationId, appointmentId))}
           >
             Guardar antropometría
           </AppButton>

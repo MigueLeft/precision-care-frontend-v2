@@ -24,6 +24,7 @@ export { ConsultationsPanel } from './components/ConsultationsPanel'
 export { PatientSymptomsPanel } from './components/PatientSymptomsPanel'
 export { EvolutionPanel } from './components/evolution/EvolutionPanel'
 export { ConsultationEncounterPage } from './components/encounter/ConsultationEncounterPage'
+export { ParaclinicalSection } from './components/encounter/ParaclinicalSection'
 export {
   CONSULTATION_STATUS_LABELS,
   DIAGNOSIS_TYPE_LABELS,

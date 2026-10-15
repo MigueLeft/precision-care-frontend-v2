@@ -3,17 +3,16 @@ import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined'
 import AddIcon from '@mui/icons-material/Add'
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
 import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { formatShortDate } from '@/utils/format-date'
 import { useIntakeResponsesByPatient } from '../hooks/useIntakeResponsesByPatient'
-import { copyIntakeLink } from '../utils/copy-intake-link'
 import { isInformativeResult } from '../utils/format-result'
 import { IntakeResponseDetailDrawer } from './IntakeResponseDetailDrawer'
 import { IntakeResultLine } from './IntakeResultLine'
 import { SendIntakeDialog } from './SendIntakeDialog'
+import { PendingIntakeActions } from './PendingIntakeActions'
 
 interface IntakeResponsesPanelProps {
   patientId: number
@@ -91,15 +90,7 @@ export function IntakeResponsesPanel({
                 Ver respuestas
               </AppButton>
             ) : (
-              <AppButton
-                size="small"
-                variant="outlined"
-                startIcon={<ContentCopyOutlinedIcon sx={{ fontSize: 16 }} />}
-                disabled={!response.link}
-                onClick={() => response.link && copyIntakeLink(response.link)}
-              >
-                Copiar enlace
-              </AppButton>
+              <PendingIntakeActions responseId={response.id} link={response.link} />
             )}
           </Stack>
         </Paper>
@@ -107,7 +98,7 @@ export function IntakeResponsesPanel({
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
         Un ingresable pendiente no se puede volver a enviar hasta que el paciente lo complete;
-        mientras tanto puedes copiar su enlace y compartirlo de nuevo.
+        mientras tanto puedes copiar su enlace o reenviarlo por correo.
       </Typography>
       </Stack>
 

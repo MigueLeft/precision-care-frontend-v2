@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { alphanumericTextSchema, optionalTextSchema } from '@/utils/text-validation'
+import { optionalTextSchema } from '@/utils/text-validation'
 
 export const paraclinicalValueTypeOptions = ['numeric', 'text', 'boolean'] as const
 
@@ -7,8 +7,20 @@ const NUMERIC_VALUE_REGEX = /^-?\d+(\.\d+)?$/
 
 const referenceValueSchema = optionalTextSchema(30)
 
+// Igual que el DTO del backend: admite % y + (ej. "Hb glicosilada (%)").
+const PARACLINICAL_NAME_REGEX = /^[\p{L}\p{N}\s.,()/%+-]+$/u
+// LOINC: de 1 a 7 dígitos, guion y dígito verificador (ej. 2093-3).
+const LOINC_REGEX = /^(\d{1,7}-\d)?$/
+
 const paraclinicalFormBaseSchema = z.object({
-  name: alphanumericTextSchema('El nombre del paraclínico', 150),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'El nombre del paraclínico es requerido.')
+    .max(150, 'El nombre no debe superar los 150 caracteres.')
+    .regex(PARACLINICAL_NAME_REGEX, 'El nombre contiene caracteres no permitidos.'),
+  loincCode: z.string().trim().regex(LOINC_REGEX, 'El código LOINC debe tener el formato 2093-3.'),
+  description: optionalTextSchema(300),
   categoryId: z
     .number({ error: 'Selecciona una categoría.' })
     .int()
@@ -87,6 +99,8 @@ export function createParaclinicalFormSchema(existingNames: string[] = []) {
 
 export const paraclinicalFormDefaultValues: ParaclinicalFormValues = {
   name: '',
+  loincCode: '',
+  description: '',
   categoryId: 0,
   defaultUnit: '',
   valueType: 'numeric',

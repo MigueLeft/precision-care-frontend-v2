@@ -27,6 +27,13 @@ export function ParaclinicalRow({
         <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
           {paraclinical.name}
         </Typography>
+        {(paraclinical.loincCode || paraclinical.description) && (
+          <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+            {[paraclinical.loincCode && `LOINC ${paraclinical.loincCode}`, paraclinical.description]
+              .filter(Boolean)
+              .join(' · ')}
+          </Typography>
+        )}
       </TableCell>
       <TableCell>
         <Chip

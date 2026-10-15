@@ -16,7 +16,8 @@ export function filterParaclinicals(
       return false
     if (filters.q) {
       const needle = filters.q.trim().toLowerCase()
-      if (!paraclinical.name.toLowerCase().includes(needle)) return false
+      const haystack = `${paraclinical.name} ${paraclinical.loincCode ?? ''}`.toLowerCase()
+      if (!haystack.includes(needle)) return false
     }
     return true
   })

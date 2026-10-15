@@ -106,6 +106,8 @@ export interface ParaclinicalCatalog {
   id: number
   categoryId: number
   name: string
+  loincCode: string | null
+  description: string | null
   defaultUnit: string | null
   referenceMin: string | null
   referenceMax: string | null
@@ -116,6 +118,9 @@ export interface ParaclinicalCatalog {
 export interface CreateParaclinicalPayload {
   name: string
   categoryId: number
+  // Vacío = sin código / sin descripción.
+  loincCode?: string
+  description?: string
   defaultUnit?: string
   valueType: ParaclinicalValueType
   referenceMin?: number
@@ -196,3 +201,28 @@ export interface HospitalizationCatalog {
   name: string
   active: boolean
 }
+
+// Estudio dentro de un perfil de laboratorio (en el orden del perfil).
+export interface LabProfileItem {
+  id: number
+  name: string
+  loincCode: string | null
+  defaultUnit: string | null
+  active: boolean
+}
+
+// Perfil de laboratorio: grupo de estudios que se ordenan juntos.
+export interface LabProfile {
+  id: number
+  name: string
+  description: string | null
+  active: boolean
+  items: LabProfileItem[]
+}
+
+export interface CreateLabProfilePayload {
+  name: string
+  description?: string
+  paraclinicalIds: number[]
+}
+export type UpdateLabProfilePayload = Partial<CreateLabProfilePayload>

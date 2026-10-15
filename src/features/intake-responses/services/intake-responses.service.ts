@@ -22,10 +22,12 @@ export async function fetchIntakeResponseDetail(
 export interface SendIntakeResult {
   response: IntakeResponse
   link: string
+  // true si además se envió por correo (SMTP de Brevo).
+  sent: boolean
 }
 
 // Crea la respuesta y devuelve el link público para llenarla sin iniciar
-// sesión. No se envía por correo — se copia/pega manualmente (WhatsApp, SMS, etc.).
+// sesión; si el paciente tiene correo, el backend también se lo envía.
 export async function sendIntakeToPatient(
   patientId: number,
   intakeVersionId: number,
@@ -34,5 +36,15 @@ export async function sendIntakeToPatient(
     patientId,
     intakeVersionId,
   })
+  return data
+}
+
+// Reenvía por correo el enlace de un formulario pendiente.
+export async function sendIntakeEmail(
+  responseId: number,
+): Promise<{ sent: boolean; email: string }> {
+  const { data } = await api.post<{ sent: boolean; email: string }>(
+    `/intake-responses/${responseId}/send-email`,
+  )
   return data
 }
