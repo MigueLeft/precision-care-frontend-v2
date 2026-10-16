@@ -23,6 +23,8 @@ export function mapFormToCreatePayload(
     primarySpecialtyId: values.primarySpecialtyId,
     otherSpecialtyIds: values.otherSpecialtyIds,
     practiceAddress: values.practiceAddress || undefined,
+    professionalTitles: values.professionalTitles?.trim() || undefined,
+    registrationNumbers: values.registrationNumbers?.trim() || undefined,
     user: values.createUser
       ? {
           roleId: values.roleId as number,
@@ -48,6 +50,8 @@ export function mapFormToUpdatePayload(
     primarySpecialtyId: values.primarySpecialtyId,
     otherSpecialtyIds: values.otherSpecialtyIds,
     practiceAddress: values.practiceAddress || undefined,
+    professionalTitles: values.professionalTitles?.trim() || undefined,
+    registrationNumbers: values.registrationNumbers?.trim() || undefined,
   }
 }
 
@@ -67,6 +71,8 @@ export function mapSpecialistToFormValues(
     primarySpecialtyId: specialist.primarySpecialtyId ?? 0,
     otherSpecialtyIds: specialist.otherSpecialties.map((s) => s.id),
     practiceAddress: specialist.practiceAddress ?? '',
+    professionalTitles: specialist.professionalTitles ?? '',
+    registrationNumbers: specialist.registrationNumbers ?? '',
     createUser: false,
   }
 }

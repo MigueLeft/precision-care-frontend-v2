@@ -10,8 +10,15 @@ export interface PrescriptionLineState {
   instructions: string
 }
 
-const REQUIRED = ['dose', 'frequency', 'duration'] as const
-
+// La indicación es lo que se imprime en la hoja del paciente.
 export function isLineComplete(line: PrescriptionLineState) {
-  return REQUIRED.every((key) => line[key].trim() !== '')
+  return line.instructions.trim() !== ''
+}
+
+// Indicación sugerida cuando el medicamento no tiene una predefinida.
+export function composeIndication(line: Pick<PrescriptionLineState, 'dose' | 'frequency' | 'duration'>) {
+  return [line.dose, line.frequency, line.duration ? `por ${line.duration}` : '']
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(', ')
 }

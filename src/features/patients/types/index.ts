@@ -5,6 +5,8 @@ export interface Patient {
   middleName: string | null
   lastName: string
   secondLastName: string | null
+  // Cédula u otro documento de identidad.
+  identityDocument: string | null
   birthDate: string
   email: string | null
   nationalityCountryId: number | null

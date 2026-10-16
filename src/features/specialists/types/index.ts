@@ -14,6 +14,8 @@ export interface Specialist {
   phone: string | null
   active: boolean
   practiceAddress: string | null
+  professionalTitles: string | null
+  registrationNumbers: string | null
   createdAt: string
   nationalityCountryId: number | null
   nationalityCountryName: string | null
@@ -57,6 +59,8 @@ export interface CreateSpecialistPayload {
   primarySpecialtyId: number
   otherSpecialtyIds?: number[]
   practiceAddress?: string
+  professionalTitles?: string
+  registrationNumbers?: string
   active?: boolean
   user?: SpecialistUserInput
 }

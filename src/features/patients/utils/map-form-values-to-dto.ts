@@ -8,6 +8,7 @@ export function mapFormValuesToDto(values: PatientFormValues): CreatePatientDto 
     birthDate: values.birthDate,
     middleName: values.middleName || undefined,
     secondLastName: values.secondLastName || undefined,
+    identityDocument: values.identityDocument?.trim() || undefined,
     email: values.email || undefined,
     nationalityCountryId: values.nationalityCountryId,
     residenceCountryId: values.residenceCountryId,

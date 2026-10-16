@@ -32,7 +32,7 @@ export const sidebarNavConfig: SidebarNavSection[] = [
       { label: 'Citas', icon: EventOutlinedIcon, to: '/citas' },
       { label: 'Calendario', icon: CalendarMonthOutlinedIcon },
       { label: 'Ingresables', icon: AssignmentOutlinedIcon, to: '/ingresables' },
-      { label: 'Entregables', icon: DescriptionOutlinedIcon },
+      { label: 'Entregables', icon: DescriptionOutlinedIcon, to: '/entregables' },
     ],
   },
   {

@@ -23,11 +23,40 @@ export interface Deliverable {
 
 // ─── Entregables de consulta (orden de laboratorio y receta) ───────────────
 
+// Textos editables de la plantilla (página Entregables). Las fotos anteriores
+// al 2026-10-16 no los traen: se usan valores por defecto.
+export interface PrescriptionTemplateSettings {
+  recipeTitle?: string
+  indicationsTitle?: string
+}
+
+export interface LabOrderTemplateSettings {
+  headerTitle?: string
+  headerSubtitle?: string
+  headerLines?: string
+  documentTitle?: string
+}
+
 export interface DeliverableHeader {
-  patient: { name: string; mrn: string | null; birthDate: string | null }
-  specialist: { name: string; specialty: string | null }
+  patient: {
+    name: string
+    mrn: string | null
+    birthDate: string | null
+    identityDocument?: string | null
+    age?: number | null
+  }
+  // Membrete del médico (titles: una línea por título).
+  specialist: {
+    name: string
+    specialty: string | null
+    titles?: string | null
+    registrations?: string | null
+    address?: string | null
+    phone?: string | null
+  }
   // Fecha de la consulta (ISO).
   date: string
+  template?: PrescriptionTemplateSettings & LabOrderTemplateSettings
 }
 
 export interface LabOrderLine {
@@ -38,6 +67,8 @@ export interface LabOrderLine {
 
 export interface PrescriptionLine {
   name: string
+  // Presentación y concentración ("Tableta 25 mg").
+  presentation?: string
   dose: string
   frequency: string
   duration: string
@@ -70,6 +101,7 @@ export interface PrescriptionDraftItem {
   brandName: string
   genericName: string
   concentration: string | null
+  presentationName: string | null
 }
 
 export interface ConsultationDrafts {
@@ -86,12 +118,23 @@ export interface SaveLabOrderPayload {
 export interface SavePrescriptionPayload {
   items: {
     medicationId: number
-    dose: string
-    frequency: string
-    duration: string
+    dose?: string
+    frequency?: string
+    duration?: string
     route?: string
-    instructions?: string
+    // Indicación que se imprime en la hoja del paciente.
+    instructions: string
   }[]
+}
+
+// Plantilla de entregable; base_structure guarda los textos editables.
+export interface DeliverableTemplate {
+  id: number
+  type: DeliverableType
+  name: string
+  description: string | null
+  baseStructure: Record<string, unknown>
+  active: boolean
 }
 
 export type ConsultationDeliverableType = 'prescription' | 'lab_order'

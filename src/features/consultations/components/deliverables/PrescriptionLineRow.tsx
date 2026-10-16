@@ -11,7 +11,7 @@ type PrescriptionLineRowProps = {
 
 // Un medicamento del tratamiento: se marca para incluirlo en la receta.
 export function PrescriptionLineRow({ line, readOnly, showErrors, onChange }: PrescriptionLineRowProps) {
-  const field = (key: keyof PrescriptionLineState, label: string, required = false) => (
+  const field = (key: keyof PrescriptionLineState, label: string, required = false, multiline = false) => (
     <TextField
       size="small"
       label={label}
@@ -19,6 +19,8 @@ export function PrescriptionLineRow({ line, readOnly, showErrors, onChange }: Pr
       onChange={(event) => onChange({ [key]: event.target.value })}
       disabled={readOnly || !line.selected}
       error={showErrors && line.selected && required && (line[key] as string).trim() === ''}
+      multiline={multiline}
+      minRows={multiline ? 2 : undefined}
       fullWidth
     />
   )
@@ -35,11 +37,12 @@ export function PrescriptionLineRow({ line, readOnly, showErrors, onChange }: Pr
       </Stack>
       {line.selected && (
         <Grid container spacing={1.5} sx={{ pl: 5 }}>
-          <Grid size={{ xs: 12, sm: 4 }}>{field('dose', 'Dosis', true)}</Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>{field('frequency', 'Frecuencia', true)}</Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>{field('duration', 'Duración', true)}</Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>{field('route', 'Vía')}</Grid>
-          <Grid size={{ xs: 12, sm: 8 }}>{field('instructions', 'Indicaciones')}</Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>{field('dose', 'Dosis')}</Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>{field('frequency', 'Frecuencia')}</Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>{field('duration', 'Duración')}</Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>{field('route', 'Vía')}</Grid>
+          {/* Se imprime en la hoja de indicaciones; viene precargada del catálogo. */}
+          <Grid size={{ xs: 12 }}>{field('instructions', 'Indicación para el paciente', true, true)}</Grid>
         </Grid>
       )}
     </Stack>

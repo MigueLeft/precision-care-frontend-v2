@@ -18,6 +18,7 @@ import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-
 import { Route as AppPacientesRouteImport } from './routes/_app/pacientes'
 import { Route as AppIngresablesRouteImport } from './routes/_app/ingresables'
 import { Route as AppEspecialistasRouteImport } from './routes/_app/especialistas'
+import { Route as AppEntregablesRouteImport } from './routes/_app/entregables'
 import { Route as AppCitasRouteImport } from './routes/_app/citas'
 import { Route as AppCatalogosRouteImport } from './routes/_app/catalogos'
 import { Route as AppIngresablesIdRouteImport } from './routes/_app/ingresables_.$id'
@@ -82,6 +83,11 @@ const AppIngresablesRoute = AppIngresablesRouteImport.update({
 const AppEspecialistasRoute = AppEspecialistasRouteImport.update({
   id: '/especialistas',
   path: '/especialistas',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppEntregablesRoute = AppEntregablesRouteImport.update({
+  id: '/entregables',
+  path: '/entregables',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppCitasRoute = AppCitasRouteImport.update({
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
   '/citas': typeof AppCitasRoute
+  '/entregables': typeof AppEntregablesRoute
   '/especialistas': typeof AppEspecialistasRoute
   '/ingresables': typeof AppIngresablesRoute
   '/pacientes': typeof AppPacientesRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
   '/citas': typeof AppCitasRoute
+  '/entregables': typeof AppEntregablesRoute
   '/especialistas': typeof AppEspecialistasRoute
   '/ingresables': typeof AppIngresablesRoute
   '/pacientes': typeof AppPacientesRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_app/catalogos': typeof AppCatalogosRoute
   '/_app/citas': typeof AppCitasRoute
+  '/_app/entregables': typeof AppEntregablesRoute
   '/_app/especialistas': typeof AppEspecialistasRoute
   '/_app/ingresables': typeof AppIngresablesRoute
   '/_app/pacientes': typeof AppPacientesRoute
@@ -314,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalogos'
     | '/citas'
+    | '/entregables'
     | '/especialistas'
     | '/ingresables'
     | '/pacientes'
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalogos'
     | '/citas'
+    | '/entregables'
     | '/especialistas'
     | '/ingresables'
     | '/pacientes'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_app/catalogos'
     | '/_app/citas'
+    | '/_app/entregables'
     | '/_app/especialistas'
     | '/_app/ingresables'
     | '/_app/pacientes'
@@ -474,6 +486,13 @@ declare module '@tanstack/react-router' {
       path: '/especialistas'
       fullPath: '/especialistas'
       preLoaderRoute: typeof AppEspecialistasRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/entregables': {
+      id: '/_app/entregables'
+      path: '/entregables'
+      fullPath: '/entregables'
+      preLoaderRoute: typeof AppEntregablesRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/citas': {
@@ -683,6 +702,7 @@ const AppPacientesPatientIdRouteRouteWithChildren =
 interface AppRouteRouteChildren {
   AppCatalogosRoute: typeof AppCatalogosRoute
   AppCitasRoute: typeof AppCitasRoute
+  AppEntregablesRoute: typeof AppEntregablesRoute
   AppEspecialistasRoute: typeof AppEspecialistasRoute
   AppIngresablesRoute: typeof AppIngresablesRoute
   AppPacientesRoute: typeof AppPacientesRoute
@@ -700,6 +720,7 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppCatalogosRoute: AppCatalogosRoute,
   AppCitasRoute: AppCitasRoute,
+  AppEntregablesRoute: AppEntregablesRoute,
   AppEspecialistasRoute: AppEspecialistasRoute,
   AppIngresablesRoute: AppIngresablesRoute,
   AppPacientesRoute: AppPacientesRoute,

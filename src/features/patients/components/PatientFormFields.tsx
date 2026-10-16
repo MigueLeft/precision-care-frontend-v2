@@ -4,6 +4,7 @@ import { Grid, TextField } from '@mui/material'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import type { PatientFormValues } from '../schemas/patient-form.schema'
 import type { Country } from '@/features/catalogs'
+import { PatientIdentityField } from './PatientIdentityField'
 
 interface PatientFormFieldsProps {
   control: Control<PatientFormValues>
@@ -74,6 +75,9 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
             />
           )}
         />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <PatientIdentityField control={control} />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller

@@ -36,6 +36,9 @@ export function getSpecialistFormSchema() {
         .positive('La especialidad es requerida.'),
       otherSpecialtyIds: z.array(z.number().int().positive()),
       practiceAddress: z.string().trim().max(255).optional().or(z.literal('')),
+      // Membrete de los entregables.
+      professionalTitles: z.string().trim().max(300, 'Máximo 300 caracteres.').optional().or(z.literal('')),
+      registrationNumbers: z.string().trim().max(150, 'Máximo 150 caracteres.').optional().or(z.literal('')),
       createUser: z.boolean(),
       roleId: optionalId,
       initialStatus: z.enum(['active', 'inactive']),
@@ -68,6 +71,8 @@ export const specialistFormDefaultValues: SpecialistFormValues = {
   primarySpecialtyId: 0,
   otherSpecialtyIds: [],
   practiceAddress: '',
+  professionalTitles: '',
+  registrationNumbers: '',
   createUser: true,
   roleId: undefined,
   initialStatus: 'active',

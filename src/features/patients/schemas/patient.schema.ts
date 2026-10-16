@@ -5,6 +5,7 @@ export const createPatientSchema = z.object({
   middleName: z.string().optional(),
   lastName: z.string().min(1, 'El primer apellido es requerido.'),
   secondLastName: z.string().optional(),
+  identityDocument: z.string().max(30).optional(),
   birthDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha de nacimiento debe tener formato YYYY-MM-DD.'),

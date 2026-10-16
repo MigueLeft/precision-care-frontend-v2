@@ -7,6 +7,7 @@ export function mapPatientToFormValues(patient: Patient): PatientFormValues {
     middleName: patient.middleName ?? '',
     lastName: patient.lastName,
     secondLastName: patient.secondLastName ?? '',
+    identityDocument: patient.identityDocument ?? '',
     birthDate: patient.birthDate,
     email: patient.email ?? '',
     nationalityCountryId: patient.nationalityCountryId ?? undefined,

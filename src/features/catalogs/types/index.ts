@@ -88,6 +88,8 @@ export interface Medication {
   presentationId: number
   concentration: string | null
   categoryId: number | null
+  // Indicación predefinida del récipe (editable al recetar).
+  defaultIndication: string | null
   active: boolean
 }
 
@@ -97,6 +99,7 @@ export interface CreateMedicationPayload {
   presentationId: number
   concentration?: string
   categoryId?: number
+  defaultIndication?: string | null
 }
 export type UpdateMedicationPayload = Partial<CreateMedicationPayload>
 

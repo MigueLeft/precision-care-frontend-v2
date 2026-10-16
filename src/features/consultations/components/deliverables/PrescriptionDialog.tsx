@@ -9,11 +9,12 @@ import {
   type PrescriptionData,
   type PrescriptionDraftItem,
 } from '@/features/deliverables'
+import { useMedications, type Medication } from '@/features/catalogs'
 import { DeliverableDialogActions } from './DeliverableDialogActions'
 import { useConsultationMedications } from '../../hooks/useConsultationMedications'
 import type { ConsultationMedication } from '../../types'
 import { PrescriptionLineRow } from './PrescriptionLineRow'
-import { isLineComplete, type PrescriptionLineState } from './prescription-lines'
+import { composeIndication, isLineComplete, type PrescriptionLineState } from './prescription-lines'
 
 type PrescriptionDialogProps = {
   consultationId: number
@@ -25,21 +26,30 @@ type PrescriptionDialogProps = {
 const medName = (m: { brandName: string | null; genericName: string | null; concentration: string | null }) =>
   [m.brandName ?? m.genericName ?? 'Medicamento', m.concentration].filter(Boolean).join(' ')
 
-// Líneas iniciales: el tratamiento vigente; lo que ya está en la receta va marcado.
-function initialLines(meds: ConsultationMedication[], draft: PrescriptionDraftItem[]): PrescriptionLineState[] {
+// Líneas iniciales: el tratamiento vigente; lo que ya está en la receta va
+// marcado. La indicación se precarga del catálogo (o de dosis y frecuencia).
+function initialLines(
+  meds: ConsultationMedication[],
+  draft: PrescriptionDraftItem[],
+  catalog: Medication[],
+): PrescriptionLineState[] {
   return meds
     .filter((med) => med.status === 'current')
     .map((med) => {
       const saved = draft.find((item) => item.medicationId === med.medicationId)
+      const dose = saved?.dose ?? med.dose ?? ''
+      const frequency = saved?.frequency ?? med.frequency ?? ''
+      const duration = saved?.duration ?? ''
+      const predefined = catalog.find((item) => item.id === med.medicationId)?.defaultIndication
       return {
         medicationId: med.medicationId,
         name: medName(med),
         selected: !!saved,
-        dose: saved?.dose ?? med.dose ?? '',
-        frequency: saved?.frequency ?? med.frequency ?? '',
-        duration: saved?.duration ?? '',
+        dose,
+        frequency,
+        duration,
         route: saved?.route ?? '',
-        instructions: saved?.instructions ?? '',
+        instructions: saved?.instructions || predefined || composeIndication({ dose, frequency, duration }),
       }
     })
 }
@@ -61,18 +71,18 @@ function PrescriptionContent({ consultationId, readOnly, onClose, initial }: Con
   async function handleSave() {
     if (!selected.every(isLineComplete)) {
       setShowErrors(true)
-      toast.error('Completa dosis, frecuencia y duración de cada medicamento marcado.')
+      toast.error('Escribe la indicación de cada medicamento marcado.')
       return
     }
     try {
       await save.mutateAsync({
         items: selected.map((line) => ({
           medicationId: line.medicationId,
-          dose: line.dose.trim(),
-          frequency: line.frequency.trim(),
-          duration: line.duration.trim(),
+          dose: line.dose.trim() || undefined,
+          frequency: line.frequency.trim() || undefined,
+          duration: line.duration.trim() || undefined,
           route: line.route.trim() || undefined,
-          instructions: line.instructions.trim() || undefined,
+          instructions: line.instructions.trim(),
         })),
       })
       setSaved(lines)
@@ -132,12 +142,16 @@ function PrescriptionContent({ consultationId, readOnly, onClose, initial }: Con
 export function PrescriptionDialog({ open, ...props }: PrescriptionDialogProps) {
   const { data: drafts } = useConsultationDrafts(props.consultationId)
   const { data: medications } = useConsultationMedications(props.consultationId)
-  const ready = !!drafts && !!medications
+  const { data: catalog } = useMedications()
+  const ready = !!drafts && !!medications && !!catalog
   return (
     // Sin cierre por clic afuera: "Cerrar" guarda los cambios en espera.
     <Dialog open={open && ready} maxWidth="md" fullWidth>
       {ready && (
-        <PrescriptionContent {...props} initial={initialLines(medications, drafts.prescription.items)} />
+        <PrescriptionContent
+          {...props}
+          initial={initialLines(medications, drafts.prescription.items, catalog)}
+        />
       )}
     </Dialog>
   )

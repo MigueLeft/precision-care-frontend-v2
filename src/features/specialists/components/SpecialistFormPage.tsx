@@ -23,6 +23,7 @@ import {
   useUpdateSpecialist,
 } from '../hooks/useSpecialistMutations'
 import { SpecialistDataFields } from './SpecialistDataFields'
+import { SpecialistLetterheadFields } from './SpecialistLetterheadFields'
 import { SpecialistAccessFields } from './SpecialistAccessFields'
 import { TemporaryPasswordDialog } from './TemporaryPasswordDialog'
 
@@ -120,6 +121,10 @@ export function SpecialistFormPage({ mode, specialistId }: Props) {
       <Stack spacing={3}>
         <SectionCard title="Datos del especialista">
           <SpecialistDataFields control={control} setValue={setValue} />
+        </SectionCard>
+
+        <SectionCard title="Membrete del récipe">
+          <SpecialistLetterheadFields control={control} />
         </SectionCard>
 
         {showAccessSection && (

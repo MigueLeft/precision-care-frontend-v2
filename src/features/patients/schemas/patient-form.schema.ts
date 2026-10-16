@@ -13,6 +13,7 @@ export const patientFormSchema = z.object({
   middleName: optionalLettersOnlySchema('El segundo nombre', 60),
   lastName: lettersOnlySchema('El primer apellido', 60),
   secondLastName: optionalLettersOnlySchema('El segundo apellido', 60),
+  identityDocument: z.string().trim().max(30, 'Máximo 30 caracteres.').optional().or(z.literal('')),
   birthDate: z
     .string()
     .min(1, 'La fecha de nacimiento es requerida.')
@@ -30,6 +31,7 @@ export const patientFormDefaultValues: PatientFormValues = {
   middleName: '',
   lastName: '',
   secondLastName: '',
+  identityDocument: '',
   birthDate: '',
   email: '',
   nationalityCountryId: undefined,
