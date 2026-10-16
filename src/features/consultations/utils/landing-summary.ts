@@ -7,6 +7,7 @@ const LABELS: [keyof Omit<IntakeLandingResult, 'intakeResponseId'>, string][] = 
   ['surgeries', 'cirugías'],
   ['hospitalizations', 'hospitalizaciones'],
   ['medications', 'medicamentos'],
+  ['allergies', 'alergias'],
 ]
 
 export function totalLanded(result: IntakeLandingResult): number {

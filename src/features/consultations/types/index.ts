@@ -312,4 +312,5 @@ export interface IntakeLandingResult {
   surgeries: IntakeLandingCount
   hospitalizations: IntakeLandingCount
   medications: IntakeLandingCount
+  allergies: IntakeLandingCount
 }
