@@ -11,16 +11,18 @@ interface PendingReplacement {
 
 // Alta de un resultado cuidando que un estudio no se registre dos veces en la
 // misma fecha: si ya existe, queda pendiente hasta que se confirme reemplazarlo.
+// Con `consultationId` el resultado queda como borrador de esa consulta.
 export function useAddParaclinicalResult(
   patientId: number,
   onAdded?: (input: CreateParaclinicalResultInput) => void,
+  consultationId?: number,
 ) {
-  const { data: results = [] } = useParaclinicalResultsByPatient(patientId)
+  const { data: results = [] } = useParaclinicalResultsByPatient(patientId, consultationId)
   const createMutation = useCreateParaclinicalResult(patientId)
   const [pending, setPending] = useState<PendingReplacement | null>(null)
 
   function create(input: CreateParaclinicalResultInput) {
-    createMutation.mutate(input, {
+    createMutation.mutate({ ...input, consultationId }, {
       onSuccess: () => {
         setPending(null)
         onAdded?.(input)

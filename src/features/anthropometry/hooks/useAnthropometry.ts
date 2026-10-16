@@ -11,10 +11,13 @@ import { anthropometryKeys } from './anthropometry.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import type { SaveAnthropometryInput } from '../types'
 
-export function useAnthropometriesByPatient(patientId: number | undefined) {
+export function useAnthropometriesByPatient(
+  patientId: number | undefined,
+  consultationId?: number,
+) {
   return useQuery({
-    queryKey: anthropometryKeys.byPatient(patientId ?? 0),
-    queryFn: () => fetchAnthropometriesByPatient(patientId as number),
+    queryKey: anthropometryKeys.byPatient(patientId ?? 0, consultationId),
+    queryFn: () => fetchAnthropometriesByPatient(patientId as number, consultationId),
     enabled: typeof patientId === 'number',
   })
 }

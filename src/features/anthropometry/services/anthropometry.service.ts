@@ -1,9 +1,15 @@
 import { api } from '@/utils/api'
+import { draftParams } from '@/utils/draft-params'
 import type { Anthropometry, SaveAnthropometryInput } from '../types'
 
-export async function fetchAnthropometriesByPatient(patientId: number): Promise<Anthropometry[]> {
+// Con consultationId incluye el borrador de esa consulta en curso.
+export async function fetchAnthropometriesByPatient(
+  patientId: number,
+  consultationId?: number,
+): Promise<Anthropometry[]> {
   const { data } = await api.get<{ anthropometries: Anthropometry[] }>(
     `/anthropometry/patient/${patientId}`,
+    draftParams(consultationId),
   )
   return data.anthropometries
 }

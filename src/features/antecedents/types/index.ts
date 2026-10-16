@@ -53,6 +53,8 @@ export interface Antecedent {
 
 export interface CreateAntecedentPayload {
   patientId: number
+  // Consulta en curso: el cambio queda como borrador hasta finalizarla.
+  consultationId?: number
   type: AntecedentType
   name: string
   cie10Code?: string

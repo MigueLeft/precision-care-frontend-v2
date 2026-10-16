@@ -28,7 +28,7 @@ export function AnthropometrySection({
   readOnly,
 }: AnthropometrySectionProps) {
   const [historyOpen, setHistoryOpen] = useState(false)
-  const { data: all = [] } = useAnthropometriesByPatient(patientId)
+  const { data: all = [] } = useAnthropometriesByPatient(patientId, consultationId)
   const { data: existing, isLoading } = useAnthropometryByConsultation(consultationId)
   const save = useSaveAnthropometry(existing?.id)
 

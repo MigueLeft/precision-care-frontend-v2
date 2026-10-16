@@ -53,6 +53,8 @@ export interface CreateParaclinicalResultValueInput {
 
 export interface CreateParaclinicalResultInput {
   patientId: number
+  // Consulta en curso: el resultado queda como borrador hasta finalizarla.
+  consultationId?: number
   resultDate: string
   laboratory?: string
   // Un estudio solo puede tener un resultado por día: con true se reemplaza el

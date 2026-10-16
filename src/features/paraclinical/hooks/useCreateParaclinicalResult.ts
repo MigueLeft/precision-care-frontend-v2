@@ -12,7 +12,7 @@ export function useCreateParaclinicalResult(patientId: number) {
       createParaclinicalResult(input),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: paraclinicalKeys.resultsByPatient(patientId),
+        queryKey: paraclinicalKeys.resultsOfPatient(patientId),
       })
       toast.success('Resultado registrado')
     },

@@ -70,11 +70,16 @@ export function useUpdateConsultation(id: number) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (patch: UpdateConsultationPatch) => updateConsultation(id, patch),
-    onSuccess: (consultation) => {
+    onSuccess: (consultation, patch) => {
       queryClient.setQueryData(consultationsKeys.detail(id), consultation)
+      if (patch.status === 'completed') {
+        // Al finalizar, el borrador de la consulta pasa al expediente (y la cita
+        // ligada termina): se refresca todo lo del paciente.
+        queryClient.invalidateQueries()
+        toast.success('Consulta finalizada · la información pasó al expediente')
+        return
+      }
       queryClient.invalidateQueries({ queryKey: consultationsKeys.all })
-      // Finalizar la consulta también cambia el estado de la cita ligada.
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al guardar la consulta'))

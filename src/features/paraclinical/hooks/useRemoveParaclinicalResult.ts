@@ -10,7 +10,7 @@ export function useRemoveParaclinicalResult(patientId: number) {
     mutationFn: (id: number) => removeParaclinicalResult(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: paraclinicalKeys.resultsByPatient(patientId),
+        queryKey: paraclinicalKeys.resultsOfPatient(patientId),
       })
       toast.success('Resultado eliminado')
     },

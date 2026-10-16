@@ -35,6 +35,18 @@ export function formatMonthYear(iso: string | null | undefined): string {
   }).format(new Date(iso))
 }
 
+// Día calendario local AAAA-MM-DD de una fecha (toISOString daría el día UTC:
+// en la noche de México ya sería "mañana").
+function localIsoDay(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+}
+
 export function todayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10)
+  return localIsoDay(new Date())
+}
+
+// Día local de un timestamp ISO ("2026-10-16T02:00:00Z" → "2026-10-15" en México).
+export function isoToLocalDay(iso: string): string {
+  return DATE_ONLY.test(iso.trim()) ? iso.trim() : localIsoDay(new Date(iso))
 }

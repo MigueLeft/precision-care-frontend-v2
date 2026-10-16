@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { todayIsoDate } from '@/utils/format-date'
+import { isoToLocalDay, todayIsoDate } from '@/utils/format-date'
 import { ANTHROPOMETRY_PARAMS } from '../config'
 import { SEGMENTS } from '../segment-config'
 import { computeAnthropometry, getSegment, type SegmentLean, type ValueMap } from '../utils/anthropometry-calculations'
@@ -55,7 +55,7 @@ function initialValues(existing: Anthropometry | null | undefined): Raw {
 export function useAnthropometryForm(existing: Anthropometry | null | undefined) {
   const [raw, setRaw] = useState<Raw>(() => initialValues(existing))
   const [date, setDate] = useState(
-    existing?.assessmentDate ? existing.assessmentDate.slice(0, 10) : todayIsoDate(),
+    existing?.assessmentDate ? isoToLocalDay(existing.assessmentDate) : todayIsoDate(),
   )
   const [notes, setNotes] = useState(existing?.notes ?? '')
 

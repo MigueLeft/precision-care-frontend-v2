@@ -88,7 +88,7 @@ export function EncounterHeader({ consultation, readOnly }: EncounterHeaderProps
       <ConfirmDialog
         open={confirmOpen}
         title="Finalizar consulta"
-        description="Al finalizar, la consulta queda cerrada y su información se refleja en la historia. ¿Continuar?"
+        description="Lo capturado en la consulta es un borrador: al finalizar queda cerrada y toda su información pasa al expediente del paciente. ¿Continuar?"
         confirmLabel="Finalizar"
         color="primary"
         isConfirming={finalize.isPending}

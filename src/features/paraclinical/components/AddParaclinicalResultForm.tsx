@@ -22,6 +22,8 @@ import { RootCategorySelect } from './RootCategorySelect'
 
 interface AddParaclinicalResultFormProps {
   patientId: number
+  /** Consulta en curso: lo capturado queda como borrador hasta finalizarla. */
+  consultationId?: number
   /** Se llama cuando el resultado quedó registrado. */
   onAdded?: (input: CreateParaclinicalResultInput) => void
 }
@@ -29,7 +31,11 @@ interface AddParaclinicalResultFormProps {
 // Alta rápida de un estudio: se crea como un resultado independiente con un
 // solo analito (el modelo de paraclínicos no exige una orden previa). Si el
 // estudio ya tiene resultado en esa fecha, se ofrece reemplazarlo.
-export function AddParaclinicalResultForm({ patientId, onAdded }: AddParaclinicalResultFormProps) {
+export function AddParaclinicalResultForm({
+  patientId,
+  consultationId,
+  onAdded,
+}: AddParaclinicalResultFormProps) {
   const { data: categories = [] } = useParaclinicalCategories()
   const { data: catalog = [] } = useParaclinicals()
 
@@ -48,6 +54,7 @@ export function AddParaclinicalResultForm({ patientId, onAdded }: AddParaclinica
       setUnit('')
       onAdded?.(input)
     },
+    consultationId,
   )
 
   // Elegir una categoría (p. ej. Laboratorio) muestra los estudios de todas sus subcategorías.

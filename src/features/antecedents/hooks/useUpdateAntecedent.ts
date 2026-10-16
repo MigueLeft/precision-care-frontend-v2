@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { updateAntecedent } from '../services/antecedents.service'
 import { antecedentsKeys } from './antecedents.keys'
+import { useDraftConsultationId } from '@/hooks/draft-consultation'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import type { Antecedent, UpdateAntecedentPayload } from '../types'
 
@@ -15,13 +16,15 @@ export function useUpdateAntecedent(
   options?: Options,
 ) {
   const queryClient = useQueryClient()
+  // Dentro de una consulta en curso el cambio queda como borrador.
+  const consultationId = useDraftConsultationId()
 
   return useMutation({
     mutationFn: (payload: UpdateAntecedentPayload) =>
-      updateAntecedent(antecedentId as number, payload),
+      updateAntecedent(antecedentId as number, { ...payload, consultationId }),
     onSuccess: (antecedent) => {
       queryClient.invalidateQueries({
-        queryKey: antecedentsKeys.byPatient(patientId),
+        queryKey: antecedentsKeys.ofPatient(patientId),
       })
       toast.success('Antecedente actualizado correctamente')
       options?.onSuccess?.(antecedent)

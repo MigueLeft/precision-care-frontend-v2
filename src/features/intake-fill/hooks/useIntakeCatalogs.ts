@@ -7,6 +7,7 @@ export const EMPTY_INTAKE_CATALOGS: PublicIntakeCatalogs = {
   countries: [],
   surgeries: [],
   hospitalizations: [],
+  foodAllergies: [],
 }
 
 // Catálogos del formulario público. Se cargan una vez por token y se comparten

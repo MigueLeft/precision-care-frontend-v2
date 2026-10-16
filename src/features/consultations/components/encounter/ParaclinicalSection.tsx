@@ -8,8 +8,10 @@ import {
   useParaclinicalResultsByPatient,
   useRemoveParaclinicalValue,
   AddParaclinicalResultForm,
+  ProfileResultsCapture,
   type CreateParaclinicalResultInput,
 } from '@/features/paraclinical'
+import { useDraftConsultationId } from '@/hooks/draft-consultation'
 import { ParaclinicalResultsTable, type ParaclinicalRow } from './ParaclinicalResultsTable'
 
 interface ParaclinicalSectionProps {
@@ -34,8 +36,12 @@ function findRootCategoryId(
 // Aplana los resultados del paciente en filas por analito, más recientes primero
 // (a igual fecha, el último capturado arriba). `rootOf` da la categoría raíz de
 // un estudio del catálogo.
-function useParaclinicalRows(patientId: number, categories: ParaclinicalCategoryCatalog[]) {
-  const { data: results = [] } = useParaclinicalResultsByPatient(patientId)
+function useParaclinicalRows(
+  patientId: number,
+  categories: ParaclinicalCategoryCatalog[],
+  consultationId?: number,
+) {
+  const { data: results = [] } = useParaclinicalResultsByPatient(patientId, consultationId)
   const { data: catalog = [] } = useParaclinicals()
   const categoryById = new Map(categories.map((category) => [category.id, category]))
   const categoryByStudy = new Map(catalog.map((item) => [item.id, item.categoryId]))
@@ -57,9 +63,11 @@ function useParaclinicalRows(patientId: number, categories: ParaclinicalCategory
 
 // Un desplegable por categoría raíz de paraclínicos (sin vista "Todos").
 export function ParaclinicalSection({ index, patientId, readOnly }: ParaclinicalSectionProps) {
+  // Lo capturado aquí es borrador de la consulta hasta finalizarla.
+  const consultationId = useDraftConsultationId()
   const { data: categories = [] } = useParaclinicalCategories()
-  const { rows, rootOf } = useParaclinicalRows(patientId, categories)
-  const removeMutation = useRemoveParaclinicalValue(patientId)
+  const { rows, rootOf } = useParaclinicalRows(patientId, categories, consultationId)
+  const removeMutation = useRemoveParaclinicalValue(patientId, consultationId)
   // Grupo que se despliega tras agregar un estudio (para ver lo recién capturado).
   const [opened, setOpened] = useState({ key: '', signal: 0 })
 
@@ -120,7 +128,18 @@ export function ParaclinicalSection({ index, patientId, readOnly }: Paraclinical
         ))}
       </Stack>
       {!readOnly && (
-        <AddParaclinicalResultForm patientId={patientId} onAdded={openGroupOf} />
+        <>
+          <ProfileResultsCapture
+            patientId={patientId}
+            consultationId={consultationId}
+            onAdded={openGroupOf}
+          />
+          <AddParaclinicalResultForm
+            patientId={patientId}
+            consultationId={consultationId}
+            onAdded={openGroupOf}
+          />
+        </>
       )}
     </CollapsibleSection>
   )

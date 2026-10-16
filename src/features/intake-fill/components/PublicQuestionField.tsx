@@ -8,6 +8,7 @@ import { CountryField } from './fields/CountryField'
 import { DateField } from './fields/DateField'
 import { EventListField } from './fields/EventListField'
 import { FamilyRelationshipField } from './fields/FamilyRelationshipField'
+import { FoodAllergyListField } from './fields/FoodAllergyListField'
 import { MedicationListField } from './fields/MedicationListField'
 import { NumericField } from './fields/NumericField'
 import { ScaleField } from './fields/ScaleField'
@@ -37,6 +38,7 @@ function QuestionInput(props: QuestionFieldProps) {
   if (question.type === 'date') return <DateField {...props} />
   if (isEventListVariant(question.displayVariant)) return <EventListField {...props} />
   if (question.displayVariant === 'medication_list') return <MedicationListField {...props} />
+  if (question.displayVariant === 'food_allergy_list') return <FoodAllergyListField {...props} />
   if (question.displayVariant === 'country' || question.displayVariant === 'nationality') {
     return <CountryField {...props} />
   }

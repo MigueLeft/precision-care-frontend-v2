@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { deleteAntecedent } from '../services/antecedents.service'
 import { antecedentsKeys } from './antecedents.keys'
+import { useDraftConsultationId } from '@/hooks/draft-consultation'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 
 interface Options {
@@ -10,12 +11,14 @@ interface Options {
 
 export function useDeleteAntecedent(patientId: number, options?: Options) {
   const queryClient = useQueryClient()
+  // Dentro de una consulta en curso el cambio queda como borrador.
+  const consultationId = useDraftConsultationId()
 
   return useMutation({
-    mutationFn: (id: number) => deleteAntecedent(id),
+    mutationFn: (id: number) => deleteAntecedent(id, consultationId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: antecedentsKeys.byPatient(patientId),
+        queryKey: antecedentsKeys.ofPatient(patientId),
       })
       toast.success('Antecedente eliminado correctamente')
       options?.onSuccess?.()

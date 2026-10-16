@@ -31,6 +31,8 @@ export interface PublicIntakeCatalogs {
   countries: PublicCountry[]
   surgeries: PublicCatalogItem[]
   hospitalizations: PublicCatalogItem[]
+  // Alergias alimentarias activas del catálogo.
+  foodAllergies: PublicCatalogItem[]
 }
 
 // Cirugía u hospitalización capturada por el paciente (misma información que

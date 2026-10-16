@@ -1,5 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material'
 import { SectionDensityContext } from '@/components/ui/section-density'
+import { DraftConsultationContext } from '@/hooks/draft-consultation'
 import { usePatient } from '@/features/patients'
 import { useMe } from '@/features/identity'
 import { useConsultation } from '../../hooks/useConsultationDetail'
@@ -46,6 +47,8 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
   const readOnly = consultation.status === 'completed' || isOtherSpecialist
 
   return (
+    // Lo capturado aquí es borrador de la consulta hasta finalizarla.
+    <DraftConsultationContext.Provider value={consultation.id}>
     <Box sx={{ mx: -4, mt: -4 }}>
       <EncounterHeader consultation={consultation} readOnly={readOnly} />
       {patient && <EncounterPatientBar patient={patient} />}
@@ -83,5 +86,6 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
         <EncounterSidebar consultation={consultation} readOnly={readOnly} />
       </Stack>
     </Box>
+    </DraftConsultationContext.Provider>
   )
 }

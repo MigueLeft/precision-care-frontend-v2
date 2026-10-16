@@ -64,7 +64,8 @@ export interface IntakeResponseDetailAnswer {
 // family_relationship: cada opción elegida pide el parentesco;
 // surgery_list / hospitalization_list: captura estructurada como en la consulta;
 // select: lista de medicamentos con la frecuencia de cada uno elegido;
-// medication_list: medicamentos escritos a mano, cada uno con su frecuencia.
+// medication_list: medicamentos escritos a mano, cada uno con su frecuencia;
+// food_allergy_list: alergias alimentarias del catálogo o escritas en "Otra".
 export type IntakeQuestionDisplayVariant =
   | 'short_text'
   | 'select'
@@ -77,6 +78,7 @@ export type IntakeQuestionDisplayVariant =
   | 'surgery_list'
   | 'hospitalization_list'
   | 'medication_list'
+  | 'food_allergy_list'
 
 export type IntakeConditionOperator =
   | 'eq'

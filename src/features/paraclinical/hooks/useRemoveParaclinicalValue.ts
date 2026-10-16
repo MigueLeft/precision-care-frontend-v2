@@ -4,14 +4,14 @@ import { removeParaclinicalValue } from '../services/paraclinical.service'
 import { paraclinicalKeys } from './paraclinical.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 
-export function useRemoveParaclinicalValue(patientId: number) {
+export function useRemoveParaclinicalValue(patientId: number, consultationId?: number) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ resultId, valueId }: { resultId: number; valueId: number }) =>
-      removeParaclinicalValue(resultId, valueId),
+      removeParaclinicalValue(resultId, valueId, consultationId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: paraclinicalKeys.resultsByPatient(patientId),
+        queryKey: paraclinicalKeys.resultsOfPatient(patientId),
       })
       toast.success('Estudio eliminado')
     },

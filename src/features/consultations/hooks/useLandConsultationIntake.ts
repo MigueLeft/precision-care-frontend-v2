@@ -17,7 +17,7 @@ export function useLandConsultationIntake(consultationId: number, patientId: num
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: consultationsKeys.detail(consultationId) })
       queryClient.invalidateQueries({ queryKey: consultationsKeys.patientSymptoms(patientId) })
-      queryClient.invalidateQueries({ queryKey: antecedentsKeys.byPatient(patientId) })
+      queryClient.invalidateQueries({ queryKey: antecedentsKeys.ofPatient(patientId) })
       queryClient.invalidateQueries({ queryKey: patientMedicationsKeys.all })
       // Lo que no estaba en los catálogos se da de alta al aterrizar.
       queryClient.invalidateQueries({ queryKey: ['catalogs'] })

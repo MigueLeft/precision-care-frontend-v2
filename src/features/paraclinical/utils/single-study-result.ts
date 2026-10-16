@@ -1,6 +1,7 @@
 import type { ParaclinicalCatalog } from '@/features/catalogs'
 import type {
   CreateParaclinicalResultInput,
+  CreateParaclinicalResultValueInput,
   ParaclinicalResult,
   ParaclinicalResultValue,
 } from '../types'
@@ -20,30 +21,40 @@ function computeStatus(value: number, min?: number, max?: number) {
   return 'normal' as const
 }
 
-// Resultado con un solo estudio (alta rápida): numérico si el texto es un
-// número, en otro caso se guarda como texto.
-export function buildSingleStudyInput(draft: SingleStudyDraft): CreateParaclinicalResultInput {
-  const { study } = draft
-  const result = draft.result.trim()
+// Fecha AAAA-MM-DD a mediodía UTC: el mismo día en cualquier zona de América.
+export function resultDateIso(date: string): string {
+  return new Date(`${date}T12:00:00.000Z`).toISOString()
+}
+
+// Analito capturado: numérico si el texto es un número, en otro caso texto. El
+// rango de referencia y el estado se toman del catálogo.
+export function buildStudyValue(
+  study: ParaclinicalCatalog,
+  rawResult: string,
+  rawUnit: string,
+): CreateParaclinicalResultValueInput {
+  const result = rawResult.trim()
   const numericValue = Number(result.replace(',', '.'))
   const isNumeric = result !== '' && !Number.isNaN(numericValue)
   const referenceMin = study.referenceMin ? Number(study.referenceMin) : undefined
   const referenceMax = study.referenceMax ? Number(study.referenceMax) : undefined
+  return {
+    paraclinicalCatalogId: study.id,
+    numericValue: isNumeric ? numericValue : undefined,
+    textValue: isNumeric ? undefined : result,
+    unit: rawUnit.trim() || study.defaultUnit || undefined,
+    referenceMin,
+    referenceMax,
+    status: isNumeric ? computeStatus(numericValue, referenceMin, referenceMax) : undefined,
+  }
+}
 
+// Resultado con un solo estudio (alta rápida).
+export function buildSingleStudyInput(draft: SingleStudyDraft): CreateParaclinicalResultInput {
   return {
     patientId: draft.patientId,
-    resultDate: new Date(`${draft.date}T12:00:00.000Z`).toISOString(),
-    values: [
-      {
-        paraclinicalCatalogId: study.id,
-        numericValue: isNumeric ? numericValue : undefined,
-        textValue: isNumeric ? undefined : result,
-        unit: draft.unit.trim() || study.defaultUnit || undefined,
-        referenceMin,
-        referenceMax,
-        status: isNumeric ? computeStatus(numericValue, referenceMin, referenceMax) : undefined,
-      },
-    ],
+    resultDate: resultDateIso(draft.date),
+    values: [buildStudyValue(draft.study, draft.result, draft.unit)],
   }
 }
 
