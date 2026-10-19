@@ -14,7 +14,7 @@ import { DeliverableDialogActions } from './DeliverableDialogActions'
 import { useConsultationMedications } from '../../hooks/useConsultationMedications'
 import type { ConsultationMedication } from '../../types'
 import { PrescriptionLineRow } from './PrescriptionLineRow'
-import { composeIndication, fillIndication, isLineComplete, type PrescriptionLineState } from './prescription-lines'
+import { fillIndication, isLineComplete, type PrescriptionLineState } from './prescription-lines'
 
 type PrescriptionDialogProps = {
   consultationId: number
@@ -27,7 +27,7 @@ const medName = (m: { brandName: string | null; genericName: string | null; conc
   [m.brandName ?? m.genericName ?? 'Medicamento', m.concentration].filter(Boolean).join(' ')
 
 // Líneas iniciales: el tratamiento vigente; lo que ya está en la receta va
-// marcado. La indicación se precarga del catálogo (o de dosis y frecuencia).
+// marcado. La indicación se precarga del catálogo; sin predefinida, en blanco.
 function initialLines(
   meds: ConsultationMedication[],
   draft: PrescriptionDraftItem[],
@@ -50,9 +50,7 @@ function initialLines(
         frequency,
         duration,
         route: saved?.route ?? '',
-        instructions:
-          saved?.instructions ||
-          (predefined ? fillIndication(predefined, name) : composeIndication({ dose, frequency, duration })),
+        instructions: saved?.instructions || (predefined ? fillIndication(predefined, name) : ''),
       }
     })
 }
