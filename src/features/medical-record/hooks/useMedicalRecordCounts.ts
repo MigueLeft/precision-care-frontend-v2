@@ -1,4 +1,4 @@
-import { useConsultationsByPatient } from '@/features/consultations'
+import { useCompletedConsultations } from '@/features/consultations'
 import { usePatientMedications, getCurrentMedications } from '@/features/patient-medications'
 import { useParaclinicalResultsByPatient } from '@/features/paraclinical'
 import { useIntakeResponsesByPatient } from '@/features/intake-responses'
@@ -7,7 +7,7 @@ import type { MedicalRecordCounts } from '../constants'
 
 // Conteos para los badges del submenú.
 export function useMedicalRecordCounts(patientId: number): MedicalRecordCounts {
-  const { data: consultations } = useConsultationsByPatient(patientId)
+  const { data: consultations } = useCompletedConsultations(patientId)
   const { data: medications } = usePatientMedications(patientId)
   const { data: paraclinicalResults } = useParaclinicalResultsByPatient(patientId)
   const { data: intakes } = useIntakeResponsesByPatient(patientId)

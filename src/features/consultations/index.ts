@@ -7,7 +7,7 @@ export {
   fetchConsultationSymptoms,
   fetchConsultationSymptomHistory,
 } from './services/consultations.service'
-export { useConsultationsByPatient } from './hooks/useConsultationsByPatient'
+export { useCompletedConsultations, useConsultationsByPatient } from './hooks/useConsultationsByPatient'
 export { usePatientSymptoms } from './hooks/usePatientSymptoms'
 export {
   useConsultation,

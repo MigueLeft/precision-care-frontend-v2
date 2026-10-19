@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { EmptyState } from '@/components/EmptyState'
-import { useConsultationsByPatient } from '@/features/consultations'
+import { useCompletedConsultations } from '@/features/consultations'
 import { formatShortDate } from '../../utils/clinical-format'
 
 interface EnfermedadActualCardProps {
@@ -9,7 +9,7 @@ interface EnfermedadActualCardProps {
 }
 
 export function EnfermedadActualCard({ patientId }: EnfermedadActualCardProps) {
-  const { data = [], isLoading } = useConsultationsByPatient(patientId)
+  const { data = [], isLoading } = useCompletedConsultations(patientId)
   // La enfermedad actual más reciente registrada en una consulta.
   const latest = data.find((consultation) => consultation.currentIllness?.trim())
 

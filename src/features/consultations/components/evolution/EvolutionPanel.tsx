@@ -3,7 +3,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { formatShortDate } from '@/utils/format-date'
-import { useConsultationsByPatient } from '../../hooks/useConsultationsByPatient'
+import { useCompletedConsultations } from '../../hooks/useConsultationsByPatient'
 import { EvolutionChanges } from './EvolutionChanges'
 
 type EvolutionPanelProps = {
@@ -14,7 +14,7 @@ type EvolutionPanelProps = {
 // respecto a la anterior. Más reciente primero.
 export function EvolutionPanel({ patientId }: EvolutionPanelProps) {
   const { data: consultations = [], isLoading, isError, error } =
-    useConsultationsByPatient(patientId)
+    useCompletedConsultations(patientId)
 
   if (isLoading || isError) {
     return (

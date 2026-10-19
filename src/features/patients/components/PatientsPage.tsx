@@ -5,7 +5,9 @@ import { usePatients } from '../hooks/usePatients'
 import { useCreatePatient } from '../hooks/useCreatePatient'
 import { useUpdatePatient } from '../hooks/useUpdatePatient'
 import { useDeletePatient } from '../hooks/useDeletePatient'
+import { ListPagination } from '@/components/ui/ListPagination'
 import { filterPatients } from '../utils/filter-patients'
+import { clampPage, pagePatients, PATIENTS_PAGE_SIZE, sortPatientsByName } from '../utils/paginate-patients'
 import { formatPatientName } from '../utils/patient-format'
 import { mapPatientToFormValues } from '../utils/map-patient-to-form-values'
 import { mapFormValuesToDto } from '../utils/map-form-values-to-dto'
@@ -31,7 +33,8 @@ export function PatientsPage({ searchParams, onSearchParamsChange }: PatientsPag
   const { data: countries = [] } = useCountries()
 
   const countryNameById = new Map(countries.map((country) => [country.id, country.name]))
-  const filteredPatients = filterPatients(patients, searchParams)
+  const filteredPatients = sortPatientsByName(filterPatients(patients, searchParams))
+  const page = clampPage(searchParams.page, filteredPatients.length)
   const drawerPatient = patients.find((patient) => patient.id === searchParams.patientId) ?? null
   const editingPatient = patients.find((patient) => patient.id === editingPatientId) ?? null
   const deletingPatient = patients.find((patient) => patient.id === deletingPatientId) ?? null
@@ -78,17 +81,26 @@ export function PatientsPage({ searchParams, onSearchParamsChange }: PatientsPag
         q={searchParams.q ?? ''}
         nationalityCountryId={searchParams.nationalityCountryId}
         countries={countries}
-        onQChange={(value) => onSearchParamsChange({ q: value || undefined })}
-        onNationalityChange={(value) => onSearchParamsChange({ nationalityCountryId: value })}
+        onQChange={(value) => onSearchParamsChange({ q: value || undefined, page: undefined })}
+        onNationalityChange={(value) =>
+          onSearchParamsChange({ nationalityCountryId: value, page: undefined })
+        }
         onNewPatient={() => setIsCreateOpen(true)}
       />
 
       <PatientsTable
-        patients={filteredPatients}
+        patients={pagePatients(filteredPatients, page)}
         countryNameById={countryNameById}
         onView={(id) => onSearchParamsChange({ patientId: id })}
         onEdit={(id) => setEditingPatientId(id)}
         onDelete={(id) => setDeletingPatientId(id)}
+      />
+
+      <ListPagination
+        page={page}
+        pageSize={PATIENTS_PAGE_SIZE}
+        total={filteredPatients.length}
+        onPageChange={(next) => onSearchParamsChange({ page: next > 1 ? next : undefined })}
       />
 
       <PatientFormModal

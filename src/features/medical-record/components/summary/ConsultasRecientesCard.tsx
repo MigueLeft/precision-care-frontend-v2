@@ -3,7 +3,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { Link } from '@tanstack/react-router'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { EmptyState } from '@/components/EmptyState'
-import { useConsultationsByPatient } from '@/features/consultations'
+import { useCompletedConsultations } from '@/features/consultations'
 import { formatShortDate } from '../../utils/clinical-format'
 
 interface ConsultasRecientesCardProps {
@@ -11,7 +11,7 @@ interface ConsultasRecientesCardProps {
 }
 
 export function ConsultasRecientesCard({ patientId }: ConsultasRecientesCardProps) {
-  const { data = [], isLoading } = useConsultationsByPatient(patientId)
+  const { data = [], isLoading } = useCompletedConsultations(patientId)
   const recent = data.slice(0, 3)
 
   return (

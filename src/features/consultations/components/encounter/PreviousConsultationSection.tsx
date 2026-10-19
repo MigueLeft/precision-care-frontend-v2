@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { formatShortDate } from '@/utils/format-date'
-import { useConsultationsByPatient } from '../../hooks/useConsultationsByPatient'
+import { useCompletedConsultations } from '../../hooks/useConsultationsByPatient'
 import { ConsultationNote } from '../note/ConsultationNote'
 import type { Consultation } from '../../types'
 
@@ -13,7 +13,7 @@ type PreviousConsultationSectionProps = {
 // Consulta subsecuente: la nota generada por el sistema con todo lo registrado
 // en la consulta anterior (la misma que se ve en el expediente › Consultas).
 export function PreviousConsultationSection({ index, consultation }: PreviousConsultationSectionProps) {
-  const { data: consultations = [] } = useConsultationsByPatient(consultation.patientId)
+  const { data: consultations = [] } = useCompletedConsultations(consultation.patientId)
 
   const startAt = new Date(consultation.startAt).getTime()
   // La lista viene de más reciente a más antigua.

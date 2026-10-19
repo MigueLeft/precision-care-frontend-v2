@@ -5,7 +5,7 @@ import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { formatShortDate } from '@/utils/format-date'
-import { useConsultationsByPatient } from '../hooks/useConsultationsByPatient'
+import { useCompletedConsultations } from '../hooks/useConsultationsByPatient'
 import { formatConsultationReason } from '../utils/consultation-format'
 import { ConsultationDetail } from './ConsultationDetail'
 
@@ -15,7 +15,7 @@ interface ConsultationsPanelProps {
 
 export function ConsultationsPanel({ patientId }: ConsultationsPanelProps) {
   const { data: consultations = [], isLoading, isError, error } =
-    useConsultationsByPatient(patientId)
+    useCompletedConsultations(patientId)
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
   if (isLoading || isError) {
