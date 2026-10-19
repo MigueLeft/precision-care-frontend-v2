@@ -1,5 +1,5 @@
 import type { PrescriptionData, PrescriptionLine } from '../types'
-import { baseStyles, chunk, escape, formatDay, lines, logo, palette, patientIdLine } from './print-shared'
+import { baseStyles, chunk, contactLine, escape, formatDay, lines, logo, palette, patientIdLine } from './print-shared'
 
 // Récipe en media carta: a la izquierda el récipe (medicamentos con su
 // presentación y dosis) y a la derecha las indicaciones para el paciente.
@@ -26,10 +26,7 @@ function letterhead(data: PrescriptionData) {
 
 function footer(data: PrescriptionData) {
   const { specialist } = data
-  const contact = [specialist.address, specialist.phone ? `Tel: ${specialist.phone}` : '']
-    .filter(Boolean)
-    .map((part) => escape(part))
-    .join(' · ')
+  const contact = contactLine(specialist)
   return `
   <footer>
     <div class="sign">${escape(specialist.name)}<br/><small>${escape(specialist.specialty)}</small></div>

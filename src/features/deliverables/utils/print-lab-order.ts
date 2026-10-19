@@ -1,5 +1,5 @@
 import type { LabOrderData, LabOrderLine } from '../types'
-import { baseStyles, chunk, escape, formatDay, lines, logo, palette, patientIdLine } from './print-shared'
+import { baseStyles, chunk, contactLine, escape, formatDay, lines, logo, palette, patientIdLine } from './print-shared'
 
 // Orden de laboratorio en media carta, dos copias iguales en la hoja (una para
 // el médico y otra para el paciente): membrete del laboratorio, "Favor realizar
@@ -13,7 +13,9 @@ function copy(data: LabOrderData, items: LabOrderLine[]) {
   const studies = items
     .map((item) => `<li><span class="box">✓</span>${escape(item.name)}${item.instructions ? ` <small>(${escape(item.instructions)})</small>` : ''}</li>`)
     .join('')
+  const contact = contactLine(data.specialist)
   return `<div class="half">
+    <p class="date">Fecha: ${formatDay(data.date)}</p>
     <header class="lab">
       <div>${logo(42)}</div>
       <div class="lab-text">
@@ -28,10 +30,10 @@ function copy(data: LabOrderData, items: LabOrderLine[]) {
     ${data.title ? `<h2>${escape(data.title)}</h2>` : ''}
     <ul class="grow">${studies}</ul>
     ${data.indications ? `<p class="notes"><strong>Indicaciones:</strong> ${escape(data.indications)}</p>` : ''}
-    <div class="bottom">
-      <p>Fecha: ${formatDay(data.date)}</p>
+    <footer>
       <div class="sign">${escape(data.specialist.name)}<br/><small>Firma del médico</small></div>
-    </div>
+      ${contact ? `<p class="contact">${contact}</p>` : ''}
+    </footer>
   </div>`
 }
 
@@ -48,8 +50,10 @@ const styles = `
   li { break-inside: avoid; margin-bottom: 3px; }
   .box { display: inline-block; width: 12px; height: 12px; border: 1px solid ${palette.text.primary}; font-size: 9px; line-height: 11px; text-align: center; margin-right: 5px; }
   .notes { font-size: 10.5px; margin-top: 6px; }
-  .bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; }
-  .sign { width: 180px; border-top: 1px solid ${palette.text.primary}; padding-top: 4px; text-align: center; font-size: 11px; }
+  .date { text-align: right; font-size: 11px; margin-bottom: 4px; }
+  footer { margin-top: 10px; text-align: center; font-size: 10px; }
+  .sign { margin: 0 auto 6px; width: 200px; border-top: 1px solid ${palette.text.primary}; padding-top: 4px; font-size: 11px; }
+  .contact { color: ${palette.text.secondary}; }
 `
 
 export function buildLabOrderHtml(data: LabOrderData) {

@@ -81,3 +81,11 @@ export function printHtml(html: string) {
   iframe.contentWindow.print()
   setTimeout(() => iframe.remove(), 1000)
 }
+
+// Dirección y teléfono del consultorio para el pie de página.
+export function contactLine(specialist: DeliverableHeader['specialist']) {
+  return [specialist.address, specialist.phone ? `Tel: ${specialist.phone}` : '']
+    .filter(Boolean)
+    .map((part) => escape(part))
+    .join(' · ')
+}

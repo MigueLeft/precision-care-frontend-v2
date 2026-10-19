@@ -37,7 +37,8 @@ function initialLines(
     .filter((med) => med.status === 'current')
     .map((med) => {
       const saved = draft.find((item) => item.medicationId === med.medicationId)
-      const dose = saved?.dose ?? med.dose ?? ''
+      // La dosis por defecto es la concentración del medicamento.
+      const dose = saved?.dose ?? med.concentration ?? med.dose ?? ''
       const frequency = saved?.frequency ?? med.frequency ?? ''
       const duration = saved?.duration ?? ''
       const name = medName(med)
