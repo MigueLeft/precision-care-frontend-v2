@@ -14,7 +14,7 @@ import { DeliverableDialogActions } from './DeliverableDialogActions'
 import { useConsultationMedications } from '../../hooks/useConsultationMedications'
 import type { ConsultationMedication } from '../../types'
 import { PrescriptionLineRow } from './PrescriptionLineRow'
-import { composeIndication, isLineComplete, type PrescriptionLineState } from './prescription-lines'
+import { composeIndication, fillIndication, isLineComplete, type PrescriptionLineState } from './prescription-lines'
 
 type PrescriptionDialogProps = {
   consultationId: number
@@ -40,16 +40,19 @@ function initialLines(
       const dose = saved?.dose ?? med.dose ?? ''
       const frequency = saved?.frequency ?? med.frequency ?? ''
       const duration = saved?.duration ?? ''
+      const name = medName(med)
       const predefined = catalog.find((item) => item.id === med.medicationId)?.defaultIndication
       return {
         medicationId: med.medicationId,
-        name: medName(med),
+        name,
         selected: !!saved,
         dose,
         frequency,
         duration,
         route: saved?.route ?? '',
-        instructions: saved?.instructions || predefined || composeIndication({ dose, frequency, duration }),
+        instructions:
+          saved?.instructions ||
+          (predefined ? fillIndication(predefined, name) : composeIndication({ dose, frequency, duration })),
       }
     })
 }

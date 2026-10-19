@@ -7,7 +7,6 @@ import type { ParaclinicalCategoryCatalog } from '@/features/catalogs'
 import {
   useParaclinicalResultsByPatient,
   useRemoveParaclinicalValue,
-  AddParaclinicalResultForm,
   ProfileResultsCapture,
   type CreateParaclinicalResultInput,
 } from '@/features/paraclinical'
@@ -128,18 +127,11 @@ export function ParaclinicalSection({ index, patientId, readOnly }: Paraclinical
         ))}
       </Stack>
       {!readOnly && (
-        <>
-          <ProfileResultsCapture
-            patientId={patientId}
-            consultationId={consultationId}
-            onAdded={openGroupOf}
-          />
-          <AddParaclinicalResultForm
-            patientId={patientId}
-            consultationId={consultationId}
-            onAdded={openGroupOf}
-          />
-        </>
+        <ProfileResultsCapture
+          patientId={patientId}
+          consultationId={consultationId}
+          onAdded={openGroupOf}
+        />
       )}
     </CollapsibleSection>
   )

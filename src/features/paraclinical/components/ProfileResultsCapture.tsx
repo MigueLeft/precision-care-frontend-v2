@@ -9,6 +9,7 @@ import { useAddParaclinicalResult } from '../hooks/useAddParaclinicalResult'
 import { useProfileResultsDraft } from '../hooks/useProfileResultsDraft'
 import { formatStudyValue } from '../utils/single-study-result'
 import type { CreateParaclinicalResultInput } from '../types'
+import { CatalogStudiesSelect } from './CatalogStudiesSelect'
 import { ProfileResultsBlock } from './ProfileResultsBlock'
 
 type ProfileResultsCaptureProps = {
@@ -18,9 +19,9 @@ type ProfileResultsCaptureProps = {
   onAdded?: (input: CreateParaclinicalResultInput) => void
 }
 
-// Captura por perfiles de laboratorio (p. ej. Perfil lipídico): cada perfil
-// elegido despliega sus estudios en un bloque y se guardan todos juntos como un
-// resultado de la misma fecha.
+// Captura de varios estudios a la vez: perfiles de laboratorio (p. ej. Perfil
+// lipídico) y estudios sueltos del catálogo despliegan sus bloques y se guardan
+// todos juntos como un resultado de la misma fecha.
 export function ProfileResultsCapture({ patientId, consultationId, onAdded }: ProfileResultsCaptureProps) {
   const draft = useProfileResultsDraft(patientId)
   const { add, isAdding, pending, confirmReplace, cancelReplace } = useAddParaclinicalResult(
@@ -35,7 +36,7 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
   function submit() {
     const input = draft.buildInput()
     if (!input) {
-      toast.error('Captura al menos un resultado de los perfiles elegidos.')
+      toast.error('Captura al menos un resultado de los estudios elegidos.')
       return
     }
     add(input)
@@ -54,10 +55,11 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
         value={draft.selectedIds}
         onChange={draft.setSelectedIds}
       />
+      <CatalogStudiesSelect value={draft.studyIds} onChange={draft.setStudyIds} />
 
       {draft.blocks.map((block) => (
         <ProfileResultsBlock
-          key={block.profile.id}
+          key={block.key}
           block={block}
           entryOf={draft.entryOf}
           onChange={draft.setEntry}
@@ -85,7 +87,7 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
             startIcon={<SaveIcon sx={{ fontSize: 18 }} />}
             onClick={submit}
           >
-            Guardar perfiles
+            Guardar resultados
           </AppButton>
         </Stack>
       )}

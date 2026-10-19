@@ -12,7 +12,6 @@ export { useCreateParaclinicalResult } from './hooks/useCreateParaclinicalResult
 export { useRemoveParaclinicalResult } from './hooks/useRemoveParaclinicalResult'
 export { useRemoveParaclinicalValue } from './hooks/useRemoveParaclinicalValue'
 export { ParaclinicalPanel } from './components/ParaclinicalPanel'
-export { AddParaclinicalResultForm } from './components/AddParaclinicalResultForm'
 export { ProfileResultsCapture } from './components/ProfileResultsCapture'
 export {
   PARACLINICAL_VALUE_STATUS_LABELS,

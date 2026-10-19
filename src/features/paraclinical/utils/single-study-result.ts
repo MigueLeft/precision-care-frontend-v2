@@ -6,15 +6,6 @@ import type {
   ParaclinicalResultValue,
 } from '../types'
 
-interface SingleStudyDraft {
-  patientId: number
-  study: ParaclinicalCatalog
-  result: string
-  unit: string
-  /** Fecha del resultado, AAAA-MM-DD. */
-  date: string
-}
-
 function computeStatus(value: number, min?: number, max?: number) {
   if (min !== undefined && value < min) return 'low' as const
   if (max !== undefined && value > max) return 'high' as const
@@ -49,14 +40,6 @@ export function buildStudyValue(
   }
 }
 
-// Resultado con un solo estudio (alta rápida).
-export function buildSingleStudyInput(draft: SingleStudyDraft): CreateParaclinicalResultInput {
-  return {
-    patientId: draft.patientId,
-    resultDate: resultDateIso(draft.date),
-    values: [buildStudyValue(draft.study, draft.result, draft.unit)],
-  }
-}
 
 export interface SameDayStudy {
   resultDate: string

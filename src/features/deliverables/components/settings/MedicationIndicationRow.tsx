@@ -31,7 +31,7 @@ export function MedicationIndicationRow({ medication, presentation }: Medication
       <DataCell>
         <TextField
           size="small"
-          placeholder="Ej.: Tomar 1 tableta cada 8 horas después del almuerzo"
+          placeholder="Ej.: Tomar 1 tableta de {medicamento} cada 8 horas después del almuerzo"
           value={value}
           onChange={(event) => setValue(event.target.value)}
           multiline

@@ -26,7 +26,8 @@ export function MedicationIndicationsTab() {
     <Stack spacing={2}>
       <Typography variant="body2" color="text.secondary">
         El texto se precarga en el récipe al recetar el medicamento y se puede ajustar en cada
-        consulta.
+        consulta. Escribe <strong>{'{medicamento}'}</strong> donde va el nombre y la concentración
+        (ej.: “Tomar 1 tableta de {'{medicamento}'} con el desayuno…”).
       </Typography>
       <TextField
         size="small"

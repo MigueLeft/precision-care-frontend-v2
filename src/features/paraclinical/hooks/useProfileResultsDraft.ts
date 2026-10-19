@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLabProfiles, useParaclinicals } from '@/features/catalogs'
-import type { LabProfile, ParaclinicalCatalog } from '@/features/catalogs'
+import type { ParaclinicalCatalog } from '@/features/catalogs'
 import { todayIsoDate } from '@/utils/format-date'
 import { buildStudyValue, resultDateIso } from '../utils/single-study-result'
 import type { CreateParaclinicalResultInput } from '../types'
@@ -10,27 +10,36 @@ export interface StudyEntry {
   unit: string
 }
 
+// Bloque de captura: un perfil elegido o los estudios sueltos del catálogo.
 export interface ProfileBlock {
-  profile: LabProfile
+  key: string
+  title: string
   studies: ParaclinicalCatalog[]
 }
 
-// Captura de resultados por perfiles de laboratorio: cada perfil elegido
-// despliega sus estudios. Un estudio que está en dos perfiles comparte valor.
+// Captura de varios resultados a la vez: perfiles de laboratorio (cada uno
+// despliega sus estudios) y estudios sueltos elegidos del catálogo. Un estudio
+// que aparece en dos bloques comparte valor.
 export function useProfileResultsDraft(patientId: number) {
   const { data: profiles = [] } = useLabProfiles()
   const { data: catalog = [] } = useParaclinicals()
   const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [studyIds, setStudyIds] = useState<number[]>([])
   const [entries, setEntries] = useState<Record<number, StudyEntry>>({})
   const [date, setDate] = useState(todayIsoDate())
 
   const studyById = new Map(catalog.map((study) => [study.id, study]))
-  const blocks: ProfileBlock[] = selectedIds.flatMap((id) => {
+  const profileBlocks: ProfileBlock[] = selectedIds.flatMap((id) => {
     const profile = profiles.find((item) => item.id === id)
     if (!profile) return []
     const studies = profile.items.flatMap((item) => studyById.get(item.id) ?? [])
-    return [{ profile, studies }]
+    return [{ key: `profile-${profile.id}`, title: profile.name, studies }]
   })
+  const looseStudies = studyIds.flatMap((id) => studyById.get(id) ?? [])
+  const blocks: ProfileBlock[] =
+    looseStudies.length > 0
+      ? [...profileBlocks, { key: 'studies', title: 'Estudios elegidos', studies: looseStudies }]
+      : profileBlocks
 
   function entryOf(study: ParaclinicalCatalog): StudyEntry {
     return entries[study.id] ?? { result: '', unit: study.defaultUnit ?? '' }
@@ -67,6 +76,7 @@ export function useProfileResultsDraft(patientId: number) {
 
   function reset() {
     setSelectedIds([])
+    setStudyIds([])
     setEntries({})
   }
 
@@ -74,6 +84,8 @@ export function useProfileResultsDraft(patientId: number) {
     profiles: profiles.filter((profile) => profile.active),
     selectedIds,
     setSelectedIds,
+    studyIds,
+    setStudyIds,
     blocks,
     entryOf,
     setEntry,

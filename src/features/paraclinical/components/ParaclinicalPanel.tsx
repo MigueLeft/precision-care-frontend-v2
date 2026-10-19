@@ -17,7 +17,6 @@ import { useRemoveParaclinicalValue } from '../hooks/useRemoveParaclinicalValue'
 import { groupResultsByDay } from '../utils/paraclinical-helpers'
 import { ParaclinicalResultCard } from './ParaclinicalResultCard'
 import { ParaclinicalOrderCard } from './ParaclinicalOrderCard'
-import { AddParaclinicalResultForm } from './AddParaclinicalResultForm'
 import { ProfileResultsCapture } from './ProfileResultsCapture'
 
 interface ParaclinicalPanelProps {
@@ -70,7 +69,6 @@ export function ParaclinicalPanel({ patientId }: ParaclinicalPanelProps) {
       {addingResult && (
         <SectionCard title="Nuevo resultado">
           <ProfileResultsCapture patientId={patientId} />
-          <AddParaclinicalResultForm patientId={patientId} />
         </SectionCard>
       )}
 

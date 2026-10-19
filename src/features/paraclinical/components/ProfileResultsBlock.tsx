@@ -18,10 +18,10 @@ function referenceOf(study: ParaclinicalCatalog): string {
   return '—'
 }
 
-// Bloque de un perfil: todos sus estudios para capturar el resultado.
+// Bloque de un perfil (o de los estudios sueltos) para capturar los resultados.
 export function ProfileResultsBlock({ block, entryOf, onChange }: ProfileResultsBlockProps) {
   return (
-    <SectionCard title={`${block.profile.name} · ${block.studies.length} estudios`} disableBodyPadding>
+    <SectionCard title={`${block.title} · ${block.studies.length} estudios`} disableBodyPadding>
       <DataTable minWidth={560}>
         <TableHead>
           <TableRow>

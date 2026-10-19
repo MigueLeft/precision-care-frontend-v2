@@ -55,13 +55,18 @@ function recipeHalf(data: PrescriptionData, items: PrescriptionLine[]) {
   return `<div class="half">${letterhead(data)}<h2>${escape(title)}</h2><div class="grow">${rows}</div>${footer(data)}</div>`
 }
 
+// Si la indicación ya nombra el medicamento ("Tomar 1 tableta de Metformina
+// 850 mg ..."), se imprime tal cual; si no, precedida del nombre.
+function indicationRow(item: PrescriptionLine) {
+  const text = item.instructions || doseLine(item)
+  const named = !!item.instructions && item.instructions.toLowerCase().includes(item.name.toLowerCase())
+  return named
+    ? `<p class="ind">${escape(text)}</p>`
+    : `<p class="ind"><strong>${escape(item.name)}:</strong> ${escape(text)}</p>`
+}
+
 function indicationsHalf(data: PrescriptionData, items: PrescriptionLine[]) {
-  const rows = items
-    .map(
-      (item) =>
-        `<p class="ind"><strong>${escape(item.name)}:</strong> ${escape(item.instructions || doseLine(item))}</p>`,
-    )
-    .join('')
+  const rows = items.map(indicationRow).join('')
   const title = data.template?.indicationsTitle ?? 'Indicaciones'
   return `<div class="half">${letterhead(data)}<h2>${escape(title)}</h2><div class="grow">${rows}</div>${footer(data)}</div>`
 }
