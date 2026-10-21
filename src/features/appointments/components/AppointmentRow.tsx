@@ -29,9 +29,9 @@ export function AppointmentRow({ appointment, onView }: AppointmentRowProps) {
   const isToday = start.toDateString() === new Date().toDateString()
   const dateStr = start.toLocaleDateString('en-CA') // YYYY-MM-DD
   const timeStr = start.toLocaleTimeString('es-MX', {
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
-    hour12: false,
+    hour12: true,
   })
 
   return (

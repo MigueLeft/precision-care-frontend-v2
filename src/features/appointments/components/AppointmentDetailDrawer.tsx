@@ -58,7 +58,7 @@ export function AppointmentDetailDrawer({
   const start = appointment ? new Date(appointment.startAtUtc) : null
   const end = appointment ? new Date(appointment.endAtUtc) : null
   const timeFmt = (d: Date) =>
-    d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })
+    d.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true })
 
   return (
     <Drawer

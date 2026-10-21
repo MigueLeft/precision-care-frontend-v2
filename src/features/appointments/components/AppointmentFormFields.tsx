@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 import { SearchableSelect } from '@/components/SearchableSelect'
+import { TimeField12h } from '@/components/ui/TimeField12h'
 import { usePatients, formatPatientName } from '@/features/patients'
 import { useSpecialistsLookup } from '@/features/identity'
 import {
@@ -178,24 +179,23 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
           )}
         />
       </Grid>
-      <Grid size={{ xs: 6, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 5 }}>
         <Controller
           name="time"
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              type="time"
+            <TimeField12h
               label="Hora"
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
               error={!!error}
               helperText={error?.message}
-              slotProps={{ inputLabel: { shrink: true } }}
-              fullWidth
             />
           )}
         />
       </Grid>
-      <Grid size={{ xs: 6, sm: 4 }}>
+      <Grid size={{ xs: 12, sm: 3 }}>
         <Controller
           name="durationMin"
           control={control}

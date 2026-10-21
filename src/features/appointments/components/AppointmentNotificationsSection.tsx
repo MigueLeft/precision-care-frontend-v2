@@ -37,6 +37,7 @@ export function AppointmentNotificationsSection({
                 {new Date(reminder.sentAt).toLocaleString('es-MX', {
                   dateStyle: 'short',
                   timeStyle: 'short',
+                  hour12: true,
                 })}{' '}
                 · {reminder.recipient}
               </Typography>
@@ -59,6 +60,7 @@ export function AppointmentNotificationsSection({
                 {new Date(assignment.startAt).toLocaleString('es-MX', {
                   dateStyle: 'short',
                   timeStyle: 'short',
+                  hour12: true,
                 })}
               </Typography>
               <Chip

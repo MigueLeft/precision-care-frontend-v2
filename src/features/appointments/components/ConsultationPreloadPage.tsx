@@ -41,7 +41,7 @@ export function ConsultationPreloadPage({ appointmentId }: { appointmentId: numb
       <Typography variant="h1">Precargar datos de la consulta</Typography>
       <Typography color="text.secondary" sx={{ mb: 3 }}>
         {appointment.patientName ?? 'Paciente'} ·{' '}
-        {start.toLocaleString('es-MX', { dateStyle: 'full', timeStyle: 'short' })}
+        {start.toLocaleString('es-MX', { dateStyle: 'full', timeStyle: 'short', hour12: true })}
       </Typography>
 
       {canPreload ? (
