@@ -1,6 +1,6 @@
 import { Stack, TextField, Typography } from '@mui/material'
 import SaveIcon from '@mui/icons-material/Save'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { SearchableMultiSelect } from '@/components/SearchableMultiSelect'

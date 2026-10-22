@@ -15,7 +15,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { useBodySystems, useDiseases } from '@/features/catalogs'
 import type { Disease } from '@/features/catalogs'

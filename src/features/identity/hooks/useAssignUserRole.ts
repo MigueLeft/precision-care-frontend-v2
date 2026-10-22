@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { assignUserRole } from '../services/users.service'
 import { identityKeys } from './identity.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'

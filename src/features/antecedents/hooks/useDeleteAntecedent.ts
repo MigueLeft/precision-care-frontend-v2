@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { deleteAntecedent } from '../services/antecedents.service'
 import { antecedentsKeys } from './antecedents.keys'
 import { useDraftConsultationId } from '@/hooks/draft-consultation'

@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
 import { useSymptoms, useSymptomSeverities } from '@/features/catalogs'

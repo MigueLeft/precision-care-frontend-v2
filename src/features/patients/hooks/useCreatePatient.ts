@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { createPatient } from '../services/patients.service'
 import { patientsKeys } from './patients.keys'
 import { formatPatientName } from '../utils/patient-format'

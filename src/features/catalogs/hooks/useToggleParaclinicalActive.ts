@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { toggleParaclinicalActive } from '../services/paraclinicals.service'
 import { catalogsKeys } from './catalogs.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'

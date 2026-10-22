@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import { useIntakes } from '@/features/intake'

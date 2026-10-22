@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Autocomplete, Checkbox, FormControlLabel, Stack, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { useMedications } from '@/features/catalogs'
 import { MedicationFrequencyField } from '@/features/patient-medications'

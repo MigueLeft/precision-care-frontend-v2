@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import { PartialDateField } from '@/components/ui/PartialDateField'
 import AddIcon from '@mui/icons-material/Add'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { useDiseases } from '@/features/catalogs'
 import { isLettersOnly } from '@/utils/text-validation'

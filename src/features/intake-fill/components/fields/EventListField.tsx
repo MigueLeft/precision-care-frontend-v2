@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Stack, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
 import { PartialDateField } from '@/components/ui/PartialDateField'

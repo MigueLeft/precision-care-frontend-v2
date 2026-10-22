@@ -1,6 +1,6 @@
 import { IconButton, MenuItem, Select, Stack, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { CatalogSearchInput, type CatalogOption } from '@/components/ui/CatalogSearchInput'
 import { useDiseases } from '@/features/catalogs'
 import { isLettersOnly } from '@/utils/text-validation'

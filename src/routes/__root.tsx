@@ -1,6 +1,6 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { Toaster } from 'sonner'
+import { ToastViewport } from '@/components/feedback/ToastViewport'
 import type { QueryClient } from '@tanstack/react-query'
 
 export interface RouterContext {
@@ -16,7 +16,7 @@ function RootLayout() {
   return (
     <>
       <Outlet />
-      <Toaster richColors position="top-right" closeButton />
+      <ToastViewport />
       {import.meta.env.DEV && <TanStackRouterDevtools />}
     </>
   )

@@ -11,7 +11,7 @@ import {
   TextField,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { useAllergyCatalog, useAllergySeverities, useAllergyTypes } from '@/features/catalogs'
 import type { AllergyCatalog } from '@/features/catalogs'

@@ -1,4 +1,4 @@
-import { toast } from 'sonner'
+import { toast } from '@/utils/toast'
 
 // Copia el enlace público de un ingresable pendiente para compartirlo con el
 // paciente (WhatsApp, SMS, etc.).
