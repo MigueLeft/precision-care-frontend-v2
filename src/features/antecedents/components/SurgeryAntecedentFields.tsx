@@ -1,53 +1,34 @@
-import { Controller } from 'react-hook-form'
 import type { Control, UseFormSetValue } from 'react-hook-form'
-import { Grid, Typography, FormHelperText } from '@mui/material'
-import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
+import { Grid } from '@mui/material'
 import { useSurgeryCatalog } from '@/features/catalogs'
 import type { AntecedentFormValues } from '../schemas/antecedent-form.schema'
 import { FormText } from './AntecedentTextField'
+import { AntecedentCatalogField } from './AntecedentCatalogField'
 
 interface SurgeryAntecedentFieldsProps {
   control: Control<AntecedentFormValues>
   setValue: UseFormSetValue<AntecedentFormValues>
 }
 
-// Campos específicos de antecedentes tipo "surgery": nombre/condición libre,
-// procedimiento (buscado en surgery_catalog), institución y demás detalles.
+// Campos específicos de antecedentes tipo "surgery", los mismos de la captura
+// en consulta: procedimiento (surgery_catalog, también es el nombre del
+// antecedente), fecha y complicaciones.
 export function SurgeryAntecedentFields({ control, setValue }: SurgeryAntecedentFieldsProps) {
   const { data: surgeryCatalog = [] } = useSurgeryCatalog()
 
   return (
     <>
       <Grid size={{ xs: 12, sm: 6 }}>
-        <FormText control={control} name="name" label="Condición / nombre" />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="surgeryProcedure"
+        <AntecedentCatalogField
           control={control}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              <CatalogSearchInput
-                options={surgeryCatalog}
-                placeholder="Buscar procedimiento…"
-                onAdd={(name, catalogId) => {
-                  field.onChange(name)
-                  setValue('surgeryProcedureCatalogId', catalogId)
-                }}
-                manualLabel="No está en el catálogo · escribir manualmente"
-              />
-              {field.value ? (
-                <Typography sx={{ fontSize: '12px', color: 'text.secondary', mt: 0.5 }}>
-                  Seleccionado: {field.value}
-                </Typography>
-              ) : null}
-              {error ? <FormHelperText error>{error.message}</FormHelperText> : null}
-            </>
-          )}
+          setValue={setValue}
+          name="surgeryProcedure"
+          idName="surgeryProcedureCatalogId"
+          options={surgeryCatalog}
+          label="Procedimiento"
+          placeholder="Buscar procedimiento…"
+          syncName
         />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <FormText control={control} name="surgeryInstitution" label="Institución" />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <FormText control={control} name="eventDate" label="Fecha" type="date" />
@@ -57,13 +38,6 @@ export function SurgeryAntecedentFields({ control, setValue }: SurgeryAntecedent
       </Grid>
       <Grid size={{ xs: 12 }}>
         <FormText control={control} name="surgeryComplications" label="Complicaciones" />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <FormText
-          control={control}
-          name="surgeryTreatingPhysician"
-          label="Médico tratante"
-        />
       </Grid>
     </>
   )

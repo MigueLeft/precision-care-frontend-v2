@@ -1,19 +1,18 @@
-import { Controller } from 'react-hook-form'
 import type { Control, UseFormSetValue } from 'react-hook-form'
-import { Grid, Typography, FormHelperText } from '@mui/material'
-import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
+import { Grid } from '@mui/material'
 import { useHospitalizationCatalog } from '@/features/catalogs'
 import type { AntecedentFormValues } from '../schemas/antecedent-form.schema'
 import { FormText } from './AntecedentTextField'
+import { AntecedentCatalogField } from './AntecedentCatalogField'
 
 interface HospitalizationAntecedentFieldsProps {
   control: Control<AntecedentFormValues>
   setValue: UseFormSetValue<AntecedentFormValues>
 }
 
-// Campos específicos de antecedentes tipo "hospitalization": nombre/condición
-// libre, fechas de ingreso/egreso, institución, CIE-10 al egreso y motivo
-// (buscado en hospitalization_catalog).
+// Campos específicos de antecedentes tipo "hospitalization": motivo (buscado en
+// hospitalization_catalog, también es el nombre del antecedente), fechas de
+// ingreso/egreso, CIE-10 al egreso y complicaciones.
 export function HospitalizationAntecedentFields({
   control,
   setValue,
@@ -23,7 +22,16 @@ export function HospitalizationAntecedentFields({
   return (
     <>
       <Grid size={{ xs: 12, sm: 6 }}>
-        <FormText control={control} name="name" label="Condición / nombre" />
+        <AntecedentCatalogField
+          control={control}
+          setValue={setValue}
+          name="hospitalizationReason"
+          idName="hospitalizationReasonCatalogId"
+          options={hospitalizationCatalog}
+          label="Motivo"
+          placeholder="Buscar motivo de hospitalización…"
+          syncName
+        />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <FormText
@@ -42,9 +50,6 @@ export function HospitalizationAntecedentFields({
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
-        <FormText control={control} name="hospitalizationInstitution" label="Institución" />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
         <FormText
           control={control}
           name="hospitalizationDischargeDiagnosisCie10"
@@ -56,31 +61,6 @@ export function HospitalizationAntecedentFields({
           control={control}
           name="hospitalizationComplications"
           label="Complicaciones"
-        />
-      </Grid>
-      <Grid size={{ xs: 12 }}>
-        <Controller
-          name="hospitalizationReason"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              <CatalogSearchInput
-                options={hospitalizationCatalog}
-                placeholder="Buscar motivo de hospitalización…"
-                onAdd={(name, catalogId) => {
-                  field.onChange(name)
-                  setValue('hospitalizationReasonCatalogId', catalogId)
-                }}
-                manualLabel="No está en el catálogo · escribir manualmente"
-              />
-              {field.value ? (
-                <Typography sx={{ fontSize: '12px', color: 'text.secondary', mt: 0.5 }}>
-                  Seleccionado: {field.value}
-                </Typography>
-              ) : null}
-              {error ? <FormHelperText error>{error.message}</FormHelperText> : null}
-            </>
-          )}
         />
       </Grid>
     </>

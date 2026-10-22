@@ -36,7 +36,11 @@ export function mapFormToPayload(
   const payload: Omit<CreateAntecedentPayload, 'patientId'> = {
     type: values.type,
     name: values.name.trim(),
-    eventDate: trimmed(values.eventDate),
+    // En hospitalizaciones la fecha del evento es la de ingreso (como en la consulta).
+    eventDate:
+      values.type === 'hospitalization'
+        ? trimmed(values.hospitalizationAdmissionDate) ?? trimmed(values.eventDate)
+        : trimmed(values.eventDate),
     description: clearable(values.description),
     cie10Code: trimmed(values.cie10Code),
     relationship:
@@ -93,7 +97,10 @@ export function mapAntecedentToForm(antecedent: Antecedent): AntecedentFormValue
       antecedent.surgeryDetail?.procedureCatalogId ?? undefined,
     hospitalizationReasonCatalogId:
       antecedent.hospitalizationDetail?.reasonCatalogId ?? undefined,
-    surgeryProcedure: antecedent.surgeryDetail?.procedure ?? '',
+    // Sin detalle guardado, el procedimiento/motivo es el nombre del antecedente.
+    surgeryProcedure:
+      antecedent.surgeryDetail?.procedure ??
+      (antecedent.type === 'surgery' ? antecedent.name : ''),
     surgeryInstitution: antecedent.surgeryDetail?.institution ?? '',
     surgeryComplications: antecedent.surgeryDetail?.complications ?? '',
     surgeryTreatingPhysician: antecedent.surgeryDetail?.treatingPhysician ?? '',
@@ -101,7 +108,9 @@ export function mapAntecedentToForm(antecedent: Antecedent): AntecedentFormValue
       antecedent.hospitalizationDetail?.admissionDate ?? '',
     hospitalizationDischargeDate:
       antecedent.hospitalizationDetail?.dischargeDate ?? '',
-    hospitalizationReason: antecedent.hospitalizationDetail?.reason ?? '',
+    hospitalizationReason:
+      antecedent.hospitalizationDetail?.reason ??
+      (antecedent.type === 'hospitalization' ? antecedent.name : ''),
     hospitalizationInstitution:
       antecedent.hospitalizationDetail?.institution ?? '',
     hospitalizationComplications:

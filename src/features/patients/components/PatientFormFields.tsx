@@ -56,7 +56,7 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
               label="Primer apellido"
               error={!!error}
               helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 60 } }}
+              slotProps={{ htmlInput: { maxLength: 60, autoComplete: 'off' } }}
             />
           )}
         />
@@ -71,7 +71,8 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
               label="Segundo apellido"
               error={!!error}
               helperText={error?.message}
-              slotProps={{ htmlInput: { maxLength: 60 } }}
+              // Sin autocompletado: el navegador lo llenaba con el primer apellido.
+              slotProps={{ htmlInput: { maxLength: 60, autoComplete: 'off' } }}
             />
           )}
         />

@@ -15,6 +15,7 @@ interface CatalogPickerProps {
   value: CatalogPick | null
   onChange: (value: CatalogPick | null) => void
   placeholder: string
+  label?: string
   disabled?: boolean
   manualLabel?: string
   sx?: object
@@ -29,18 +30,25 @@ export function CatalogPicker({
   value,
   onChange,
   placeholder,
+  label,
   disabled,
   manualLabel = 'No está en el catálogo · escribir manualmente',
   sx,
 }: CatalogPickerProps) {
-  const [manual, setManual] = useState(false)
-  const selected = options.find((option) => option.id === value?.catalogId) ?? null
+  // Un valor ya guardado sin id de catálogo (escrito a mano) abre en modo manual.
+  const [manual, setManual] = useState(() => !!value?.name && value.catalogId === undefined)
+  const found = options.find((option) => option.id === value?.catalogId)
+  // Si el id guardado no está entre las opciones (ej. inactivo), se muestra igual.
+  const selected =
+    found ?? (value?.catalogId !== undefined ? { id: value.catalogId, name: value.name } : null)
+  const list = found || !selected ? options : [...options, selected]
 
   return (
     <Stack spacing={0.25} sx={sx}>
       {manual ? (
         <TextField
           size="small"
+          label={label}
           placeholder={placeholder}
           value={value?.name ?? ''}
           onChange={(event) =>
@@ -50,7 +58,7 @@ export function CatalogPicker({
         />
       ) : (
         <Autocomplete
-          options={options}
+          options={list}
           getOptionLabel={(option) => option.name}
           filterOptions={filterCatalogOptions}
           renderOption={({ key, ...props }, option) => (
@@ -63,7 +71,7 @@ export function CatalogPicker({
           }
           disabled={disabled}
           renderInput={(params) => (
-            <TextField {...params} size="small" placeholder={placeholder} />
+            <TextField {...params} size="small" label={label} placeholder={placeholder} />
           )}
         />
       )}

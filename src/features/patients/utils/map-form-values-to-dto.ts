@@ -6,9 +6,10 @@ export function mapFormValuesToDto(values: PatientFormValues): CreatePatientDto 
     firstName: values.firstName,
     lastName: values.lastName,
     birthDate: values.birthDate,
-    middleName: values.middleName || undefined,
-    secondLastName: values.secondLastName || undefined,
-    identityDocument: values.identityDocument?.trim() || undefined,
+    // Vacíos se envían como '' para que al editar se borre el valor anterior.
+    middleName: values.middleName?.trim() ?? '',
+    secondLastName: values.secondLastName?.trim() ?? '',
+    identityDocument: values.identityDocument?.trim() ?? '',
     email: values.email || undefined,
     nationalityCountryId: values.nationalityCountryId,
     residenceCountryId: values.residenceCountryId,

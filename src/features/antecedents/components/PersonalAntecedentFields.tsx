@@ -3,16 +3,15 @@ import type { Control, UseFormSetValue } from 'react-hook-form'
 import {
   Grid,
   Typography,
-  FormHelperText,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
 } from '@mui/material'
-import { CatalogSearchInput } from '@/components/ui/CatalogSearchInput'
 import { useAntecedentDiseaseOptions } from '../hooks/useAntecedentDiseaseOptions'
 import type { AntecedentFormValues } from '../schemas/antecedent-form.schema'
 import { FormText } from './AntecedentTextField'
+import { AntecedentCatalogField } from './AntecedentCatalogField'
 import { ANTECEDENT_STATUS_LABELS } from '../utils/antecedent-format'
 import type { AntecedentStatus } from '../types'
 
@@ -36,28 +35,14 @@ export function PersonalAntecedentFields({ control, setValue }: PersonalAntecede
   return (
     <>
       <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="name"
+        <AntecedentCatalogField
           control={control}
-          render={({ field, fieldState: { error } }) => (
-            <>
-              <CatalogSearchInput
-                options={diseaseOptions}
-                placeholder="Buscar antecedente personal…"
-                onAdd={(name, catalogId) => {
-                  field.onChange(name)
-                  setValue('diseaseCatalogId', catalogId)
-                }}
-                manualLabel="No está en el catálogo · escribir manualmente"
-              />
-              {field.value ? (
-                <Typography sx={{ fontSize: '12px', color: 'text.secondary', mt: 0.5 }}>
-                  Seleccionado: {field.value}
-                </Typography>
-              ) : null}
-              {error ? <FormHelperText error>{error.message}</FormHelperText> : null}
-            </>
-          )}
+          setValue={setValue}
+          name="name"
+          idName="diseaseCatalogId"
+          options={diseaseOptions}
+          label="Condición"
+          placeholder="Buscar antecedente personal…"
         />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>

@@ -3,6 +3,7 @@ import { TextField } from '@mui/material'
 import type { PatientFormValues } from '../schemas/patient-form.schema'
 
 // Cédula u otro documento de identidad: se imprime en el récipe y la orden.
+// Solo admite dígitos; cualquier otro carácter se descarta al escribir o pegar.
 export function PatientIdentityField({ control }: { control: Control<PatientFormValues> }) {
   return (
     <Controller
@@ -11,11 +12,12 @@ export function PatientIdentityField({ control }: { control: Control<PatientForm
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
+          onChange={(event) => field.onChange(event.target.value.replace(/\D/g, ''))}
           label="Cédula / documento de identidad"
-          placeholder="V-12.345.678"
+          placeholder="12345678"
           error={!!error}
           helperText={error?.message}
-          slotProps={{ htmlInput: { maxLength: 30 } }}
+          slotProps={{ htmlInput: { maxLength: 30, inputMode: 'numeric' } }}
         />
       )}
     />

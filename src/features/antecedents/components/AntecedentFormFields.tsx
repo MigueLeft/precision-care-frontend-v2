@@ -76,7 +76,7 @@ export function AntecedentFormFields({ control, setValue, lockType }: Antecedent
         <HospitalizationAntecedentFields control={control} setValue={setValue} />
       )}
 
-      {(type === 'family' || type === 'other') && (
+      {type === 'other' && (
         <Grid size={{ xs: 12, sm: 6 }}>
           <FormText control={control} name="eventDate" label="Fecha" type="date" />
         </Grid>

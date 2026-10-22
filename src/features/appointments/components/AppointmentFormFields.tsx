@@ -13,20 +13,16 @@ import {
   Typography,
 } from '@mui/material'
 import { SearchableSelect } from '@/components/SearchableSelect'
-import { TimeField12h } from '@/components/ui/TimeField12h'
 import { usePatients, formatPatientName } from '@/features/patients'
 import { useSpecialistsLookup } from '@/features/identity'
-import {
-  appointmentTypeOptions,
-  DURATION_MIN,
-  DURATION_STEP_MIN,
-} from '../schemas/appointment-form.schema'
+import { appointmentTypeOptions } from '../schemas/appointment-form.schema'
 import type { AppointmentFormValues } from '../schemas/appointment-form.schema'
 import {
   APPOINTMENT_MODALITY_LABELS,
   APPOINTMENT_TYPE_LABELS,
 } from '../utils/appointment-helpers'
 import type { AppointmentModality } from '../types'
+import { AppointmentScheduleFields } from './AppointmentScheduleFields'
 
 interface AppointmentFormFieldsProps {
   control: Control<AppointmentFormValues>
@@ -34,7 +30,6 @@ interface AppointmentFormFieldsProps {
 }
 
 const MODALITIES: AppointmentModality[] = ['in_person', 'telemedicine']
-const todayIso = new Date().toLocaleDateString('en-CA')
 
 export function AppointmentFormFields({ control, lockPatient }: AppointmentFormFieldsProps) {
   const { data: patients = [] } = usePatients()
@@ -162,63 +157,7 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
         </Grid>
       )}
 
-      <Grid size={{ xs: 12, sm: 4 }}>
-        <Controller
-          name="date"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              type="date"
-              label="Fecha"
-              error={!!error}
-              helperText={error?.message}
-              slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: todayIso } }}
-              fullWidth
-            />
-          )}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 5 }}>
-        <Controller
-          name="time"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TimeField12h
-              label="Hora"
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              error={!!error}
-              helperText={error?.message}
-            />
-          )}
-        />
-      </Grid>
-      <Grid size={{ xs: 12, sm: 3 }}>
-        <Controller
-          name="durationMin"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              type="number"
-              label="Duración (min)"
-              value={field.value ?? ''}
-              onChange={(e) =>
-                field.onChange(e.target.value === '' ? undefined : Number(e.target.value))
-              }
-              onBlur={field.onBlur}
-              error={!!error}
-              helperText={error?.message ?? `En pasos de ${DURATION_STEP_MIN} min`}
-              slotProps={{
-                inputLabel: { shrink: true },
-                htmlInput: { min: DURATION_MIN, step: DURATION_STEP_MIN },
-              }}
-              fullWidth
-            />
-          )}
-        />
-      </Grid>
+      <AppointmentScheduleFields control={control} />
 
       <Grid size={{ xs: 12 }}>
         <Controller
