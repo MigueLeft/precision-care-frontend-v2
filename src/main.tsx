@@ -6,9 +6,12 @@ import { ThemeProvider, CssBaseline } from '@mui/material'
 import { theme } from '@/utils/theme'
 import { queryClient } from '@/utils/query-client'
 import App from '@/App'
+import { initSentry, sentryRootOptions } from '@/utils/sentry'
 import '@/index.css'
 
-createRoot(document.getElementById('root')!).render(
+initSentry()
+
+createRoot(document.getElementById('root')!, sentryRootOptions).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>

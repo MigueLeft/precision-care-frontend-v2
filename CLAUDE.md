@@ -31,7 +31,7 @@ pnpm preview      # serve the production build locally
 | `axios` | 1.18 | HTTP — instance configured in `src/utils/api.ts` |
 | `zustand` | 5.x | Global UI/client state |
 | `zod` | 4.x | Validation — schemas must match backend DTOs |
-| `sonner` | 2.x | Toasts — every mutation must show success/error toast |
+| MUI `Snackbar` | — | Toasts via `toast.success/error/warning/info` from `@/utils/toast` (store in `src/store/toast.store.ts`, `<ToastViewport />` in `__root.tsx`) — every mutation must show success/error toast |
 | `react-international-phone` + `libphonenumber-js` | — | Phone input & validation |
 
 ## Bootstrap architecture
@@ -46,6 +46,9 @@ Router definition is in `src/router.ts` (not in `main.tsx`). The `routeTree.gen.
 
 ```
 VITE_API_URL=http://localhost:3000   # backend base URL (also used by better-auth client)
+VITE_SENTRY_DSN=                     # Sentry DSN; Sentry stays disabled when empty (init in src/utils/sentry.ts)
+# Build-time only (source map upload, plugin disabled without token):
+SENTRY_AUTH_TOKEN=                   # org miguel-lo, project precision-care-frontend (fixed in vite.config.ts)
 ```
 
 ## Architecture
