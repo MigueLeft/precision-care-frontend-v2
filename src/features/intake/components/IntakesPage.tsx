@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Typography, Box } from '@mui/material'
 import { useIntakes } from '../hooks/useIntakes'
 import { useCreateIntake } from '../hooks/useCreateIntake'
@@ -14,7 +14,12 @@ import { IntakeFormModal } from './IntakeFormModal'
 import { DeleteIntakeDialog } from './DeleteIntakeDialog'
 import type { IntakeFormValues } from '../schemas/intake-form.schema'
 
-export function IntakesPage() {
+type IntakesPageProps = {
+  // Contenido extra bajo el encabezado (p. ej. el Recordatorio de 24 Horas).
+  children?: ReactNode
+}
+
+export function IntakesPage({ children }: IntakesPageProps) {
   const [q, setQ] = useState('')
   const [type, setType] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -63,6 +68,8 @@ export function IntakesPage() {
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
         Ingresables estructurados en secciones y preguntas, con puntuación y mapeo a la historia clínica.
       </Typography>
+
+      {children}
 
       <IntakesToolbar
         q={q}

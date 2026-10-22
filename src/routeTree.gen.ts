@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as Recordatorio24hTokenRouteImport } from './routes/recordatorio-24h.$token'
 import { Route as IngresablePublicoTokenRouteImport } from './routes/ingresable-publico.$token'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-roles'
@@ -54,6 +55,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const Recordatorio24hTokenRoute = Recordatorio24hTokenRouteImport.update({
+  id: '/recordatorio-24h/$token',
+  path: '/recordatorio-24h/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const IngresablePublicoTokenRoute = IngresablePublicoTokenRouteImport.update({
   id: '/ingresable-publico/$token',
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
+  '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
@@ -262,6 +269,7 @@ export interface FileRoutesByTo {
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
+  '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
@@ -295,6 +303,7 @@ export interface FileRoutesById {
   '/_app/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/_auth/login': typeof AuthLoginRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
+  '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/_app/': typeof AppIndexRoute
   '/_app/pacientes_/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
   '/_app/consultas_/$consultationId': typeof AppConsultasConsultationIdRoute
@@ -330,6 +339,7 @@ export interface FileRouteTypes {
     | '/usuarios-y-roles'
     | '/login'
     | '/ingresable-publico/$token'
+    | '/recordatorio-24h/$token'
     | '/pacientes/$patientId'
     | '/consultas/$consultationId'
     | '/especialistas/$specialistId'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/usuarios-y-roles'
     | '/login'
     | '/ingresable-publico/$token'
+    | '/recordatorio-24h/$token'
     | '/consultas/$consultationId'
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
@@ -394,6 +405,7 @@ export interface FileRouteTypes {
     | '/_app/usuarios-y-roles'
     | '/_auth/login'
     | '/ingresable-publico/$token'
+    | '/recordatorio-24h/$token'
     | '/_app/'
     | '/_app/pacientes_/$patientId'
     | '/_app/consultas_/$consultationId'
@@ -421,6 +433,7 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   IngresablePublicoTokenRoute: typeof IngresablePublicoTokenRoute
+  Recordatorio24hTokenRoute: typeof Recordatorio24hTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -445,6 +458,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/recordatorio-24h/$token': {
+      id: '/recordatorio-24h/$token'
+      path: '/recordatorio-24h/$token'
+      fullPath: '/recordatorio-24h/$token'
+      preLoaderRoute: typeof Recordatorio24hTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/ingresable-publico/$token': {
       id: '/ingresable-publico/$token'
@@ -756,6 +776,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   IngresablePublicoTokenRoute: IngresablePublicoTokenRoute,
+  Recordatorio24hTokenRoute: Recordatorio24hTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
