@@ -6,8 +6,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Checkbox,
-  ListItemText,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
@@ -21,11 +19,10 @@ import {
   isDefaultFilters,
   type AppointmentFilters,
 } from '../utils/filter-appointments'
-import {
-  APPOINTMENT_MODALITY_LABELS,
-  APPOINTMENT_STATUS_LABELS,
-} from '../utils/appointment-helpers'
-import type { AppointmentModality, AppointmentStatus } from '../types'
+import { APPOINTMENT_MODALITY_LABELS } from '../utils/appointment-helpers'
+import type { AppointmentModality } from '../types'
+import { ConfirmationFilterSelect } from './ConfirmationFilterSelect'
+import { StatusFilterSelect } from './StatusFilterSelect'
 
 interface AppointmentsToolbarProps {
   filters: AppointmentFilters
@@ -33,16 +30,10 @@ interface AppointmentsToolbarProps {
   onChange: (patch: Partial<AppointmentFilters>) => void
   // Un especialista solo ve sus citas: se oculta el toggle "Mis citas / Todas".
   isSpecialist: boolean
+  // En semana/mes el periodo lo define el calendario: sin "desde/hasta".
+  showDateRange: boolean
 }
 
-const STATUS_KEYS: AppointmentStatus[] = [
-  'scheduled',
-  'confirmed',
-  'in_progress',
-  'completed',
-  'cancelled_by_clinic',
-  'no_show',
-]
 const MODALITY_KEYS: AppointmentModality[] = ['in_person', 'telemedicine']
 
 export function AppointmentsToolbar({
@@ -50,6 +41,7 @@ export function AppointmentsToolbar({
   specialists,
   onChange,
   isSpecialist,
+  showDateRange,
 }: AppointmentsToolbarProps) {
   const hasActiveFilters = !isDefaultFilters(filters)
 
@@ -88,59 +80,35 @@ export function AppointmentsToolbar({
         }}
       />
 
-      <TextField
-        type="date"
-        value={filters.from}
-        onChange={(e) => onChange({ from: e.target.value })}
-        slotProps={{ inputLabel: { shrink: true } }}
-        sx={{ width: 160 }}
-      />
-      <Typography sx={{ color: 'text.secondary' }}>→</Typography>
-      <TextField
-        type="date"
-        value={filters.to}
-        onChange={(e) => onChange({ to: e.target.value })}
-        slotProps={{ inputLabel: { shrink: true } }}
-        sx={{ width: 160 }}
-      />
+      {showDateRange && (
+        <>
+          <TextField
+            type="date"
+            value={filters.from}
+            onChange={(e) => onChange({ from: e.target.value })}
+            slotProps={{ inputLabel: { shrink: true } }}
+            sx={{ width: 160 }}
+          />
+          <Typography sx={{ color: 'text.secondary' }}>→</Typography>
+          <TextField
+            type="date"
+            value={filters.to}
+            onChange={(e) => onChange({ to: e.target.value })}
+            slotProps={{ inputLabel: { shrink: true } }}
+            sx={{ width: 160 }}
+          />
+        </>
+      )}
 
-      {/* Ancho fijo: con varios estados seleccionados el texto se recorta con "…" */}
-      <FormControl sx={{ width: 220 }}>
-        <InputLabel id="appt-status-label">Estado</InputLabel>
-        <Select<AppointmentStatus[]>
-          labelId="appt-status-label"
-          label="Estado"
-          multiple
-          sx={{
-            '& .MuiSelect-select': {
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            },
-          }}
-          value={filters.statuses}
-          onChange={(e) =>
-            onChange({
-              statuses:
-                typeof e.target.value === 'string'
-                  ? []
-                  : (e.target.value as AppointmentStatus[]),
-            })
-          }
-          renderValue={(selected) =>
-            selected.length === 0
-              ? 'Todos'
-              : selected.map((s) => APPOINTMENT_STATUS_LABELS[s]).join(', ')
-          }
-        >
-          {STATUS_KEYS.map((key) => (
-            <MenuItem key={key} value={key}>
-              <Checkbox size="small" checked={filters.statuses.includes(key)} />
-              <ListItemText primary={APPOINTMENT_STATUS_LABELS[key]} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      {/* El especialista solo ve citas confirmadas: el filtro no aplica. */}
+      {!isSpecialist && (
+        <ConfirmationFilterSelect
+          value={filters.confirmation}
+          onChange={(confirmation) => onChange({ confirmation })}
+        />
+      )}
+
+      <StatusFilterSelect value={filters.statuses} onChange={(statuses) => onChange({ statuses })} />
 
       <FormControl sx={{ minWidth: 150 }}>
         <InputLabel id="appt-modality-label">Modalidad</InputLabel>

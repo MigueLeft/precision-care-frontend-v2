@@ -13,6 +13,7 @@ import type { Appointment } from '../types'
 import { getPrimarySpecialist, isCancelled } from '../utils/appointment-helpers'
 import { useStartConsultation, useSendReminder } from '../hooks/useAppointmentMutations'
 import { SendIntakeAssignmentButton } from './SendIntakeAssignmentButton'
+import { ConfirmAppointmentButton } from './ConfirmAppointmentButton'
 
 interface AppointmentActionsProps {
   appointment: Appointment
@@ -84,6 +85,7 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
 
       {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
         <>
+          <ConfirmAppointmentButton appointment={appointment} />
           {isAssignedSpecialist && (
             <AppButton
               variant="contained"

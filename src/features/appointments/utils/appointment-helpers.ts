@@ -6,7 +6,7 @@ import type {
 } from '../types'
 
 export const APPOINTMENT_STATUS_LABELS: Record<AppointmentStatus, string> = {
-  scheduled: 'Programada',
+  scheduled: 'Sin confirmar',
   confirmed: 'Confirmada',
   in_progress: 'En curso',
   completed: 'Terminada',

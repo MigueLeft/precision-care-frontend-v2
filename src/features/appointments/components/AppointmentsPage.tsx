@@ -1,14 +1,12 @@
 import { useState } from 'react'
-import { Box, Stack, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
-import ViewListIcon from '@mui/icons-material/ViewList'
-import CalendarViewWeekIcon from '@mui/icons-material/CalendarViewWeek'
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { canViewAllAppointments, useMe, useSpecialistsLookup } from '@/features/identity'
 import { useAppointments } from '../hooks/useAppointments'
+import { useCalendarNavigation } from '../hooks/useCalendarNavigation'
 import {
   useCreateAppointment,
   useUpdateAppointment,
@@ -21,29 +19,46 @@ import {
 } from '../utils/filter-appointments'
 import { mapFormToPayload, mapAppointmentToForm } from '../utils/appointment-mappers'
 import { AppointmentsToolbar } from './AppointmentsToolbar'
-import { AppointmentsTable } from './AppointmentsTable'
+import { AppointmentsViewBody } from './AppointmentsViewBody'
 import { AppointmentFormModal } from './AppointmentFormModal'
 import { AppointmentDetailDrawer } from './AppointmentDetailDrawer'
-import type { AppointmentFormValues } from '../schemas/appointment-form.schema'
+import { CalendarHeader } from './calendar/CalendarHeader'
+import { SpecialistLegend } from './calendar/SpecialistLegend'
+import {
+  appointmentFormDefaultValues,
+  type AppointmentFormValues,
+} from '../schemas/appointment-form.schema'
 
 export function AppointmentsPage() {
   const { data: appointments = [], isLoading, isError, error } = useAppointments()
   const { data: specialists = [] } = useSpecialistsLookup()
   const { data: me } = useMe()
+  const calendar = useCalendarNavigation()
 
   const [filters, setFilters] = useState<AppointmentFilters>(defaultAppointmentFilters)
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  // Valores iniciales al crear (clic en un hueco del calendario: fecha y hora).
+  const [createDraft, setCreateDraft] = useState<AppointmentFormValues | null>(null)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [viewingId, setViewingId] = useState<number | null>(null)
   const [cancelingId, setCancelingId] = useState<number | null>(null)
 
-  const createMutation = useCreateAppointment({ onSuccess: () => setIsCreateOpen(false) })
+  const createMutation = useCreateAppointment({ onSuccess: () => setCreateDraft(null) })
   const updateMutation = useUpdateAppointment({ onSuccess: () => setEditingId(null) })
   const cancelMutation = useCancelAppointment({ onSuccess: () => setCancelingId(null) })
 
   const editing = appointments.find((a) => a.id === editingId) ?? null
   const canViewAll = canViewAllAppointments(me)
-  const filtered = filterAppointments(appointments, filters, me?.specialistId ?? null, !canViewAll)
+  const isCalendar = calendar.view !== 'list'
+  const filtered = filterAppointments(appointments, filters, {
+    mySpecialistId: me?.specialistId ?? null,
+    restrictToMine: !canViewAll,
+    range: calendar.range,
+  })
+  const updateFilters = (patch: Partial<AppointmentFilters>) => setFilters((prev) => ({ ...prev, ...patch }))
+  // Las citas se agendan a partir de hoy: los huecos del pasado no crean citas.
+  const today = new Date().toLocaleDateString('en-CA')
+  const createAt = (date: string, time: string) =>
+    date >= today && setCreateDraft({ ...appointmentFormDefaultValues, date, time })
 
   function handleSubmit(values: AppointmentFormValues) {
     if (editingId) {
@@ -60,47 +75,55 @@ export function AppointmentsPage() {
         <AppButton
           variant="contained"
           startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-          onClick={() => setIsCreateOpen(true)}
+          onClick={() => setCreateDraft(appointmentFormDefaultValues)}
         >
           Nueva cita
         </AppButton>
-      </Stack>
-      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="body1" color="text.secondary">
-          {filtered.length} citas con los filtros actuales.
-        </Typography>
-        <ToggleButtonGroup size="small" exclusive value="list">
-          <ToggleButton value="list">
-            <ViewListIcon sx={{ fontSize: 16, mr: 0.5 }} /> Lista
-          </ToggleButton>
-          <ToggleButton value="week" disabled>
-            <CalendarViewWeekIcon sx={{ fontSize: 16, mr: 0.5 }} /> Semana
-          </ToggleButton>
-          <ToggleButton value="month" disabled>
-            <CalendarMonthIcon sx={{ fontSize: 16, mr: 0.5 }} /> Mes
-          </ToggleButton>
-        </ToggleButtonGroup>
       </Stack>
 
       <AppointmentsToolbar
         filters={filters}
         specialists={specialists}
         isSpecialist={!canViewAll}
-        onChange={(patch) => setFilters((prev) => ({ ...prev, ...patch }))}
+        showDateRange={!isCalendar}
+        onChange={updateFilters}
       />
 
+      <CalendarHeader
+        view={calendar.view}
+        anchor={calendar.anchor}
+        count={filtered.length}
+        onViewChange={calendar.setView}
+        onToday={calendar.goToday}
+        onNavigate={calendar.navigate}
+      />
+      {isCalendar && canViewAll && (
+        <SpecialistLegend
+          specialists={specialists}
+          selectedId={filters.specialistId}
+          onSelect={(specialistId) => updateFilters({ specialistId })}
+        />
+      )}
+
       <QueryBoundary isLoading={isLoading} isError={isError} error={error}>
-        <AppointmentsTable appointments={filtered} onView={(id) => setViewingId(id)} />
+        <AppointmentsViewBody
+          view={calendar.view}
+          anchor={calendar.anchor}
+          appointments={filtered}
+          onOpen={setViewingId}
+          onShowWeekOf={calendar.showWeekOf}
+          onCreateAt={createAt}
+        />
       </QueryBoundary>
 
       <AppointmentFormModal
-        open={isCreateOpen || editingId !== null}
+        open={createDraft !== null || editingId !== null}
         mode={editingId ? 'edit' : 'create'}
-        initialValues={editing ? mapAppointmentToForm(editing) : undefined}
+        initialValues={editing ? mapAppointmentToForm(editing) : (createDraft ?? undefined)}
         isSubmitting={createMutation.isPending || updateMutation.isPending}
         onSubmit={handleSubmit}
         onClose={() => {
-          setIsCreateOpen(false)
+          setCreateDraft(null)
           setEditingId(null)
         }}
       />
