@@ -11,7 +11,7 @@ interface PatientsTableProps {
   onDelete: (id: number) => void
 }
 
-const HEADERS = ['Paciente', 'MRN', 'F. nacimiento', 'Nacionalidad', '']
+const HEADERS = ['Paciente', 'MRN', 'Teléfono', 'F. nacimiento', 'Nacionalidad', '']
 
 export function PatientsTable({ patients, countryNameById, onView, onEdit, onDelete }: PatientsTableProps) {
   if (patients.length === 0) {

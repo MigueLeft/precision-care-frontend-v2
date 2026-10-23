@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { lettersOnlySchema, optionalLettersOnlySchema } from '@/utils/text-validation'
+import { isValidPhone } from '@/utils/phone'
 
 function todayIsoDate() {
   return new Date().toISOString().slice(0, 10)
@@ -26,6 +27,10 @@ export const patientFormSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha de nacimiento debe tener formato YYYY-MM-DD.')
     .refine((value) => value <= todayIsoDate(), 'La fecha de nacimiento no puede ser una fecha futura.'),
   email: z.string().email('El correo no tiene un formato válido.').optional().or(z.literal('')),
+  // Opcional; si se escribe debe ser un número válido para el país elegido.
+  phone: z
+    .string()
+    .refine((value) => value === '' || isValidPhone(value), 'El teléfono no es válido para el país elegido.'),
   nationalityCountryId: z.number().int().positive().optional(),
   residenceCountryId: z.number().int().positive().optional(),
 })
@@ -40,6 +45,7 @@ export const patientFormDefaultValues: PatientFormValues = {
   identityDocument: '',
   birthDate: '',
   email: '',
+  phone: '',
   nationalityCountryId: undefined,
   residenceCountryId: undefined,
 }

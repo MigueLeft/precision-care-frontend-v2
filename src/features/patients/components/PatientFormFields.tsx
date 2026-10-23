@@ -5,6 +5,7 @@ import { SearchableSelect } from '@/components/SearchableSelect'
 import type { PatientFormValues } from '../schemas/patient-form.schema'
 import type { Country } from '@/features/catalogs'
 import { PatientIdentityField } from './PatientIdentityField'
+import { PatientContactFields } from './PatientContactFields'
 
 interface PatientFormFieldsProps {
   control: Control<PatientFormValues>
@@ -96,21 +97,7 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
           )}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="email"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              type="email"
-              label="Correo electrónico"
-              error={!!error}
-              helperText={error?.message}
-            />
-          )}
-        />
-      </Grid>
+      <PatientContactFields control={control} />
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
           name="nationalityCountryId"

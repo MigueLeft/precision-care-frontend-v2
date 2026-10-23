@@ -26,7 +26,7 @@ export function PatientsToolbar({
   return (
     <Stack direction="row" spacing={2} useFlexGap sx={{ alignItems: 'center', flexWrap: 'wrap', mb: 3 }}>
       <TextField
-        placeholder="Buscar por nombre o correo…"
+        placeholder="Buscar por nombre, correo o teléfono…"
         value={q}
         onChange={(event) => onQChange(event.target.value)}
         sx={{ minWidth: 280 }}

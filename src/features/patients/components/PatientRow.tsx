@@ -1,4 +1,5 @@
 import { TableRow, TableCell, Typography, Box } from '@mui/material'
+import { formatPhone } from '@/utils/phone'
 import { PatientNameCell } from './PatientNameCell'
 import { RowActionsMenu } from './RowActionsMenu'
 import { formatBirthDate, calculatePatientAge } from '../utils/patient-format'
@@ -24,6 +25,11 @@ export function PatientRow({ patient, nationalityName, onView, onEdit, onDelete 
       </TableCell>
       <TableCell>
         <Typography sx={{ fontSize: '14px' }}>{patient.mrn}</Typography>
+      </TableCell>
+      <TableCell>
+        <Typography sx={{ fontSize: '14px', whiteSpace: 'nowrap', color: patient.phone ? 'text.primary' : 'text.secondary' }}>
+          {formatPhone(patient.phone) ?? '—'}
+        </Typography>
       </TableCell>
       <TableCell>
         <Box>

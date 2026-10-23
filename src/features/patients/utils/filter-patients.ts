@@ -15,7 +15,11 @@ export function filterPatients(patients: Patient[], filters: PatientFilters): Pa
     if (filters.q) {
       const needle = filters.q.trim().toLowerCase()
       const haystack = `${formatPatientName(patient)} ${patient.email ?? ''}`.toLowerCase()
-      if (!haystack.includes(needle)) return false
+      // También por teléfono, ignorando espacios y signos ("0412 123" o "+58412").
+      // Sin el 0 inicial del formato local: "0412…" coincide con "+58412…".
+      const needleDigits = needle.replace(/\D/g, '').replace(/^0+/, '')
+      const phoneMatch = needleDigits.length >= 3 && (patient.phone ?? '').includes(needleDigits)
+      if (!haystack.includes(needle) && !phoneMatch) return false
     }
     return true
   })

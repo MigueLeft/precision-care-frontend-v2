@@ -9,6 +9,8 @@ export interface Patient {
   identityDocument: string | null
   birthDate: string
   email: string | null
+  // Formato internacional E.164 (+584121234567).
+  phone: string | null
   nationalityCountryId: number | null
   originCountryId: number | null
   residenceCountryId: number | null

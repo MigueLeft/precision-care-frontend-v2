@@ -1,4 +1,5 @@
 import { Box, Stack, Typography, Divider } from '@mui/material'
+import { formatPhone } from '@/utils/phone'
 import { formatBirthDate, calculatePatientAge } from '../utils/patient-format'
 import type { Patient } from '../types'
 
@@ -47,6 +48,7 @@ export function PatientDrawerInfo({ patient, countryNameById }: PatientDrawerInf
         Contacto
       </Typography>
       <InfoRow label="Email" value={patient.email ?? '—'} />
+      <InfoRow label="Teléfono" value={formatPhone(patient.phone) ?? '—'} />
     </Box>
   )
 }

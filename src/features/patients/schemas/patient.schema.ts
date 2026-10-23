@@ -10,6 +10,8 @@ export const createPatientSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha de nacimiento debe tener formato YYYY-MM-DD.'),
   email: z.string().email('El correo no tiene un formato válido.').optional(),
+  // E.164, igual que el DTO del backend; null lo borra al editar.
+  phone: z.string().regex(/^\+[1-9]\d{7,14}$/).nullable().optional(),
   nationalityCountryId: z.number().int().positive().optional(),
   originCountryId: z.number().int().positive().optional(),
   residenceCountryId: z.number().int().positive().optional(),

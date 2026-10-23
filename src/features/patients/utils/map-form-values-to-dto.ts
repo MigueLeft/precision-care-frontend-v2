@@ -11,6 +11,7 @@ export function mapFormValuesToDto(values: PatientFormValues): CreatePatientDto 
     secondLastName: values.secondLastName?.trim() ?? '',
     identityDocument: values.identityDocument?.trim() ?? '',
     email: values.email || undefined,
+    phone: values.phone || null,
     nationalityCountryId: values.nationalityCountryId,
     residenceCountryId: values.residenceCountryId,
   }
