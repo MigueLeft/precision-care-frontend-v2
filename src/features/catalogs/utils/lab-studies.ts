@@ -30,6 +30,19 @@ function labCategoryIds(categories: ParaclinicalCategoryCatalog[]): Set<number> 
   return ids
 }
 
+// Subcategorías activas de "Laboratorio" en el orden en que se crearon.
+export function labSubcategories(
+  categories: ParaclinicalCategoryCatalog[],
+): ParaclinicalCategoryCatalog[] {
+  const root = categories.find(
+    (c) => c.parentId == null && c.name.trim().toLowerCase() === LAB_ROOT_NAME,
+  )
+  if (!root) return []
+  return categories
+    .filter((c) => c.parentId === root.id && c.active)
+    .sort((a, b) => a.id - b.id)
+}
+
 // Estudios de laboratorio que se pueden agregar a un perfil: los activos más los
 // que ya están en el perfil (aunque se hayan desactivado después).
 export function labStudyOptions(

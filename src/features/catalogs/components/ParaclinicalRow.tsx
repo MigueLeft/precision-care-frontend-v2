@@ -1,4 +1,4 @@
-import { TableRow, TableCell, Typography, Chip, IconButton, Tooltip } from '@mui/material'
+import { TableRow, TableCell, Typography, Chip, IconButton, Switch, Tooltip } from '@mui/material'
 import { ToggleActiveButton } from '@/components/ToggleActiveButton'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import type { ParaclinicalCatalog } from '../types'
@@ -8,6 +8,7 @@ interface ParaclinicalRowProps {
   categoryNameById: Map<number, string>
   onEdit: () => void
   onToggleActive: () => void
+  onToggleDefault: (showByDefault: boolean) => void
 }
 
 export function ParaclinicalRow({
@@ -15,6 +16,7 @@ export function ParaclinicalRow({
   categoryNameById,
   onEdit,
   onToggleActive,
+  onToggleDefault,
 }: ParaclinicalRowProps) {
   const referenceRange =
     paraclinical.referenceMin || paraclinical.referenceMax
@@ -52,6 +54,16 @@ export function ParaclinicalRow({
         <Typography sx={{ fontSize: '14px', fontStyle: 'italic', color: 'text.secondary' }}>
           {referenceRange}
         </Typography>
+      </TableCell>
+      <TableCell>
+        <Tooltip title="Aparece al elegir su categoría en la captura de resultados">
+          <Switch
+            size="small"
+            checked={paraclinical.showByDefault}
+            onChange={(_event, checked) => onToggleDefault(checked)}
+            slotProps={{ input: { 'aria-label': `Mostrar ${paraclinical.name} por defecto` } }}
+          />
+        </Tooltip>
       </TableCell>
       <TableCell>
         <Chip

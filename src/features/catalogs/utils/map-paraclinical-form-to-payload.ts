@@ -13,5 +13,6 @@ export function mapParaclinicalFormToPayload(
     defaultUnit: values.defaultUnit || undefined,
     referenceMin: values.referenceMin ? Number(values.referenceMin) : undefined,
     referenceMax: values.referenceMax ? Number(values.referenceMax) : undefined,
+    showByDefault: values.showByDefault,
   }
 }

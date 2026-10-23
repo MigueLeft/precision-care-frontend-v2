@@ -115,6 +115,8 @@ export interface ParaclinicalCatalog {
   referenceMin: string | null
   referenceMax: string | null
   valueType: ParaclinicalValueType
+  // Aparece al elegir su categoría en la captura de resultados.
+  showByDefault: boolean
   active: boolean
 }
 
@@ -128,6 +130,7 @@ export interface CreateParaclinicalPayload {
   valueType: ParaclinicalValueType
   referenceMin?: number
   referenceMax?: number
+  showByDefault?: boolean
 }
 export type UpdateParaclinicalPayload = Partial<CreateParaclinicalPayload>
 

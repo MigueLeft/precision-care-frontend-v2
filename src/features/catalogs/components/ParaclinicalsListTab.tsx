@@ -4,6 +4,7 @@ import { useParaclinicals } from '../hooks/useParaclinicals'
 import { useCreateParaclinical } from '../hooks/useCreateParaclinical'
 import { useUpdateParaclinical } from '../hooks/useUpdateParaclinical'
 import { useToggleParaclinicalActive } from '../hooks/useToggleParaclinicalActive'
+import { useToggleParaclinicalDefault } from '../hooks/useToggleParaclinicalDefault'
 import { useParaclinicalCategories } from '../hooks/useParaclinicalCategories'
 import { filterParaclinicals } from '../utils/filter-paraclinicals'
 import { categoryWithDescendants } from '../utils/paraclinical-category-tree'
@@ -49,6 +50,7 @@ export function ParaclinicalsListTab() {
     onSuccess: () => setEditingId(null),
   })
   const toggleActiveMutation = useToggleParaclinicalActive()
+  const toggleDefaultMutation = useToggleParaclinicalDefault()
 
   const isFormOpen = isCreateOpen || editingId !== null
   const formMode = isCreateOpen ? 'create' : 'edit'
@@ -99,6 +101,7 @@ export function ParaclinicalsListTab() {
         categoryNameById={categoryNameById}
         onEdit={(id) => setEditingId(id)}
         onToggleActive={(id) => toggleActiveMutation.mutate(id)}
+        onToggleDefault={(id, showByDefault) => toggleDefaultMutation.mutate({ id, showByDefault })}
       />
 
       <ParaclinicalFormModal

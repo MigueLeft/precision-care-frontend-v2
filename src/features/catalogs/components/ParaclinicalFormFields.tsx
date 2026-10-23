@@ -1,7 +1,16 @@
 import { useEffect } from 'react'
 import { Controller, useWatch } from 'react-hook-form'
 import type { Control, UseFormSetValue } from 'react-hook-form'
-import { Grid, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import {
+  Grid,
+  TextField,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  Select,
+  MenuItem,
+  Switch,
+} from '@mui/material'
 import { paraclinicalValueTypeOptions } from '../schemas/paraclinical-form.schema'
 import { ParaclinicalCategoryFields } from './ParaclinicalCategoryFields'
 import type { ParaclinicalFormValues } from '../schemas/paraclinical-form.schema'
@@ -114,6 +123,18 @@ export function ParaclinicalFormFields({ control, setValue }: ParaclinicalFormFi
               error={!!error}
               helperText={error?.message ?? (isNumericType ? ' ' : 'Solo aplica para tipo numérico.')}
               slotProps={{ htmlInput: { maxLength: 30 } }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid size={{ xs: 12 }}>
+        <Controller
+          name="showByDefault"
+          control={control}
+          render={({ field }) => (
+            <FormControlLabel
+              control={<Switch checked={field.value} onChange={(_e, checked) => field.onChange(checked)} />}
+              label="Mostrar por defecto al ingresar resultados por categoría"
             />
           )}
         />

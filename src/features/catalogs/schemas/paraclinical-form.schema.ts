@@ -29,6 +29,7 @@ const paraclinicalFormBaseSchema = z.object({
   valueType: z.enum(paraclinicalValueTypeOptions),
   referenceMin: referenceValueSchema,
   referenceMax: referenceValueSchema,
+  showByDefault: z.boolean(),
 })
 
 export type ParaclinicalFormValues = z.infer<typeof paraclinicalFormBaseSchema>
@@ -106,4 +107,5 @@ export const paraclinicalFormDefaultValues: ParaclinicalFormValues = {
   valueType: 'numeric',
   referenceMin: '',
   referenceMax: '',
+  showByDefault: false,
 }

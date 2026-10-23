@@ -44,17 +44,30 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
 
   return (
     <Stack spacing={1.5} sx={{ mt: 2.5 }}>
-      <SearchableMultiSelect
-        label="Perfiles de laboratorio"
-        placeholder="Elige uno o más perfiles…"
-        options={draft.profiles.map((profile) => ({
-          id: profile.id,
-          label: profile.name,
-          sublabel: `${profile.items.length} estudios`,
-        }))}
-        value={draft.selectedIds}
-        onChange={draft.setSelectedIds}
-      />
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5}>
+        <Stack sx={{ flex: 1 }}>
+          <SearchableMultiSelect
+            label="Perfiles de laboratorio"
+            placeholder="Elige uno o más perfiles…"
+            options={draft.profiles.map((profile) => ({
+              id: profile.id,
+              label: profile.name,
+              sublabel: `${profile.items.length} estudios`,
+            }))}
+            value={draft.profileIds}
+            onChange={draft.selectProfiles}
+          />
+        </Stack>
+        <Stack sx={{ flex: 1 }}>
+          <SearchableMultiSelect
+            label="Categorías de laboratorio"
+            placeholder="Elige una o más categorías…"
+            options={draft.labCategories.map((category) => ({ id: category.id, label: category.name }))}
+            value={draft.categoryIds}
+            onChange={draft.selectCategories}
+          />
+        </Stack>
+      </Stack>
       <CatalogStudiesSelect value={draft.studyIds} onChange={draft.setStudyIds} />
 
       {draft.blocks.map((block) => (
@@ -63,6 +76,9 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
           block={block}
           entryOf={draft.entryOf}
           onChange={draft.setEntry}
+          onAddStudy={(studyId) => draft.addStudy(block.key, studyId)}
+          onRemoveStudy={(studyId) => draft.removeStudy(block.key, studyId)}
+          onRemoveBlock={() => draft.removeBlock(block.key)}
         />
       ))}
 

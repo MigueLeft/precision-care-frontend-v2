@@ -13,5 +13,6 @@ export function mapParaclinicalToFormValues(
     valueType: paraclinical.valueType,
     referenceMin: paraclinical.referenceMin ?? '',
     referenceMax: paraclinical.referenceMax ?? '',
+    showByDefault: paraclinical.showByDefault,
   }
 }

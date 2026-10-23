@@ -8,15 +8,17 @@ interface ParaclinicalsTableProps {
   categoryNameById: Map<number, string>
   onEdit: (id: number) => void
   onToggleActive: (id: number) => void
+  onToggleDefault: (id: number, showByDefault: boolean) => void
 }
 
-const HEADERS = ['Nombre', 'Categoría', 'Unidad', 'Referencia', 'Estado', '']
+const HEADERS = ['Nombre', 'Categoría', 'Unidad', 'Referencia', 'Por defecto', 'Estado', '']
 
 export function ParaclinicalsTable({
   paraclinicals,
   categoryNameById,
   onEdit,
   onToggleActive,
+  onToggleDefault,
 }: ParaclinicalsTableProps) {
   if (paraclinicals.length === 0) {
     return (
@@ -44,6 +46,7 @@ export function ParaclinicalsTable({
               categoryNameById={categoryNameById}
               onEdit={() => onEdit(paraclinical.id)}
               onToggleActive={() => onToggleActive(paraclinical.id)}
+              onToggleDefault={(checked) => onToggleDefault(paraclinical.id, checked)}
             />
           ))}
         </TableBody>
