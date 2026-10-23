@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MobileRouteRouteImport } from './routes/_mobile/route'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as Recordatorio24hTokenRouteImport } from './routes/recordatorio-24h.$token'
 import { Route as IngresablePublicoTokenRouteImport } from './routes/ingresable-publico.$token'
+import { Route as MobileAgendaRouteImport } from './routes/_mobile/agenda'
 import { Route as AuthRestablecerContrasenaRouteImport } from './routes/_auth/restablecer-contrasena'
 import { Route as AuthRecuperarContrasenaRouteImport } from './routes/_auth/recuperar-contrasena'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
@@ -46,6 +48,10 @@ import { Route as AppPacientesPatientIdAntecedentesRouteImport } from './routes/
 import { Route as AppEspecialistasSpecialistIdEditarRouteImport } from './routes/_app/especialistas_.$specialistId_.editar'
 import { Route as AppCitasAppointmentIdPrecargaRouteImport } from './routes/_app/citas_.$appointmentId_.precarga'
 
+const MobileRouteRoute = MobileRouteRouteImport.update({
+  id: '/_mobile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -68,6 +74,11 @@ const IngresablePublicoTokenRoute = IngresablePublicoTokenRouteImport.update({
   id: '/ingresable-publico/$token',
   path: '/ingresable-publico/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MobileAgendaRoute = MobileAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => MobileRouteRoute,
 } as any)
 const AuthRestablecerContrasenaRoute =
   AuthRestablecerContrasenaRouteImport.update({
@@ -257,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
   '/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
+  '/agenda': typeof MobileAgendaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
@@ -293,6 +305,7 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
   '/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
+  '/agenda': typeof MobileAgendaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
@@ -319,6 +332,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/_mobile': typeof MobileRouteRouteWithChildren
   '/_app/catalogos': typeof AppCatalogosRoute
   '/_app/citas': typeof AppCitasRoute
   '/_app/entregables': typeof AppEntregablesRoute
@@ -330,6 +344,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
   '/_auth/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
+  '/_mobile/agenda': typeof MobileAgendaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/_app/': typeof AppIndexRoute
@@ -369,6 +384,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/recuperar-contrasena'
     | '/restablecer-contrasena'
+    | '/agenda'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/pacientes/$patientId'
@@ -405,6 +421,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/recuperar-contrasena'
     | '/restablecer-contrasena'
+    | '/agenda'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/consultas/$consultationId'
@@ -430,6 +447,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_auth'
+    | '/_mobile'
     | '/_app/catalogos'
     | '/_app/citas'
     | '/_app/entregables'
@@ -441,6 +459,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/recuperar-contrasena'
     | '/_auth/restablecer-contrasena'
+    | '/_mobile/agenda'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/_app/'
@@ -469,12 +488,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  MobileRouteRoute: typeof MobileRouteRouteWithChildren
   IngresablePublicoTokenRoute: typeof IngresablePublicoTokenRoute
   Recordatorio24hTokenRoute: typeof Recordatorio24hTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_mobile': {
+      id: '/_mobile'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof MobileRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -509,6 +536,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ingresable-publico/$token'
       preLoaderRoute: typeof IngresablePublicoTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_mobile/agenda': {
+      id: '/_mobile/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof MobileAgendaRouteImport
+      parentRoute: typeof MobileRouteRoute
     }
     '/_auth/restablecer-contrasena': {
       id: '/_auth/restablecer-contrasena'
@@ -836,9 +870,22 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface MobileRouteRouteChildren {
+  MobileAgendaRoute: typeof MobileAgendaRoute
+}
+
+const MobileRouteRouteChildren: MobileRouteRouteChildren = {
+  MobileAgendaRoute: MobileAgendaRoute,
+}
+
+const MobileRouteRouteWithChildren = MobileRouteRoute._addFileChildren(
+  MobileRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  MobileRouteRoute: MobileRouteRouteWithChildren,
   IngresablePublicoTokenRoute: IngresablePublicoTokenRoute,
   Recordatorio24hTokenRoute: Recordatorio24hTokenRoute,
 }

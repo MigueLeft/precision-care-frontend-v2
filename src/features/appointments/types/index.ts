@@ -62,6 +62,8 @@ export interface Appointment {
   // Adjuntado por el backend.
   specialists: AppointmentSpecialist[]
   patientName: string | null
+  // Teléfono del paciente (E.164) para llamarle desde la agenda.
+  patientPhone: string | null
   reminders?: AppointmentReminder[]
   intakeAssignments: IntakeAssignment[]
   createdAt: string

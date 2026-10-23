@@ -21,12 +21,17 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
-export function LoginForm() {
+type LoginFormProps = {
+  // Ruta a la que se vuelve tras iniciar sesión (p. ej. /agenda en la PWA).
+  redirectTo?: string
+}
+
+export function LoginForm({ redirectTo = '/' }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
   const { mutate: login, isPending } = useLogin({
-    onSuccess: () => navigate({ to: '/' }),
+    onSuccess: () => navigate({ to: redirectTo }),
   })
 
   const { control, handleSubmit } = useForm<LoginFormValues>({

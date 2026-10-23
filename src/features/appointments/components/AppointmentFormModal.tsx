@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, useMediaQuery, useTheme } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import { AppointmentFormFields } from './AppointmentFormFields'
 import {
@@ -30,6 +30,8 @@ export function AppointmentFormModal({
   onClose,
 }: AppointmentFormModalProps) {
   const values = initialValues ?? appointmentFormDefaultValues
+  // En el teléfono (app de citas) el formulario ocupa toda la pantalla.
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
   const { control, handleSubmit, reset } = useForm<AppointmentFormValues>({
     resolver: zodResolver(getAppointmentFormSchema(mode)),
     defaultValues: values,
@@ -40,7 +42,7 @@ export function AppointmentFormModal({
   }, [open, values, reset])
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{mode === 'create' ? 'Nueva cita' : 'Editar cita'}</DialogTitle>
       <DialogContent>
         <AppointmentFormFields control={control} lockPatient={lockPatient} />
