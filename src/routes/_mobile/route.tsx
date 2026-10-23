@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { MobileShell } from '@/components/layout/MobileShell'
 import { MobileUserMenu } from '@/features/auth'
+import { PushNotificationsMenuItem } from '@/features/notifications'
 
 // App de citas (PWA): pantallas para el teléfono, sin el menú del sistema.
 export const Route = createFileRoute('/_mobile')({
@@ -14,7 +15,7 @@ export const Route = createFileRoute('/_mobile')({
 
 function MobileLayout() {
   return (
-    <MobileShell title="Agenda" actions={<MobileUserMenu />}>
+    <MobileShell title="Agenda" actions={<MobileUserMenu extraItems={<PushNotificationsMenuItem />} />}>
       <Outlet />
     </MobileShell>
   )
