@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { FRIENDLY_ERROR_MESSAGE, reportError } from '@/utils/report-error'
 import { finishNutritionRecall, streamNutriBotTurn } from '../services/public-nutrition-recall.service'
-import type { ChatTurn, NutritionRecallReportStatus } from '../types'
+import type { ChatTurn } from '../types'
 import { loadSavedConversation, saveConversation } from '../utils/conversation-storage'
 
 // Marcador con el que NutriBot indica que la entrevista terminó.
@@ -17,10 +17,12 @@ export interface ChatBubble {
   isError?: boolean
 }
 
+// Cierre de la entrevista: el reporte ya no se calcula aquí, solo se guardan
+// las respuestas (el equipo lo genera y se envía al correo del paciente).
 export type ReportPhase =
   | { kind: 'interview' }
-  | { kind: 'generating' }
-  | { kind: 'done'; status: NutritionRecallReportStatus }
+  | { kind: 'saving' }
+  | { kind: 'done' }
   | { kind: 'error'; detail: string }
 
 let idCounter = 0
@@ -30,7 +32,7 @@ const toBubbles = (turns: ChatTurn[]): ChatBubble[] =>
   turns.map((turn) => ({ id: nextId(), role: turn.role, content: turn.content }))
 
 // Conduce la entrevista con NutriBot: cada turno se transmite por SSE y, al
-// recibir el marcador de cierre, se pide al backend el reporte final.
+// recibir el marcador de cierre, se guardan las respuestas en el backend.
 export function useNutriBotChat(token: string) {
   const [saved] = useState(() => loadSavedConversation(token))
   const history = useRef<ChatTurn[]>(saved)
@@ -43,10 +45,10 @@ export function useNutriBotChat(token: string) {
     setBubbles((prev) => prev.map((bubble) => (bubble.id === id ? { ...bubble, ...patch } : bubble)))
 
   async function finish() {
-    setPhase({ kind: 'generating' })
+    setPhase({ kind: 'saving' })
     try {
-      const status = await finishNutritionRecall(token, history.current, new AbortController().signal)
-      setPhase({ kind: 'done', status })
+      await finishNutritionRecall(token, history.current)
+      setPhase({ kind: 'done' })
     } catch (error) {
       reportError(error, 'nutribot', { step: 'finish' })
       setPhase({ kind: 'error', detail: FRIENDLY_ERROR_MESSAGE })

@@ -6,16 +6,19 @@ import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import { AppButton } from '@/components/AppButton'
 import { copyIntakeLink } from '@/features/intake-responses'
 import { formatShortDate } from '@/utils/format-date'
-import {
-  useResendNutritionRecallReport,
-  useSendNutritionRecallEmail,
-} from '../hooks/useNutritionRecallMutations'
+import { useSendNutritionRecallEmail } from '../hooks/useNutritionRecallMutations'
 import type { NutritionRecall, NutritionRecallReportStatus } from '../types'
 
 const REPORT_STATUS_TEXT: Record<NutritionRecallReportStatus, string> = {
   sent: 'Reporte PDF enviado',
-  backup: 'Reporte no generado: transcripción enviada al equipo',
+  backup: 'El PDF no se pudo generar: transcripción enviada al equipo',
   failed: 'No se pudo enviar el reporte por correo',
+}
+
+// Completado sin estado = el reporte aún no se genera (lo genera el equipo).
+function reportStatusText(recall: NutritionRecall) {
+  if (!recall.completed) return null
+  return recall.reportStatus ? REPORT_STATUS_TEXT[recall.reportStatus] : 'Reporte pendiente de generar'
 }
 
 type NutritionRecallItemProps = {
@@ -25,7 +28,7 @@ type NutritionRecallItemProps = {
 
 export function NutritionRecallItem({ recall, onViewReport }: NutritionRecallItemProps) {
   const sendEmail = useSendNutritionRecallEmail()
-  const resendReport = useResendNutritionRecallReport(recall.patientId)
+  const statusText = reportStatusText(recall)
 
   return (
     <Paper sx={{ p: 2.5, borderRadius: '8px' }}>
@@ -49,28 +52,18 @@ export function NutritionRecallItem({ recall, onViewReport }: NutritionRecallIte
             Asignado: {formatShortDate(recall.startAt)}
             {recall.completedAt ? ` · Completado: ${formatShortDate(recall.completedAt)}` : ''}
           </Typography>
-          {recall.reportStatus && (
+          {statusText && (
             <Typography
               sx={{ fontSize: '12px', mt: 0.5, color: recall.reportStatus === 'sent' ? 'text.secondary' : 'warning.main' }}
             >
-              {REPORT_STATUS_TEXT[recall.reportStatus]}
+              {statusText}
             </Typography>
           )}
         </Box>
         {recall.completed ? (
-          <Stack direction="row" spacing={1}>
-            <AppButton size="small" variant="outlined" onClick={() => onViewReport(recall.id)}>
-              Ver reporte
-            </AppButton>
-            <AppButton
-              size="small"
-              variant="outlined"
-              loading={resendReport.isPending}
-              onClick={() => resendReport.mutate(recall.id)}
-            >
-              Reenviar PDF
-            </AppButton>
-          </Stack>
+          <AppButton size="small" variant="outlined" onClick={() => onViewReport(recall.id)}>
+            {recall.reportStatus === 'sent' ? 'Ver reporte' : 'Ver y generar reporte'}
+          </AppButton>
         ) : (
           <Stack direction="row" spacing={1}>
             <AppButton

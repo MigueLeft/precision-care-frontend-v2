@@ -23,8 +23,8 @@ export function NutritionRecallCard() {
         <Box sx={{ flex: 1 }}>
           <Typography sx={{ fontSize: '15px', fontWeight: 600 }}>Recordatorio de 24 Horas</Typography>
           <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
-            Entrevista nutricional con NutriBot. El paciente recibe un enlace y, al terminar, se genera su
-            reporte nutricional en PDF.
+            Entrevista nutricional con NutriBot. El paciente recibe un enlace y, al terminar, el equipo genera su
+            reporte nutricional en PDF desde el expediente o la consulta.
           </Typography>
         </Box>
         <AppButton

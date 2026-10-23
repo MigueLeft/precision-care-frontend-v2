@@ -3,6 +3,7 @@ import { Box, Divider, Stack, Typography } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { AppButton } from '@/components/AppButton'
 import { IntakeResponseDetailContent } from '@/features/intake-responses'
+import { NutritionRecallSidebarSection } from '@/features/nutrition-recall'
 import { EvolutionChanges } from '../evolution/EvolutionChanges'
 import { GenerarEntregablesPanel } from './GenerarEntregablesPanel'
 import { IntakeResponsesSection } from './IntakeResponsesSection'
@@ -81,6 +82,10 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
             patientId={consultation.patientId}
             onSelect={(responseId) => setView({ kind: 'intake', responseId })}
           />
+
+          <Divider />
+
+          <NutritionRecallSidebarSection patientId={consultation.patientId} />
 
           <Divider />
 

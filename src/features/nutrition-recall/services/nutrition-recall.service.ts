@@ -3,6 +3,7 @@ import type {
   NutritionRecall,
   NutritionRecallDetail,
   NutritionRecallReportStatus,
+  ReportDeliveryInput,
   SendNutritionRecallDto,
   SendNutritionRecallResult,
 } from '../types'
@@ -37,11 +38,26 @@ export async function sendNutritionRecallEmail(
   return data
 }
 
-export async function resendNutritionRecallReport(
-  id: number,
-): Promise<{ reportStatus: NutritionRecallReportStatus }> {
+// Genera el reporte desde la transcripción y envía el PDF. Puede tardar varios
+// minutos (el modelo calcula todo el reporte).
+export async function generateNutritionRecallReport({
+  id,
+  sendToPatient,
+}: ReportDeliveryInput): Promise<{ reportStatus: NutritionRecallReportStatus }> {
+  const { data } = await api.post<{ reportStatus: NutritionRecallReportStatus }>(
+    `/nutrition-recalls/${id}/generate-report`,
+    { sendToPatient },
+  )
+  return data
+}
+
+export async function resendNutritionRecallReport({
+  id,
+  sendToPatient,
+}: ReportDeliveryInput): Promise<{ reportStatus: NutritionRecallReportStatus }> {
   const { data } = await api.post<{ reportStatus: NutritionRecallReportStatus }>(
     `/nutrition-recalls/${id}/resend-report`,
+    { sendToPatient },
   )
   return data
 }
