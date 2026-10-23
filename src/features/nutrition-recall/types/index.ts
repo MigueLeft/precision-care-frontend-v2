@@ -20,8 +20,16 @@ export interface NutritionRecall {
 export interface NutritionRecallDetail extends NutritionRecall {
   reportMarkdown: string | null
   reportError: string | null
+  patientEmail: string | null
   // Entrevista completa (vacía mientras está pendiente).
   transcript: ChatTurn[]
+}
+
+// Generar/reenviar el reporte: el equipo siempre lo recibe; el paciente solo
+// si se marca en el diálogo.
+export interface ReportDeliveryInput {
+  id: number
+  sendToPatient: boolean
 }
 
 export interface SendNutritionRecallDto {

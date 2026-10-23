@@ -59,11 +59,11 @@ export function useGenerateNutritionRecallReport(patientId: number) {
   const refresh = useRefreshRecall(patientId)
   return useMutation({
     mutationFn: generateNutritionRecallReport,
-    onSuccess: (_result, id) => {
+    onSuccess: (_result, { id }) => {
       refresh(id)
       toast.success('Reporte generado y enviado por correo.')
     },
-    onError: (error, id) => {
+    onError: (error, { id }) => {
       refresh(id)
       toast.error(getApiErrorMessage(error, 'No se pudo generar el reporte.'))
     },
@@ -75,11 +75,11 @@ export function useResendNutritionRecallReport(patientId: number) {
   const refresh = useRefreshRecall(patientId)
   return useMutation({
     mutationFn: resendNutritionRecallReport,
-    onSuccess: (_result, id) => {
+    onSuccess: (_result, { id }) => {
       refresh(id)
       toast.success('Reporte reenviado por correo.')
     },
-    onError: (error, id) => {
+    onError: (error, { id }) => {
       refresh(id)
       toast.error(getApiErrorMessage(error, 'No se pudo reenviar el reporte.'))
     },
