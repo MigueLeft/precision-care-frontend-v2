@@ -14,9 +14,12 @@ import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as Recordatorio24hTokenRouteImport } from './routes/recordatorio-24h.$token'
 import { Route as IngresablePublicoTokenRouteImport } from './routes/ingresable-publico.$token'
+import { Route as AuthRestablecerContrasenaRouteImport } from './routes/_auth/restablecer-contrasena'
+import { Route as AuthRecuperarContrasenaRouteImport } from './routes/_auth/recuperar-contrasena'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppUsuariosYRolesRouteImport } from './routes/_app/usuarios-y-roles'
 import { Route as AppPacientesRouteImport } from './routes/_app/pacientes'
+import { Route as AppMiCuentaRouteImport } from './routes/_app/mi-cuenta'
 import { Route as AppIngresablesRouteImport } from './routes/_app/ingresables'
 import { Route as AppEspecialistasRouteImport } from './routes/_app/especialistas'
 import { Route as AppEntregablesRouteImport } from './routes/_app/entregables'
@@ -66,6 +69,17 @@ const IngresablePublicoTokenRoute = IngresablePublicoTokenRouteImport.update({
   path: '/ingresable-publico/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRestablecerContrasenaRoute =
+  AuthRestablecerContrasenaRouteImport.update({
+    id: '/restablecer-contrasena',
+    path: '/restablecer-contrasena',
+    getParentRoute: () => AuthRouteRoute,
+  } as any)
+const AuthRecuperarContrasenaRoute = AuthRecuperarContrasenaRouteImport.update({
+  id: '/recuperar-contrasena',
+  path: '/recuperar-contrasena',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -79,6 +93,11 @@ const AppUsuariosYRolesRoute = AppUsuariosYRolesRouteImport.update({
 const AppPacientesRoute = AppPacientesRouteImport.update({
   id: '/pacientes',
   path: '/pacientes',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppMiCuentaRoute = AppMiCuentaRouteImport.update({
+  id: '/mi-cuenta',
+  path: '/mi-cuenta',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppIngresablesRoute = AppIngresablesRouteImport.update({
@@ -232,9 +251,12 @@ export interface FileRoutesByFullPath {
   '/entregables': typeof AppEntregablesRoute
   '/especialistas': typeof AppEspecialistasRoute
   '/ingresables': typeof AppIngresablesRoute
+  '/mi-cuenta': typeof AppMiCuentaRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
+  '/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
+  '/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
@@ -265,9 +287,12 @@ export interface FileRoutesByTo {
   '/entregables': typeof AppEntregablesRoute
   '/especialistas': typeof AppEspecialistasRoute
   '/ingresables': typeof AppIngresablesRoute
+  '/mi-cuenta': typeof AppMiCuentaRoute
   '/pacientes': typeof AppPacientesRoute
   '/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/login': typeof AuthLoginRoute
+  '/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
+  '/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
@@ -299,9 +324,12 @@ export interface FileRoutesById {
   '/_app/entregables': typeof AppEntregablesRoute
   '/_app/especialistas': typeof AppEspecialistasRoute
   '/_app/ingresables': typeof AppIngresablesRoute
+  '/_app/mi-cuenta': typeof AppMiCuentaRoute
   '/_app/pacientes': typeof AppPacientesRoute
   '/_app/usuarios-y-roles': typeof AppUsuariosYRolesRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_auth/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
+  '/_auth/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/_app/': typeof AppIndexRoute
@@ -335,9 +363,12 @@ export interface FileRouteTypes {
     | '/entregables'
     | '/especialistas'
     | '/ingresables'
+    | '/mi-cuenta'
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
+    | '/recuperar-contrasena'
+    | '/restablecer-contrasena'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/pacientes/$patientId'
@@ -368,9 +399,12 @@ export interface FileRouteTypes {
     | '/entregables'
     | '/especialistas'
     | '/ingresables'
+    | '/mi-cuenta'
     | '/pacientes'
     | '/usuarios-y-roles'
     | '/login'
+    | '/recuperar-contrasena'
+    | '/restablecer-contrasena'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/consultas/$consultationId'
@@ -401,9 +435,12 @@ export interface FileRouteTypes {
     | '/_app/entregables'
     | '/_app/especialistas'
     | '/_app/ingresables'
+    | '/_app/mi-cuenta'
     | '/_app/pacientes'
     | '/_app/usuarios-y-roles'
     | '/_auth/login'
+    | '/_auth/recuperar-contrasena'
+    | '/_auth/restablecer-contrasena'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/_app/'
@@ -473,6 +510,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IngresablePublicoTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/restablecer-contrasena': {
+      id: '/_auth/restablecer-contrasena'
+      path: '/restablecer-contrasena'
+      fullPath: '/restablecer-contrasena'
+      preLoaderRoute: typeof AuthRestablecerContrasenaRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/recuperar-contrasena': {
+      id: '/_auth/recuperar-contrasena'
+      path: '/recuperar-contrasena'
+      fullPath: '/recuperar-contrasena'
+      preLoaderRoute: typeof AuthRecuperarContrasenaRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/login': {
       id: '/_auth/login'
       path: '/login'
@@ -492,6 +543,13 @@ declare module '@tanstack/react-router' {
       path: '/pacientes'
       fullPath: '/pacientes'
       preLoaderRoute: typeof AppPacientesRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/mi-cuenta': {
+      id: '/_app/mi-cuenta'
+      path: '/mi-cuenta'
+      fullPath: '/mi-cuenta'
+      preLoaderRoute: typeof AppMiCuentaRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/ingresables': {
@@ -725,6 +783,7 @@ interface AppRouteRouteChildren {
   AppEntregablesRoute: typeof AppEntregablesRoute
   AppEspecialistasRoute: typeof AppEspecialistasRoute
   AppIngresablesRoute: typeof AppIngresablesRoute
+  AppMiCuentaRoute: typeof AppMiCuentaRoute
   AppPacientesRoute: typeof AppPacientesRoute
   AppUsuariosYRolesRoute: typeof AppUsuariosYRolesRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -743,6 +802,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppEntregablesRoute: AppEntregablesRoute,
   AppEspecialistasRoute: AppEspecialistasRoute,
   AppIngresablesRoute: AppIngresablesRoute,
+  AppMiCuentaRoute: AppMiCuentaRoute,
   AppPacientesRoute: AppPacientesRoute,
   AppUsuariosYRolesRoute: AppUsuariosYRolesRoute,
   AppIndexRoute: AppIndexRoute,
@@ -762,10 +822,14 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 
 interface AuthRouteRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthRecuperarContrasenaRoute: typeof AuthRecuperarContrasenaRoute
+  AuthRestablecerContrasenaRoute: typeof AuthRestablecerContrasenaRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
+  AuthRecuperarContrasenaRoute: AuthRecuperarContrasenaRoute,
+  AuthRestablecerContrasenaRoute: AuthRestablecerContrasenaRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

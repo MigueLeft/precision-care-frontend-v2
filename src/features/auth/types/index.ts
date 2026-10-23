@@ -3,6 +3,11 @@ export interface LoginCredentials {
   password: string
 }
 
+export interface ChangePasswordValues {
+  currentPassword: string
+  newPassword: string
+}
+
 export interface AuthUser {
   id: string
   email: string

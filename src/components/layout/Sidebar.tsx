@@ -158,21 +158,30 @@ export function Sidebar({ compact = false }: SidebarProps) {
         spacing={1.5}
         sx={{ px: compact ? 1 : 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.1)', alignItems: compact ? 'center' : 'stretch' }}
       >
-        {compact ? (
-          <InitialsAvatar initials={initials} size={32} />
-        ) : (
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-            <InitialsAvatar initials={initials} size={36} />
-            <Box sx={{ minWidth: 0 }}>
-              <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }} noWrap>
-                {user?.name ?? 'Usuario'}
-              </Typography>
-              <Typography sx={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }} noWrap>
-                {user?.email}
-              </Typography>
-            </Box>
-          </Stack>
-        )}
+        {/* Abre "Mi cuenta" (datos y cambio de contraseña). */}
+        <Tooltip title="Mi cuenta" placement="right">
+          <Link to="/mi-cuenta" style={{ textDecoration: 'none' }}>
+            {compact ? (
+              <InitialsAvatar initials={initials} size={32} />
+            ) : (
+              <Stack
+                direction="row"
+                spacing={1.5}
+                sx={{ alignItems: 'center', borderRadius: 1, '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' } }}
+              >
+                <InitialsAvatar initials={initials} size={36} />
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }} noWrap>
+                    {user?.name ?? 'Usuario'}
+                  </Typography>
+                  <Typography sx={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }} noWrap>
+                    {user?.email}
+                  </Typography>
+                </Box>
+              </Stack>
+            )}
+          </Link>
+        </Tooltip>
         <AppButton
           size="small"
           variant="outlined"

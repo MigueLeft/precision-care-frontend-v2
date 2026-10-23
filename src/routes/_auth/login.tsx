@@ -1,9 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Box, Link, Stack, Typography } from '@mui/material'
-import { BrandLogo } from '@/components/BrandLogo'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { LoginForm } from '@/features/auth/components/LoginForm'
-import { LoginBrandPanel } from '@/features/auth/components/LoginBrandPanel'
+import { createFileRoute, Link as RouterLink } from '@tanstack/react-router'
+import { Box, Link } from '@mui/material'
+import { AuthPageLayout, LoginForm } from '@/features/auth'
 
 export const Route = createFileRoute('/_auth/login')({
   component: LoginPage,
@@ -11,79 +8,20 @@ export const Route = createFileRoute('/_auth/login')({
 
 function LoginPage() {
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
+    <AuthPageLayout title="Bienvenido de vuelta" subtitle="Ingresa tus credenciales para acceder al sistema">
+      <LoginForm />
 
-      {/* Panel izquierdo — Marca (oculto en móvil) */}
-      <Box sx={{ display: { xs: 'none', md: 'flex' }, flex: '0 0 44%' }}>
-        <LoginBrandPanel />
+      {/* ¿Olvidaste contraseña? */}
+      <Box sx={{ mt: 2, textAlign: 'right' }}>
+        <Link
+          component={RouterLink}
+          to="/recuperar-contrasena"
+          underline="hover"
+          sx={{ fontSize: '13px', color: 'primary.main', fontWeight: 500 }}
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
       </Box>
-
-      {/* Panel derecho — Formulario */}
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          bgcolor: '#ffffff',
-          px: { xs: 3, sm: 6, lg: 10 },
-          py: 6,
-        }}
-      >
-        <Box sx={{ width: '100%', maxWidth: 400 }}>
-
-          {/* Logo móvil */}
-          <Stack
-            direction="row" spacing={1}
-            sx={{ display: { xs: 'flex', md: 'none' }, mb: 5, alignItems: 'center', justifyContent: 'center' }}
-          >
-            <BrandLogo height={32} variant="dark" />
-            <Typography sx={{ fontWeight: 700, fontSize: 18, color: '#001d4a' }}>
-              PrecisionCare
-            </Typography>
-          </Stack>
-
-          {/* Encabezado */}
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="h1"
-              sx={{ fontSize: '26px', fontWeight: 700, color: '#001d4a', mb: 1 }}
-            >
-              Bienvenido de vuelta
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-              Ingresa tus credenciales para acceder al sistema
-            </Typography>
-          </Box>
-
-          {/* Formulario */}
-          <LoginForm />
-
-          {/* ¿Olvidaste contraseña? */}
-          <Box sx={{ mt: 2, textAlign: 'right' }}>
-            <Link
-              href="#"
-              underline="hover"
-              sx={{ fontSize: '13px', color: '#046ea3', fontWeight: 500, fontFamily: "'Montserrat', sans-serif" }}
-            >
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </Box>
-
-          {/* Nota de seguridad */}
-          <Stack
-            direction="row" spacing={0.75}
-            sx={{ mt: 6, pt: 4, borderTop: '1px solid #e5e7eb', alignItems: 'center' }}
-          >
-            <LockOutlinedIcon sx={{ fontSize: 14, color: '#9ca3af' }} />
-            <Typography variant="caption" sx={{ color: '#9ca3af' }}>
-              Acceso protegido con encriptación SSL de 256 bits
-            </Typography>
-          </Stack>
-
-        </Box>
-      </Box>
-    </Box>
+    </AuthPageLayout>
   )
 }
