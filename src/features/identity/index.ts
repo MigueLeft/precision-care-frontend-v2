@@ -10,4 +10,10 @@ export { useMe } from './hooks/useMe'
 export { fetchMe } from './services/me.service'
 export type { CurrentUser } from './services/me.service'
 export type { UserAccount, Role, Permission, UserType, SpecialistLookup } from './types'
-export { canViewAllAppointments, VIEW_ALL_APPOINTMENTS } from './utils/access'
+export {
+  canViewAllAppointments,
+  canViewUnconfirmedAppointments,
+  canConfirmAppointments,
+  VIEW_ALL_APPOINTMENTS,
+  VIEW_UNCONFIRMED_APPOINTMENTS,
+} from './utils/access'

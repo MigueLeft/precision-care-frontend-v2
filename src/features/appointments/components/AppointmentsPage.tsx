@@ -4,7 +4,12 @@ import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
-import { canViewAllAppointments, useMe, useSpecialistsLookup } from '@/features/identity'
+import {
+  canViewAllAppointments,
+  canViewUnconfirmedAppointments,
+  useMe,
+  useSpecialistsLookup,
+} from '@/features/identity'
 import { useAppointments } from '../hooks/useAppointments'
 import { useCalendarNavigation } from '../hooks/useCalendarNavigation'
 import {
@@ -48,10 +53,12 @@ export function AppointmentsPage() {
 
   const editing = appointments.find((a) => a.id === editingId) ?? null
   const canViewAll = canViewAllAppointments(me)
+  const canViewUnconfirmed = canViewUnconfirmedAppointments(me)
   const isCalendar = calendar.view !== 'list'
   const filtered = filterAppointments(appointments, filters, {
     mySpecialistId: me?.specialistId ?? null,
     restrictToMine: !canViewAll,
+    hideUnconfirmed: !canViewUnconfirmed,
     range: calendar.range,
   })
   const updateFilters = (patch: Partial<AppointmentFilters>) => setFilters((prev) => ({ ...prev, ...patch }))
@@ -85,6 +92,7 @@ export function AppointmentsPage() {
         filters={filters}
         specialists={specialists}
         isSpecialist={!canViewAll}
+        showConfirmationFilter={canViewUnconfirmed}
         showDateRange={!isCalendar}
         onChange={updateFilters}
       />

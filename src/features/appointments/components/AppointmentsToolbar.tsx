@@ -30,6 +30,8 @@ interface AppointmentsToolbarProps {
   onChange: (patch: Partial<AppointmentFilters>) => void
   // Un especialista solo ve sus citas: se oculta el toggle "Mis citas / Todas".
   isSpecialist: boolean
+  // Solo quien ve las sin confirmar puede filtrar por confirmación.
+  showConfirmationFilter: boolean
   // En semana/mes el periodo lo define el calendario: sin "desde/hasta".
   showDateRange: boolean
 }
@@ -41,6 +43,7 @@ export function AppointmentsToolbar({
   specialists,
   onChange,
   isSpecialist,
+  showConfirmationFilter,
   showDateRange,
 }: AppointmentsToolbarProps) {
   const hasActiveFilters = !isDefaultFilters(filters)
@@ -100,8 +103,7 @@ export function AppointmentsToolbar({
         </>
       )}
 
-      {/* El especialista solo ve citas confirmadas: el filtro no aplica. */}
-      {!isSpecialist && (
+      {showConfirmationFilter && (
         <ConfirmationFilterSelect
           value={filters.confirmation}
           onChange={(confirmation) => onChange({ confirmation })}

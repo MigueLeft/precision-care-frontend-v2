@@ -1,7 +1,7 @@
 import EventAvailableIcon from '@mui/icons-material/EventAvailable'
 import EventBusyOutlinedIcon from '@mui/icons-material/EventBusyOutlined'
 import { AppButton } from '@/components/AppButton'
-import { canViewAllAppointments, useMe } from '@/features/identity'
+import { canConfirmAppointments, useMe } from '@/features/identity'
 import { useUpdateAppointment } from '../hooks/useAppointmentMutations'
 import type { Appointment } from '../types'
 
@@ -15,7 +15,7 @@ export function ConfirmAppointmentButton({ appointment }: ConfirmAppointmentButt
   const { data: me } = useMe()
   const update = useUpdateAppointment()
 
-  if (!canViewAllAppointments(me)) return null
+  if (!canConfirmAppointments(me)) return null
 
   if (appointment.status === 'scheduled') {
     return (
