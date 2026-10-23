@@ -34,13 +34,13 @@ export function ConfirmAppointmentButton({ appointment }: ConfirmAppointmentButt
   if (appointment.status === 'confirmed') {
     return (
       <AppButton
-        variant="text"
+        variant="outlined"
         color="inherit"
         startIcon={<EventBusyOutlinedIcon sx={{ fontSize: 18 }} />}
         loading={update.isPending}
         onClick={() => update.mutate({ id: appointment.id, payload: { status: 'scheduled' } })}
       >
-        Quitar confirmación (el médico deja de verla)
+        Quitar confirmación
       </AppButton>
     )
   }

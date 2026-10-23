@@ -42,9 +42,10 @@ export function AgendaAppointmentCard({ appointment, showDoctor, onOpen }: Agend
       }}
     >
       <Box sx={{ width: 6, bgcolor: color, flexShrink: 0 }} />
-      <Box sx={{ width: 74, py: 1.5, px: 1, flexShrink: 0 }}>
-        <Typography sx={{ fontSize: '14px', fontWeight: 700 }}>{formatTime(start)}</Typography>
-        <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>{formatTime(end)}</Typography>
+      {/* La hora siempre en una sola línea ("9:00 a. m."); debajo, el fin. */}
+      <Box sx={{ width: 96, py: 1.5, px: 1.25, flexShrink: 0, whiteSpace: 'nowrap' }}>
+        <Typography sx={{ fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap' }}>{formatTime(start)}</Typography>
+        <Typography sx={{ fontSize: '12px', color: 'text.secondary', whiteSpace: 'nowrap' }}>{formatTime(end)}</Typography>
       </Box>
       <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0, py: 1.5, pr: 1.5 }}>
         <Typography noWrap sx={{ fontSize: '15px', fontWeight: 600 }}>

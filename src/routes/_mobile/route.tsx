@@ -1,5 +1,8 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect, useRouterState } from '@tanstack/react-router'
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined'
 import { MobileShell } from '@/components/layout/MobileShell'
+import { MobileBottomNav, type MobileNavItem } from '@/components/layout/MobileBottomNav'
 import { MobileUserMenu } from '@/features/auth'
 import { PushNotificationsMenuItem } from '@/features/notifications'
 
@@ -13,10 +16,22 @@ export const Route = createFileRoute('/_mobile')({
   component: MobileLayout,
 })
 
+const NAV_ITEMS: MobileNavItem[] = [
+  { label: 'Agenda', to: '/agenda', icon: <CalendarMonthOutlinedIcon /> },
+  { label: 'Pacientes', to: '/agenda/pacientes', icon: <PeopleAltOutlinedIcon /> },
+]
+
 function MobileLayout() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const active = pathname.startsWith('/agenda/pacientes') ? '/agenda/pacientes' : '/agenda'
+
   return (
-    <MobileShell title="Agenda" actions={<MobileUserMenu extraItems={<PushNotificationsMenuItem />} />}>
+    <MobileShell
+      title={active === '/agenda' ? 'Agenda' : 'Pacientes'}
+      actions={<MobileUserMenu extraItems={<PushNotificationsMenuItem />} />}
+    >
       <Outlet />
+      <MobileBottomNav items={NAV_ITEMS} active={active} />
     </MobileShell>
   )
 }

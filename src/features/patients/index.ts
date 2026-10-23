@@ -1,4 +1,5 @@
 export { PatientsPage } from './components/PatientsPage'
+export { MobilePatientsPage } from './components/mobile/MobilePatientsPage'
 export { patientsListSearchSchema } from './schemas/patients-list-search.schema'
 export type { PatientsListSearch } from './schemas/patients-list-search.schema'
 export { patientsKeys } from './hooks/patients.keys'

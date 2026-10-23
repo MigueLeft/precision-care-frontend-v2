@@ -1,4 +1,4 @@
-import { Box, Drawer, Stack, Typography } from '@mui/material'
+import { Box, Stack, SwipeableDrawer, Typography } from '@mui/material'
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined'
 import WhatsAppIcon from '@mui/icons-material/WhatsApp'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined'
@@ -39,10 +39,13 @@ export function AgendaAppointmentSheet({ appointment, onClose, onCancel }: Agend
   const end = appointment ? new Date(appointment.endAtUtc) : null
 
   return (
-    <Drawer
+    // Se cierra arrastrando hacia abajo (como las hojas del teléfono).
+    <SwipeableDrawer
       anchor="bottom"
       open={!!appointment}
       onClose={onClose}
+      onOpen={() => {}}
+      disableSwipeToOpen
       slotProps={{ paper: { sx: { borderTopLeftRadius: 16, borderTopRightRadius: 16, pb: 'calc(env(safe-area-inset-bottom) + 16px)' } } }}
     >
       {appointment && start && end && (
@@ -84,7 +87,7 @@ export function AgendaAppointmentSheet({ appointment, onClose, onCancel }: Agend
             <Stack spacing={1}>
               <ConfirmAppointmentButton appointment={appointment} />
               {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
-                <AppButton variant="text" color="error" startIcon={<CancelOutlinedIcon />} onClick={() => onCancel(appointment)}>
+                <AppButton variant="outlined" color="error" startIcon={<CancelOutlinedIcon />} onClick={() => onCancel(appointment)}>
                   Cancelar cita
                 </AppButton>
               )}
@@ -92,6 +95,6 @@ export function AgendaAppointmentSheet({ appointment, onClose, onCancel }: Agend
           )}
         </Stack>
       )}
-    </Drawer>
+    </SwipeableDrawer>
   )
 }

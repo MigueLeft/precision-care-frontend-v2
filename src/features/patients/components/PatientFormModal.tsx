@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, useMediaQuery, useTheme } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import { PatientFormFields } from './PatientFormFields'
 import { patientFormSchema } from '../schemas/patient-form.schema'
@@ -27,6 +27,8 @@ export function PatientFormModal({
   onSubmit,
   onClose,
 }: PatientFormModalProps) {
+  // En el teléfono (app de citas) el formulario ocupa toda la pantalla.
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
   const { control, handleSubmit, reset } = useForm<PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
     defaultValues: initialValues,
@@ -37,7 +39,7 @@ export function PatientFormModal({
   }, [open, initialValues, reset])
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth fullScreen={fullScreen}>
       <DialogTitle>{mode === 'create' ? 'Nuevo paciente' : 'Editar paciente'}</DialogTitle>
       <DialogContent>
         <PatientFormFields control={control} countries={countries} />

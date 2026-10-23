@@ -15,7 +15,6 @@ import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as Recordatorio24hTokenRouteImport } from './routes/recordatorio-24h.$token'
 import { Route as IngresablePublicoTokenRouteImport } from './routes/ingresable-publico.$token'
-import { Route as MobileAgendaRouteImport } from './routes/_mobile/agenda'
 import { Route as AuthRestablecerContrasenaRouteImport } from './routes/_auth/restablecer-contrasena'
 import { Route as AuthRecuperarContrasenaRouteImport } from './routes/_auth/recuperar-contrasena'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
@@ -27,6 +26,8 @@ import { Route as AppEspecialistasRouteImport } from './routes/_app/especialista
 import { Route as AppEntregablesRouteImport } from './routes/_app/entregables'
 import { Route as AppCitasRouteImport } from './routes/_app/citas'
 import { Route as AppCatalogosRouteImport } from './routes/_app/catalogos'
+import { Route as MobileAgendaIndexRouteImport } from './routes/_mobile/agenda/index'
+import { Route as MobileAgendaPacientesRouteImport } from './routes/_mobile/agenda/pacientes'
 import { Route as AppIngresablesIdRouteImport } from './routes/_app/ingresables_.$id'
 import { Route as AppEspecialistasNuevoRouteImport } from './routes/_app/especialistas_.nuevo'
 import { Route as AppEspecialistasSpecialistIdRouteImport } from './routes/_app/especialistas_.$specialistId'
@@ -74,11 +75,6 @@ const IngresablePublicoTokenRoute = IngresablePublicoTokenRouteImport.update({
   id: '/ingresable-publico/$token',
   path: '/ingresable-publico/$token',
   getParentRoute: () => rootRouteImport,
-} as any)
-const MobileAgendaRoute = MobileAgendaRouteImport.update({
-  id: '/agenda',
-  path: '/agenda',
-  getParentRoute: () => MobileRouteRoute,
 } as any)
 const AuthRestablecerContrasenaRoute =
   AuthRestablecerContrasenaRouteImport.update({
@@ -135,6 +131,16 @@ const AppCatalogosRoute = AppCatalogosRouteImport.update({
   id: '/catalogos',
   path: '/catalogos',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const MobileAgendaIndexRoute = MobileAgendaIndexRouteImport.update({
+  id: '/agenda/',
+  path: '/agenda/',
+  getParentRoute: () => MobileRouteRoute,
+} as any)
+const MobileAgendaPacientesRoute = MobileAgendaPacientesRouteImport.update({
+  id: '/agenda/pacientes',
+  path: '/agenda/pacientes',
+  getParentRoute: () => MobileRouteRoute,
 } as any)
 const AppIngresablesIdRoute = AppIngresablesIdRouteImport.update({
   id: '/ingresables_/$id',
@@ -268,7 +274,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
   '/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
-  '/agenda': typeof MobileAgendaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdRouteRouteWithChildren
@@ -276,6 +281,8 @@ export interface FileRoutesByFullPath {
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
   '/ingresables/$id': typeof AppIngresablesIdRoute
+  '/agenda/pacientes': typeof MobileAgendaPacientesRoute
+  '/agenda/': typeof MobileAgendaIndexRoute
   '/citas/$appointmentId/precarga': typeof AppCitasAppointmentIdPrecargaRoute
   '/especialistas/$specialistId/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
@@ -305,13 +312,14 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
   '/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
-  '/agenda': typeof MobileAgendaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/consultas/$consultationId': typeof AppConsultasConsultationIdRoute
   '/especialistas/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/especialistas/nuevo': typeof AppEspecialistasNuevoRoute
   '/ingresables/$id': typeof AppIngresablesIdRoute
+  '/agenda/pacientes': typeof MobileAgendaPacientesRoute
+  '/agenda': typeof MobileAgendaIndexRoute
   '/citas/$appointmentId/precarga': typeof AppCitasAppointmentIdPrecargaRoute
   '/especialistas/$specialistId/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/pacientes/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
@@ -344,7 +352,6 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/recuperar-contrasena': typeof AuthRecuperarContrasenaRoute
   '/_auth/restablecer-contrasena': typeof AuthRestablecerContrasenaRoute
-  '/_mobile/agenda': typeof MobileAgendaRoute
   '/ingresable-publico/$token': typeof IngresablePublicoTokenRoute
   '/recordatorio-24h/$token': typeof Recordatorio24hTokenRoute
   '/_app/': typeof AppIndexRoute
@@ -353,6 +360,8 @@ export interface FileRoutesById {
   '/_app/especialistas_/$specialistId': typeof AppEspecialistasSpecialistIdRoute
   '/_app/especialistas_/nuevo': typeof AppEspecialistasNuevoRoute
   '/_app/ingresables_/$id': typeof AppIngresablesIdRoute
+  '/_mobile/agenda/pacientes': typeof MobileAgendaPacientesRoute
+  '/_mobile/agenda/': typeof MobileAgendaIndexRoute
   '/_app/citas_/$appointmentId_/precarga': typeof AppCitasAppointmentIdPrecargaRoute
   '/_app/especialistas_/$specialistId_/editar': typeof AppEspecialistasSpecialistIdEditarRoute
   '/_app/pacientes_/$patientId/antecedentes': typeof AppPacientesPatientIdAntecedentesRoute
@@ -384,7 +393,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/recuperar-contrasena'
     | '/restablecer-contrasena'
-    | '/agenda'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/pacientes/$patientId'
@@ -392,6 +400,8 @@ export interface FileRouteTypes {
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
     | '/ingresables/$id'
+    | '/agenda/pacientes'
+    | '/agenda/'
     | '/citas/$appointmentId/precarga'
     | '/especialistas/$specialistId/editar'
     | '/pacientes/$patientId/antecedentes'
@@ -421,13 +431,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/recuperar-contrasena'
     | '/restablecer-contrasena'
-    | '/agenda'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/consultas/$consultationId'
     | '/especialistas/$specialistId'
     | '/especialistas/nuevo'
     | '/ingresables/$id'
+    | '/agenda/pacientes'
+    | '/agenda'
     | '/citas/$appointmentId/precarga'
     | '/especialistas/$specialistId/editar'
     | '/pacientes/$patientId/antecedentes'
@@ -459,7 +470,6 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/recuperar-contrasena'
     | '/_auth/restablecer-contrasena'
-    | '/_mobile/agenda'
     | '/ingresable-publico/$token'
     | '/recordatorio-24h/$token'
     | '/_app/'
@@ -468,6 +478,8 @@ export interface FileRouteTypes {
     | '/_app/especialistas_/$specialistId'
     | '/_app/especialistas_/nuevo'
     | '/_app/ingresables_/$id'
+    | '/_mobile/agenda/pacientes'
+    | '/_mobile/agenda/'
     | '/_app/citas_/$appointmentId_/precarga'
     | '/_app/especialistas_/$specialistId_/editar'
     | '/_app/pacientes_/$patientId/antecedentes'
@@ -536,13 +548,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/ingresable-publico/$token'
       preLoaderRoute: typeof IngresablePublicoTokenRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_mobile/agenda': {
-      id: '/_mobile/agenda'
-      path: '/agenda'
-      fullPath: '/agenda'
-      preLoaderRoute: typeof MobileAgendaRouteImport
-      parentRoute: typeof MobileRouteRoute
     }
     '/_auth/restablecer-contrasena': {
       id: '/_auth/restablecer-contrasena'
@@ -620,6 +625,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/catalogos'
       preLoaderRoute: typeof AppCatalogosRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/_mobile/agenda/': {
+      id: '/_mobile/agenda/'
+      path: '/agenda'
+      fullPath: '/agenda/'
+      preLoaderRoute: typeof MobileAgendaIndexRouteImport
+      parentRoute: typeof MobileRouteRoute
+    }
+    '/_mobile/agenda/pacientes': {
+      id: '/_mobile/agenda/pacientes'
+      path: '/agenda/pacientes'
+      fullPath: '/agenda/pacientes'
+      preLoaderRoute: typeof MobileAgendaPacientesRouteImport
+      parentRoute: typeof MobileRouteRoute
     }
     '/_app/ingresables_/$id': {
       id: '/_app/ingresables_/$id'
@@ -871,11 +890,13 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 )
 
 interface MobileRouteRouteChildren {
-  MobileAgendaRoute: typeof MobileAgendaRoute
+  MobileAgendaPacientesRoute: typeof MobileAgendaPacientesRoute
+  MobileAgendaIndexRoute: typeof MobileAgendaIndexRoute
 }
 
 const MobileRouteRouteChildren: MobileRouteRouteChildren = {
-  MobileAgendaRoute: MobileAgendaRoute,
+  MobileAgendaPacientesRoute: MobileAgendaPacientesRoute,
+  MobileAgendaIndexRoute: MobileAgendaIndexRoute,
 }
 
 const MobileRouteRouteWithChildren = MobileRouteRoute._addFileChildren(

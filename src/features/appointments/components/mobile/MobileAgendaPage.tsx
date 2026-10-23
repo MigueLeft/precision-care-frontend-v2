@@ -1,23 +1,23 @@
 import { useState } from 'react'
-import { Fab, Stack, Typography } from '@mui/material'
+import { Box, Fab, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
-import { canViewAllAppointments, canViewUnconfirmedAppointments, useMe } from '@/features/identity'
-import { useAppointments } from '../../hooks/useAppointments'
+import { useAgendaAppointments } from '../../hooks/useAgendaAppointments'
 import { useCancelAppointment, useCreateAppointment } from '../../hooks/useAppointmentMutations'
 import { appointmentFormDefaultValues, type AppointmentFormValues } from '../../schemas/appointment-form.schema'
 import { mapFormToPayload } from '../../utils/appointment-mappers'
-import { isCreatableDay, startOfDay, toDateKey, visibleRange } from '../../utils/calendar-dates'
-import { filterAppointments, type AppointmentFilters } from '../../utils/filter-appointments'
-import { AppointmentFormModal } from '../AppointmentFormModal'
+import { isCreatableDay, startOfDay, toDateKey } from '../../utils/calendar-dates'
+import type { AppointmentFilters } from '../../utils/filter-appointments'
 import type { Appointment } from '../../types'
-import { AgendaAppointmentCard } from './AgendaAppointmentCard'
+import { AppointmentFormModal } from '../AppointmentFormModal'
 import { AgendaAppointmentSheet } from './AgendaAppointmentSheet'
 import { AgendaDayStrip } from './AgendaDayStrip'
 import { AgendaFilters } from './AgendaFilters'
+import { AgendaMonthGrid } from './AgendaMonthGrid'
+import { AgendaViewBody, type AgendaView } from './AgendaViewBody'
 
-// En la agenda se ven todas las citas del día salvo las canceladas.
+// En la agenda se ven todas las citas salvo las canceladas.
 const AGENDA_FILTERS: AppointmentFilters = {
   scope: 'all',
   q: '',
@@ -29,74 +29,75 @@ const AGENDA_FILTERS: AppointmentFilters = {
   confirmation: '',
 }
 
-// Agenda de la app instalable (PWA): citas del día, confirmar y agendar.
+// Agenda de la app instalable (PWA): día / semana / mes, confirmar y agendar.
 export function MobileAgendaPage() {
-  const { data: appointments = [], isLoading, isError, error } = useAppointments()
-  const { data: me } = useMe()
+  const [view, setView] = useState<AgendaView>('day')
   const [selected, setSelected] = useState(() => startOfDay(new Date()))
   const [filters, setFilters] = useState(AGENDA_FILTERS)
-  const [open, setOpen] = useState<Appointment | null>(null)
+  const [openId, setOpenId] = useState<number | null>(null)
   const [cancelling, setCancelling] = useState<Appointment | null>(null)
   const [draft, setDraft] = useState<AppointmentFormValues | null>(null)
+  const agenda = useAgendaAppointments(filters, selected, view === 'month' ? 'month' : 'week')
 
   const createMutation = useCreateAppointment({ onSuccess: () => setDraft(null) })
   const cancelMutation = useCancelAppointment({ onSuccess: () => setCancelling(null) })
-  const canViewAll = canViewAllAppointments(me)
-  const canViewUnconfirmed = canViewUnconfirmedAppointments(me)
-  const context = { mySpecialistId: me?.specialistId ?? null, restrictToMine: !canViewAll, hideUnconfirmed: !canViewUnconfirmed }
-
-  // Puntos de la tira: días de la semana con citas (con los mismos filtros).
-  const weekAppointments = filterAppointments(appointments, filters, { ...context, range: visibleRange('week', selected) })
-  const busyDays = new Set(weekAppointments.map((a) => toDateKey(new Date(a.startAtUtc))))
-  const dayAppointments = filterAppointments(appointments, filters, { ...context, range: visibleRange('day', selected) }).sort(
-    (a, b) => new Date(a.startAtUtc).getTime() - new Date(b.startAtUtc).getTime(),
-  )
-  // La hoja muestra la versión más reciente de la cita (tras confirmar, etc.).
-  const openAppointment = open ? (appointments.find((a) => a.id === open.id) ?? null) : null
+  const openAppointment = agenda.all.find((a) => a.id === openId) ?? null
+  const select = (day: Date) => setSelected(startOfDay(day))
+  const openDay = (day: Date) => {
+    select(day)
+    setView('day')
+  }
+  const createAt = (date: string, time: string) =>
+    setDraft({ ...appointmentFormDefaultValues, date, time, specialistId: agenda.me?.specialistId ?? 0 })
 
   return (
     <>
-      <AgendaDayStrip selected={selected} busyDays={busyDays} onSelect={(day) => setSelected(startOfDay(day))} />
+      <Box sx={{ px: 2, pt: 1.5, bgcolor: 'background.paper' }}>
+        <ToggleButtonGroup fullWidth size="small" exclusive value={view} onChange={(_e, value: AgendaView | null) => value && setView(value)}>
+          <ToggleButton value="day">Día</ToggleButton>
+          <ToggleButton value="week">Semana</ToggleButton>
+          <ToggleButton value="month">Mes</ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
+      {view === 'month' ? (
+        <AgendaMonthGrid selected={selected} countByDay={agenda.countByDay} onSelect={select} onOpenDay={openDay} />
+      ) : (
+        <AgendaDayStrip selected={selected} busyDays={new Set(agenda.countByDay.keys())} onSelect={select} />
+      )}
       <AgendaFilters
         filters={filters}
-        showConfirmation={canViewUnconfirmed}
-        showDoctor={canViewAll}
+        showConfirmation={agenda.canViewUnconfirmed}
+        showDoctor={agenda.canViewAll}
         onChange={(patch) => setFilters((prev) => ({ ...prev, ...patch }))}
       />
 
-      <QueryBoundary isLoading={isLoading} isError={isError} error={error}>
-        <Stack spacing={1.25} sx={{ px: 2, pt: 1.5 }}>
-          {dayAppointments.length === 0 ? (
-            <Typography sx={{ textAlign: 'center', color: 'text.secondary', fontSize: '14px', py: 6 }}>
-              No hay citas para este día.
-            </Typography>
-          ) : (
-            dayAppointments.map((appointment) => (
-              <AgendaAppointmentCard key={appointment.id} appointment={appointment} showDoctor={canViewAll} onOpen={setOpen} />
-            ))
-          )}
-        </Stack>
+      <QueryBoundary isLoading={agenda.isLoading} isError={agenda.isError} error={agenda.error}>
+        {view !== 'month' && (
+          <AgendaViewBody
+            view={view}
+            selected={selected}
+            dayAppointments={agenda.dayAppointments}
+            periodAppointments={agenda.periodAppointments}
+            showDoctor={agenda.canViewAll}
+            onOpen={setOpenId}
+            onShowDay={openDay}
+            onCreateAt={agenda.me?.permissions.includes('citas:create') ? createAt : undefined}
+          />
+        )}
       </QueryBoundary>
 
-      {me?.permissions.includes('citas:create') && (
+      {agenda.me?.permissions.includes('citas:create') && (
         <Fab
           color="primary"
           aria-label="Agendar cita"
-          onClick={() =>
-            setDraft({
-              ...appointmentFormDefaultValues,
-              date: toDateKey(isCreatableDay(selected) ? selected : new Date()),
-              specialistId: me.specialistId ?? 0,
-            })
-          }
-          sx={{ position: 'fixed', right: 20, bottom: 'calc(env(safe-area-inset-bottom) + 20px)' }}
+          onClick={() => createAt(toDateKey(isCreatableDay(selected) ? selected : new Date()), '09:00')}
+          sx={{ position: 'fixed', right: 20, bottom: 'calc(env(safe-area-inset-bottom) + 76px)' }}
         >
           <AddIcon />
         </Fab>
       )}
 
-      <AgendaAppointmentSheet appointment={openAppointment} onClose={() => setOpen(null)} onCancel={setCancelling} />
-
+      <AgendaAppointmentSheet appointment={openAppointment} onClose={() => setOpenId(null)} onCancel={setCancelling} />
       <AppointmentFormModal
         open={draft !== null}
         mode="create"
@@ -105,7 +106,6 @@ export function MobileAgendaPage() {
         onSubmit={(values) => createMutation.mutate(mapFormToPayload(values))}
         onClose={() => setDraft(null)}
       />
-
       <ConfirmDialog
         open={cancelling !== null}
         title="Cancelar cita"
@@ -115,7 +115,7 @@ export function MobileAgendaPage() {
         onConfirm={() => {
           if (!cancelling) return
           cancelMutation.mutate(cancelling.id)
-          setOpen(null)
+          setOpenId(null)
         }}
         onClose={() => setCancelling(null)}
       />
