@@ -3,6 +3,7 @@ import type { AnswerDraft, AnswerMap } from '../types'
 import { isEventListVariant, parseEventEntries } from './event-list'
 import { isNoneOption, splitRelationships } from './family-relationship'
 import { parseMedicationEntries } from './medication-list'
+import { heightError } from './height'
 import type { IntakeStep } from './intake-steps'
 import { isQuestionVisible, type QuestionIndex } from './question-visibility'
 
@@ -29,6 +30,11 @@ function validateQuestion(
   // La lista solo es visible si el paciente respondió "Sí" a la pregunta previa.
   if (isEventListVariant(question.displayVariant) && parseEventEntries(draft).length === 0) {
     return EMPTY_LIST_MESSAGES[question.displayVariant]
+  }
+
+  // Talla en centímetros: evita que "1.72" (metros) se guarde como 1.72 cm.
+  if (question.displayVariant === 'height_cm' && draft?.kind === 'numeric') {
+    return heightError(draft.value)
   }
 
   // Solo visible si el paciente eligió "Otro (no está en la lista)".

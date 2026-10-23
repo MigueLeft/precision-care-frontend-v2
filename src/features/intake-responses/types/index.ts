@@ -65,7 +65,8 @@ export interface IntakeResponseDetailAnswer {
 // surgery_list / hospitalization_list: captura estructurada como en la consulta;
 // select: lista de medicamentos con la frecuencia de cada uno elegido;
 // medication_list: medicamentos escritos a mano, cada uno con su frecuencia;
-// food_allergy_list: alergias alimentarias del catálogo o escritas en "Otra".
+// food_allergy_list: alergias alimentarias del catálogo o escritas en "Otra";
+// height_cm: talla en centímetros (convierte metros, valida 50–250).
 export type IntakeQuestionDisplayVariant =
   | 'short_text'
   | 'select'
@@ -78,6 +79,7 @@ export type IntakeQuestionDisplayVariant =
   | 'surgery_list'
   | 'hospitalization_list'
   | 'medication_list'
+  | 'height_cm'
   | 'food_allergy_list'
 
 export type IntakeConditionOperator =
