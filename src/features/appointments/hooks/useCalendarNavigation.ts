@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { shiftAnchor, startOfDay, visibleRange, type CalendarView } from '../utils/calendar-dates'
 
 // Vista activa (lista/día/semana/mes) y fecha de referencia del calendario.
-export function useCalendarNavigation(initialView: CalendarView = 'week') {
+export function useCalendarNavigation(initialView: CalendarView = 'list') {
   const [view, setView] = useState<CalendarView>(initialView)
   const [anchor, setAnchor] = useState(() => startOfDay(new Date()))
 

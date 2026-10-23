@@ -1,5 +1,6 @@
-import { InputAdornment, MenuItem, Select, TextField, Typography } from '@mui/material'
-import { defaultCountries, FlagImage, parseCountry, usePhoneInput } from 'react-international-phone'
+import { Divider, InputAdornment, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { FlagImage, parseCountry, usePhoneInput } from 'react-international-phone'
+import { PHONE_COUNTRIES, PREFERRED_PHONE_COUNTRIES } from '@/utils/phone-countries'
 
 type PhoneFieldProps = {
   label: string
@@ -18,7 +19,7 @@ export function PhoneField({ label, value, onChange, onBlur, error, helperText, 
   const { inputValue, country, setCountry, handlePhoneValueChange, inputRef } = usePhoneInput({
     defaultCountry,
     value,
-    countries: defaultCountries,
+    countries: PHONE_COUNTRIES,
     forceDialCode: true,
     onChange: (data) => {
       // Solo el código de país (+58) cuenta como vacío.
@@ -51,9 +52,9 @@ export function PhoneField({ label, value, onChange, onBlur, error, helperText, 
                 MenuProps={{ slotProps: { paper: { sx: { maxHeight: 320 } } } }}
                 aria-label="País del teléfono"
               >
-                {defaultCountries.map((item) => {
+                {PHONE_COUNTRIES.flatMap((item, index) => {
                   const parsed = parseCountry(item)
-                  return (
+                  const option = (
                     <MenuItem key={parsed.iso2} value={parsed.iso2}>
                       <FlagImage iso2={parsed.iso2} size="20px" style={{ marginRight: 8 }} />
                       <Typography sx={{ fontSize: '13px' }}>
@@ -61,6 +62,10 @@ export function PhoneField({ label, value, onChange, onBlur, error, helperText, 
                       </Typography>
                     </MenuItem>
                   )
+                  // Separador entre los países frecuentes y el resto.
+                  return index === PREFERRED_PHONE_COUNTRIES - 1
+                    ? [option, <Divider key="preferred-divider" />]
+                    : [option]
                 })}
               </Select>
             </InputAdornment>
