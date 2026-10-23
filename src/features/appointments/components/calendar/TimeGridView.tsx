@@ -1,27 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
 import { Box, Paper, Typography } from '@mui/material'
 import type { Appointment } from '../../types'
-import { hourLabel, isSameDay, weekDays, WEEKDAY_SHORT } from '../../utils/calendar-dates'
+import { hourLabel } from '../../utils/calendar-dates'
 import { HOUR_HEIGHT, WeekDayColumn } from './WeekDayColumn'
+import { TimeGridDayHeader } from './TimeGridDayHeader'
 
 const GUTTER = 64
 // Al abrir, la cuadrícula arranca a las 7 a.m. (como Google Calendar).
 const FIRST_VISIBLE_HOUR = 7
 const HOURS = Array.from({ length: 24 }, (_, h) => h)
 
-type WeekViewProps = {
-  anchor: Date
+type TimeGridViewProps = {
+  // Un día (vista Día) o siete (vista Semana).
+  days: Date[]
   appointments: Appointment[]
   onOpen: (id: number) => void
+  // Clic en el número del día: abre la vista de ese día.
+  onShowDay?: (day: Date) => void
   onCreateAt?: (date: string, time: string) => void
 }
 
-// Vista semanal: días de lunes a domingo, horas a la izquierda y las citas
-// como bloques dentro de cada día.
-export function WeekView({ anchor, appointments, onOpen, onCreateAt }: WeekViewProps) {
-  const days = weekDays(anchor)
+// Cuadrícula por horas: horas a la izquierda y las citas como bloques dentro
+// de cada día.
+export function TimeGridView({ days, appointments, onOpen, onShowDay, onCreateAt }: TimeGridViewProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const [now, setNow] = useState(() => new Date())
+  const minColumn = days.length === 1 ? 240 : 110
 
   // Sincronización con el DOM y el reloj: posición inicial del scroll y
   // avance de la línea de la hora actual cada minuto.
@@ -31,56 +35,26 @@ export function WeekView({ anchor, appointments, onOpen, onCreateAt }: WeekViewP
     return () => clearInterval(timer)
   }, [])
 
-  const columns = `${GUTTER}px repeat(7, minmax(110px, 1fr))`
+  const columns = `${GUTTER}px repeat(${days.length}, minmax(${minColumn}px, 1fr))`
 
   return (
     <Paper sx={{ borderRadius: '8px', overflow: 'hidden' }}>
       <Box sx={{ overflowX: 'auto' }}>
-        <Box sx={{ minWidth: GUTTER + 7 * 110 }}>
-          {/* Encabezado: día de la semana + número (hoy resaltado) */}
+        <Box sx={{ minWidth: GUTTER + days.length * minColumn }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: columns, borderBottom: '1px solid', borderColor: 'divider' }}>
             <Box />
-            {days.map((day, index) => {
-              const today = isSameDay(day, now)
-              return (
-                <Box key={day.toISOString()} sx={{ textAlign: 'center', py: 1 }}>
-                  <Typography
-                    sx={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', color: today ? 'primary.main' : 'text.secondary' }}
-                  >
-                    {WEEKDAY_SHORT[index]}
-                  </Typography>
-                  <Box
-                    sx={{
-                      mx: 'auto',
-                      mt: 0.25,
-                      width: 40,
-                      height: 40,
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      bgcolor: today ? 'primary.main' : 'transparent',
-                      color: today ? 'primary.contrastText' : 'text.primary',
-                      fontSize: '22px',
-                    }}
-                  >
-                    {day.getDate()}
-                  </Box>
-                </Box>
-              )
-            })}
+            {days.map((day) => (
+              <TimeGridDayHeader key={day.toISOString()} day={day} now={now} onClick={onShowDay} />
+            ))}
           </Box>
 
-          {/* Cuadrícula de horas */}
           <Box ref={scrollRef} sx={{ height: 'calc(100vh - 330px)', minHeight: 420, overflowY: 'auto' }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: columns }}>
               <Box>
                 {HOURS.map((hour) => (
                   <Box key={hour} sx={{ height: HOUR_HEIGHT, position: 'relative' }}>
                     {hour > 0 && (
-                      <Typography
-                        sx={{ position: 'absolute', top: -8, right: 8, fontSize: '10px', color: 'text.secondary' }}
-                      >
+                      <Typography sx={{ position: 'absolute', top: -8, right: 8, fontSize: '10px', color: 'text.secondary' }}>
                         {hourLabel(hour)}
                       </Typography>
                     )}

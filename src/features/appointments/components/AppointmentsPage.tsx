@@ -111,7 +111,7 @@ export function AppointmentsPage() {
           anchor={calendar.anchor}
           appointments={filtered}
           onOpen={setViewingId}
-          onShowWeekOf={calendar.showWeekOf}
+          onShowDay={calendar.showDay}
           onCreateAt={createAt}
         />
       </QueryBoundary>

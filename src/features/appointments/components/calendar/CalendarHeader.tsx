@@ -3,6 +3,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ViewListIcon from '@mui/icons-material/ViewList'
 import CalendarViewWeekIcon from '@mui/icons-material/CalendarViewWeek'
+import ViewDayOutlinedIcon from '@mui/icons-material/ViewDayOutlined'
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
 import { AppButton } from '@/components/AppButton'
 import { calendarTitle, type CalendarView } from '../../utils/calendar-dates'
@@ -20,7 +21,7 @@ type CalendarHeaderProps = {
 // y selector de vista.
 export function CalendarHeader({ view, anchor, count, onViewChange, onToday, onNavigate }: CalendarHeaderProps) {
   const isCalendar = view !== 'list'
-  const unit = view === 'month' ? 'Mes' : 'Semana'
+  const unit = view === 'month' ? 'Mes' : view === 'day' ? 'Día' : 'Semana'
 
   return (
     <Stack
@@ -61,6 +62,9 @@ export function CalendarHeader({ view, anchor, count, onViewChange, onToday, onN
       >
         <ToggleButton value="list">
           <ViewListIcon sx={{ fontSize: 16, mr: 0.5 }} /> Lista
+        </ToggleButton>
+        <ToggleButton value="day">
+          <ViewDayOutlinedIcon sx={{ fontSize: 16, mr: 0.5 }} /> Día
         </ToggleButton>
         <ToggleButton value="week">
           <CalendarViewWeekIcon sx={{ fontSize: 16, mr: 0.5 }} /> Semana

@@ -1,7 +1,7 @@
 // Fechas del calendario de citas (hora local del navegador). La semana
 // empieza en lunes, como se acostumbra en español.
 
-export type CalendarView = 'list' | 'week' | 'month'
+export type CalendarView = 'list' | 'day' | 'week' | 'month'
 
 export function startOfDay(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
@@ -39,6 +39,10 @@ export function monthGridDays(anchor: Date): Date[] {
 
 // Rango visible [start, end) para filtrar las citas de la vista.
 export function visibleRange(view: CalendarView, anchor: Date): { start: Date; end: Date } | null {
+  if (view === 'day') {
+    const start = startOfDay(anchor)
+    return { start, end: addDays(start, 1) }
+  }
   if (view === 'week') {
     const start = startOfWeek(anchor)
     return { start, end: addDays(start, 7) }
@@ -52,15 +56,20 @@ export function visibleRange(view: CalendarView, anchor: Date): { start: Date; e
 
 export function shiftAnchor(view: CalendarView, anchor: Date, direction: 1 | -1): Date {
   if (view === 'month') return new Date(anchor.getFullYear(), anchor.getMonth() + direction, 1)
+  if (view === 'day') return addDays(anchor, direction)
   return addDays(anchor, 7 * direction)
 }
 
 const MONTH_YEAR = new Intl.DateTimeFormat('es-MX', { month: 'long', year: 'numeric' })
 const DAY_MONTH = new Intl.DateTimeFormat('es-MX', { day: 'numeric', month: 'short' })
+const FULL_DAY = new Intl.DateTimeFormat('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+const WEEKDAY = new Intl.DateTimeFormat('es-MX', { weekday: 'short' })
 
-// "octubre de 2026" (mes) o "20 – 26 oct 2026" / "29 sept – 4 oct 2026" (semana).
+// "octubre de 2026" (mes), "20 – 26 oct 2026" (semana) o
+// "viernes, 23 de octubre de 2026" (día).
 export function calendarTitle(view: CalendarView, anchor: Date): string {
   if (view === 'month') return MONTH_YEAR.format(anchor)
+  if (view === 'day') return FULL_DAY.format(anchor)
   const days = weekDays(anchor)
   const first = days[0]
   const last = days[6]
@@ -70,6 +79,16 @@ export function calendarTitle(view: CalendarView, anchor: Date): string {
 }
 
 export const WEEKDAY_SHORT = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom']
+
+// "vie" para el encabezado de un día cualquiera.
+export function weekdayShort(date: Date): string {
+  return WEEKDAY.format(date).replace('.', '')
+}
+
+// Las citas se agendan de hoy en adelante.
+export function isCreatableDay(date: Date): boolean {
+  return startOfDay(date) >= startOfDay(new Date())
+}
 
 const TIME = new Intl.DateTimeFormat('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true })
 
