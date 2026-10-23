@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { reportAndRethrow } from '@/utils/report-error'
 import { fetchPublicIntakeCatalogs } from '../services/intake-fill.service'
 import type { PublicIntakeCatalogs } from '../types'
 
@@ -21,7 +22,7 @@ export function useIntakeCatalogs(): PublicIntakeCatalogs {
 export function usePublicIntakeCatalogs(token: string) {
   return useQuery({
     queryKey: ['public-intake-catalogs', token] as const,
-    queryFn: () => fetchPublicIntakeCatalogs(token),
+    queryFn: () => fetchPublicIntakeCatalogs(token).catch(reportAndRethrow('public-intake')),
     enabled: token.length > 0,
     staleTime: Infinity,
   })

@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import { Box, Tab, Tabs, Typography } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { useDebouncedCallback } from '@/hooks/useDebouncedCallback'
-import {
-  useConsultationSymptoms,
-  useUpdateConsultation,
-} from '../../hooks/useConsultationDetail'
+import { useAntecedentsByPatient } from '@/features/antecedents'
+import { useUpdateConsultation } from '../../hooks/useConsultationDetail'
 import { useConsultationDiseases } from '../../hooks/useConsultationDiseases'
 import { ProblemsList } from './ProblemsList'
 import {
+  appendSources,
   buildProblemSources,
   dropRemovedSources,
   sameProblems,
@@ -23,20 +22,23 @@ interface ProblemsSectionProps {
   readOnly: boolean
 }
 
-// "Notas de diagnósticos" del Cierre Clínico (se guarda en consultation.problems):
-// el sistema las precarga con los síntomas + diagnósticos de esta consulta y cada
-// nota se puede editar para agregar detalles. En "Actuales" solo quedan los que
-// están activos; al cambiar de estado, la nota pasa a "Previos" (y viceversa).
-// Si el síntoma o diagnóstico se quita de la consulta, su nota también se quita.
+// "Problemas" del Cierre Clínico (se guarda en consultation.problems): el sistema
+// agrega solo los diagnósticos de esta consulta y las cirugías/hospitalizaciones
+// del expediente (las que aterrizan del formulario), y cada nota se puede editar.
+// Los diagnósticos activos van a "Actuales"; los de otro estado y los eventos, a
+// "Previos". Si el origen se quita, su nota también se quita.
 export function ProblemsSection({ index, consultation, readOnly }: ProblemsSectionProps) {
   const consultationId = consultation.id
-  const { data: symptoms = [] } = useConsultationSymptoms(consultationId)
-  const { data: diseases = [] } = useConsultationDiseases(consultationId)
+  const diseasesQuery = useConsultationDiseases(consultationId)
+  const antecedentsQuery = useAntecedentsByPatient(consultation.patientId)
   const update = useUpdateConsultation(consultationId)
+  const ready = diseasesQuery.isSuccess && antecedentsQuery.isSuccess
+  const diseases = diseasesQuery.data
+  const antecedents = antecedentsQuery.data
 
-  const seeded = useRef(false)
-  // Diagnósticos/síntomas vistos en la pasada anterior, para detectar los que se quitan.
-  const knownPrefixes = useRef<string[]>([])
+  // Orígenes vistos en la pasada anterior (null = aún no hay pasada), para
+  // detectar los que se agregan o se quitan durante la consulta.
+  const knownPrefixes = useRef<string[] | null>(null)
   const [problems, setProblems] = useState<ConsultationProblems>(() =>
     consultation.problems ?? { actuales: [], previos: [] },
   )
@@ -46,26 +48,27 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
     update.mutate({ problems: next })
   }, 700)
 
-  // Precarga única (si aún no hay problemas guardados) y, después, reubicación de
-  // cada nota según el estado vigente de su diagnóstico o síntoma. Las notas de
-  // los que se quitaron de la consulta se eliminan.
+  // Primera pasada: precarga si aún no hay problemas guardados. Después: agrega
+  // los orígenes nuevos, quita los eliminados y reubica cada nota según su estado.
   useEffect(() => {
-    if (readOnly) return
-    const sources = buildProblemSources(diseases, symptoms)
+    if (readOnly || !ready || !diseases || !antecedents) return
+    const sources = buildProblemSources(diseases, antecedents)
     const prefixes = sources.map((source) => source.prefix)
-    const removed = knownPrefixes.current.filter((prefix) => !prefixes.includes(prefix))
+    const known = knownPrefixes.current
     knownPrefixes.current = prefixes
-    if (sources.length === 0 && removed.length === 0) return
 
-    const shouldSeed = !seeded.current && !consultation.problems
-    seeded.current = true
-    const next = shouldSeed
-      ? seedProblems(sources)
-      : syncProblems(dropRemovedSources(problems, removed), sources)
+    let next: ConsultationProblems
+    if (known === null) {
+      next = consultation.problems ? syncProblems(problems, sources) : seedProblems(sources)
+    } else {
+      const removed = known.filter((prefix) => !prefixes.includes(prefix))
+      const added = sources.filter((source) => !known.includes(source.prefix))
+      next = appendSources(syncProblems(dropRemovedSources(problems, removed), sources), added)
+    }
     if (sameProblems(next, problems)) return
     setProblems(next)
     save(next)
-  }, [readOnly, consultation.problems, symptoms, diseases, problems, save])
+  }, [readOnly, ready, consultation.problems, diseases, antecedents, problems, save])
 
   const commit = (next: ConsultationProblems) => {
     setProblems(next)
@@ -74,7 +77,7 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
 
   return (
     <CollapsibleSection
-      title={`${index}. Notas de diagnósticos`}
+      title={`${index}. Problemas`}
       headerMeta={
         <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
           {problems.actuales.length + problems.previos.length}
@@ -95,8 +98,8 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
         <ProblemsList
           items={problems.actuales}
           readOnly={readOnly}
-          placeholder="Agregar nota…"
-          emptyLabel="Sin notas de diagnóstico."
+          placeholder="Agregar problema…"
+          emptyLabel="Sin problemas actuales."
           onChange={(actuales) => commit({ ...problems, actuales })}
         />
       </Box>
@@ -104,16 +107,16 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
         <ProblemsList
           items={problems.previos}
           readOnly={readOnly}
-          placeholder="Agregar nota previa…"
-          emptyLabel="Sin notas previas."
+          placeholder="Agregar problema previo…"
+          emptyLabel="Sin problemas previos."
           onChange={(previos) => commit({ ...problems, previos })}
         />
       </Box>
 
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1.5 }}>
-        Se precarga con los diagnósticos y síntomas registrados en esta consulta: los activos van a
-        "Actuales" y los de otro estado a "Previos". Usa el lápiz para agregar detalles a cada nota.
-        Puedes pegar varias líneas para agregarlas de una vez.
+        Se agregan automáticamente los diagnósticos de esta consulta (los activos en "Actuales", el
+        resto en "Previos") y las cirugías y hospitalizaciones del expediente (en "Previos"). Usa el
+        lápiz para agregar detalles. Puedes pegar varias líneas para agregarlas de una vez.
       </Typography>
     </CollapsibleSection>
   )

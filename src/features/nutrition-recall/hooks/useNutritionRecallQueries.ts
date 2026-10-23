@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { reportAndRethrow } from '@/utils/report-error'
 import {
   fetchNutritionRecallDetail,
   fetchNutritionRecallsByPatient,
@@ -25,7 +26,7 @@ export function useNutritionRecallDetail(id: number | null) {
 export function usePublicNutritionRecall(token: string) {
   return useQuery({
     queryKey: nutritionRecallKeys.public(token),
-    queryFn: () => fetchPublicNutritionRecall(token),
+    queryFn: () => fetchPublicNutritionRecall(token).catch(reportAndRethrow('nutribot')),
     retry: false,
     staleTime: Infinity,
   })

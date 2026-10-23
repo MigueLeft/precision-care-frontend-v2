@@ -30,7 +30,14 @@ export function PrescriptionLineRow({ line, readOnly, showErrors, onChange }: Pr
       <Stack direction="row" sx={{ alignItems: 'center' }}>
         <Checkbox
           checked={line.selected}
-          onChange={(event) => onChange({ selected: event.target.checked })}
+          onChange={(event) =>
+            // Al volver a marcarlo, la indicación regresa a la predeterminada.
+            onChange(
+              event.target.checked
+                ? { selected: true, instructions: line.defaultInstructions }
+                : { selected: false },
+            )
+          }
           disabled={readOnly}
         />
         <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>{line.name}</Typography>

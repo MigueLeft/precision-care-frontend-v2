@@ -16,7 +16,7 @@ type ConsultationNoteProps = {
 // en el expediente (Consultas) y como "Nota de la consulta anterior".
 export function ConsultationNote({ consultation }: ConsultationNoteProps) {
   const { data: recorded } = useConsultationRecorded(consultation.id)
-  const diagnosisNotes = consultation.problems?.actuales ?? []
+  const currentProblems = consultation.problems?.actuales ?? []
 
   return (
     <Stack spacing={2.5}>
@@ -39,14 +39,14 @@ export function ConsultationNote({ consultation }: ConsultationNoteProps) {
       <NoteBlock title="PLAN DE ESTUDIO">
         <NoteText value={consultation.diagnosticPlan} />
       </NoteBlock>
-      <NoteBlock title="NOTAS DE DIAGNÓSTICOS">
-        {diagnosisNotes.length === 0 ? (
+      <NoteBlock title="PROBLEMAS">
+        {currentProblems.length === 0 ? (
           <NoteEmpty />
         ) : (
           <Stack component="ul" sx={{ m: 0, pl: 2.5 }}>
-            {diagnosisNotes.map((note, index) => (
-              <Typography component="li" key={`${index}-${note}`} sx={{ fontSize: '13px' }}>
-                {note}
+            {currentProblems.map((problem, index) => (
+              <Typography component="li" key={`${index}-${problem}`} sx={{ fontSize: '13px' }}>
+                {problem}
               </Typography>
             ))}
           </Stack>

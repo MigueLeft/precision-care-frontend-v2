@@ -2,7 +2,8 @@ import { Avatar, Box, CircularProgress, Paper, Stack, Typography } from '@mui/ma
 import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined'
 import { EmptyState } from '@/components/EmptyState'
-import { getApiErrorMessage } from '@/utils/get-api-error-message'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { FRIENDLY_ERROR_MESSAGE, isNotFoundError } from '@/utils/report-error'
 import { usePublicNutritionRecall } from '../hooks/useNutritionRecallQueries'
 import { NutriBotChat } from './NutriBotChat'
 
@@ -54,15 +55,20 @@ export function NutriBotChatPage({ token }: NutriBotChatPageProps) {
       {isError && (
         <Box sx={{ p: 3 }}>
           <EmptyState
-            message={getApiErrorMessage(
-              error,
-              'Este enlace no es válido o ya expiró. Contacta a tu clínica para solicitar uno nuevo.',
-            )}
+            message={
+              isNotFoundError(error)
+                ? 'Este enlace no es válido o ya expiró. Contacta a tu clínica para solicitar uno nuevo.'
+                : FRIENDLY_ERROR_MESSAGE
+            }
           />
         </Box>
       )}
       {recall?.completed && <CompletedCard />}
-      {recall && !recall.completed && <NutriBotChat token={token} recall={recall} />}
+      {recall && !recall.completed && (
+        <ErrorBoundary title="NutriBot no está disponible" message={FRIENDLY_ERROR_MESSAGE}>
+          <NutriBotChat token={token} recall={recall} />
+        </ErrorBoundary>
+      )}
     </Stack>
   )
 }

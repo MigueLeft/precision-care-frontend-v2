@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { FRIENDLY_ERROR_MESSAGE, reportError } from '@/utils/report-error'
 import { finishNutritionRecall, streamNutriBotTurn } from '../services/public-nutrition-recall.service'
 import type { ChatTurn, NutritionRecallReportStatus } from '../types'
 import { loadSavedConversation, saveConversation } from '../utils/conversation-storage'
@@ -7,7 +8,6 @@ import { loadSavedConversation, saveConversation } from '../utils/conversation-s
 const GENERATE_REPORT_MARKER = '[GENERATE_REPORT]'
 // Mayor que los límites del servidor, para que normalmente sea él quien cierre.
 const CLIENT_IDLE_TIMEOUT_MS = 60_000
-const TIMEOUT_MESSAGE = 'NutriBot tardó demasiado en responder. Por favor, envía tu respuesta de nuevo.'
 
 export interface ChatBubble {
   id: string
@@ -48,7 +48,8 @@ export function useNutriBotChat(token: string) {
       const status = await finishNutritionRecall(token, history.current, new AbortController().signal)
       setPhase({ kind: 'done', status })
     } catch (error) {
-      setPhase({ kind: 'error', detail: error instanceof Error ? error.message : 'Error inesperado' })
+      reportError(error, 'nutribot', { step: 'finish' })
+      setPhase({ kind: 'error', detail: FRIENDLY_ERROR_MESSAGE })
     }
   }
 
@@ -76,10 +77,11 @@ export function useNutriBotChat(token: string) {
         { signal: abort.signal, onActivity: armIdleTimer },
       )
     } catch (error) {
+      // El paciente solo ve el mensaje predeterminado; el detalle va a Sentry.
+      reportError(error, 'nutribot', { step: 'chat', timedOut: abort.signal.aborted, partial: !!fullText })
       // Si ya llegó texto, se conserva la pregunta para que el paciente responda.
       if (!fullText) {
-        const message = abort.signal.aborted ? TIMEOUT_MESSAGE : (error as Error).message
-        updateBubble(id, { content: `❌ ${message}`, streaming: false, isError: true })
+        updateBubble(id, { content: FRIENDLY_ERROR_MESSAGE, streaming: false, isError: true })
         setIsLoading(false)
         return
       }

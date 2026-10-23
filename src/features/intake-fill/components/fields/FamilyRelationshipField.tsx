@@ -1,4 +1,5 @@
-import { Autocomplete, Checkbox, FormControlLabel, Stack, TextField } from '@mui/material'
+import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import { ChipMultiSelect } from '@/components/ui/ChipMultiSelect'
 import { FAMILY_RELATIONSHIPS } from '@/features/antecedents'
 import type { IntakeResponseDetailQuestionOption } from '@/features/intake-responses'
 import type { QuestionFieldProps } from '../../types'
@@ -53,18 +54,16 @@ export function FamilyRelationshipField({ question, value, onChange }: QuestionF
               label={option.text}
             />
             {checked && !isNoneOption(option) && (
-              <Autocomplete
-                multiple
-                size="small"
-                options={[...FAMILY_RELATIONSHIPS]}
-                value={splitRelationships(texts[option.id])}
-                onChange={(_event, relationships) => setRelationships(option.id, relationships)}
-                disableCloseOnSelect
-                renderInput={(params) => (
-                  <TextField {...params} label="Parentesco" placeholder="¿Qué familiar?" />
-                )}
-                sx={{ ml: 3.5, mb: 1.5, mt: 0.5, maxWidth: 420 }}
-              />
+              <Stack spacing={0.75} sx={{ ml: 3.5, mb: 1.5, mt: 0.5 }}>
+                <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
+                  ¿Qué familiar? Puedes elegir varios.
+                </Typography>
+                <ChipMultiSelect
+                  options={FAMILY_RELATIONSHIPS}
+                  value={splitRelationships(texts[option.id])}
+                  onChange={(relationships) => setRelationships(option.id, relationships)}
+                />
+              </Stack>
             )}
           </Stack>
         )

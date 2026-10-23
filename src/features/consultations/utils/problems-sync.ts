@@ -1,15 +1,14 @@
-import { DISEASE_STATUS_LABELS, formatSymptomDiseases } from './consultation-format'
-import type {
-  ConsultationDisease,
-  ConsultationProblems,
-  ConsultationSymptom,
-} from '../types'
+import { ANTECEDENT_TYPE_LABELS, type Antecedent } from '@/features/antecedents'
+import { formatFreeDate } from '@/utils/format-date'
+import { DISEASE_STATUS_LABELS } from './consultation-format'
+import type { ConsultationDisease, ConsultationProblems } from '../types'
 
-// Origen de una nota de diagnóstico: un diagnóstico o un síntoma de la consulta.
-interface ProblemSource {
+// Origen de un problema: un diagnóstico de la consulta o una cirugía/hospitalización
+// del expediente (las que aterrizan del formulario de ingreso).
+export interface ProblemSource {
   // Inicio con el que se reconoce la nota ("Hipertensión arterial (I10)").
   prefix: string
-  // Solo los que están en estado "activo" van a problemas actuales.
+  // Solo los diagnósticos activos van a problemas actuales.
   active: boolean
   // Texto con el que se precarga la nota.
   note: string
@@ -20,9 +19,18 @@ interface ProblemSource {
 const diseasePrefix = (disease: ConsultationDisease) =>
   `${disease.name ?? '—'}${disease.code ? ` (${disease.code})` : ''}`
 
+// "Cirugía: Apendicectomía (05/2020)"
+const eventPrefix = (antecedent: Antecedent) =>
+  `${ANTECEDENT_TYPE_LABELS[antecedent.type]}: ${antecedent.name}${
+    antecedent.eventDate ? ` (${formatFreeDate(antecedent.eventDate)})` : ''
+  }`
+
+const isSurgicalEvent = (antecedent: Antecedent) =>
+  antecedent.type === 'surgery' || antecedent.type === 'hospitalization'
+
 export function buildProblemSources(
   diseases: ConsultationDisease[],
-  symptoms: ConsultationSymptom[],
+  antecedents: Antecedent[],
 ): ProblemSource[] {
   return [
     // "Hipertensión arterial (I10) — Activa"
@@ -32,19 +40,19 @@ export function buildProblemSources(
       note: `${diseasePrefix(disease)} — ${DISEASE_STATUS_LABELS[disease.status]}`,
       statusLabel: DISEASE_STATUS_LABELS[disease.status],
     })),
-    // "Cefalea (Moderada) — Migraña (Bajo investigación) · HTA (Descartado)"
-    ...symptoms
-      .filter((symptom) => symptom.name)
-      .map((symptom) => ({
-        prefix: symptom.name as string,
-        active: symptom.status === 'active',
-        note: [
-          `${symptom.name}${symptom.severityName ? ` (${symptom.severityName})` : ''}`,
-          symptom.diseases.length > 0 ? formatSymptomDiseases(symptom.diseases) : null,
-        ]
+    // "Cirugía: Apendicectomía (05/2020) — Complicaciones: infección" (siempre en previos)
+    ...antecedents.filter(isSurgicalEvent).map((antecedent) => {
+      const complications =
+        antecedent.surgeryDetail?.complications ??
+        antecedent.hospitalizationDetail?.complications
+      return {
+        prefix: eventPrefix(antecedent),
+        active: false,
+        note: [eventPrefix(antecedent), complications ? `Complicaciones: ${complications}` : null]
           .filter(Boolean)
           .join(' — '),
-      })),
+      }
+    }),
   ]
 }
 
@@ -73,7 +81,7 @@ function withCurrentStatus(note: string, source: ProblemSource) {
   return old ? `${head}${source.statusLabel}${rest.slice(old.length)}` : note
 }
 
-// Precarga: cada diagnóstico/síntoma en actuales (si está activo) o en previos.
+// Precarga: cada diagnóstico activo en actuales; el resto (y los eventos) en previos.
 export function seedProblems(sources: ProblemSource[]): ConsultationProblems {
   return {
     actuales: sources.filter((s) => s.active).map((s) => s.note),
@@ -81,8 +89,8 @@ export function seedProblems(sources: ProblemSource[]): ConsultationProblems {
   }
 }
 
-// Mueve cada nota a actuales/previos según el estado vigente de su diagnóstico o
-// síntoma. Las notas escritas a mano (sin fuente) se quedan donde están.
+// Mueve cada nota a actuales/previos según el estado vigente de su origen.
+// Las notas escritas a mano (sin fuente) se quedan donde están.
 export function syncProblems(
   problems: ConsultationProblems,
   sources: ProblemSource[],
@@ -101,8 +109,26 @@ export function syncProblems(
   return next
 }
 
-// Quita las notas de los diagnósticos o síntomas que se eliminaron de la
-// consulta (`removedPrefixes`), aunque el médico les haya agregado detalles.
+// Agrega la nota de cada origen nuevo (diagnóstico capturado o evento aterrizado
+// durante la consulta) si todavía no tiene una.
+export function appendSources(
+  problems: ConsultationProblems,
+  added: ProblemSource[],
+): ConsultationProblems {
+  const notes = [...problems.actuales, ...problems.previos]
+  const missing = added.filter(
+    (source) => !notes.some((note) => matchesPrefix(note, source.prefix)),
+  )
+  if (missing.length === 0) return problems
+  const seeded = seedProblems(missing)
+  return {
+    actuales: [...problems.actuales, ...seeded.actuales],
+    previos: [...problems.previos, ...seeded.previos],
+  }
+}
+
+// Quita las notas de los diagnósticos o eventos que se eliminaron
+// (`removedPrefixes`), aunque el médico les haya agregado detalles.
 export function dropRemovedSources(
   problems: ConsultationProblems,
   removedPrefixes: string[],

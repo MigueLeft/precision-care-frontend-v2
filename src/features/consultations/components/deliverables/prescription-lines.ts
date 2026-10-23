@@ -8,6 +8,8 @@ export interface PrescriptionLineState {
   duration: string
   route: string
   instructions: string
+  // Indicación predefinida del catálogo; se restablece al volver a marcar la línea.
+  defaultInstructions: string
 }
 
 // La indicación es lo que se imprime en la hoja del paciente.

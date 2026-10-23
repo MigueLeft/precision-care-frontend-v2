@@ -7,6 +7,8 @@ interface ErrorBoundaryProps {
   /** Cambiar este valor reinicia el boundary (p. ej. la ruta activa). */
   resetKey?: string | number
   title?: string
+  /** Texto fijo en lugar del detalle técnico (páginas públicas para pacientes). */
+  message?: string
 }
 
 interface ErrorBoundaryState {
@@ -51,7 +53,7 @@ export class ErrorBoundary extends Component<
             {this.props.title ?? 'Algo salió mal en esta sección'}
           </Typography>
           <Typography color="text.secondary" sx={{ mb: 2, fontSize: '13px' }}>
-            {this.state.error.message}
+            {this.props.message ?? this.state.error.message}
           </Typography>
           <AppButton
             variant="outlined"

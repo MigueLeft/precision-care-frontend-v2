@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Stack, Typography } from '@mui/material'
 import { EmptyState } from '@/components/EmptyState'
-import { getApiErrorMessage } from '@/utils/get-api-error-message'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { FRIENDLY_ERROR_MESSAGE, isNotFoundError } from '@/utils/report-error'
 import {
   EMPTY_INTAKE_CATALOGS,
   IntakeCatalogsContext,
@@ -39,7 +40,13 @@ export function PublicIntakeFillPage({ token }: PublicIntakeFillPageProps) {
         )}
 
         {isError && (
-          <EmptyState message={getApiErrorMessage(error, 'Este formulario no existe o el enlace ya no es válido.')} />
+          <EmptyState
+            message={
+              isNotFoundError(error)
+                ? 'Este formulario no existe o el enlace ya no es válido.'
+                : FRIENDLY_ERROR_MESSAGE
+            }
+          />
         )}
 
         {response && (response.completed || flow.justCompleted) && <IntakeCompletedCard />}
@@ -55,14 +62,16 @@ export function PublicIntakeFillPage({ token }: PublicIntakeFillPageProps) {
               stepIndex={flow.stepIndex}
               totalSteps={flow.steps.length}
             />
-            <IntakeCatalogsContext value={catalogs ?? EMPTY_INTAKE_CATALOGS}>
-              <IntakeStepContent
-                step={flow.step}
-                answers={flow.answers}
-                questionIndex={flow.questionIndex}
-                onAnswer={flow.setAnswer}
-              />
-            </IntakeCatalogsContext>
+            <ErrorBoundary resetKey={flow.stepIndex} message={FRIENDLY_ERROR_MESSAGE}>
+              <IntakeCatalogsContext value={catalogs ?? EMPTY_INTAKE_CATALOGS}>
+                <IntakeStepContent
+                  step={flow.step}
+                  answers={flow.answers}
+                  questionIndex={flow.questionIndex}
+                  onAnswer={flow.setAnswer}
+                />
+              </IntakeCatalogsContext>
+            </ErrorBoundary>
             <IntakeStepActions
               isFirstStep={flow.stepIndex === 0}
               isLastStep={flow.isLastStep}

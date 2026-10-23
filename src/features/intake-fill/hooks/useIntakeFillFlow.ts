@@ -6,7 +6,7 @@ import {
   sexFromOptionId,
   type IntakeResponseDetail,
 } from '@/features/intake-responses'
-import { getApiErrorMessage } from '@/utils/get-api-error-message'
+import { FRIENDLY_ERROR_MESSAGE, reportError } from '@/utils/report-error'
 import { completePublicIntakeResponse, submitPublicAnswer } from '../services/intake-fill.service'
 import type { AnswerDraft, AnswerMap } from '../types'
 import { collectPayloads } from '../utils/answer-payloads'
@@ -60,7 +60,8 @@ export function useIntakeFillFlow(token: string, response: IntakeResponseDetail 
       await completePublicIntakeResponse(token)
       setJustCompleted(true)
     } catch (err) {
-      toast.error(getApiErrorMessage(err, 'No se pudo enviar el formulario.'))
+      reportError(err, 'public-intake', { step: 'submit' })
+      toast.error(FRIENDLY_ERROR_MESSAGE)
     } finally {
       setSubmitting(false)
     }

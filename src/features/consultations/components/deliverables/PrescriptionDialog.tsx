@@ -43,6 +43,7 @@ function initialLines(
       const duration = saved?.duration ?? ''
       const name = medName(med)
       const predefined = catalog.find((item) => item.id === med.medicationId)?.defaultIndication
+      const defaultInstructions = predefined ? fillIndication(predefined, name) : ''
       return {
         medicationId: med.medicationId,
         name,
@@ -51,7 +52,8 @@ function initialLines(
         frequency,
         duration,
         route: saved?.route ?? '',
-        instructions: saved?.instructions || (predefined ? fillIndication(predefined, name) : ''),
+        instructions: saved?.instructions || defaultInstructions,
+        defaultInstructions,
       }
     })
 }
