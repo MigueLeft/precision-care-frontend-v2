@@ -1,5 +1,5 @@
 import { api } from '@/utils/api'
-import type { ChatTurn, NutritionRecallReportStatus, PublicNutritionRecall } from '../types'
+import type { ChatTurn, PublicNutritionRecall } from '../types'
 import { readEventStream } from '../utils/read-event-stream'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
@@ -12,9 +12,9 @@ export async function fetchPublicNutritionRecall(token: string): Promise<PublicN
 }
 
 // Las respuestas de NutriBot llegan por SSE, que axios no transmite; por eso
-// estas dos llamadas usan fetch.
-async function postStream(token: string, path: 'chat' | 'finish', messages: ChatTurn[], signal: AbortSignal) {
-  const response = await fetch(`${API_URL}/public/nutrition-recalls/${token}/${path}`, {
+// el chat usa fetch.
+async function postStream(token: string, messages: ChatTurn[], signal: AbortSignal) {
+  const response = await fetch(`${API_URL}/public/nutrition-recalls/${token}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages }),
@@ -34,7 +34,7 @@ export async function streamNutriBotTurn(
   onText: (text: string) => void,
   options: { signal: AbortSignal; onActivity: () => void },
 ): Promise<void> {
-  const response = await postStream(token, 'chat', messages, options.signal)
+  const response = await postStream(token, messages, options.signal)
   await readEventStream(
     response,
     (event) => {
@@ -45,18 +45,8 @@ export async function streamNutriBotTurn(
   )
 }
 
-// Cierra la entrevista: el backend calcula el reporte y envía el PDF.
-export async function finishNutritionRecall(
-  token: string,
-  messages: ChatTurn[],
-  signal: AbortSignal,
-): Promise<NutritionRecallReportStatus> {
-  const response = await postStream(token, 'finish', messages, signal)
-  let status: NutritionRecallReportStatus | null = null
-  await readEventStream(response, (event) => {
-    if (typeof event.error === 'string') throw new Error(event.error)
-    if (typeof event.reportStatus === 'string') status = event.reportStatus as NutritionRecallReportStatus
-  })
-  if (!status) throw new Error('No recibimos la confirmación del envío de tu reporte.')
-  return status
+// Cierra la entrevista: el backend guarda la transcripción. El reporte lo
+// genera después el equipo y le llega al paciente por correo.
+export async function finishNutritionRecall(token: string, messages: ChatTurn[]): Promise<void> {
+  await api.post(`/public/nutrition-recalls/${token}/finish`, { messages })
 }

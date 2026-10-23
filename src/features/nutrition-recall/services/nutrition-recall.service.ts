@@ -37,6 +37,17 @@ export async function sendNutritionRecallEmail(
   return data
 }
 
+// Genera el reporte desde la transcripción y envía el PDF. Puede tardar varios
+// minutos (el modelo calcula todo el reporte).
+export async function generateNutritionRecallReport(
+  id: number,
+): Promise<{ reportStatus: NutritionRecallReportStatus }> {
+  const { data } = await api.post<{ reportStatus: NutritionRecallReportStatus }>(
+    `/nutrition-recalls/${id}/generate-report`,
+  )
+  return data
+}
+
 export async function resendNutritionRecallReport(
   id: number,
 ): Promise<{ reportStatus: NutritionRecallReportStatus }> {

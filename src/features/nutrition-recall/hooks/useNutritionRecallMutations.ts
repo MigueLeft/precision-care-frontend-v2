@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from '@/utils/toast'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import {
+  generateNutritionRecallReport,
   resendNutritionRecallReport,
   sendNutritionRecall,
   sendNutritionRecallEmail,
@@ -44,17 +45,42 @@ export function useSendNutritionRecallEmail() {
   })
 }
 
+// Refresca la lista del paciente y el detalle tras generar o reenviar.
+function useRefreshRecall(patientId: number) {
+  const queryClient = useQueryClient()
+  return (id: number) => {
+    void queryClient.invalidateQueries({ queryKey: nutritionRecallKeys.byPatient(patientId) })
+    void queryClient.invalidateQueries({ queryKey: nutritionRecallKeys.detail(id) })
+  }
+}
+
+// Genera el reporte desde la transcripción y envía el PDF.
+export function useGenerateNutritionRecallReport(patientId: number) {
+  const refresh = useRefreshRecall(patientId)
+  return useMutation({
+    mutationFn: generateNutritionRecallReport,
+    onSuccess: (_result, id) => {
+      refresh(id)
+      toast.success('Reporte generado y enviado por correo.')
+    },
+    onError: (error, id) => {
+      refresh(id)
+      toast.error(getApiErrorMessage(error, 'No se pudo generar el reporte.'))
+    },
+  })
+}
+
 // Vuelve a enviar el PDF del reporte ya generado.
 export function useResendNutritionRecallReport(patientId: number) {
-  const queryClient = useQueryClient()
+  const refresh = useRefreshRecall(patientId)
   return useMutation({
     mutationFn: resendNutritionRecallReport,
-    onSuccess: ({ reportStatus }) => {
-      void queryClient.invalidateQueries({ queryKey: nutritionRecallKeys.byPatient(patientId) })
-      if (reportStatus === 'sent') toast.success('Reporte reenviado por correo.')
-      else toast.warning('El reporte no existe; se reenvió la transcripción al equipo de nutrición.')
+    onSuccess: (_result, id) => {
+      refresh(id)
+      toast.success('Reporte reenviado por correo.')
     },
-    onError: (error) => {
+    onError: (error, id) => {
+      refresh(id)
       toast.error(getApiErrorMessage(error, 'No se pudo reenviar el reporte.'))
     },
   })

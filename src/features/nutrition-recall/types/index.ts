@@ -1,6 +1,7 @@
 // Recordatorio de 24 Horas (NutriBot). Refleja las respuestas del módulo
 // nutrition-recalls del backend.
 
+// null mientras el reporte no se ha generado (lo genera el equipo).
 export type NutritionRecallReportStatus = 'sent' | 'backup' | 'failed'
 
 export interface NutritionRecall {
@@ -19,6 +20,8 @@ export interface NutritionRecall {
 export interface NutritionRecallDetail extends NutritionRecall {
   reportMarkdown: string | null
   reportError: string | null
+  // Entrevista completa (vacía mientras está pendiente).
+  transcript: ChatTurn[]
 }
 
 export interface SendNutritionRecallDto {
