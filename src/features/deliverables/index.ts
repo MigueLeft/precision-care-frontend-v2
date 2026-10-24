@@ -9,7 +9,7 @@ export {
 } from './hooks/useConsultationDeliverables'
 export { printDeliverable } from './utils/print-deliverable'
 // Piezas de impresión compartidas con otros reportes (p. ej. antropometría).
-export { printHtml, escape as escapeHtml, logo as printLogo } from './utils/print-shared'
+export { printHtml, escape as escapeHtml, fullLogo as printFullLogo } from './utils/print-shared'
 export { DeliverablesPanel } from './components/DeliverablesPanel'
 export { DeliverablesSettingsPage } from './components/settings/DeliverablesSettingsPage'
 export { fetchDeliverableTemplates } from './services/deliverable-templates.service'

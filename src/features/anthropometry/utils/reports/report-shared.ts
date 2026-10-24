@@ -1,4 +1,4 @@
-import { escapeHtml, printLogo } from '@/features/deliverables'
+import { escapeHtml, printFullLogo } from '@/features/deliverables'
 import { theme } from '@/utils/theme'
 import type { Sex } from './body-silhouettes'
 
@@ -54,7 +54,7 @@ export function formatDateTime(iso: string) {
 export function reportHeader(title: string) {
   return `<header class="report-head">
     <div><p class="eyebrow">REPORTE CLÍNICO</p><h1>${esc(title)}</h1></div>
-    <div class="logo">${printLogo(46)}</div>
+    <div class="logo">${printFullLogo(46)}</div>
   </header>`
 }
 

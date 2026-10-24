@@ -34,6 +34,18 @@ export function logo(height: number) {
 </svg>`
 }
 
+// Logo completo: ícono + "Precision / Care" en dos líneas (reportes clínicos).
+export function fullLogo(height: number) {
+  const width = (height * 850) / 261
+  return `<svg viewBox="0 0 850 261" height="${height}" width="${width}">
+  <path d="${LOGO_PATHS.center}" fill="${palette.brand.dark}"/>
+  <path d="${LOGO_PATHS.bottom}" fill="${palette.brand.accent}"/>
+  <path d="${LOGO_PATHS.top}" fill="${palette.brand.accent}"/>
+  <text x="258" y="112" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="128" fill="${palette.brand.dark}">Precision</text>
+  <text x="258" y="246" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="128" fill="${palette.brand.dark}">Care</text>
+</svg>`
+}
+
 // Cédula y edad del paciente (lo que haya).
 export function patientIdLine(patient: DeliverableHeader['patient']) {
   return [
