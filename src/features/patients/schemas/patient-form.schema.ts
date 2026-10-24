@@ -26,6 +26,8 @@ export const patientFormSchema = z.object({
     .min(1, 'La fecha de nacimiento es requerida.')
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha de nacimiento debe tener formato YYYY-MM-DD.')
     .refine((value) => value <= todayIsoDate(), 'La fecha de nacimiento no puede ser una fecha futura.'),
+  // Obligatorio: define referencias clínicas y la silueta de los reportes.
+  sex: z.string().refine((value): boolean => ['male', 'female'].includes(value), 'Selecciona el sexo.'),
   email: z.string().email('El correo no tiene un formato válido.').optional().or(z.literal('')),
   // Opcional; si se escribe debe ser un número válido para el país elegido.
   phone: z
@@ -44,6 +46,7 @@ export const patientFormDefaultValues: PatientFormValues = {
   secondLastName: '',
   identityDocument: '',
   birthDate: '',
+  sex: '',
   email: '',
   phone: '',
   nationalityCountryId: undefined,

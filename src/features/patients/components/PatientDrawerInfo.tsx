@@ -1,6 +1,6 @@
 import { Box, Stack, Typography, Divider } from '@mui/material'
 import { formatPhone } from '@/utils/phone'
-import { formatBirthDate, calculatePatientAge } from '../utils/patient-format'
+import { formatBirthDate, calculatePatientAge, PATIENT_SEX_LABELS } from '../utils/patient-format'
 import type { Patient } from '../types'
 
 interface PatientDrawerInfoProps {
@@ -39,6 +39,7 @@ export function PatientDrawerInfo({ patient, countryNameById }: PatientDrawerInf
         label="Fecha de nacimiento"
         value={`${formatBirthDate(patient.birthDate)} (${calculatePatientAge(patient.birthDate)} años)`}
       />
+      <InfoRow label="Sexo" value={patient.sex ? PATIENT_SEX_LABELS[patient.sex] : 'Sin registrar'} />
       <InfoRow label="Nacionalidad" value={nationalityName ?? '—'} />
       <InfoRow label="Residencia" value={residenceName ?? '—'} />
 
