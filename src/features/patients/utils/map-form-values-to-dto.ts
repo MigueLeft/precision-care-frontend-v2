@@ -10,6 +10,7 @@ export function mapFormValuesToDto(values: PatientFormValues): CreatePatientDto 
     middleName: values.middleName?.trim() ?? '',
     secondLastName: values.secondLastName?.trim() ?? '',
     identityDocument: values.identityDocument?.trim() ?? '',
+    sex: values.sex === 'male' || values.sex === 'female' ? values.sex : undefined,
     email: values.email || undefined,
     phone: values.phone || null,
     nationalityCountryId: values.nationalityCountryId,

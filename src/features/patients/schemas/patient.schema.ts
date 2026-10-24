@@ -9,6 +9,7 @@ export const createPatientSchema = z.object({
   birthDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha de nacimiento debe tener formato YYYY-MM-DD.'),
+  sex: z.enum(['male', 'female']).optional(),
   email: z.string().email('El correo no tiene un formato válido.').optional(),
   // E.164, igual que el DTO del backend; null lo borra al editar.
   phone: z.string().regex(/^\+[1-9]\d{7,14}$/).nullable().optional(),

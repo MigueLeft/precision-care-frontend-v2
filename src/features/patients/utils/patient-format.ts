@@ -31,3 +31,8 @@ export function formatBirthDate(birthDate: string): string {
     new Date(`${birthDate}T00:00:00`),
   )
 }
+
+export const PATIENT_SEX_LABELS: Record<'male' | 'female', string> = {
+  female: 'Mujer',
+  male: 'Hombre',
+}
