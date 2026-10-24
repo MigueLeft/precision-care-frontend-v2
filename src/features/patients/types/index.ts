@@ -8,6 +8,8 @@ export interface Patient {
   // Cédula u otro documento de identidad.
   identityDocument: string | null
   birthDate: string
+  // Sexo biológico (define la silueta y las referencias de los reportes).
+  sex: 'male' | 'female' | null
   email: string | null
   // Formato internacional E.164 (+584121234567).
   phone: string | null

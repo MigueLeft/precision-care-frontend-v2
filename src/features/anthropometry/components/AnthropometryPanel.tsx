@@ -10,6 +10,7 @@ import { anthropometryValues, sortAnthropometries } from '../utils/anthropometry
 import { AnthropometryCurrentView } from './AnthropometryCurrentView'
 import { AnthropometryHistoryView } from './AnthropometryHistoryView'
 import { AnthropometryForm } from './AnthropometryForm'
+import { AnthropometryReportsMenu } from './AnthropometryReportsMenu'
 
 // Antropometría en el expediente: medición actual, histórico y captura/edición.
 export function AnthropometryPanel({ patientId }: { patientId: number }) {
@@ -42,6 +43,7 @@ export function AnthropometryPanel({ patientId }: { patientId: number }) {
           <ToggleButton value="history">Histórico</ToggleButton>
         </ToggleButtonGroup>
         <Stack direction="row" spacing={1}>
+          {latest && <AnthropometryReportsMenu patientId={patientId} row={latest} />}
           {latest && (
             <AppButton
               variant="outlined"
