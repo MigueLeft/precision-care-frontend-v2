@@ -13,6 +13,7 @@ export function useAgendaAppointments(filters: AppointmentFilters, selected: Dat
   const canViewUnconfirmed = canViewUnconfirmedAppointments(me)
   const context = {
     mySpecialistId: me?.specialistId ?? null,
+    myUserId: me?.id ?? null,
     restrictToMine: !canViewAll,
     hideUnconfirmed: !canViewUnconfirmed,
   }

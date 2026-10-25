@@ -57,6 +57,7 @@ export function AppointmentsPage() {
   const isCalendar = calendar.view !== 'list'
   const filtered = filterAppointments(appointments, filters, {
     mySpecialistId: me?.specialistId ?? null,
+    myUserId: me?.id ?? null,
     restrictToMine: !canViewAll,
     hideUnconfirmed: !canViewUnconfirmed,
     range: calendar.range,

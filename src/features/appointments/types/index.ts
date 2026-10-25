@@ -66,6 +66,8 @@ export interface Appointment {
   patientPhone: string | null
   reminders?: AppointmentReminder[]
   intakeAssignments: IntakeAssignment[]
+  // Usuario que creó la cita (la ve sin confirmar para confirmarla después).
+  createdBy?: number | null
   createdAt: string
   updatedAt: string
 }

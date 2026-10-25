@@ -43,6 +43,8 @@ export function isDefaultFilters(filters: AppointmentFilters): boolean {
 
 interface FilterContext {
   mySpecialistId: number | null
+  // Usuario de la sesión: siempre ve las citas sin confirmar que él creó.
+  myUserId: number | null
   // Especialista sin permiso para ver todas: solo sus citas.
   restrictToMine: boolean
   // Sin permiso para ver citas sin confirmar: solo las confirmadas.
@@ -54,18 +56,20 @@ interface FilterContext {
 export function filterAppointments(
   appointments: Appointment[],
   filters: AppointmentFilters,
-  { mySpecialistId, restrictToMine, hideUnconfirmed, range }: FilterContext,
+  { mySpecialistId, myUserId, restrictToMine, hideUnconfirmed, range }: FilterContext,
 ): Appointment[] {
   return appointments.filter((appointment) => {
+    const ownDraft = myUserId != null && isUnconfirmed(appointment) && appointment.createdBy === myUserId
     const onlyMine = restrictToMine || filters.scope === 'mine'
     if (
+      !ownDraft &&
       onlyMine &&
       mySpecialistId != null &&
       !appointment.specialists.some((s) => s.specialistId === mySpecialistId)
     ) {
       return false
     }
-    if (hideUnconfirmed && isUnconfirmed(appointment)) return false
+    if (hideUnconfirmed && isUnconfirmed(appointment) && !ownDraft) return false
     if (filters.confirmation === 'confirmed' && isUnconfirmed(appointment)) return false
     if (filters.confirmation === 'unconfirmed' && !isUnconfirmed(appointment)) return false
     if (filters.statuses.length > 0 && !filters.statuses.includes(appointment.status)) {

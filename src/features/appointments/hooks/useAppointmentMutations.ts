@@ -28,7 +28,7 @@ export function useCreateAppointment(options?: { onSuccess?: (a: Appointment) =>
     mutationFn: (payload: CreateAppointmentPayload) => createAppointment(payload),
     onSuccess: (appointment) => {
       invalidate()
-      toast.success('Cita creada correctamente')
+      toast.success('Cita creada sin confirmar: confírmala cuando esté lista')
       options?.onSuccess?.(appointment)
     },
     onError: (error) => {
