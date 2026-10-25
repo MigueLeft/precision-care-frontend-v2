@@ -18,7 +18,7 @@ export function NarrativePanel({ exam, readOnly, onEdit, onReset }: NarrativePan
   const outdated = exam.narrativaEditada && exam.narrativaFinal !== exam.narrativaGenerada
 
   return (
-    <Paper sx={{ p: 1.5, borderRadius: '8px', position: { md: 'sticky' }, top: { md: 16 } }}>
+    <Paper sx={{ p: 1.5, borderRadius: '8px' }}>
       <Stack direction="row" sx={{ alignItems: 'center', mb: 1 }}>
         <Typography sx={{ flex: 1, fontSize: '13px', fontWeight: 700 }}>Narrativa del examen físico</Typography>
         {!readOnly && !editing && (

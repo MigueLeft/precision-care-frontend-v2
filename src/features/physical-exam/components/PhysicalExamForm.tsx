@@ -1,4 +1,4 @@
-import { Grid, Stack } from '@mui/material'
+import { Stack } from '@mui/material'
 import { MANDATORY_SYSTEMS, PHYSICAL_EXAM_SYSTEMS } from '../config'
 import { usePhysicalExam } from '../hooks/usePhysicalExam'
 import type { AlteredVital, PhysicalExam } from '../types'
@@ -17,8 +17,8 @@ type PhysicalExamFormProps = {
   onChange: (exam: PhysicalExam) => void
 }
 
-// Examen físico: 13 sistemas (Sistema → Elemento → Hallazgo) y la narrativa
-// generada en vivo a un lado (debajo en pantallas chicas).
+// Examen físico: 13 sistemas (Sistema → Elemento → Hallazgo) a todo el ancho y,
+// debajo de todos, la narrativa generada en vivo.
 export function PhysicalExamForm({ saved, sex, alteredVitals, readOnly, onChange }: PhysicalExamFormProps) {
   const api = usePhysicalExam({ saved, sex, ctx: { alteredVitals }, onChange })
   const { exam, errors } = api
@@ -36,8 +36,8 @@ export function PhysicalExamForm({ saved, sex, alteredVitals, readOnly, onChange
   }
 
   return (
-    <Grid container spacing={2}>
-      <Grid size={{ xs: 12, md: 8 }}>
+    <Stack spacing={2}>
+      <div>
         <ExamToolbar
           documented={documented}
           total={PHYSICAL_EXAM_SYSTEMS.length}
@@ -70,10 +70,8 @@ export function PhysicalExamForm({ saved, sex, alteredVitals, readOnly, onChange
             )
           })}
         </Stack>
-      </Grid>
-      <Grid size={{ xs: 12, md: 4 }}>
-        <NarrativePanel exam={exam} readOnly={readOnly} onEdit={api.setFinalNarrative} onReset={api.resetNarrative} />
-      </Grid>
-    </Grid>
+      </div>
+      <NarrativePanel exam={exam} readOnly={readOnly} onEdit={api.setFinalNarrative} onReset={api.resetNarrative} />
+    </Stack>
   )
 }
