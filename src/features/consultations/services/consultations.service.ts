@@ -54,6 +54,7 @@ export type UpdateConsultationPatch = Partial<
     Consultation,
     | 'consultationReason'
     | 'reasonType'
+    | 'physicalExam'
     | 'currentIllness'
     | 'diagnosticPlan'
     | 'treatmentPlan'

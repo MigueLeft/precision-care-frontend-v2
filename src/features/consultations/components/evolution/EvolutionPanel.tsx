@@ -47,7 +47,7 @@ export function EvolutionPanel({ patientId }: EvolutionPanelProps) {
             </Box>
           }
         >
-          <EvolutionChanges consultationId={consultation.id} />
+          <EvolutionChanges consultationId={consultation.id} physicalExam={consultation.physicalExam} />
         </SectionCard>
       ))}
     </Box>

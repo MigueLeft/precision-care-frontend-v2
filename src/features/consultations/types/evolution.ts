@@ -1,3 +1,4 @@
+import type { PhysicalExam } from '@/features/physical-exam'
 import type {
   DiseaseStatus,
   MedicationAdherence,
@@ -67,6 +68,8 @@ export interface ConsultationEvolution {
     id: number
     startAt: string
     specialistName: string | null
+    // Ausente en respuestas de un backend anterior.
+    physicalExam?: PhysicalExam | null
   } | null
   medications: MedicationEvolution[]
   diseases: DiseaseEvolution[]

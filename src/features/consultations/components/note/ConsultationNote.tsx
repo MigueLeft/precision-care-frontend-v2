@@ -33,6 +33,9 @@ export function ConsultationNote({ consultation }: ConsultationNoteProps) {
         <NoteDiseases diseases={recorded?.diseases ?? []} />
       </NoteBlock>
       <NoteMeasurements consultationId={consultation.id} />
+      <NoteBlock title="EXAMEN FÍSICO">
+        <NoteText value={consultation.physicalExam?.narrativaFinal} />
+      </NoteBlock>
       <NoteBlock title="ENFERMEDAD ACTUAL">
         <NoteText value={consultation.currentIllness} />
       </NoteBlock>

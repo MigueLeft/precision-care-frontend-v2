@@ -1,3 +1,5 @@
+import type { PhysicalExam } from '@/features/physical-exam'
+
 export type ConsultationStatus = 'in_progress' | 'completed'
 
 export type VisitType = 'first' | 'subsequent'
@@ -32,6 +34,7 @@ export interface Consultation {
   treatmentPlan: string | null
   evolution: string | null
   problems: ConsultationProblems | null
+  physicalExam: PhysicalExam | null
   status: ConsultationStatus
   visitType: VisitType
   // Adjuntado por GET /consultations/patient/:patientId

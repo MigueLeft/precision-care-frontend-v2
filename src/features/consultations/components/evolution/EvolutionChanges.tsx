@@ -10,9 +10,14 @@ import {
 import { DiseaseChanges, MedicationChanges, SymptomChanges } from './ClinicalChanges'
 import { MeasurementChanges } from './MeasurementChanges'
 import { ParaclinicalChanges } from './ParaclinicalChanges'
+import { PhysicalExamChanges } from './PhysicalExamChanges'
+import { physicalExamChanges } from '../../utils/physical-exam-changes'
+import type { PhysicalExam } from '@/features/physical-exam'
 
 type EvolutionChangesProps = {
   consultationId: number
+  // Examen físico de la consulta actual (se compara con el de la anterior).
+  physicalExam: PhysicalExam | null
 }
 
 const Hint = ({ children }: { children: string }) => (
@@ -23,7 +28,7 @@ const Hint = ({ children }: { children: string }) => (
 
 // Nota evolutiva automática: solo lo que cambió respecto a la consulta anterior
 // (tratamiento, diagnósticos, síntomas, antropometría y paraclínicos).
-export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
+export function EvolutionChanges({ consultationId, physicalExam }: EvolutionChangesProps) {
   const { data: evolution, isLoading, isError, error } = useConsultationEvolution(consultationId)
 
   if (isLoading || isError || !evolution) {
@@ -46,13 +51,15 @@ export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
       )
     : []
   const paraclinicals = evolution.paraclinicals ?? []
+  const examChanges = physicalExamChanges(previous.physicalExam ?? null, physicalExam)
 
   const hasChanges =
     evolution.medications.length +
       evolution.diseases.length +
       evolution.symptoms.length +
       anthropometryChanges.length +
-      paraclinicals.length >
+      paraclinicals.length +
+      examChanges.length >
     0
 
   return (
@@ -65,6 +72,7 @@ export function EvolutionChanges({ consultationId }: EvolutionChangesProps) {
       <MedicationChanges items={evolution.medications} />
       <DiseaseChanges items={evolution.diseases} />
       <SymptomChanges items={evolution.symptoms} />
+      <PhysicalExamChanges items={examChanges} />
       {/* Antropometría y paraclínicos se muestran siempre, aunque no cambien. */}
       <MeasurementChanges
         title="ANTROPOMETRÍA"

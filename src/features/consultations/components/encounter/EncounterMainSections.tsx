@@ -7,6 +7,7 @@ import { SymptomsSection } from './SymptomsSection'
 import { TreatmentSection } from './TreatmentSection'
 import { DiseasesSection } from './DiseasesSection'
 import { ParaclinicalSection } from './ParaclinicalSection'
+import { PhysicalExamSection } from './PhysicalExamSection'
 import type { Consultation } from '../../types'
 
 type EncounterMainSectionsProps = {
@@ -59,6 +60,9 @@ export function EncounterMainSections({ consultation, readOnly }: EncounterMainS
         consultationDate={consultationDate}
         readOnly={readOnly}
       />
+    ),
+    (index) => (
+      <PhysicalExamSection key="physical-exam" index={index} consultation={consultation} readOnly={readOnly} />
     ),
     (index) => (
       <ParaclinicalSection key="paraclinical" index={index} patientId={patientId} readOnly={readOnly} />

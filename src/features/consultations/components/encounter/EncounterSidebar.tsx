@@ -64,7 +64,7 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
             <Typography variant="h3">Cambios vs. consulta anterior</Typography>
             {backButton}
           </Stack>
-          <EvolutionChanges consultationId={consultation.id} />
+          <EvolutionChanges consultationId={consultation.id} physicalExam={consultation.physicalExam} />
         </Stack>
       )}
 
