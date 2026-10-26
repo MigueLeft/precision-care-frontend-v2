@@ -14,7 +14,8 @@ export function ReasonPicker({ value, disabled, onChange }: ReasonPickerProps) {
   const otherText = isOther ? (value ?? '').slice(OTHER_REASON.length + 1).trimStart() : ''
 
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ mt: 1 }}>
+    // El texto de "Otro" va debajo del select, a todo el ancho.
+    <Stack spacing={1} sx={{ mt: 1, maxWidth: 560 }}>
       <TextField
         select
         size="small"
@@ -23,7 +24,7 @@ export function ReasonPicker({ value, disabled, onChange }: ReasonPickerProps) {
         disabled={disabled}
         error={!value}
         onChange={(event) => onChange(event.target.value === OTHER_REASON ? `${OTHER_REASON}: ` : event.target.value)}
-        sx={{ minWidth: 280 }}
+        fullWidth
       >
         {SKIP_REASONS.map((reason) => (
           <MenuItem key={reason} value={reason}>
@@ -34,12 +35,16 @@ export function ReasonPicker({ value, disabled, onChange }: ReasonPickerProps) {
       {isOther && (
         <TextField
           size="small"
-          label="Especifica el motivo"
+          label="Especifica el otro motivo"
+          placeholder="Escribe el motivo…"
+          autoFocus
+          fullWidth
+          multiline
+          minRows={2}
           value={otherText}
           disabled={disabled}
           error={!otherText.trim()}
           onChange={(event) => onChange(`${OTHER_REASON}: ${event.target.value}`)}
-          sx={{ flex: 1 }}
         />
       )}
     </Stack>

@@ -59,11 +59,17 @@ describe('buildNarrative', () => {
 })
 
 describe('reglas y validación', () => {
-  it('"Todo normal" no sobrescribe los sistemas ya documentados', () => {
+  it('"Todo normal" pasa todo a Normal y borra lo marcado antes', () => {
     let exam = setSystemState(createExam('female'), 'OJOS', 'NO_EXAMINADO', ctx, { motivo: 'Paciente rechaza' })
+    exam = setSystemState(exam, 'PIEL', 'ANORMAL', ctx)
     exam = setAllNormal(exam, ctx)
-    expect(exam.sistemas.find((s) => s.codigo === 'OJOS')?.estado).toBe('NO_EXAMINADO')
-    expect(exam.sistemas.find((s) => s.codigo === 'PIEL')?.origen).toBe('todo_normal')
+    const ojos = exam.sistemas.find((s) => s.codigo === 'OJOS')
+    expect(ojos?.estado).toBe('NORMAL')
+    expect(ojos?.motivo).toBeNull()
+    const piel = exam.sistemas.find((s) => s.codigo === 'PIEL')
+    expect(piel?.estado).toBe('NORMAL')
+    expect(piel?.elementos.every((e) => e.estado === 'N' && e.hallazgos.length === 0)).toBe(true)
+    expect(exam.sistemas.every((s) => s.estado === 'NORMAL')).toBe(true)
   })
 
   it('signos vitales alterados fuerzan el elemento a A', () => {

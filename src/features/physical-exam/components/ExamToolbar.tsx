@@ -24,7 +24,6 @@ export function ExamToolbar({ documented, total, pendingMandatory, warnings, rea
             variant="outlined"
             color="success"
             startIcon={<DoneAllIcon sx={{ fontSize: 16 }} />}
-            disabled={documented === total}
             onClick={onAllNormal}
           >
             Todo normal
@@ -45,7 +44,7 @@ export function ExamToolbar({ documented, total, pendingMandatory, warnings, rea
       <LinearProgress variant="determinate" value={(documented / total) * 100} sx={{ height: 4, borderRadius: 2 }} />
       {!readOnly && (
         <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
-          "Todo normal" solo marca los sistemas sin documentar; no cambia los que ya marcaste.
+          "Todo normal" deja todos los sistemas en Normal y borra lo que hayas marcado antes.
         </Typography>
       )}
     </Stack>
