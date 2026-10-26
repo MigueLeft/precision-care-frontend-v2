@@ -1,10 +1,20 @@
 import { Chip, Paper, Stack, Typography } from '@mui/material'
-import type { FindriscResult } from '../types'
-import { FINDRISC_CATEGORY_COLORS, FINDRISC_CATEGORY_LABELS, FINDRISC_ITEM_LABELS } from '../utils/risk-labels'
+import type { FamilyDiabetes, FindriscResult } from '../types'
+import {
+  FAMILY_DIABETES_LABELS,
+  FINDRISC_CATEGORY_COLORS,
+  FINDRISC_CATEGORY_LABELS,
+  FINDRISC_ITEM_LABELS,
+} from '../utils/risk-labels'
 import { WarningList } from './WarningList'
 
-const show = (value: number | boolean | string | null) =>
-  value === null ? '—' : value === true ? 'Sí' : value === false ? 'No' : String(value)
+const show = (value: number | boolean | string | null) => {
+  if (value === null) return '—'
+  if (typeof value === 'boolean') return value ? 'Sí' : 'No'
+  // Familiar con diabetes: none / second_degree / first_degree.
+  if (value in FAMILY_DIABETES_LABELS) return FAMILY_DIABETES_LABELS[value as FamilyDiabetes]
+  return String(value)
+}
 
 // FINDRISC: puntaje, categoría y puntos por ítem (o intervalo si faltan datos).
 export function FindriscCard({ result }: { result: FindriscResult }) {
