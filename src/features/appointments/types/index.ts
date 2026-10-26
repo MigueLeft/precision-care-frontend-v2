@@ -1,3 +1,5 @@
+import type { ClinicalNotesDraft } from '@/features/consultations'
+
 export type AppointmentModality = 'in_person' | 'telemedicine'
 
 export type AppointmentType =
@@ -68,6 +70,8 @@ export interface Appointment {
   intakeAssignments: IntakeAssignment[]
   // Usuario que creó la cita (la ve sin confirmar para confirmarla después).
   createdBy?: number | null
+  // Notas clínicas precargadas (pasan a la consulta al iniciarla).
+  preloadNotes?: ClinicalNotesDraft | null
   createdAt: string
   updatedAt: string
 }
