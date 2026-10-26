@@ -1,4 +1,5 @@
 export { RiskSection } from './components/RiskSection'
 export { RiskHistoryPanel } from './components/RiskHistoryPanel'
+export { RiskTimelinePanel } from './components/RiskTimelinePanel'
 export { riskKeys } from './hooks/useRisk'
 export type { RiskOverview, RiskCalculation } from './types'

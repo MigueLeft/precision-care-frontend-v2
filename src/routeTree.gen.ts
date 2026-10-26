@@ -35,6 +35,7 @@ import { Route as AppConsultasConsultationIdRouteImport } from './routes/_app/co
 import { Route as AppPacientesPatientIdRouteRouteImport } from './routes/_app/pacientes_.$patientId/route'
 import { Route as AppPacientesPatientIdIndexRouteImport } from './routes/_app/pacientes_.$patientId/index'
 import { Route as AppPacientesPatientIdSintomasRouteImport } from './routes/_app/pacientes_.$patientId/sintomas'
+import { Route as AppPacientesPatientIdRiesgoHistoricoRouteImport } from './routes/_app/pacientes_.$patientId/riesgo-historico'
 import { Route as AppPacientesPatientIdRiesgoRouteImport } from './routes/_app/pacientes_.$patientId/riesgo'
 import { Route as AppPacientesPatientIdResumenRouteImport } from './routes/_app/pacientes_.$patientId/resumen'
 import { Route as AppPacientesPatientIdParaclinicosRouteImport } from './routes/_app/pacientes_.$patientId/paraclinicos'
@@ -183,6 +184,12 @@ const AppPacientesPatientIdSintomasRoute =
     path: '/sintomas',
     getParentRoute: () => AppPacientesPatientIdRouteRoute,
   } as any)
+const AppPacientesPatientIdRiesgoHistoricoRoute =
+  AppPacientesPatientIdRiesgoHistoricoRouteImport.update({
+    id: '/riesgo-historico',
+    path: '/riesgo-historico',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
 const AppPacientesPatientIdRiesgoRoute =
   AppPacientesPatientIdRiesgoRouteImport.update({
     id: '/riesgo',
@@ -304,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
   '/pacientes/$patientId/riesgo': typeof AppPacientesPatientIdRiesgoRoute
+  '/pacientes/$patientId/riesgo-historico': typeof AppPacientesPatientIdRiesgoHistoricoRoute
   '/pacientes/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
   '/pacientes/$patientId/': typeof AppPacientesPatientIdIndexRoute
 }
@@ -342,6 +350,7 @@ export interface FileRoutesByTo {
   '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
   '/pacientes/$patientId/riesgo': typeof AppPacientesPatientIdRiesgoRoute
+  '/pacientes/$patientId/riesgo-historico': typeof AppPacientesPatientIdRiesgoHistoricoRoute
   '/pacientes/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdIndexRoute
 }
@@ -385,6 +394,7 @@ export interface FileRoutesById {
   '/_app/pacientes_/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/_app/pacientes_/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
   '/_app/pacientes_/$patientId/riesgo': typeof AppPacientesPatientIdRiesgoRoute
+  '/_app/pacientes_/$patientId/riesgo-historico': typeof AppPacientesPatientIdRiesgoHistoricoRoute
   '/_app/pacientes_/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
   '/_app/pacientes_/$patientId/': typeof AppPacientesPatientIdIndexRoute
 }
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/paraclinicos'
     | '/pacientes/$patientId/resumen'
     | '/pacientes/$patientId/riesgo'
+    | '/pacientes/$patientId/riesgo-historico'
     | '/pacientes/$patientId/sintomas'
     | '/pacientes/$patientId/'
   fileRoutesByTo: FileRoutesByTo
@@ -464,6 +475,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/paraclinicos'
     | '/pacientes/$patientId/resumen'
     | '/pacientes/$patientId/riesgo'
+    | '/pacientes/$patientId/riesgo-historico'
     | '/pacientes/$patientId/sintomas'
     | '/pacientes/$patientId'
   id:
@@ -506,6 +518,7 @@ export interface FileRouteTypes {
     | '/_app/pacientes_/$patientId/paraclinicos'
     | '/_app/pacientes_/$patientId/resumen'
     | '/_app/pacientes_/$patientId/riesgo'
+    | '/_app/pacientes_/$patientId/riesgo-historico'
     | '/_app/pacientes_/$patientId/sintomas'
     | '/_app/pacientes_/$patientId/'
   fileRoutesById: FileRoutesById
@@ -702,6 +715,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPacientesPatientIdSintomasRouteImport
       parentRoute: typeof AppPacientesPatientIdRouteRoute
     }
+    '/_app/pacientes_/$patientId/riesgo-historico': {
+      id: '/_app/pacientes_/$patientId/riesgo-historico'
+      path: '/riesgo-historico'
+      fullPath: '/pacientes/$patientId/riesgo-historico'
+      preLoaderRoute: typeof AppPacientesPatientIdRiesgoHistoricoRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
     '/_app/pacientes_/$patientId/riesgo': {
       id: '/_app/pacientes_/$patientId/riesgo'
       path: '/riesgo'
@@ -816,6 +836,7 @@ interface AppPacientesPatientIdRouteRouteChildren {
   AppPacientesPatientIdParaclinicosRoute: typeof AppPacientesPatientIdParaclinicosRoute
   AppPacientesPatientIdResumenRoute: typeof AppPacientesPatientIdResumenRoute
   AppPacientesPatientIdRiesgoRoute: typeof AppPacientesPatientIdRiesgoRoute
+  AppPacientesPatientIdRiesgoHistoricoRoute: typeof AppPacientesPatientIdRiesgoHistoricoRoute
   AppPacientesPatientIdSintomasRoute: typeof AppPacientesPatientIdSintomasRoute
   AppPacientesPatientIdIndexRoute: typeof AppPacientesPatientIdIndexRoute
 }
@@ -843,6 +864,8 @@ const AppPacientesPatientIdRouteRouteChildren: AppPacientesPatientIdRouteRouteCh
       AppPacientesPatientIdParaclinicosRoute,
     AppPacientesPatientIdResumenRoute: AppPacientesPatientIdResumenRoute,
     AppPacientesPatientIdRiesgoRoute: AppPacientesPatientIdRiesgoRoute,
+    AppPacientesPatientIdRiesgoHistoricoRoute:
+      AppPacientesPatientIdRiesgoHistoricoRoute,
     AppPacientesPatientIdSintomasRoute: AppPacientesPatientIdSintomasRoute,
     AppPacientesPatientIdIndexRoute: AppPacientesPatientIdIndexRoute,
   }

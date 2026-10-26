@@ -31,7 +31,13 @@ function display(calc: RiskCalculation): string {
 }
 
 // Histórico de cálculos con la tendencia frente al cálculo anterior del mismo tipo.
-export function RiskTrend({ calculations }: { calculations: RiskCalculation[] }) {
+type RiskTrendProps = {
+  calculations: RiskCalculation[]
+  page?: number
+  rowsPerPage?: number
+}
+
+export function RiskTrend({ calculations, page = 0, rowsPerPage = calculations.length }: RiskTrendProps) {
   if (calculations.length === 0) {
     return <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>Sin cálculos todavía.</Typography>
   }
@@ -52,7 +58,8 @@ export function RiskTrend({ calculations }: { calculations: RiskCalculation[] })
         </TableRow>
       </TableHead>
       <TableBody>
-        {calculations.map((calc, index) => {
+        {calculations.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((calc, pageIndex) => {
+          const index = page * rowsPerPage + pageIndex
           const now = numeric(calc)
           const prev = previousOf(index)
           const before = prev ? numeric(prev) : null

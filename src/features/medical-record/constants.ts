@@ -11,6 +11,7 @@ import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlin
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
+import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 
 // Clave para el badge de conteo del submenú (se llena por fase).
@@ -34,6 +35,7 @@ export type MedicalRecordTabTo =
   | '/pacientes/$patientId/antropometria'
   | '/pacientes/$patientId/estilo-de-vida'
   | '/pacientes/$patientId/riesgo'
+  | '/pacientes/$patientId/riesgo-historico'
   | '/pacientes/$patientId/ingresables'
   | '/pacientes/$patientId/entregables'
 
@@ -115,6 +117,12 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
     to: '/pacientes/$patientId/riesgo',
     label: 'Riesgo',
     icon: MonitorHeartOutlinedIcon,
+  },
+  {
+    slug: 'riesgo-historico',
+    to: '/pacientes/$patientId/riesgo-historico',
+    label: 'Histórico de riesgo',
+    icon: ShowChartOutlinedIcon,
   },
   {
     slug: 'ingresables',
