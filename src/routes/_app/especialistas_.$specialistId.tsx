@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { Box, Typography } from '@mui/material'
 import { SpecialistDetailPage, specialistsKeys, fetchSpecialist } from '@/features/specialists'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 
 export const Route = createFileRoute('/_app/especialistas_/$specialistId')({
+  beforeLoad: requirePermission('especialistas:read'),
   loader: ({ context: { queryClient }, params: { specialistId } }) =>
     queryClient.ensureQueryData({
       queryKey: specialistsKeys.detail(Number(specialistId)),

@@ -13,6 +13,7 @@ import {
   isCancelled,
 } from '../../utils/appointment-helpers'
 import { ConfirmAppointmentButton } from '../ConfirmAppointmentButton'
+import { useCan } from '@/features/identity'
 
 type AgendaAppointmentSheetProps = {
   appointment: Appointment | null
@@ -34,6 +35,7 @@ function Detail({ label, value }: { label: string; value: string }) {
 // Detalle de la cita como hoja inferior: datos, contacto del paciente y
 // acciones (confirmar / quitar confirmación / cancelar).
 export function AgendaAppointmentSheet({ appointment, onClose, onCancel }: AgendaAppointmentSheetProps) {
+  const { can } = useCan()
   const phone = appointment?.patientPhone ?? null
   const start = appointment ? new Date(appointment.startAtUtc) : null
   const end = appointment ? new Date(appointment.endAtUtc) : null
@@ -86,7 +88,7 @@ export function AgendaAppointmentSheet({ appointment, onClose, onCancel }: Agend
           {!isCancelled(appointment.status) && (
             <Stack spacing={1}>
               <ConfirmAppointmentButton appointment={appointment} />
-              {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
+              {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && can('citas:update') && (
                 <AppButton variant="outlined" color="error" startIcon={<CancelOutlinedIcon />} onClick={() => onCancel(appointment)}>
                   Cancelar cita
                 </AppButton>

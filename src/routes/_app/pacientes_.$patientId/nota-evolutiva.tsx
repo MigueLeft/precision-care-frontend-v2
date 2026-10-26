@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PermissionGate } from '@/features/identity'
 import { EvolutionPanel } from '@/features/consultations'
 
 export const Route = createFileRoute('/_app/pacientes_/$patientId/nota-evolutiva')({
@@ -7,5 +8,9 @@ export const Route = createFileRoute('/_app/pacientes_/$patientId/nota-evolutiva
 
 function NotaEvolutivaRoute() {
   const { patientId } = Route.useParams()
-  return <EvolutionPanel patientId={Number(patientId)} />
+  return (
+    <PermissionGate permission="consultas:read">
+      <EvolutionPanel patientId={Number(patientId)} />
+    </PermissionGate>
+  )
 }

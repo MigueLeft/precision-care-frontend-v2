@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { Box, Typography } from '@mui/material'
 import { IntakeBuilderPage, intakeKeys, fetchIntakeDetailed } from '@/features/intake'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
@@ -7,6 +8,7 @@ import { getApiErrorMessage } from '@/utils/get-api-error-message'
 // (que renderiza la tabla de ingresables, sin <Outlet />) para que este builder
 // se muestre como página propia en vez de quedar "atrapado" dentro de esa lista.
 export const Route = createFileRoute('/_app/ingresables_/$id')({
+  beforeLoad: requirePermission('ingresables:read'),
   loader: ({ context: { queryClient }, params: { id } }) =>
     queryClient.ensureQueryData({
       queryKey: intakeKeys.detail(Number(id)),

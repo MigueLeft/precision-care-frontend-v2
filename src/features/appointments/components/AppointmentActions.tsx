@@ -7,7 +7,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck'
 import { useNavigate } from '@tanstack/react-router'
 import { AppButton } from '@/components/AppButton'
-import { useMe, VIEW_ALL_APPOINTMENTS } from '@/features/identity'
+import { hasPermission, useMe, VIEW_ALL_APPOINTMENTS } from '@/features/identity'
 import { useConsultationByAppointment } from '@/features/consultations'
 import type { Appointment } from '../types'
 import { getPrimarySpecialist, isCancelled } from '../utils/appointment-helpers'
@@ -37,9 +37,12 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
   const primary = getPrimarySpecialist(appointment)
   const isAssignedSpecialist =
     me?.specialistId != null && me.specialistId === primary?.specialistId
+  const can = (code: string) => hasPermission(me, code)
   // Con el permiso se puede ver (no editar) la consulta de otro médico.
   const canViewConsultation =
-    isAssignedSpecialist || !!me?.permissions.includes(VIEW_ALL_APPOINTMENTS)
+    can('consultas:read') && (isAssignedSpecialist || can(VIEW_ALL_APPOINTMENTS))
+  const canStart = isAssignedSpecialist && can('consultas:create') && can('citas:update')
+  const canUpdate = can('citas:update')
 
   function goToConsultation() {
     if (!linkedConsultation) return
@@ -59,7 +62,7 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
 
   return (
     <Stack spacing={1} sx={{ mt: 2 }}>
-      {appointment.status === 'in_progress' && isAssignedSpecialist && (
+      {appointment.status === 'in_progress' && isAssignedSpecialist && can('consultas:read') && (
         <AppButton
           variant="contained"
           startIcon={<PlayArrowIcon sx={{ fontSize: 18 }} />}
@@ -86,7 +89,7 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
       {(appointment.status === 'scheduled' || appointment.status === 'confirmed') && (
         <>
           <ConfirmAppointmentButton appointment={appointment} />
-          {isAssignedSpecialist && (
+          {canStart && (
             <AppButton
               variant="contained"
               startIcon={<PlayArrowIcon sx={{ fontSize: 18 }} />}
@@ -96,45 +99,49 @@ export function AppointmentActions({ appointment, onEdit, onCancel }: Appointmen
               Iniciar consulta
             </AppButton>
           )}
-          <AppButton
-            variant="outlined"
-            startIcon={<PlaylistAddCheckIcon sx={{ fontSize: 18 }} />}
-            onClick={() =>
-              navigate({
-                to: '/citas/$appointmentId/precarga',
-                params: { appointmentId: String(appointment.id) },
-              })
-            }
-          >
-            Precargar datos de la consulta
-          </AppButton>
-          <AppButton
-            variant="outlined"
-            startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />}
-            onClick={onEdit}
-          >
-            Editar cita
-          </AppButton>
-          <AppButton
-            variant="outlined"
-            color="error"
-            startIcon={<CancelOutlinedIcon sx={{ fontSize: 16 }} />}
-            onClick={onCancel}
-          >
-            Cancelar cita
-          </AppButton>
-          <AppButton
-            variant="text"
-            startIcon={<NotificationsNoneIcon sx={{ fontSize: 16 }} />}
-            loading={reminderMutation.isPending}
-            onClick={() => reminderMutation.mutate(appointment.id)}
-          >
-            Enviar recordatorio manual
-          </AppButton>
-          <SendIntakeAssignmentButton
-            appointmentId={appointment.id}
-            patientId={appointment.patientId}
-          />
+          {canUpdate && (
+            <>
+              <AppButton
+                variant="outlined"
+                startIcon={<PlaylistAddCheckIcon sx={{ fontSize: 18 }} />}
+                onClick={() =>
+                  navigate({
+                    to: '/citas/$appointmentId/precarga',
+                    params: { appointmentId: String(appointment.id) },
+                  })
+                }
+              >
+                Precargar datos de la consulta
+              </AppButton>
+              <AppButton
+                variant="outlined"
+                startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />}
+                onClick={onEdit}
+              >
+                Editar cita
+              </AppButton>
+              <AppButton
+                variant="outlined"
+                color="error"
+                startIcon={<CancelOutlinedIcon sx={{ fontSize: 16 }} />}
+                onClick={onCancel}
+              >
+                Cancelar cita
+              </AppButton>
+              <AppButton
+                variant="text"
+                startIcon={<NotificationsNoneIcon sx={{ fontSize: 16 }} />}
+                loading={reminderMutation.isPending}
+                onClick={() => reminderMutation.mutate(appointment.id)}
+              >
+                Enviar recordatorio manual
+              </AppButton>
+              <SendIntakeAssignmentButton
+                appointmentId={appointment.id}
+                patientId={appointment.patientId}
+              />
+            </>
+          )}
         </>
       )}
     </Stack>

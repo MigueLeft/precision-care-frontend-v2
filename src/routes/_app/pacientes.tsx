@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { PatientsPage, patientsListSearchSchema, patientsKeys, fetchPatients } from '@/features/patients'
 import { catalogsKeys, fetchCountries } from '@/features/catalogs'
 
 export const Route = createFileRoute('/_app/pacientes')({
+  beforeLoad: requirePermission('pacientes:read'),
   validateSearch: (search) => patientsListSearchSchema.parse(search),
   loader: ({ context: { queryClient } }) => {
     // Los países solo enriquecen la tabla (la página usa `= []` mientras llegan):

@@ -17,6 +17,8 @@ import { UserFormModal } from './UserFormModal'
 import { DeleteUserDialog } from './DeleteUserDialog'
 import type { UserFormValues } from '../schemas/user-form.schema'
 
+import { PermissionGate } from './PermissionGate'
+
 export function UsersTab() {
   const [q, setQ] = useState('')
   const [showDeleted, setShowDeleted] = useState(false)
@@ -80,14 +82,16 @@ export function UsersTab() {
           }
           label="Mostrar eliminados"
         />
-        <AppButton
-          variant="contained"
-          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-          onClick={() => setIsCreateOpen(true)}
-          sx={{ ml: 'auto' }}
-        >
-          Nuevo usuario
-        </AppButton>
+        <PermissionGate permission="usuarios:create" fallback={null}>
+          <AppButton
+            variant="contained"
+            startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+            onClick={() => setIsCreateOpen(true)}
+            sx={{ ml: 'auto' }}
+          >
+            Nuevo usuario
+          </AppButton>
+        </PermissionGate>
       </Stack>
 
       <UsersTable

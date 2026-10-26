@@ -16,6 +16,8 @@ export function useUpdateRole(id: number | undefined, options?: UseUpdateRoleOpt
     mutationFn: (payload: UpdateRolePayload) => updateRole(id as number, payload),
     onSuccess: (role) => {
       queryClient.invalidateQueries({ queryKey: identityKeys.roles })
+      // Si cambió un rol del usuario de la sesión, se refrescan sus permisos.
+      queryClient.invalidateQueries({ queryKey: identityKeys.me })
       toast.success('Rol actualizado correctamente')
       options?.onSuccess?.(role)
     },

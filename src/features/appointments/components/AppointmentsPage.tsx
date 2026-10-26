@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
+import { hasPermission } from '@/features/identity'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import {
@@ -65,6 +66,7 @@ export function AppointmentsPage() {
   const updateFilters = (patch: Partial<AppointmentFilters>) => setFilters((prev) => ({ ...prev, ...patch }))
   // Las citas se agendan a partir de hoy: los huecos del pasado no crean citas.
   const today = new Date().toLocaleDateString('en-CA')
+  const canCreate = hasPermission(me, 'citas:create')
   const createAt = (date: string, time: string) =>
     date >= today && setCreateDraft({ ...appointmentFormDefaultValues, date, time })
 
@@ -80,13 +82,15 @@ export function AppointmentsPage() {
     <Box>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
         <Typography variant="h1">Citas</Typography>
-        <AppButton
-          variant="contained"
-          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-          onClick={() => setCreateDraft(appointmentFormDefaultValues)}
-        >
-          Nueva cita
-        </AppButton>
+        {canCreate && (
+          <AppButton
+            variant="contained"
+            startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+            onClick={() => setCreateDraft(appointmentFormDefaultValues)}
+          >
+            Nueva cita
+          </AppButton>
+        )}
       </Stack>
 
       <AppointmentsToolbar
@@ -121,7 +125,7 @@ export function AppointmentsPage() {
           appointments={filtered}
           onOpen={setViewingId}
           onShowDay={calendar.showDay}
-          onCreateAt={createAt}
+          onCreateAt={canCreate ? createAt : undefined}
         />
       </QueryBoundary>
 

@@ -3,6 +3,7 @@ import OpenInFullIcon from '@mui/icons-material/OpenInFull'
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined'
 import { Link } from '@tanstack/react-router'
 import { AppButton } from '@/components/AppButton'
+import { PermissionGate } from '@/features/identity'
 import { PatientDrawerHeader } from './PatientDrawerHeader'
 import { PatientDrawerInfo } from './PatientDrawerInfo'
 import { PatientDrawerCareTeam } from './PatientDrawerCareTeam'
@@ -65,16 +66,22 @@ export function PatientDetailDrawer({
             <PatientDrawerInfo patient={patient} countryNameById={countryNameById} />
             <PatientDrawerCareTeam patientId={patient.id} />
             <PatientDrawerAllergies patientId={patient.id} />
-            <PatientDrawerUpcomingAppointments patientId={patient.id} />
-            <PatientDrawerRecentConsultations patientId={patient.id} />
+            <PermissionGate permission="citas:read" fallback={null}>
+              <PatientDrawerUpcomingAppointments patientId={patient.id} />
+            </PermissionGate>
+            <PermissionGate permission="consultas:read" fallback={null}>
+              <PatientDrawerRecentConsultations patientId={patient.id} />
+            </PermissionGate>
           </Box>
 
-          <Divider />
-          <Box sx={{ p: 2 }}>
-            <AppButton variant="text" fullWidth onClick={onEditRequest}>
-              Editar datos del paciente
-            </AppButton>
-          </Box>
+          <PermissionGate permission="pacientes:update" fallback={null}>
+            <Divider />
+            <Box sx={{ p: 2 }}>
+              <AppButton variant="text" fullWidth onClick={onEditRequest}>
+                Editar datos del paciente
+              </AppButton>
+            </Box>
+          </PermissionGate>
         </Box>
       )}
     </Drawer>

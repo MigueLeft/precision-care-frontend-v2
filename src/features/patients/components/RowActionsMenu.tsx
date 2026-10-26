@@ -5,6 +5,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
+import { useCan } from '@/features/identity'
 
 interface RowActionsMenuProps {
   onView: () => void
@@ -15,6 +16,7 @@ interface RowActionsMenuProps {
 export function RowActionsMenu({ onView, onEdit, onDelete }: RowActionsMenuProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
   const open = !!anchorEl
+  const { can } = useCan()
 
   function handleOpen(event: MouseEvent<HTMLElement>) {
     event.stopPropagation()
@@ -45,18 +47,22 @@ export function RowActionsMenu({ onView, onEdit, onDelete }: RowActionsMenuProps
           </ListItemIcon>
           <ListItemText>Ver</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleAction(onEdit)}>
-          <ListItemIcon>
-            <EditOutlinedIcon sx={{ fontSize: 18 }} />
-          </ListItemIcon>
-          <ListItemText>Editar</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleAction(onDelete)} sx={{ color: 'error.main' }}>
-          <ListItemIcon>
-            <DeleteOutlineIcon sx={{ fontSize: 18, color: 'error.main' }} />
-          </ListItemIcon>
-          <ListItemText>Eliminar</ListItemText>
-        </MenuItem>
+        {can('pacientes:update') && (
+          <MenuItem onClick={handleAction(onEdit)}>
+            <ListItemIcon>
+              <EditOutlinedIcon sx={{ fontSize: 18 }} />
+            </ListItemIcon>
+            <ListItemText>Editar</ListItemText>
+          </MenuItem>
+        )}
+        {can('pacientes:delete') && (
+          <MenuItem onClick={handleAction(onDelete)} sx={{ color: 'error.main' }}>
+            <ListItemIcon>
+              <DeleteOutlineIcon sx={{ fontSize: 18, color: 'error.main' }} />
+            </ListItemIcon>
+            <ListItemText>Eliminar</ListItemText>
+          </MenuItem>
+        )}
       </Menu>
     </>
   )

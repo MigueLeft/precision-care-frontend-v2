@@ -7,6 +7,7 @@ import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined
 import { useNavigate } from '@tanstack/react-router'
 import { InitialsAvatar } from '@/components/InitialsAvatar'
 import { AppButton } from '@/components/AppButton'
+import { PermissionGate } from '@/features/identity'
 import { SectionCard } from '@/components/ui/SectionCard'
 import { formatShortDate } from '@/utils/format-date'
 import { useSpecialist } from '../hooks/useSpecialists'
@@ -73,6 +74,7 @@ export function SpecialistDetailPage({ specialistId }: Props) {
           </Box>
         </Stack>
 
+        <PermissionGate permission="especialistas:update" fallback={null}>
         <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
           <AppButton
             variant="outlined"
@@ -101,6 +103,7 @@ export function SpecialistDetailPage({ specialistId }: Props) {
             {specialist.active ? 'Desactivar' : 'Activar'}
           </AppButton>
         </Stack>
+        </PermissionGate>
       </Stack>
 
       <Grid container spacing={3}>

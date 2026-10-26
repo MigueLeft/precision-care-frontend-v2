@@ -10,9 +10,14 @@ import { sidebarNavConfig } from './sidebarNavConfig'
 interface SidebarProps {
   // Modo compacto (solo iconos) para laptop dentro de consulta / expediente.
   compact?: boolean
+  // Si el usuario puede abrir esa ruta (permisos); sin función se muestra todo.
+  isAllowed?: (to: string) => boolean
 }
 
-export function Sidebar({ compact = false }: SidebarProps) {
+export function Sidebar({ compact = false, isAllowed = () => true }: SidebarProps) {
+  const sections = sidebarNavConfig
+    .map((section) => ({ ...section, items: section.items.filter((item) => !item.to || isAllowed(item.to)) }))
+    .filter((section) => section.items.some((item) => item.to))
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const { user } = useSession()
   const { mutate: logout, isPending } = useLogout({
@@ -87,7 +92,7 @@ export function Sidebar({ compact = false }: SidebarProps) {
           '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
-        {sidebarNavConfig.map((section) => (
+        {sections.map((section) => (
           <Box key={section.title} sx={{ px: compact ? 1 : 1.5 }}>
             {!compact && (
               <Typography
