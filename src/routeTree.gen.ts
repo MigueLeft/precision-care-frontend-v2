@@ -35,6 +35,7 @@ import { Route as AppConsultasConsultationIdRouteImport } from './routes/_app/co
 import { Route as AppPacientesPatientIdRouteRouteImport } from './routes/_app/pacientes_.$patientId/route'
 import { Route as AppPacientesPatientIdIndexRouteImport } from './routes/_app/pacientes_.$patientId/index'
 import { Route as AppPacientesPatientIdSintomasRouteImport } from './routes/_app/pacientes_.$patientId/sintomas'
+import { Route as AppPacientesPatientIdRiesgoRouteImport } from './routes/_app/pacientes_.$patientId/riesgo'
 import { Route as AppPacientesPatientIdResumenRouteImport } from './routes/_app/pacientes_.$patientId/resumen'
 import { Route as AppPacientesPatientIdParaclinicosRouteImport } from './routes/_app/pacientes_.$patientId/paraclinicos'
 import { Route as AppPacientesPatientIdNotaEvolutivaRouteImport } from './routes/_app/pacientes_.$patientId/nota-evolutiva'
@@ -182,6 +183,12 @@ const AppPacientesPatientIdSintomasRoute =
     path: '/sintomas',
     getParentRoute: () => AppPacientesPatientIdRouteRoute,
   } as any)
+const AppPacientesPatientIdRiesgoRoute =
+  AppPacientesPatientIdRiesgoRouteImport.update({
+    id: '/riesgo',
+    path: '/riesgo',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
 const AppPacientesPatientIdResumenRoute =
   AppPacientesPatientIdResumenRouteImport.update({
     id: '/resumen',
@@ -296,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/pacientes/$patientId/nota-evolutiva': typeof AppPacientesPatientIdNotaEvolutivaRoute
   '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
+  '/pacientes/$patientId/riesgo': typeof AppPacientesPatientIdRiesgoRoute
   '/pacientes/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
   '/pacientes/$patientId/': typeof AppPacientesPatientIdIndexRoute
 }
@@ -333,6 +341,7 @@ export interface FileRoutesByTo {
   '/pacientes/$patientId/nota-evolutiva': typeof AppPacientesPatientIdNotaEvolutivaRoute
   '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
+  '/pacientes/$patientId/riesgo': typeof AppPacientesPatientIdRiesgoRoute
   '/pacientes/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
   '/pacientes/$patientId': typeof AppPacientesPatientIdIndexRoute
 }
@@ -375,6 +384,7 @@ export interface FileRoutesById {
   '/_app/pacientes_/$patientId/nota-evolutiva': typeof AppPacientesPatientIdNotaEvolutivaRoute
   '/_app/pacientes_/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/_app/pacientes_/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
+  '/_app/pacientes_/$patientId/riesgo': typeof AppPacientesPatientIdRiesgoRoute
   '/_app/pacientes_/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
   '/_app/pacientes_/$patientId/': typeof AppPacientesPatientIdIndexRoute
 }
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/nota-evolutiva'
     | '/pacientes/$patientId/paraclinicos'
     | '/pacientes/$patientId/resumen'
+    | '/pacientes/$patientId/riesgo'
     | '/pacientes/$patientId/sintomas'
     | '/pacientes/$patientId/'
   fileRoutesByTo: FileRoutesByTo
@@ -452,6 +463,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/nota-evolutiva'
     | '/pacientes/$patientId/paraclinicos'
     | '/pacientes/$patientId/resumen'
+    | '/pacientes/$patientId/riesgo'
     | '/pacientes/$patientId/sintomas'
     | '/pacientes/$patientId'
   id:
@@ -493,6 +505,7 @@ export interface FileRouteTypes {
     | '/_app/pacientes_/$patientId/nota-evolutiva'
     | '/_app/pacientes_/$patientId/paraclinicos'
     | '/_app/pacientes_/$patientId/resumen'
+    | '/_app/pacientes_/$patientId/riesgo'
     | '/_app/pacientes_/$patientId/sintomas'
     | '/_app/pacientes_/$patientId/'
   fileRoutesById: FileRoutesById
@@ -689,6 +702,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPacientesPatientIdSintomasRouteImport
       parentRoute: typeof AppPacientesPatientIdRouteRoute
     }
+    '/_app/pacientes_/$patientId/riesgo': {
+      id: '/_app/pacientes_/$patientId/riesgo'
+      path: '/riesgo'
+      fullPath: '/pacientes/$patientId/riesgo'
+      preLoaderRoute: typeof AppPacientesPatientIdRiesgoRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
     '/_app/pacientes_/$patientId/resumen': {
       id: '/_app/pacientes_/$patientId/resumen'
       path: '/resumen'
@@ -795,6 +815,7 @@ interface AppPacientesPatientIdRouteRouteChildren {
   AppPacientesPatientIdNotaEvolutivaRoute: typeof AppPacientesPatientIdNotaEvolutivaRoute
   AppPacientesPatientIdParaclinicosRoute: typeof AppPacientesPatientIdParaclinicosRoute
   AppPacientesPatientIdResumenRoute: typeof AppPacientesPatientIdResumenRoute
+  AppPacientesPatientIdRiesgoRoute: typeof AppPacientesPatientIdRiesgoRoute
   AppPacientesPatientIdSintomasRoute: typeof AppPacientesPatientIdSintomasRoute
   AppPacientesPatientIdIndexRoute: typeof AppPacientesPatientIdIndexRoute
 }
@@ -821,6 +842,7 @@ const AppPacientesPatientIdRouteRouteChildren: AppPacientesPatientIdRouteRouteCh
     AppPacientesPatientIdParaclinicosRoute:
       AppPacientesPatientIdParaclinicosRoute,
     AppPacientesPatientIdResumenRoute: AppPacientesPatientIdResumenRoute,
+    AppPacientesPatientIdRiesgoRoute: AppPacientesPatientIdRiesgoRoute,
     AppPacientesPatientIdSintomasRoute: AppPacientesPatientIdSintomasRoute,
     AppPacientesPatientIdIndexRoute: AppPacientesPatientIdIndexRoute,
   }

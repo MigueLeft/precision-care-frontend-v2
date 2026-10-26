@@ -18,6 +18,11 @@ export function canViewUnconfirmedAppointments(me: CurrentUser | null | undefine
   return !!me?.permissions.includes(VIEW_UNCONFIRMED_APPOINTMENTS)
 }
 
+// Scores de riesgo cardiometabólico (FINDRISC, Globorisk, perfil de factores).
+export function canViewRisk(me: CurrentUser | null | undefined): boolean {
+  return !!me?.permissions.includes('riesgo:read')
+}
+
 // Confirmar / quitar confirmación: quien ve las sin confirmar y puede editar citas.
 export function canConfirmAppointments(me: CurrentUser | null | undefined): boolean {
   return canViewUnconfirmedAppointments(me) && !!me?.permissions.includes('citas:update')

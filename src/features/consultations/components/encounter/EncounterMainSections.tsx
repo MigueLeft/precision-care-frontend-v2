@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Stack } from '@mui/material'
 import { AnthropometrySection } from '@/features/anthropometry'
+import { RiskSection } from '@/features/risk'
 import { AntecedentsSection } from './AntecedentsSection'
 import { PreviousConsultationSection } from './PreviousConsultationSection'
 import { SymptomsSection } from './SymptomsSection'
@@ -77,6 +78,10 @@ export function EncounterMainSections({ consultation, readOnly }: EncounterMainS
         consultationDate={consultationDate}
         readOnly={readOnly}
       />
+    ),
+    // Riesgo cardiometabólico: usa lo capturado arriba (mediciones, laboratorio, diagnósticos).
+    (index) => (
+      <RiskSection key="risk" index={index} patientId={patientId} consultationId={consultationId} readOnly={readOnly} />
     ),
   ]
 

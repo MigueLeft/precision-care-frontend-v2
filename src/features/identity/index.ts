@@ -14,6 +14,7 @@ export {
   canViewAllAppointments,
   canViewUnconfirmedAppointments,
   canConfirmAppointments,
+  canViewRisk,
   VIEW_ALL_APPOINTMENTS,
   VIEW_UNCONFIRMED_APPOINTMENTS,
 } from './utils/access'
