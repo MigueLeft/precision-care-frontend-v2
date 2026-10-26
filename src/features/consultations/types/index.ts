@@ -16,6 +16,17 @@ export type DiagnosisType =
 export interface ConsultationProblems {
   actuales: string[]
   previos: string[]
+  // Viene de la precarga: al abrir la consulta se suman sus diagnósticos/eventos.
+  fromPreload?: boolean
+}
+
+// Notas clínicas precargadas desde la cita (appointment.preloadNotes).
+export interface ClinicalNotesDraft {
+  currentIllness?: string
+  evolution?: string
+  treatmentPlan?: string
+  diagnosticPlan?: string
+  problems?: ConsultationProblems
 }
 
 export interface Consultation {

@@ -7,15 +7,18 @@ import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { SectionDensityContext } from '@/components/ui/section-density'
 import { AnthropometryPreloadSection } from '@/features/anthropometry'
-import { ParaclinicalSection } from '@/features/consultations'
+import { ParaclinicalSection, PreloadClinicalNotes } from '@/features/consultations'
 import { MedicationsPanel } from '@/features/patient-medications'
 import { useAppointment } from '../hooks/useAppointments'
+import { useUpdatePreloadNotes } from '../hooks/useAppointmentMutations'
 
-// Precarga de la consulta desde la cita: antropometría, paraclínicos y
-// tratamiento quedan listos antes de que el especialista inicie la consulta.
+// Precarga de la consulta desde la cita: antropometría, paraclínicos,
+// tratamiento y notas clínicas (enfermedad actual, nota evolutiva, planes y
+// problemas) quedan listos antes de que el especialista inicie la consulta.
 export function ConsultationPreloadPage({ appointmentId }: { appointmentId: number }) {
   const navigate = useNavigate()
   const { data: appointment, isLoading, isError, error } = useAppointment(appointmentId)
+  const saveNotes = useUpdatePreloadNotes(appointmentId)
 
   if (isLoading || isError || !appointment) {
     return (
@@ -56,6 +59,11 @@ export function ConsultationPreloadPage({ appointmentId }: { appointmentId: numb
             <CollapsibleSection title="3. Tratamiento" defaultExpanded>
               <MedicationsPanel patientId={appointment.patientId} />
             </CollapsibleSection>
+            <PreloadClinicalNotes
+              startIndex={4}
+              notes={appointment.preloadNotes ?? {}}
+              onSave={(patch) => saveNotes.mutate(patch)}
+            />
         </Stack>
         </SectionDensityContext.Provider>
       ) : (

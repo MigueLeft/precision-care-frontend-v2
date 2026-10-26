@@ -96,7 +96,7 @@ export function syncProblems(
   sources: ProblemSource[],
 ): ConsultationProblems {
   const next: ConsultationProblems = { actuales: [], previos: [] }
-  const place = (note: string, fallback: keyof ConsultationProblems) => {
+  const place = (note: string, fallback: 'actuales' | 'previos') => {
     const source = findSource(note, sources)
     if (!source) {
       next[fallback].push(note)

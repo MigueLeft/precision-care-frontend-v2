@@ -1,5 +1,5 @@
 import { api } from '@/utils/api'
-import type { Consultation } from '@/features/consultations'
+import type { ClinicalNotesDraft, Consultation } from '@/features/consultations'
 import type {
   Appointment,
   AppointmentReminder,
@@ -45,6 +45,17 @@ export async function updateAppointment(
   const { data } = await api.patch<{ appointment: Appointment }>(
     `/appointments/${id}`,
     payload,
+  )
+  return data.appointment
+}
+
+export async function updatePreloadNotes(
+  id: number,
+  notes: ClinicalNotesDraft,
+): Promise<Appointment> {
+  const { data } = await api.patch<{ appointment: Appointment }>(
+    `/appointments/${id}/preload-notes`,
+    notes,
   )
   return data.appointment
 }

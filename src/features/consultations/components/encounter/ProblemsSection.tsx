@@ -40,7 +40,9 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
   // detectar los que se agregan o se quitan durante la consulta.
   const knownPrefixes = useRef<string[] | null>(null)
   const [problems, setProblems] = useState<ConsultationProblems>(() =>
-    consultation.problems ?? { actuales: [], previos: [] },
+    consultation.problems
+      ? { actuales: consultation.problems.actuales, previos: consultation.problems.previos }
+      : { actuales: [], previos: [] },
   )
   const [tab, setTab] = useState(0)
 
@@ -59,7 +61,11 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
 
     let next: ConsultationProblems
     if (known === null) {
-      next = consultation.problems ? syncProblems(problems, sources) : seedProblems(sources)
+      const saved = consultation.problems
+      if (!saved) next = seedProblems(sources)
+      // Precargados desde la cita: se suman los diagnósticos y eventos.
+      else if (saved.fromPreload) next = appendSources(syncProblems(problems, sources), sources)
+      else next = syncProblems(problems, sources)
     } else {
       const removed = known.filter((prefix) => !prefixes.includes(prefix))
       const added = sources.filter((source) => !known.includes(source.prefix))

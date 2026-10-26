@@ -3,13 +3,14 @@ import { toast } from '@/utils/toast'
 import {
   createAppointment,
   updateAppointment,
+  updatePreloadNotes,
   startConsultationForAppointment,
   sendAppointmentReminder,
   sendIntakeAssignment,
 } from '../services/appointments.service'
 import { appointmentsKeys } from './appointments.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
-import type { Consultation } from '@/features/consultations'
+import type { ClinicalNotesDraft, Consultation } from '@/features/consultations'
 import type {
   Appointment,
   CreateAppointmentPayload,
@@ -49,6 +50,20 @@ export function useUpdateAppointment(options?: { onSuccess?: (a: Appointment) =>
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al actualizar la cita'))
+    },
+  })
+}
+
+// Autoguardado de las notas precargadas: sin toast en éxito, solo en error.
+export function useUpdatePreloadNotes(id: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (notes: ClinicalNotesDraft) => updatePreloadNotes(id, notes),
+    onSuccess: (appointment) => {
+      queryClient.setQueryData(appointmentsKeys.detail(id), appointment)
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Error al guardar la precarga'))
     },
   })
 }
