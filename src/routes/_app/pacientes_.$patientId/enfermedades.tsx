@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PermissionGate } from '@/features/identity'
 import { PatientDiseasesPanel } from '@/features/patient-diseases'
 
 export const Route = createFileRoute('/_app/pacientes_/$patientId/enfermedades')({
@@ -7,5 +8,9 @@ export const Route = createFileRoute('/_app/pacientes_/$patientId/enfermedades')
 
 function EnfermedadesRoute() {
   const { patientId } = Route.useParams()
-  return <PatientDiseasesPanel patientId={Number(patientId)} />
+  return (
+    <PermissionGate permission="consultas:read">
+      <PatientDiseasesPanel patientId={Number(patientId)} />
+    </PermissionGate>
+  )
 }

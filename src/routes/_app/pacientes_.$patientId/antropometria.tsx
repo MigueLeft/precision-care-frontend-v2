@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PermissionGate } from '@/features/identity'
 import { AnthropometryPanel } from '@/features/anthropometry'
 
 export const Route = createFileRoute('/_app/pacientes_/$patientId/antropometria')({
@@ -7,5 +8,9 @@ export const Route = createFileRoute('/_app/pacientes_/$patientId/antropometria'
 
 function AntropometriaRoute() {
   const { patientId } = Route.useParams()
-  return <AnthropometryPanel patientId={Number(patientId)} />
+  return (
+    <PermissionGate permission="antropometria:read">
+      <AnthropometryPanel patientId={Number(patientId)} />
+    </PermissionGate>
+  )
 }

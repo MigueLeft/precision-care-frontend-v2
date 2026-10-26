@@ -25,6 +25,8 @@ import {
   formatSpecialistLocationSub,
 } from '../utils/specialist-format'
 
+import { PermissionGate } from '@/features/identity'
+
 interface Props {
   specialists: Specialist[]
   onView: (id: number) => void
@@ -128,6 +130,7 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
                 />
               </TableCell>
               <TableCell align="right" sx={stickyActions} onClick={(event) => event.stopPropagation()}>
+                <PermissionGate permission="especialistas:update" fallback={null}>
                 <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
                   <Tooltip title="Editar">
                     <IconButton
@@ -157,6 +160,7 @@ export function SpecialistsTable({ specialists, onView, onToggleStatus }: Props)
                     </IconButton>
                   </Tooltip>
                 </Stack>
+                </PermissionGate>
               </TableCell>
             </TableRow>
           ))}

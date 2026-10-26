@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { SpecialistFormPage, specialistsKeys, fetchSpecialist } from '@/features/specialists'
 import { catalogsKeys, fetchCountries, fetchMedicalSpecialties } from '@/features/catalogs'
 
 export const Route = createFileRoute('/_app/especialistas_/$specialistId_/editar')({
+  beforeLoad: requirePermission('especialistas:update'),
   loader: ({ context: { queryClient }, params: { specialistId } }) =>
     Promise.all([
       queryClient.ensureQueryData({

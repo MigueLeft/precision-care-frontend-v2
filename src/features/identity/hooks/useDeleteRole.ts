@@ -15,6 +15,8 @@ export function useDeleteRole(options?: UseDeleteRoleOptions) {
     mutationFn: (id: number) => deleteRole(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: identityKeys.roles })
+      // Si cambió un rol del usuario de la sesión, se refrescan sus permisos.
+      queryClient.invalidateQueries({ queryKey: identityKeys.me })
       toast.success('Rol eliminado correctamente')
       options?.onSuccess?.()
     },

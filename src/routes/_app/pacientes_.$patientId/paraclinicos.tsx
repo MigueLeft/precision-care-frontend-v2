@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PermissionGate } from '@/features/identity'
 import { ParaclinicalPanel } from '@/features/paraclinical'
 
 export const Route = createFileRoute('/_app/pacientes_/$patientId/paraclinicos')({
@@ -7,5 +8,9 @@ export const Route = createFileRoute('/_app/pacientes_/$patientId/paraclinicos')
 
 function ParaclinicosRoute() {
   const { patientId } = Route.useParams()
-  return <ParaclinicalPanel patientId={Number(patientId)} />
+  return (
+    <PermissionGate permission="resultados_paraclinico:read">
+      <ParaclinicalPanel patientId={Number(patientId)} />
+    </PermissionGate>
+  )
 }

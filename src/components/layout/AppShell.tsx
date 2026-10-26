@@ -5,16 +5,17 @@ import { TopBar } from './TopBar'
 
 interface AppShellProps {
   children: ReactNode
+  isNavAllowed?: (to: string) => boolean
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, isNavAllowed }: AppShellProps) {
   const theme = useTheme()
   // En laptops (≤ xl) el sidebar se compacta a solo iconos, con tooltip al hover.
   const compactSidebar = useMediaQuery(theme.breakpoints.down('xl'))
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar compact={compactSidebar} />
+      <Sidebar compact={compactSidebar} isAllowed={isNavAllowed} />
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <TopBar />
         <Box sx={{ flex: 1, p: 4, bgcolor: 'background.default' }}>{children}</Box>

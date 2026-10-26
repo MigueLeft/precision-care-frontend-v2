@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { SpecialistsPage, specialistsKeys, fetchSpecialists } from '@/features/specialists'
 import { catalogsKeys, fetchMedicalSpecialties } from '@/features/catalogs'
 
 export const Route = createFileRoute('/_app/especialistas')({
+  beforeLoad: requirePermission('especialistas:read'),
   loader: ({ context: { queryClient } }) => {
     // Las especialidades solo alimentan el filtro (la toolbar usa `= []`): se
     // precargan sin bloquear la navegación.

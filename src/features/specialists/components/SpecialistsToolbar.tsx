@@ -17,6 +17,8 @@ import { useMedicalSpecialties } from '@/features/catalogs'
 
 export type SpecialistStatusFilter = 'all' | 'active' | 'inactive'
 
+import { PermissionGate } from '@/features/identity'
+
 interface Props {
   q: string
   specialtyId: number | undefined
@@ -79,14 +81,16 @@ export function SpecialistsToolbar({
         </Select>
       </FormControl>
 
-      <AppButton
-        variant="contained"
-        startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-        onClick={() => navigate({ to: '/especialistas/nuevo' })}
-        sx={{ ml: 'auto' }}
-      >
-        Crear especialista
-      </AppButton>
+      <PermissionGate permission="especialistas:create" fallback={null}>
+        <AppButton
+          variant="contained"
+          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+          onClick={() => navigate({ to: '/especialistas/nuevo' })}
+          sx={{ ml: 'auto' }}
+        >
+          Crear especialista
+        </AppButton>
+      </PermissionGate>
     </Stack>
   )
 }

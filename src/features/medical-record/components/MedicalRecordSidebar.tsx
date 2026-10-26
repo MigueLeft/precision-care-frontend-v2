@@ -1,5 +1,6 @@
 import { Box, Chip, Stack, Typography } from '@mui/material'
 import { Link, useRouterState } from '@tanstack/react-router'
+import { RECORD_TAB_PERMISSIONS, useCan } from '@/features/identity'
 import { MEDICAL_RECORD_TABS, type MedicalRecordCounts } from '../constants'
 
 interface MedicalRecordSidebarProps {
@@ -10,6 +11,7 @@ interface MedicalRecordSidebarProps {
 export function MedicalRecordSidebar({ patientId, counts }: MedicalRecordSidebarProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
   const activeSlug = pathname.split('/').filter(Boolean).pop()
+  const { can } = useCan()
 
   return (
     <Box
@@ -27,7 +29,7 @@ export function MedicalRecordSidebar({ patientId, counts }: MedicalRecordSidebar
         direction={{ xs: 'row', md: 'column' }}
         sx={{ overflowX: { xs: 'auto', md: 'visible' } }}
       >
-        {MEDICAL_RECORD_TABS.map((tab) => {
+        {MEDICAL_RECORD_TABS.filter((tab) => !RECORD_TAB_PERMISSIONS[tab.slug] || can(RECORD_TAB_PERMISSIONS[tab.slug])).map((tab) => {
           const isActive = activeSlug === tab.slug
           const count = tab.countKey ? counts?.[tab.countKey] : undefined
 
