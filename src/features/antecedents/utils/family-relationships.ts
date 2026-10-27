@@ -10,5 +10,7 @@ export const FAMILY_RELATIONSHIPS = [
   'Abuela materna',
   'Tío/a',
   'Hijo/a',
+  'Primo/a',
+  'Sobrino/a',
   'Otro',
 ] as const
