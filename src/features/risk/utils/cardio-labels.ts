@@ -2,6 +2,7 @@ import type {
   AnticoagulationRecommendation,
   AscvdCategory,
   Cha2ds2Item,
+  EngineWarning,
   PreventOutcome,
   RiskCalculation,
   RiskFactorAnswers,
@@ -75,6 +76,17 @@ export const DIAGNOSIS_QUESTIONS: { key: keyof RiskFactorAnswers; label: string 
   { key: 'mitralStenosisModSevere', label: 'Estenosis mitral moderada-grave' },
   { key: 'mechanicalValve', label: 'Prótesis valvular mecánica' },
 ]
+
+// Avisos informativos (no impiden el cálculo): se muestran como nota discreta
+// y no como alerta, para no confundirlos con el motivo de un "no calculado".
+const INFORMATIVE_CODES = ['non_us_population', 'legacy_equation']
+
+export function splitNotes(all: EngineWarning[]) {
+  return {
+    warnings: all.filter((w) => !INFORMATIVE_CODES.includes(w.code)),
+    notes: all.filter((w) => INFORMATIVE_CODES.includes(w.code)).map((w) => w.message),
+  }
+}
 
 export const percent = (fraction: number | null, digits = 1) =>
   fraction === null ? '—' : `${(fraction * 100).toFixed(digits)} %`

@@ -1,10 +1,11 @@
-import { Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import { Alert, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import type { PreventOutcome, PreventResult } from '../types'
 import {
   ASCVD_CATEGORY_COLORS,
   ASCVD_CATEGORY_LABELS,
   PREVENT_OUTCOME_LABELS,
   percent,
+  splitNotes,
 } from '../utils/cardio-labels'
 import { LegacyPceComparison } from './LegacyPceComparison'
 import { WarningList } from './WarningList'
@@ -18,7 +19,9 @@ type PreventCardProps = {
 }
 
 // PREVENT (AHA): comparativo; el score principal para Venezuela es Globorisk.
+// Se calcula aunque la población no sea de EE. UU. (la nota es informativa).
 export function PreventCard({ result, patientId }: PreventCardProps) {
+  const { warnings, notes } = splitNotes(result.warnings)
   return (
     <Paper variant="outlined" sx={{ p: 1.5, borderRadius: '8px' }}>
       <Stack spacing={1}>
@@ -55,12 +58,20 @@ export function PreventCard({ result, patientId }: PreventCardProps) {
                 <Chip size="small" variant="outlined" color="warning" label="ECV ≥7,5 %: umbral de fármacos en HTA estadio 1" />
               )}
             </Stack>
-            <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>{result.attribution}</Typography>
+            <WarningList warnings={warnings} />
+            <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
+              {[result.attribution, ...notes].join(' ')}
+            </Typography>
           </>
         ) : (
-          <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>{result.reason}</Typography>
+          <>
+            {/* El motivo es lo que impide el cálculo (edad, datos faltantes, prevención secundaria). */}
+            <Alert severity="info" sx={{ py: 0, '& .MuiAlert-message': { fontSize: '12px' } }}>
+              {result.reason}
+            </Alert>
+            <WarningList warnings={warnings} />
+          </>
         )}
-        <WarningList warnings={result.warnings} />
         <LegacyPceComparison patientId={patientId} />
       </Stack>
     </Paper>
