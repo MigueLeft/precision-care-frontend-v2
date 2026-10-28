@@ -1,4 +1,4 @@
-import { Grid, Paper, Stack, Typography } from '@mui/material'
+import { Divider, Paper, Stack, Typography } from '@mui/material'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { useStrokePreventionAf } from '../hooks/useRisk'
 import { Cha2ds2VariantColumn } from './Cha2ds2VariantColumn'
@@ -24,13 +24,12 @@ export function Cha2ds2Card({ patientId }: { patientId: number }) {
         {data?.status === 'evaluated' && (
           <Stack spacing={1.5}>
             <WarningList warnings={data.warnings} />
-            <Grid container spacing={2}>
-              {(['vasc', 'va'] as const).map((variant) => (
-                <Grid key={variant} size={{ xs: 12, md: 6 }}>
-                  <Cha2ds2VariantColumn result={data[variant]} primary={data.primaryVariant === variant} />
-                </Grid>
+            {/* La principal arriba y la otra variante debajo, a todo el ancho. */}
+            <Stack spacing={1.5} divider={<Divider flexItem />}>
+              {(data.primaryVariant === 'vasc' ? (['vasc', 'va'] as const) : (['va', 'vasc'] as const)).map((variant) => (
+                <Cha2ds2VariantColumn key={variant} result={data[variant]} primary={data.primaryVariant === variant} />
               ))}
-            </Grid>
+            </Stack>
             <Typography sx={{ fontSize: '12px', color: 'text.secondary', fontStyle: 'italic' }}>{data.legend}</Typography>
           </Stack>
         )}
