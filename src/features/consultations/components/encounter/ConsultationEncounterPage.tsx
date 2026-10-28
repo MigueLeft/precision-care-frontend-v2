@@ -71,7 +71,12 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
                 title="Nutrición"
                 subtitle="Respuestas de ingreso · asignación de plan"
               />
-              <LifeEssential8Section index={2} patientId={consultation.patientId} />
+              <LifeEssential8Section
+                index={2}
+                consultationId={consultation.id}
+                patientId={consultation.patientId}
+                readOnly={readOnly}
+              />
             </Stack>
 
             <GroupTitle>CIERRE CLÍNICO</GroupTitle>
