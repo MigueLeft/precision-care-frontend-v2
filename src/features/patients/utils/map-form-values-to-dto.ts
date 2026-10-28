@@ -15,5 +15,6 @@ export function mapFormValuesToDto(values: PatientFormValues): CreatePatientDto 
     phone: values.phone || null,
     nationalityCountryId: values.nationalityCountryId,
     residenceCountryId: values.residenceCountryId,
+    raceId: values.raceId,
   }
 }
