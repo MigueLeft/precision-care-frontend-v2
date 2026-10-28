@@ -1,3 +1,4 @@
+import { Stack } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { useIntakeResponsesByPatient, useIntakeResponseDetail } from '@/features/intake-responses'
@@ -7,10 +8,13 @@ import {
   LifeEssential8Empty,
   ClinicalRiskScoresCard,
 } from '@/features/lifestyle'
+import { RecalculateLifestyleButton } from './RecalculateLifestyleButton'
 
 interface LifeEssential8SectionProps {
   index: number
+  consultationId: number
   patientId: number
+  readOnly: boolean
 }
 
 // Sólo lectura: la captura del ingresable de estilo de vida vive en su propio
@@ -20,7 +24,12 @@ interface LifeEssential8SectionProps {
 // Essential 8 (educación, nivel socioeconómico, antecedentes familiares,
 // apnea del sueño, ansiedad, depresión, alcohol, tabaquismo, drogas...).
 // Sin una captura real (IM1 completado), no se muestra nada — nunca datos de ejemplo.
-export function LifeEssential8Section({ index, patientId }: LifeEssential8SectionProps) {
+export function LifeEssential8Section({
+  index,
+  consultationId,
+  patientId,
+  readOnly,
+}: LifeEssential8SectionProps) {
   const { data: evaluations = [], isLoading, isError, error } = useLifestyleByPatient(patientId)
   const latest = evaluations[0]
 
@@ -38,7 +47,12 @@ export function LifeEssential8Section({ index, patientId }: LifeEssential8Sectio
           {null}
         </QueryBoundary>
       ) : (
-        <>
+        <Stack spacing={1.5}>
+          {!readOnly && (
+            <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
+              <RecalculateLifestyleButton consultationId={consultationId} patientId={patientId} />
+            </Stack>
+          )}
           {latest ? <LifeEssential8Card assessment={latest} /> : <LifeEssential8Empty />}
           <ClinicalRiskScoresCard
             scores={clinicalScores.map((r) => ({
@@ -48,7 +62,7 @@ export function LifeEssential8Section({ index, patientId }: LifeEssential8Sectio
               interpretation: r.interpretation,
             }))}
           />
-        </>
+        </Stack>
       )}
     </CollapsibleSection>
   )
