@@ -6,8 +6,8 @@ export function WarningList({ warnings }: { warnings: EngineWarning[] }) {
   if (warnings.length === 0) return null
   return (
     <Stack spacing={0.5}>
-      {warnings.map((w) => (
-        <Alert key={w.code} severity="warning" sx={{ py: 0, '& .MuiAlert-message': { fontSize: '12px' } }}>
+      {warnings.map((w, index) => (
+        <Alert key={`${w.code}-${index}`} severity="warning" sx={{ py: 0, '& .MuiAlert-message': { fontSize: '12px' } }}>
           {w.message}
         </Alert>
       ))}

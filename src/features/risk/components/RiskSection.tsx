@@ -29,7 +29,7 @@ function RiskSectionContent({ index, patientId, consultationId, readOnly, canEdi
     <CollapsibleSection title={`${index}. Riesgo cardiometabólico`} defaultExpanded>
       <QueryBoundary isLoading={isLoading} isError={isError} error={error}>
         {data && (
-          <RiskOverviewContent overview={data} consultationId={consultationId} readOnly={locked}>
+          <RiskOverviewContent overview={data} patientId={patientId} consultationId={consultationId} readOnly={locked}>
             <Typography sx={{ fontSize: '13px', fontWeight: 700 }}>Datos para el cálculo</Typography>
             <RiskFactorsForm
               profile={data.profile}

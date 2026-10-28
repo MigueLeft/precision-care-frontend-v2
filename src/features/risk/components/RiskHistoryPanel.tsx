@@ -16,7 +16,7 @@ function CurrentRisk({ patientId }: { patientId: number }) {
   const overview = useRiskOverview(patientId)
   return (
     <QueryBoundary isLoading={overview.isLoading} isError={overview.isError} error={overview.error}>
-      {overview.data && <RiskOverviewContent overview={overview.data} consultationId={null} readOnly />}
+      {overview.data && <RiskOverviewContent overview={overview.data} patientId={patientId} consultationId={null} readOnly />}
     </QueryBoundary>
   )
 }

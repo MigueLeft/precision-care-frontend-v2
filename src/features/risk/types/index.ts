@@ -1,4 +1,7 @@
 // Respuesta de GET /risk/patient/:id (debe coincidir con src/risk del backend).
+import type { Cha2ds2Calculation, PceResult, PreventResult } from './cardio'
+
+export type * from './cardio'
 
 export type ValueSource = 'measured' | 'lab' | 'self_reported' | 'confirmed' | 'derived'
 
@@ -7,9 +10,12 @@ export interface ProfileValue<T> {
   unit: string | null
   date: string | null
   source: ValueSource
+  // Fórmula de un valor derivado (p. ej. 'ckd-epi-2021' para el eGFR).
+  formulaVersion?: string
 }
 
 export type FamilyDiabetes = 'none' | 'second_degree' | 'first_degree'
+export type PceRace = 'white' | 'african_american' | 'other'
 
 export interface ProfileGap {
   field: string
@@ -28,11 +34,25 @@ export interface ClinicalProfile {
   ldlMgDl: ProfileValue<number> | null
   fastingGlucoseMgDl: ProfileValue<number> | null
   hba1cPct: ProfileValue<number> | null
+  hdlMgDl: ProfileValue<number> | null
+  nonHdlMgDl: ProfileValue<number> | null
+  creatinineMgDl: ProfileValue<number> | null
+  egfr: ProfileValue<number> | null
+  uacrMgG: ProfileValue<number> | null
   diabetesDiagnosed: ProfileValue<boolean> | null
   priorCvd: ProfileValue<boolean> | null
   currentSmoker: ProfileValue<boolean> | null
   antihypertensiveUse: ProfileValue<boolean> | null
   glucoseLoweringUse: ProfileValue<boolean> | null
+  statinUse: ProfileValue<boolean> | null
+  pceRace: ProfileValue<PceRace> | null
+  atrialFibrillation: ProfileValue<boolean> | null
+  heartFailure: ProfileValue<boolean> | null
+  hypertensionDx: ProfileValue<boolean> | null
+  strokeTiaThromboembolism: ProfileValue<boolean> | null
+  vascularDisease: ProfileValue<boolean> | null
+  mitralStenosisModSevere: ProfileValue<boolean> | null
+  mechanicalValve: ProfileValue<boolean> | null
   physicalActivityDaily: ProfileValue<boolean> | null
   dailyFruitVegetables: ProfileValue<boolean> | null
   highGlucoseEver: ProfileValue<boolean> | null
@@ -114,6 +134,14 @@ export interface RiskFactorAnswers {
   highGlucoseEver?: boolean | null
   familyDiabetes?: FamilyDiabetes | null
   familyPrematureCvd?: boolean | null
+  statinUse?: boolean | null
+  atrialFibrillation?: boolean | null
+  heartFailure?: boolean | null
+  hypertensionDx?: boolean | null
+  strokeTiaThromboembolism?: boolean | null
+  vascularDisease?: boolean | null
+  mitralStenosisModSevere?: boolean | null
+  mechanicalValve?: boolean | null
 }
 
 export interface RiskOverview {
@@ -123,6 +151,10 @@ export interface RiskOverview {
     findrisc: FindriscResult
     globorisk: GloboriskAssessment | null
     riskProfile: RiskProfileResult
+    // Comparativo AHA; Globorisk sigue siendo el principal.
+    prevent: PreventResult
+    // Heredada: solo con includeLegacyPce.
+    pce: PceResult | null
   }
   confirmation: RiskFactorAnswers | null
   referralThreshold: number
@@ -131,10 +163,10 @@ export interface RiskOverview {
 
 export interface RiskCalculation {
   id: number
-  kind: 'findrisc' | 'globorisk' | 'risk_profile'
+  kind: 'findrisc' | 'globorisk' | 'risk_profile' | 'prevent' | 'pce' | 'cha2ds2_vasc' | 'cha2ds2_va'
   status: string
   evaluationDate: string
-  result: FindriscResult | GloboriskAssessment | RiskProfileResult
+  result: FindriscResult | GloboriskAssessment | RiskProfileResult | PreventResult | PceResult | Cha2ds2Calculation
   algorithmVersion: string
   parametersVersion: string | null
   trigger: string

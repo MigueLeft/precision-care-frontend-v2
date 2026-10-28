@@ -1,23 +1,28 @@
 import { Grid, Stack, Typography } from '@mui/material'
 import type { RiskOverview } from '../types'
 import { RISK_DISCLAIMER } from '../utils/risk-labels'
+import { Cha2ds2Card } from './Cha2ds2Card'
 import { FindriscCard } from './FindriscCard'
 import { GloboriskCard } from './GloboriskCard'
+import { PreventCard } from './PreventCard'
 import { RiskFindings } from './RiskFindings'
 import { RiskReferralAlert } from './RiskReferralAlert'
 
 type RiskOverviewContentProps = {
   overview: RiskOverview
+  patientId: number
   consultationId: number | null
   readOnly: boolean
   // Formulario de confirmación (solo en la consulta).
   children?: React.ReactNode
 }
 
-// Resultados vigentes: FINDRISC, Globorisk, perfil de factores y la leyenda.
-export function RiskOverviewContent({ overview, consultationId, readOnly, children }: RiskOverviewContentProps) {
-  const { findrisc, globorisk, riskProfile } = overview.assessment
+// Resultados vigentes: FINDRISC, Globorisk (principal), PREVENT (comparativo
+// AHA), CHA2DS2 si hay FA, perfil de factores y la leyenda.
+export function RiskOverviewContent({ overview, patientId, consultationId, readOnly, children }: RiskOverviewContentProps) {
+  const { findrisc, globorisk, riskProfile, prevent } = overview.assessment
   const referral = findrisc.status !== 'not_applicable' && findrisc.referral
+  const hasAtrialFibrillation = overview.profile.atrialFibrillation?.value === true
 
   return (
     <Stack spacing={1.5}>
@@ -38,6 +43,14 @@ export function RiskOverviewContent({ overview, consultationId, readOnly, childr
         {globorisk && (
           <Grid size={{ xs: 12, md: 6 }}>
             <GloboriskCard result={globorisk} />
+          </Grid>
+        )}
+        <Grid size={{ xs: 12, md: hasAtrialFibrillation ? 6 : 12 }}>
+          <PreventCard result={prevent} patientId={patientId} />
+        </Grid>
+        {hasAtrialFibrillation && (
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Cha2ds2Card patientId={patientId} />
           </Grid>
         )}
       </Grid>

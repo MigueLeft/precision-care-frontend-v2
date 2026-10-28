@@ -6,14 +6,14 @@ import { canViewRisk, useMe } from '@/features/identity'
 import { useRiskHistory } from '../hooks/useRisk'
 import type { RiskCalculation } from '../types'
 import { RiskTrend } from './RiskTrend'
+import { CALCULATION_KIND_LABELS } from '../utils/cardio-labels'
 
 type Kind = RiskCalculation['kind']
 
-const KINDS: { value: Kind; label: string }[] = [
-  { value: 'findrisc', label: 'FINDRISC' },
-  { value: 'globorisk', label: 'Globorisk' },
-  { value: 'risk_profile', label: 'Perfil de factores' },
-]
+const KINDS = (Object.keys(CALCULATION_KIND_LABELS) as Kind[]).map((value) => ({
+  value,
+  label: CALCULATION_KIND_LABELS[value],
+}))
 
 // Pestaña "Histórico de riesgo": cálculos filtrados por tipo y paginados para
 // que la tabla no crezca sin límite.
@@ -32,7 +32,7 @@ function RiskTimeline({ patientId }: { patientId: number }) {
 
   return (
     <Paper variant="outlined" sx={{ p: 1.5, borderRadius: '8px' }}>
-      <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
+      <Stack direction="row" spacing={1} useFlexGap sx={{ mb: 1.5, flexWrap: 'wrap' }}>
         {KINDS.map((k) => (
           <Chip
             key={k.value}

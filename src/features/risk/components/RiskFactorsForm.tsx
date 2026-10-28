@@ -3,11 +3,10 @@ import { Grid, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/m
 import { AppButton } from '@/components/AppButton'
 import type { ClinicalProfile, FamilyDiabetes, ProfileValue, RiskFactorAnswers } from '../types'
 import { CONFIRMATION_QUESTIONS, FAMILY_DIABETES_LABELS, SOURCE_LABELS } from '../utils/risk-labels'
+import { DIAGNOSIS_QUESTIONS } from '../utils/cardio-labels'
+import { YesNoQuestion, type YesNo } from './YesNoQuestion'
 
-type YesNo = 'yes' | 'no' | ''
-type FormValues = Record<(typeof CONFIRMATION_QUESTIONS)[number]['key'], YesNo> & {
-  familyDiabetes: FamilyDiabetes | ''
-}
+type FormValues = Record<string, YesNo> & { familyDiabetes: FamilyDiabetes | '' }
 
 type RiskFactorsFormProps = {
   profile: ClinicalProfile
@@ -18,59 +17,50 @@ type RiskFactorsFormProps = {
 
 const toYesNo = (v: ProfileValue<boolean> | null): YesNo => (v ? (v.value ? 'yes' : 'no') : '')
 const fromYesNo = (v: YesNo) => (v === '' ? null : v === 'yes')
+const ALL_QUESTIONS = [...CONFIRMATION_QUESTIONS, ...DIAGNOSIS_QUESTIONS]
 
 // Pre-llenado con lo que ya se sabe (IM1, laboratorio, medicamentos,
-// antecedentes); el médico confirma o corrige. Lo confirmado tiene prioridad.
+// antecedentes, diagnósticos); el médico confirma o corrige. Los diagnósticos
+// solo se envían si se tocan: confirmarlos sin revisar podría excluir el CHA2DS2
+// (p. ej. una prótesis valvular inferida de Z95.2).
 export function RiskFactorsForm({ profile, readOnly, saving, onSubmit }: RiskFactorsFormProps) {
   const defaults = Object.fromEntries(
-    CONFIRMATION_QUESTIONS.map((q) => [q.key, toYesNo(profile[q.key] as ProfileValue<boolean> | null)]),
+    ALL_QUESTIONS.map((q) => [q.key, toYesNo(profile[q.key as keyof ClinicalProfile] as ProfileValue<boolean> | null)]),
   ) as FormValues
   defaults.familyDiabetes = profile.familyDiabetes?.value ?? ''
   const { control, handleSubmit, formState } = useForm<FormValues>({ values: defaults })
 
   const submit = handleSubmit((values) => {
     const answers: RiskFactorAnswers = { familyDiabetes: values.familyDiabetes || null }
-    for (const q of CONFIRMATION_QUESTIONS) answers[q.key] = fromYesNo(values[q.key])
+    for (const q of CONFIRMATION_QUESTIONS) answers[q.key] = fromYesNo(values[q.key] as YesNo)
+    for (const q of DIAGNOSIS_QUESTIONS) {
+      if (formState.dirtyFields[q.key]) (answers as Record<string, boolean | null>)[q.key] = fromYesNo(values[q.key] as YesNo)
+    }
     onSubmit(answers)
   })
 
-  const sourceOf = (key: keyof ClinicalProfile) => {
-    const value = profile[key] as ProfileValue<unknown> | null
+  const sourceOf = (key: string) => {
+    const value = profile[key as keyof ClinicalProfile] as ProfileValue<unknown> | null
     return value ? SOURCE_LABELS[value.source] : 'sin dato'
   }
+
+  const questionGrid = (questions: { key: string; label: string }[]) =>
+    questions.map((q) => (
+      <Grid key={q.key} size={{ xs: 12, md: 6 }}>
+        <Controller
+          name={q.key}
+          control={control}
+          render={({ field }) => (
+            <YesNoQuestion label={q.label} source={sourceOf(q.key)} value={field.value as YesNo} disabled={readOnly} onChange={field.onChange} />
+          )}
+        />
+      </Grid>
+    ))
 
   return (
     <Stack component="form" onSubmit={submit} spacing={1}>
       <Grid container spacing={1}>
-        {CONFIRMATION_QUESTIONS.map((q) => (
-          <Grid key={q.key} size={{ xs: 12, md: 6 }}>
-            <Controller
-              name={q.key}
-              control={control}
-              render={({ field }) => (
-                <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-                  <ToggleButtonGroup
-                    size="small"
-                    exclusive
-                    disabled={readOnly}
-                    value={field.value}
-                    onChange={(_e, next: YesNo | null) => field.onChange(next ?? '')}
-                    sx={{ '& .MuiToggleButton-root': { py: 0.25, px: 1 } }}
-                  >
-                    <ToggleButton value="yes">Sí</ToggleButton>
-                    <ToggleButton value="no">No</ToggleButton>
-                  </ToggleButtonGroup>
-                  <Typography sx={{ fontSize: '13px', flex: 1 }}>
-                    {q.label}
-                    <Typography component="span" sx={{ fontSize: '11px', color: 'text.secondary', ml: 0.5 }}>
-                      ({sourceOf(q.key)})
-                    </Typography>
-                  </Typography>
-                </Stack>
-              )}
-            />
-          </Grid>
-        ))}
+        {questionGrid(CONFIRMATION_QUESTIONS)}
         <Grid size={{ xs: 12, md: 6 }}>
           <Controller
             name="familyDiabetes"
@@ -101,6 +91,15 @@ export function RiskFactorsForm({ profile, readOnly, saving, onSubmit }: RiskFac
             )}
           />
         </Grid>
+      </Grid>
+      <Typography sx={{ fontSize: '12px', fontWeight: 700, pt: 0.5 }}>
+        Diagnósticos (fibrilación auricular y CHA₂DS₂)
+        <Typography component="span" sx={{ fontSize: '11px', color: 'text.secondary', fontWeight: 400, ml: 0.5 }}>
+          · se guardan solo los que cambies
+        </Typography>
+      </Typography>
+      <Grid container spacing={1}>
+        {questionGrid(DIAGNOSIS_QUESTIONS)}
       </Grid>
       {!readOnly && (
         <AppButton type="submit" size="small" variant="contained" loading={saving} sx={{ alignSelf: 'flex-start' }}>

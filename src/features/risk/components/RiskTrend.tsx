@@ -1,34 +1,8 @@
 import { Chip, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import { formatShortDate } from '@/utils/format-date'
-import type { FindriscResult, GloboriskAssessment, RiskCalculation, RiskProfileResult } from '../types'
-
-const KIND_LABELS = { findrisc: 'FINDRISC', globorisk: 'Globorisk', risk_profile: 'Perfil de factores' } as const
-
-// Valor numérico para la tendencia (null si no hay puntaje).
-function numeric(calc: RiskCalculation): number | null {
-  if (calc.kind === 'findrisc') {
-    const r = calc.result as FindriscResult
-    return r.status === 'complete' ? r.score : null
-  }
-  if (calc.kind === 'globorisk') {
-    const r = calc.result as GloboriskAssessment
-    return r.status === 'calculated' ? r.risk * 100 : null
-  }
-  return (calc.result as RiskProfileResult).majorAltered
-}
-
-function display(calc: RiskCalculation): string {
-  if (calc.kind === 'findrisc') {
-    const r = calc.result as FindriscResult
-    if (r.status === 'not_applicable') return 'No aplica'
-    return r.status === 'complete' ? `${r.score} pts` : `${r.range[0]}–${r.range[1]} (incompleto)`
-  }
-  if (calc.kind === 'globorisk') {
-    const r = calc.result as GloboriskAssessment
-    return r.status === 'calculated' ? `${(r.risk * 100).toFixed(1)} % (${r.version}, ${r.baseYear})` : 'No calculado'
-  }
-  return `${(calc.result as RiskProfileResult).majorAltered} mayores alterados`
-}
+import type { RiskCalculation } from '../types'
+import { CALCULATION_KIND_LABELS } from '../utils/cardio-labels'
+import { calculationText, calculationValue } from '../utils/calculation-values'
 
 // Histórico de cálculos con la tendencia frente al cálculo anterior del mismo tipo.
 type RiskTrendProps = {
@@ -60,15 +34,15 @@ export function RiskTrend({ calculations, page = 0, rowsPerPage = calculations.l
       <TableBody>
         {calculations.slice(page * rowsPerPage, (page + 1) * rowsPerPage).map((calc, pageIndex) => {
           const index = page * rowsPerPage + pageIndex
-          const now = numeric(calc)
+          const now = calculationValue(calc)
           const prev = previousOf(index)
-          const before = prev ? numeric(prev) : null
+          const before = prev ? calculationValue(prev) : null
           const trend = now === null || before === null ? '—' : now > before ? '▲' : now < before ? '▼' : '='
           return (
             <TableRow key={calc.id}>
               <TableCell>{formatShortDate(calc.createdAt)}</TableCell>
-              <TableCell>{KIND_LABELS[calc.kind]}</TableCell>
-              <TableCell>{display(calc)}</TableCell>
+              <TableCell>{CALCULATION_KIND_LABELS[calc.kind]}</TableCell>
+              <TableCell>{calculationText(calc)}</TableCell>
               <TableCell sx={{ color: trend === '▲' ? 'error.main' : trend === '▼' ? 'success.main' : 'text.secondary' }}>
                 {trend}
               </TableCell>
