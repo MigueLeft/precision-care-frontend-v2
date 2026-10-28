@@ -55,6 +55,9 @@ export { useCreateParaclinical } from './hooks/useCreateParaclinical'
 export { useUpdateParaclinical } from './hooks/useUpdateParaclinical'
 export { useToggleParaclinicalActive } from './hooks/useToggleParaclinicalActive'
 export { useLabProfiles } from './hooks/useLabProfiles'
+export { useReferralProviders } from './hooks/useReferralProviders'
+export { ReferralProviderFormModal } from './components/ReferralProviderFormModal'
+export type { ReferralProviderFormValues } from './schemas/referral-provider-form.schema'
 export { LabStudiesPicker } from './components/LabStudiesPicker'
 export { labStudyOptions, labSubcategories } from './utils/lab-studies'
 export { categoryWithDescendants, rootCategories } from './utils/paraclinical-category-tree'
@@ -133,4 +136,6 @@ export type {
   UpdateDiseasePayload,
   SurgeryCatalog,
   HospitalizationCatalog,
+  ReferralProvider,
+  ReferralProviderPayload,
 } from './types'

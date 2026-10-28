@@ -3,13 +3,15 @@ import { Stack, Typography } from '@mui/material'
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
+import { ConsultationStudyOrdersDialog } from '@/features/deliverables'
 import { LabOrderDialog } from '../deliverables/LabOrderDialog'
 import { PrescriptionDialog } from '../deliverables/PrescriptionDialog'
 import { AnthropometryReportCards } from './AnthropometryReportCards'
 import { DeliverableActionCard } from './DeliverableActionCard'
 
-type DialogKind = 'prescription' | 'lab_order'
+type DialogKind = 'prescription' | 'lab_order' | 'study_orders'
 
 const ITEMS: { kind: DialogKind | null; icon: SvgIconComponent; title: string; subtitle: string }[] = [
   {
@@ -23,6 +25,12 @@ const ITEMS: { kind: DialogKind | null; icon: SvgIconComponent; title: string; s
     icon: ScienceOutlinedIcon,
     title: 'Orden de laboratorio',
     subtitle: 'Selecciona estudios o perfiles a ordenar',
+  },
+  {
+    kind: 'study_orders',
+    icon: MonitorHeartOutlinedIcon,
+    title: 'Órdenes de estudio',
+    subtitle: 'Eco, radiografía y otros estudios dirigidos a un centro',
   },
   {
     kind: null,
@@ -75,6 +83,13 @@ export function GenerarEntregablesPanel({ consultationId, patientId, readOnly }:
         consultationId={consultationId}
         readOnly={readOnly}
         open={open === 'lab_order'}
+        onClose={() => setOpen(null)}
+      />
+      <ConsultationStudyOrdersDialog
+        consultationId={consultationId}
+        patientId={patientId}
+        readOnly={readOnly}
+        open={open === 'study_orders'}
         onClose={() => setOpen(null)}
       />
     </div>

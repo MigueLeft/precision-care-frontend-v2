@@ -10,7 +10,7 @@ import {
   type PrescriptionDraftItem,
 } from '@/features/deliverables'
 import { useMedications, type Medication } from '@/features/catalogs'
-import { DeliverableDialogActions } from './DeliverableDialogActions'
+import { DeliverableDialogActions } from '@/features/deliverables'
 import { useConsultationMedications } from '../../hooks/useConsultationMedications'
 import type { ConsultationMedication } from '../../types'
 import { PrescriptionLineRow } from './PrescriptionLineRow'
@@ -98,7 +98,7 @@ function PrescriptionContent({ consultationId, readOnly, onClose, initial }: Con
   async function handlePrint() {
     try {
       const { deliverable } = await print.mutateAsync('prescription')
-      printDeliverable('prescription', deliverable.data as unknown as PrescriptionData)
+      printDeliverable({ type: 'prescription', data: deliverable.data as unknown as PrescriptionData })
     } catch {
       /* toast */
     }

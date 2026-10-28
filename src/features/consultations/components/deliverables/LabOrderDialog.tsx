@@ -15,7 +15,7 @@ import {
   useSaveLabOrder,
   type LabOrderData,
 } from '@/features/deliverables'
-import { DeliverableDialogActions } from './DeliverableDialogActions'
+import { DeliverableDialogActions } from '@/features/deliverables'
 import { LabProfileChips } from './LabProfileChips'
 import { useLabOrderSelection } from './useLabOrderSelection'
 
@@ -71,7 +71,7 @@ function LabOrderContent({
   async function handlePrint() {
     try {
       const { deliverable } = await print.mutateAsync('lab_order')
-      printDeliverable('lab_order', deliverable.data as unknown as LabOrderData)
+      printDeliverable({ type: 'lab_order', data: deliverable.data as unknown as LabOrderData })
     } catch { /* toast */ }
   }
 

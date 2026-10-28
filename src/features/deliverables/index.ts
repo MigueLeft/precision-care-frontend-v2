@@ -11,6 +11,8 @@ export { printDeliverable } from './utils/print-deliverable'
 // Piezas de impresión compartidas con otros reportes (p. ej. antropometría).
 export { printHtml, escape as escapeHtml, fullLogo as printFullLogo } from './utils/print-shared'
 export { DeliverablesPanel } from './components/DeliverablesPanel'
+export { DeliverableDialogActions } from './components/DeliverableDialogActions'
+export { ConsultationStudyOrdersDialog } from './components/study-orders/ConsultationStudyOrdersDialog'
 export { DeliverablesSettingsPage } from './components/settings/DeliverablesSettingsPage'
 export { fetchDeliverableTemplates } from './services/deliverable-templates.service'
 export { DELIVERABLE_TYPE_LABELS } from './utils/deliverable-format'

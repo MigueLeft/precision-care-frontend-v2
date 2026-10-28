@@ -232,3 +232,20 @@ export interface CreateLabProfilePayload {
   paraclinicalIds: number[]
 }
 export type UpdateLabProfilePayload = Partial<CreateLabProfilePayload>
+
+// Centro o especialista de referencia (destinatario de una orden de estudio).
+export interface ReferralProvider {
+  id: number
+  name: string
+  specialty: string | null
+  address: string | null
+  phone: string | null
+  active: boolean
+}
+
+export interface ReferralProviderPayload {
+  name: string
+  specialty?: string
+  address?: string
+  phone?: string
+}

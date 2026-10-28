@@ -5,6 +5,7 @@ export const DELIVERABLE_TYPE_LABELS: Record<DeliverableType, string> = {
   lab_order: 'Orden de lab',
   nutritional_report: 'Reporte',
   other: 'Otro',
+  study_order: 'Orden de estudio',
 }
 
 // Título legible a partir del template + campos comunes del `data`.

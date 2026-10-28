@@ -3,6 +3,7 @@ export type DeliverableType =
   | 'lab_order'
   | 'nutritional_report'
   | 'other'
+  | 'study_order'
 
 export interface Deliverable {
   id: number
@@ -28,6 +29,11 @@ export interface Deliverable {
 export interface PrescriptionTemplateSettings {
   recipeTitle?: string
   indicationsTitle?: string
+}
+
+export interface StudyOrderTemplateSettings {
+  // Texto antes de los estudios ("Favor practicar").
+  requestLabel?: string
 }
 
 export interface LabOrderTemplateSettings {
@@ -56,7 +62,7 @@ export interface DeliverableHeader {
   }
   // Fecha de la consulta (ISO).
   date: string
-  template?: PrescriptionTemplateSettings & LabOrderTemplateSettings
+  template?: PrescriptionTemplateSettings & LabOrderTemplateSettings & StudyOrderTemplateSettings
 }
 
 export interface LabOrderLine {
@@ -143,4 +149,55 @@ export interface PrintDeliverableResult {
   deliverable: Deliverable
   // false = reimpresión sin cambios (no se registró de nuevo).
   created: boolean
+}
+
+// ─── Órdenes de estudio ─────────────────────────────────────────────────────
+
+export interface StudyOrderProvider {
+  name: string
+  specialty: string | null
+  address: string | null
+  phone: string | null
+}
+
+export interface StudyOrderItem {
+  // null = estudio escrito a mano.
+  paraclinicalCatalogId: number | null
+  name: string
+  instructions: string | null
+}
+
+export interface StudyOrder {
+  id: number
+  patientId: number
+  // null = creada desde el expediente.
+  consultationId: number | null
+  specialistId: number
+  orderDate: string
+  indications: string | null
+  deliverableId: number | null
+  referralProvider: (StudyOrderProvider & { id: number; active: boolean }) | null
+  items: StudyOrderItem[]
+}
+
+// Igual que el DTO del backend (UpdateStudyOrderSchema / CreateStudyOrderSchema).
+export interface StudyOrderContentPayload {
+  referralProviderId?: number | null
+  newReferralProvider?: { name: string; specialty?: string; address?: string; phone?: string }
+  indications?: string
+  items: { paraclinicalCatalogId?: number; name?: string; instructions?: string }[]
+  specialistId?: number
+}
+
+export type CreateStudyOrderPayload = StudyOrderContentPayload & {
+  patientId: number
+  consultationId?: number
+}
+
+// "Foto" guardada en deliverable.data al imprimir o al finalizar la consulta.
+export type StudyOrderData = DeliverableHeader & {
+  studyOrderId: number
+  referralProvider: StudyOrderProvider | null
+  indications: string | null
+  items: { name: string; instructions: string | null }[]
 }

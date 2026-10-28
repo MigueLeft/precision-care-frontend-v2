@@ -9,6 +9,7 @@ import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined'
 import CoronavirusOutlinedIcon from '@mui/icons-material/CoronavirusOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
+import ApartmentOutlinedIcon from '@mui/icons-material/ApartmentOutlined'
 import { MedicationsTab } from './MedicationsTab'
 import { ParaclinicalsTab } from './ParaclinicalsTab'
 import { SymptomsTab } from './SymptomsTab'
@@ -18,6 +19,7 @@ import { DemographicListsTab } from './DemographicListsTab'
 import { BodySystemsTab } from './BodySystemsTab'
 import { MedicalSpecialtiesTab } from './MedicalSpecialtiesTab'
 import { AntecedentCatalogsTab } from './AntecedentCatalogsTab'
+import { ReferralProvidersTab } from './ReferralProvidersTab'
 
 const TABS = [
   { label: 'Medicamentos', icon: LinkOutlinedIcon },
@@ -29,6 +31,7 @@ const TABS = [
   { label: 'Especialidades', icon: LocalHospitalOutlinedIcon },
   { label: 'Listas demográficas', icon: ListOutlinedIcon },
   { label: 'Cirugías y hospitalizaciones', icon: HistoryOutlinedIcon },
+  { label: 'Centros de referencia', icon: ApartmentOutlinedIcon },
 ] as const
 
 export function CatalogsPage() {
@@ -58,6 +61,7 @@ export function CatalogsPage() {
       {tab === 6 && <MedicalSpecialtiesTab />}
       {tab === 7 && <DemographicListsTab />}
       {tab === 8 && <AntecedentCatalogsTab />}
+      {tab === 9 && <ReferralProvidersTab />}
     </Box>
   )
 }
