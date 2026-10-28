@@ -325,3 +325,13 @@ export interface IntakeLandingResult {
   medications: IntakeLandingCount
   allergies: IntakeLandingCount
 }
+
+// Resultado de recalcular el scoring del IM1 (estilo de vida y demás
+// mapeos) con las respuestas ya guardadas por el paciente.
+export interface RecalculateLifestyleResult {
+  mappingId: number
+  scoringType: string
+  destinationType: string
+  score: number
+  interpretation: string | null
+}

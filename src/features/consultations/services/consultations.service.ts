@@ -22,6 +22,7 @@ import type {
   MedicationHistoryItem,
   ConsultationEvolution,
   IntakeLandingResult,
+  RecalculateLifestyleResult,
 } from '../types'
 
 export async function fetchConsultationsByPatient(
@@ -323,4 +324,15 @@ export async function landConsultationIntake(id: number): Promise<IntakeLandingR
     `/consultations/${id}/land-intake`,
   )
   return data.landing
+}
+
+// Recalcula el estilo de vida (Life's Essential 8) y demás scores del último
+// formulario de ingreso completado del paciente, con las respuestas ya guardadas.
+export async function recalculateConsultationLifestyle(
+  id: number,
+): Promise<RecalculateLifestyleResult[]> {
+  const { data } = await api.post<{ results: RecalculateLifestyleResult[] }>(
+    `/consultations/${id}/recalculate-lifestyle`,
+  )
+  return data.results
 }
