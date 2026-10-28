@@ -6,9 +6,9 @@ function todayIsoDate() {
   return new Date().toISOString().slice(0, 10)
 }
 
-// Solo los campos esenciales del modal de creación/edición — el resto de los
-// campos del DTO del backend (dirección, estado civil, raza, etc.) se difieren
-// a una futura pantalla de perfil completo.
+// Solo los campos esenciales del modal de creación/edición (más la raza, que
+// usa la PCE) — el resto del DTO del backend (dirección, estado civil, etc.) se
+// difiere a una futura pantalla de perfil completo.
 export const patientFormSchema = z.object({
   firstName: lettersOnlySchema('El primer nombre', 60),
   middleName: optionalLettersOnlySchema('El segundo nombre', 60),
@@ -35,6 +35,7 @@ export const patientFormSchema = z.object({
     .refine((value) => value === '' || isValidPhone(value), 'El teléfono no es válido para el país elegido.'),
   nationalityCountryId: z.number().int().positive().optional(),
   residenceCountryId: z.number().int().positive().optional(),
+  raceId: z.number().int().positive().optional(),
 })
 
 export type PatientFormValues = z.infer<typeof patientFormSchema>
@@ -51,4 +52,5 @@ export const patientFormDefaultValues: PatientFormValues = {
   phone: '',
   nationalityCountryId: undefined,
   residenceCountryId: undefined,
+  raceId: undefined,
 }

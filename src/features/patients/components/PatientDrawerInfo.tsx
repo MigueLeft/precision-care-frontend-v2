@@ -1,5 +1,6 @@
 import { Box, Stack, Typography, Divider } from '@mui/material'
 import { formatPhone } from '@/utils/phone'
+import { useRaces } from '@/features/catalogs'
 import { formatBirthDate, calculatePatientAge, PATIENT_SEX_LABELS } from '../utils/patient-format'
 import type { Patient } from '../types'
 
@@ -23,6 +24,8 @@ function InfoRow({ label, value }: InfoRowProps) {
 }
 
 export function PatientDrawerInfo({ patient, countryNameById }: PatientDrawerInfoProps) {
+  const { data: races = [] } = useRaces()
+  const raceName = races.find((race) => race.id === patient.raceId)?.name
   const nationalityName = patient.nationalityCountryId
     ? countryNameById.get(patient.nationalityCountryId)
     : undefined
@@ -40,6 +43,7 @@ export function PatientDrawerInfo({ patient, countryNameById }: PatientDrawerInf
         value={`${formatBirthDate(patient.birthDate)} (${calculatePatientAge(patient.birthDate)} años)`}
       />
       <InfoRow label="Sexo" value={patient.sex ? PATIENT_SEX_LABELS[patient.sex] : 'Sin registrar'} />
+      <InfoRow label="Raza" value={raceName ?? 'Sin registrar'} />
       <InfoRow label="Nacionalidad" value={nationalityName ?? '—'} />
       <InfoRow label="Residencia" value={residenceName ?? '—'} />
 

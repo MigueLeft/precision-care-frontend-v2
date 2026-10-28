@@ -327,4 +327,6 @@ export interface IntakeLandingResult {
   hospitalizations: IntakeLandingCount
   medications: IntakeLandingCount
   allergies: IntakeLandingCount
+  // Raza del IM1 en la ficha del paciente (1 = se cargó).
+  race: IntakeLandingCount
 }

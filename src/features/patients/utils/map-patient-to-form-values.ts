@@ -14,5 +14,6 @@ export function mapPatientToFormValues(patient: Patient): PatientFormValues {
     phone: patient.phone ?? '',
     nationalityCountryId: patient.nationalityCountryId ?? undefined,
     residenceCountryId: patient.residenceCountryId ?? undefined,
+    raceId: patient.raceId ?? undefined,
   }
 }
