@@ -169,6 +169,13 @@ export interface ConsultationAllergy {
   createdAt: string
 }
 
+// Editar una alergia (el agente no cambia); null borra reacción o año.
+export interface UpdateAllergyInput {
+  severityId?: number
+  reaction?: string | null
+  onsetYear?: number | null
+}
+
 export interface AddAllergyInput {
   allergyCatalogId?: number
   name?: string

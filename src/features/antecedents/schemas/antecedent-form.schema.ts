@@ -1,10 +1,10 @@
 import { z } from 'zod'
 import { PARTIAL_DATE_REGEX } from '@/utils/partial-date'
 
-// Igual que el DTO del backend: mes y año, con día opcional.
+// Igual que el DTO del backend: año, mes y año, o fecha completa.
 const optionalDate = z
   .string()
-  .regex(PARTIAL_DATE_REGEX, 'Indica al menos el mes y el año.')
+  .regex(PARTIAL_DATE_REGEX, 'Indica al menos el año.')
   .optional()
   .or(z.literal(''))
 

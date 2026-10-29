@@ -10,7 +10,7 @@ export interface AntecedentFieldProps {
   control: Control<AntecedentFormValues>
   name: AntecedentFieldName
   label: string
-  // 'date' = fecha parcial (mes y año, día opcional).
+  // 'date' = fecha parcial (año; mes y día opcionales).
   type?: 'text' | 'date'
   multiline?: boolean
 }

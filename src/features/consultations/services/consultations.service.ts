@@ -10,6 +10,7 @@ import type {
   PatientSymptom,
   ConsultationAllergy,
   AddAllergyInput,
+  UpdateAllergyInput,
   ConsultationDisease,
   AddDiseaseInput,
   UpdateDiseaseInput,
@@ -165,6 +166,18 @@ export async function addConsultationAllergy(
 ): Promise<ConsultationAllergy> {
   const { data } = await api.post<{ allergy: ConsultationAllergy }>(
     `/consultations/${id}/allergies`,
+    input,
+  )
+  return data.allergy
+}
+
+export async function updateConsultationAllergy(
+  id: number,
+  allergyId: number,
+  input: UpdateAllergyInput,
+): Promise<ConsultationAllergy> {
+  const { data } = await api.patch<{ allergy: ConsultationAllergy }>(
+    `/consultations/${id}/allergies/${allergyId}`,
     input,
   )
   return data.allergy

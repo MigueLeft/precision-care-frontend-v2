@@ -21,7 +21,7 @@ type PartialDateFieldProps = {
   sx?: SxProps<Theme>
 }
 
-// Fecha con día opcional: basta con mes y año.
+// Fecha parcial: basta con el año; mes y día son opcionales (el día pide mes).
 export function PartialDateField({
   label,
   value,
@@ -65,7 +65,7 @@ export function PartialDateField({
           size="small"
           label="Día"
           value={parts.day}
-          disabled={disabled}
+          disabled={disabled || !parts.month}
           onChange={(event) => update({ day: event.target.value })}
           sx={{ width: 76, flexShrink: 0 }}
         >

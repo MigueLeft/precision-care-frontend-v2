@@ -1,5 +1,5 @@
-// Fechas clínicas parciales: mes y año ('YYYY-MM') o completas ('YYYY-MM-DD').
-// El paciente suele no recordar el día, así que el día es opcional.
+// Fechas clínicas parciales: solo año ('YYYY'), mes y año ('YYYY-MM') o
+// completas ('YYYY-MM-DD'). El paciente suele no recordar el día ni el mes.
 
 export interface PartialDateParts {
   year: string
@@ -24,12 +24,12 @@ export const MONTH_LABELS = [
 
 export const MIN_PARTIAL_DATE_YEAR = 1900
 
-export const PARTIAL_DATE_REGEX = /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/
+export const PARTIAL_DATE_REGEX = /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$/
 
 export function parsePartialDate(value: string | null | undefined): PartialDateParts {
-  const match = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(value ?? '')
+  const match = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?/.exec(value ?? '')
   if (!match) return { year: '', month: '', day: '' }
-  return { year: match[1], month: match[2], day: match[3] ?? '' }
+  return { year: match[1], month: match[2] ?? '', day: match[3] ?? '' }
 }
 
 export function daysInMonth(year: string, month: string): number {
@@ -45,8 +45,10 @@ export function isValidPartialYear(year: string): boolean {
   return numeric >= MIN_PARTIAL_DATE_YEAR && numeric <= new Date().getFullYear()
 }
 
-// Valor a guardar; vacío mientras falte el mes o el año (o el año sea inválido).
+// Valor a guardar; vacío mientras falte el año (o sea inválido). El día solo
+// cuenta si hay mes.
 export function composePartialDate({ year, month, day }: PartialDateParts): string {
-  if (!month || !isValidPartialYear(year)) return ''
+  if (!isValidPartialYear(year)) return ''
+  if (!month) return year
   return day ? `${year}-${month}-${day}` : `${year}-${month}`
 }

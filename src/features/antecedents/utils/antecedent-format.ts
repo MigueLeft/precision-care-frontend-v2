@@ -26,7 +26,7 @@ export const ANTECEDENT_TYPE_LABELS: Record<AntecedentType, string> = {
   other: 'Otro',
 }
 
-// "10/05/2020" (fecha completa) o "05/2020" (solo mes y año).
+// "10/05/2020" (fecha completa), "05/2020" (mes y año) o "2020" (solo año).
 export function formatEventDate(eventDate: string | null): string {
   return formatFreeDate(eventDate)
 }

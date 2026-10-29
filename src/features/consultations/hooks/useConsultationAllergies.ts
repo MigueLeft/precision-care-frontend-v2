@@ -5,12 +5,13 @@ import {
   fetchConsultationAllergyHistory,
   addConsultationAllergy,
   removeConsultationAllergy,
+  updateConsultationAllergy,
   setNoKnownAllergies,
 } from '../services/consultations.service'
 import { consultationsKeys } from './consultations.keys'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import { patientsKeys } from '@/features/patients'
-import type { AddAllergyInput } from '../types'
+import type { AddAllergyInput, UpdateAllergyInput } from '../types'
 
 export function useConsultationAllergies(id: number) {
   return useQuery({
@@ -46,6 +47,22 @@ export function useAddConsultationAllergy(id: number, options?: { onSuccess?: ()
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'Error al registrar la alergia'))
+    },
+  })
+}
+
+export function useUpdateConsultationAllergy(id: number, options?: { onSuccess?: () => void }) {
+  const invalidate = useInvalidateAllergies(id)
+  return useMutation({
+    mutationFn: ({ allergyId, input }: { allergyId: number; input: UpdateAllergyInput }) =>
+      updateConsultationAllergy(id, allergyId, input),
+    onSuccess: () => {
+      invalidate()
+      toast.success('Alergia actualizada')
+      options?.onSuccess?.()
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Error al actualizar la alergia'))
     },
   })
 }

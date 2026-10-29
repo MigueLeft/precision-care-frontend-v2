@@ -1,13 +1,5 @@
-import {
-  Box,
-  Checkbox,
-  Chip,
-  FormControlLabel,
-  IconButton,
-  Stack,
-  Typography,
-} from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { useState } from 'react'
+import { Checkbox, Chip, FormControlLabel, Stack, Typography } from '@mui/material'
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined'
 import { formatShortDate } from '@/utils/format-date'
 import {
@@ -18,6 +10,9 @@ import {
 } from '../../hooks/useConsultationAllergies'
 import { AllergyHistory } from './AllergyHistory'
 import { AllergyAddForm } from './AllergyAddForm'
+import { AllergyCard } from './AllergyCard'
+import { isSevereAllergy } from '../../utils/allergy'
+import { AllergyEditDialog } from './AllergyEditDialog'
 import type { ConsultationAllergy } from '../../types'
 
 interface AllergiesBlockProps {
@@ -25,9 +20,6 @@ interface AllergiesBlockProps {
   consultationDate: string
   readOnly: boolean
 }
-
-const isSevere = (allergy: ConsultationAllergy) =>
-  /sever[oa]|grave/i.test(allergy.severityName ?? '')
 
 // Bloque "Alergias" dentro de Antecedentes (se guardan a nivel paciente).
 export function AllergiesBlock({
@@ -38,12 +30,13 @@ export function AllergiesBlock({
   const { data } = useConsultationAllergies(consultationId)
   const allergies = data?.allergies ?? []
   const noKnownAllergies = data?.noKnownAllergies ?? false
+  const [editing, setEditing] = useState<ConsultationAllergy | null>(null)
 
   const addMutation = useAddConsultationAllergy(consultationId)
   const removeMutation = useRemoveConsultationAllergy(consultationId)
   const flagMutation = useSetNoKnownAllergies(consultationId)
 
-  const severe = allergies.find(isSevere)
+  const severe = allergies.find(isSevereAllergy)
   const usedCatalogIds = new Set(allergies.map((allergy) => allergy.allergyCatalogId))
 
   return (
@@ -80,45 +73,13 @@ export function AllergiesBlock({
 
       <Stack spacing={1} sx={{ my: 1.5 }}>
         {allergies.map((allergy) => (
-          <Box
+          <AllergyCard
             key={allergy.id}
-            sx={(theme) => ({
-              p: 1.5,
-              borderRadius: 1.5,
-              border: '1px solid',
-              borderColor: isSevere(allergy) ? 'error.light' : 'divider',
-              bgcolor: isSevere(allergy)
-                ? theme.palette.error.light + '14'
-                : 'transparent',
-            })}
-          >
-            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <Typography sx={{ fontSize: '14px' }}>
-                <Box component="span" sx={{ fontWeight: 700, color: isSevere(allergy) ? 'error.main' : 'text.primary' }}>
-                  {allergy.name ?? '—'}
-                </Box>
-                <Box component="span" sx={{ color: 'text.secondary' }}>
-                  {allergy.typeName ? `  ${allergy.typeName}` : ''}
-                  {allergy.severityName ? `  ${allergy.severityName}` : ''}
-                  {allergy.onsetYear ? `  desde ${allergy.onsetYear}` : ''}
-                </Box>
-              </Typography>
-              {!readOnly && (
-                <IconButton
-                  size="small"
-                  aria-label="Quitar alergia"
-                  onClick={() => removeMutation.mutate(allergy.id)}
-                >
-                  <CloseIcon sx={{ fontSize: 18 }} />
-                </IconButton>
-              )}
-            </Stack>
-            {allergy.reaction && (
-              <Typography sx={{ fontSize: '13px', fontStyle: 'italic', color: 'text.secondary' }}>
-                {allergy.reaction}
-              </Typography>
-            )}
-          </Box>
+            allergy={allergy}
+            readOnly={readOnly}
+            onEdit={() => setEditing(allergy)}
+            onRemove={() => removeMutation.mutate(allergy.id)}
+          />
         ))}
       </Stack>
 
@@ -133,6 +94,8 @@ export function AllergiesBlock({
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic' }}>
         Las alergias severas se muestran en la barra del paciente y validan las prescripciones.
       </Typography>
+
+      <AllergyEditDialog consultationId={consultationId} allergy={editing} onClose={() => setEditing(null)} />
     </Stack>
   )
 }
