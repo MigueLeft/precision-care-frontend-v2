@@ -1,6 +1,7 @@
 import GridViewOutlinedIcon from '@mui/icons-material/GridViewOutlined'
 import HistoryOutlinedIcon from '@mui/icons-material/HistoryOutlined'
 import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined'
+import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined'
 import MedicalInformationOutlinedIcon from '@mui/icons-material/MedicalInformationOutlined'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import MedicationOutlinedIcon from '@mui/icons-material/MedicationOutlined'
@@ -27,6 +28,7 @@ export type MedicalRecordTabTo =
   | '/pacientes/$patientId/resumen'
   | '/pacientes/$patientId/antecedentes'
   | '/pacientes/$patientId/consultas'
+  | '/pacientes/$patientId/notas'
   | '/pacientes/$patientId/nota-evolutiva'
   | '/pacientes/$patientId/sintomas'
   | '/pacientes/$patientId/enfermedades'
@@ -67,6 +69,12 @@ export const MEDICAL_RECORD_TABS: MedicalRecordTab[] = [
     label: 'Consultas',
     icon: MedicalInformationOutlinedIcon,
     countKey: 'consultas',
+  },
+  {
+    slug: 'notas',
+    to: '/pacientes/$patientId/notas',
+    label: 'Notas',
+    icon: StickyNote2OutlinedIcon,
   },
   {
     slug: 'nota-evolutiva',

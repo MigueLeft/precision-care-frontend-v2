@@ -23,6 +23,7 @@ export const RECORD_TAB_PERMISSIONS: Record<string, string> = {
   resumen: 'pacientes:read',
   antecedentes: 'antecedentes:read',
   consultas: 'consultas:read',
+  notas: 'consultas:read',
   'nota-evolutiva': 'consultas:read',
   sintomas: 'consultas:read',
   enfermedades: 'consultas:read',
