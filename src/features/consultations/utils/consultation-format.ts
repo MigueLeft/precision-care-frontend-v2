@@ -59,6 +59,7 @@ const ACUTE_DISEASE_STATUSES: DiseaseStatus[] = [
   'to_diagnose',
 ]
 const CHRONIC_DISEASE_STATUSES: DiseaseStatus[] = [
+  'active',
   'controlled',
   'remission',
   'discarded',
