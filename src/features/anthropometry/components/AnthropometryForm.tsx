@@ -1,4 +1,4 @@
-import { Box, Stack, TextField, Typography } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, Stack, TextField, Typography } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import { ANTHROPOMETRY_GROUPS } from '../config'
 import { useAnthropometryForm } from '../hooks/useAnthropometryForm'
@@ -58,20 +58,39 @@ export function AnthropometryForm({
               computed={form.computed}
               previous={previous}
               readOnly={readOnly}
+              segmentsEnabled={form.segmentsEnabled}
               onChange={form.setField}
             />
+            {/* La composición por segmento va justo después de la composición general. */}
+            {group.id === 'composition' && (
+              <Box sx={{ mt: 1.5 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      checked={form.segmentsEnabled}
+                      disabled={readOnly}
+                      onChange={(event) => form.setSegmentsEnabled(event.target.checked)}
+                    />
+                  }
+                  label="Composición por segmento"
+                  sx={{ '& .MuiFormControlLabel-label': { fontSize: '13px' } }}
+                />
+                {form.segmentsEnabled && (
+                  <SegmentInputsTable raw={form.raw} readOnly={readOnly} onChange={form.setField} />
+                )}
+              </Box>
+            )}
           </Box>
         ))}
       </Stack>
 
-      <Box>
-        <SegmentInputsTable raw={form.raw} readOnly={readOnly} onChange={form.setField} />
-      </Box>
-
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic' }}>
         Las filas "calc." se calculan solas: masa magra % = 100 − masa grasa %; masa grasa y magra
-        en kg a partir del peso; masa magra apendicular = suma de la masa magra de brazos y piernas;
-        circunferencia muscular del brazo = circ. braquial − π × pliegue tricipital.
+        en kg a partir del peso; circunferencia muscular del brazo = circ. braquial − π × pliegue
+        tricipital. Con composición por segmento, la masa músculo esquelética (0,566 × masa magra) y
+        la masa magra apendicular (brazos + piernas) salen de los segmentos; sin ella se escriben
+        del reporte de bioimpedancia. MMA/talla² se calcula siempre.
       </Typography>
 
       <TextField

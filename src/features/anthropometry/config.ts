@@ -6,6 +6,8 @@ export interface AnthropometryParam {
   unit: string
   // Calculado: no se captura a mano.
   calc?: boolean
+  // Calculado solo con la composición por segmento; sin ella se captura a mano.
+  calcWithSegments?: boolean
   decimals?: number
   // Dirección "buena" del cambio, para colorear el delta vs. la medición anterior.
   betterWhen?: 'lower' | 'higher'
@@ -19,8 +21,20 @@ export interface AnthropometryGroup {
 
 export const ANTHROPOMETRY_GROUPS: AnthropometryGroup[] = [
   {
+    id: 'vitals',
+    title: 'Signos vitales',
+    params: [
+      { key: 'systolicBp', label: 'Presión arterial sistólica', unit: 'mmHg', betterWhen: 'lower' },
+      { key: 'diastolicBp', label: 'Presión arterial diastólica', unit: 'mmHg', betterWhen: 'lower' },
+      { key: 'heartRate', label: 'Frecuencia cardíaca', unit: 'lpm', betterWhen: 'lower' },
+      { key: 'respiratoryRate', label: 'Frecuencia respiratoria', unit: 'rpm', decimals: 0 },
+      { key: 'temperatureC', label: 'Temperatura', unit: '°C', decimals: 1 },
+      { key: 'oxygenSaturation', label: 'Saturación de oxígeno', unit: '%', betterWhen: 'higher' },
+    ],
+  },
+  {
     id: 'composition',
-    title: 'Composición corporal',
+    title: 'Antropometría y composición',
     params: [
       { key: 'heightCm', label: 'Altura', unit: 'cm' },
       { key: 'weightKg', label: 'Peso', unit: 'kg' },
@@ -35,14 +49,14 @@ export const ANTHROPOMETRY_GROUPS: AnthropometryGroup[] = [
         key: 'skeletalMuscleMassKg',
         label: 'Masa músculo esquelética',
         unit: 'kg',
-        calc: true,
+        calcWithSegments: true,
         betterWhen: 'higher',
       },
       {
         key: 'appendicularLeanMassKg',
         label: 'Masa magra apendicular',
         unit: 'kg',
-        calc: true,
+        calcWithSegments: true,
         betterWhen: 'higher',
       },
       {
@@ -70,6 +84,24 @@ export const ANTHROPOMETRY_GROUPS: AnthropometryGroup[] = [
         betterWhen: 'lower',
       },
       { key: 'neckCircCm', label: 'Circunferencia del cuello', unit: 'cm' },
+      { key: 'brachialCircCm', label: 'Circunferencia braquial', unit: 'cm' },
+      {
+        key: 'armMuscleCircCm',
+        label: 'Circunferencia muscular del brazo',
+        unit: 'cm',
+        calc: true,
+      },
+    ],
+  },
+  {
+    id: 'skinfolds',
+    title: 'Pliegues',
+    params: [
+      { key: 'tricepsSkinfoldMm', label: 'Pliegue tricipital', unit: 'mm' },
+      { key: 'subscapularSkinfoldMm', label: 'Pliegue subescapular', unit: 'mm' },
+      { key: 'abdominalSkinfoldMm', label: 'Pliegue abdominal', unit: 'mm' },
+      { key: 'suprailiacSkinfoldMm', label: 'Pliegue suprailiaco', unit: 'mm' },
+      { key: 'thighSkinfoldMm', label: 'Pliegue de muslo', unit: 'mm' },
     ],
   },
   {
@@ -85,34 +117,6 @@ export const ANTHROPOMETRY_GROUPS: AnthropometryGroup[] = [
         calc: true,
         betterWhen: 'lower',
       },
-    ],
-  },
-  {
-    id: 'vitals',
-    title: 'Signos vitales',
-    params: [
-      { key: 'systolicBp', label: 'Presión arterial sistólica', unit: 'mmHg', betterWhen: 'lower' },
-      { key: 'diastolicBp', label: 'Presión arterial diastólica', unit: 'mmHg', betterWhen: 'lower' },
-      { key: 'heartRate', label: 'Frecuencia cardíaca', unit: 'lpm', betterWhen: 'lower' },
-      { key: 'oxygenSaturation', label: 'Saturación de oxígeno', unit: '%', betterWhen: 'higher' },
-    ],
-  },
-  {
-    id: 'skinfolds',
-    title: 'Pliegues',
-    params: [
-      { key: 'brachialCircCm', label: 'Circunferencia braquial', unit: 'cm' },
-      {
-        key: 'armMuscleCircCm',
-        label: 'Circunferencia muscular del brazo',
-        unit: 'cm',
-        calc: true,
-      },
-      { key: 'tricepsSkinfoldMm', label: 'Pliegue tricipital', unit: 'mm' },
-      { key: 'subscapularSkinfoldMm', label: 'Pliegue subescapular', unit: 'mm' },
-      { key: 'abdominalSkinfoldMm', label: 'Pliegue abdominal', unit: 'mm' },
-      { key: 'suprailiacSkinfoldMm', label: 'Pliegue suprailiaco', unit: 'mm' },
-      { key: 'thighSkinfoldMm', label: 'Pliegue de muslo', unit: 'mm' },
     ],
   },
 ]
