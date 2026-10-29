@@ -34,6 +34,7 @@ import { Route as AppPacientesPatientIdIndexRouteImport } from './routes/_app/pa
 import { Route as AppPacientesPatientIdSintomasRouteImport } from './routes/_app/pacientes_.$patientId/sintomas'
 import { Route as AppPacientesPatientIdResumenRouteImport } from './routes/_app/pacientes_.$patientId/resumen'
 import { Route as AppPacientesPatientIdParaclinicosRouteImport } from './routes/_app/pacientes_.$patientId/paraclinicos'
+import { Route as AppPacientesPatientIdNotasRouteImport } from './routes/_app/pacientes_.$patientId/notas'
 import { Route as AppPacientesPatientIdNotaEvolutivaRouteImport } from './routes/_app/pacientes_.$patientId/nota-evolutiva'
 import { Route as AppPacientesPatientIdMedicamentosRouteImport } from './routes/_app/pacientes_.$patientId/medicamentos'
 import { Route as AppPacientesPatientIdIngresablesRouteImport } from './routes/_app/pacientes_.$patientId/ingresables'
@@ -177,6 +178,12 @@ const AppPacientesPatientIdParaclinicosRoute =
     path: '/paraclinicos',
     getParentRoute: () => AppPacientesPatientIdRouteRoute,
   } as any)
+const AppPacientesPatientIdNotasRoute =
+  AppPacientesPatientIdNotasRouteImport.update({
+    id: '/notas',
+    path: '/notas',
+    getParentRoute: () => AppPacientesPatientIdRouteRoute,
+  } as any)
 const AppPacientesPatientIdNotaEvolutivaRoute =
   AppPacientesPatientIdNotaEvolutivaRouteImport.update({
     id: '/nota-evolutiva',
@@ -275,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/pacientes/$patientId/ingresables': typeof AppPacientesPatientIdIngresablesRoute
   '/pacientes/$patientId/medicamentos': typeof AppPacientesPatientIdMedicamentosRoute
   '/pacientes/$patientId/nota-evolutiva': typeof AppPacientesPatientIdNotaEvolutivaRoute
+  '/pacientes/$patientId/notas': typeof AppPacientesPatientIdNotasRoute
   '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
   '/pacientes/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
@@ -310,6 +318,7 @@ export interface FileRoutesByTo {
   '/pacientes/$patientId/ingresables': typeof AppPacientesPatientIdIngresablesRoute
   '/pacientes/$patientId/medicamentos': typeof AppPacientesPatientIdMedicamentosRoute
   '/pacientes/$patientId/nota-evolutiva': typeof AppPacientesPatientIdNotaEvolutivaRoute
+  '/pacientes/$patientId/notas': typeof AppPacientesPatientIdNotasRoute
   '/pacientes/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/pacientes/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
   '/pacientes/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
@@ -349,6 +358,7 @@ export interface FileRoutesById {
   '/_app/pacientes_/$patientId/ingresables': typeof AppPacientesPatientIdIngresablesRoute
   '/_app/pacientes_/$patientId/medicamentos': typeof AppPacientesPatientIdMedicamentosRoute
   '/_app/pacientes_/$patientId/nota-evolutiva': typeof AppPacientesPatientIdNotaEvolutivaRoute
+  '/_app/pacientes_/$patientId/notas': typeof AppPacientesPatientIdNotasRoute
   '/_app/pacientes_/$patientId/paraclinicos': typeof AppPacientesPatientIdParaclinicosRoute
   '/_app/pacientes_/$patientId/resumen': typeof AppPacientesPatientIdResumenRoute
   '/_app/pacientes_/$patientId/sintomas': typeof AppPacientesPatientIdSintomasRoute
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/ingresables'
     | '/pacientes/$patientId/medicamentos'
     | '/pacientes/$patientId/nota-evolutiva'
+    | '/pacientes/$patientId/notas'
     | '/pacientes/$patientId/paraclinicos'
     | '/pacientes/$patientId/resumen'
     | '/pacientes/$patientId/sintomas'
@@ -422,6 +433,7 @@ export interface FileRouteTypes {
     | '/pacientes/$patientId/ingresables'
     | '/pacientes/$patientId/medicamentos'
     | '/pacientes/$patientId/nota-evolutiva'
+    | '/pacientes/$patientId/notas'
     | '/pacientes/$patientId/paraclinicos'
     | '/pacientes/$patientId/resumen'
     | '/pacientes/$patientId/sintomas'
@@ -460,6 +472,7 @@ export interface FileRouteTypes {
     | '/_app/pacientes_/$patientId/ingresables'
     | '/_app/pacientes_/$patientId/medicamentos'
     | '/_app/pacientes_/$patientId/nota-evolutiva'
+    | '/_app/pacientes_/$patientId/notas'
     | '/_app/pacientes_/$patientId/paraclinicos'
     | '/_app/pacientes_/$patientId/resumen'
     | '/_app/pacientes_/$patientId/sintomas'
@@ -650,6 +663,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPacientesPatientIdParaclinicosRouteImport
       parentRoute: typeof AppPacientesPatientIdRouteRoute
     }
+    '/_app/pacientes_/$patientId/notas': {
+      id: '/_app/pacientes_/$patientId/notas'
+      path: '/notas'
+      fullPath: '/pacientes/$patientId/notas'
+      preLoaderRoute: typeof AppPacientesPatientIdNotasRouteImport
+      parentRoute: typeof AppPacientesPatientIdRouteRoute
+    }
     '/_app/pacientes_/$patientId/nota-evolutiva': {
       id: '/_app/pacientes_/$patientId/nota-evolutiva'
       path: '/nota-evolutiva'
@@ -740,6 +760,7 @@ interface AppPacientesPatientIdRouteRouteChildren {
   AppPacientesPatientIdIngresablesRoute: typeof AppPacientesPatientIdIngresablesRoute
   AppPacientesPatientIdMedicamentosRoute: typeof AppPacientesPatientIdMedicamentosRoute
   AppPacientesPatientIdNotaEvolutivaRoute: typeof AppPacientesPatientIdNotaEvolutivaRoute
+  AppPacientesPatientIdNotasRoute: typeof AppPacientesPatientIdNotasRoute
   AppPacientesPatientIdParaclinicosRoute: typeof AppPacientesPatientIdParaclinicosRoute
   AppPacientesPatientIdResumenRoute: typeof AppPacientesPatientIdResumenRoute
   AppPacientesPatientIdSintomasRoute: typeof AppPacientesPatientIdSintomasRoute
@@ -765,6 +786,7 @@ const AppPacientesPatientIdRouteRouteChildren: AppPacientesPatientIdRouteRouteCh
       AppPacientesPatientIdMedicamentosRoute,
     AppPacientesPatientIdNotaEvolutivaRoute:
       AppPacientesPatientIdNotaEvolutivaRoute,
+    AppPacientesPatientIdNotasRoute: AppPacientesPatientIdNotasRoute,
     AppPacientesPatientIdParaclinicosRoute:
       AppPacientesPatientIdParaclinicosRoute,
     AppPacientesPatientIdResumenRoute: AppPacientesPatientIdResumenRoute,

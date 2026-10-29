@@ -8,7 +8,6 @@ import { MedicamentosActivosCard } from './MedicamentosActivosCard'
 import { AlergiasCard } from './AlergiasCard'
 import { DatosPacienteCard } from './DatosPacienteCard'
 import { UltimosLaboratoriosCard } from './UltimosLaboratoriosCard'
-import { HistoriaAnteriorCard } from './HistoriaAnteriorCard'
 
 interface SummaryPanelProps {
   patient: Patient
@@ -24,7 +23,6 @@ export function SummaryPanel({ patient }: SummaryPanelProps) {
           <EnfermedadActualCard patientId={patient.id} />
           <ConsultasRecientesCard patientId={patient.id} />
           <UltimosLaboratoriosCard patientId={patient.id} />
-          <HistoriaAnteriorCard patientId={patient.id} />
         </Stack>
       </Grid>
       <Grid size={{ xs: 12, lg: 4 }}>
