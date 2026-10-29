@@ -1,5 +1,5 @@
 import { api } from '@/utils/api'
-import type { Patient, Allergy } from '../types'
+import type { Patient, Allergy, PatientLegacyHistory } from '../types'
 import type { CreatePatientDto, UpdatePatientDto } from '../schemas/patient.schema'
 
 export async function fetchPatients(): Promise<Patient[]> {
@@ -32,4 +32,12 @@ export async function fetchPatientAllergies(patientId: number): Promise<Allergy[
     `/patients/${patientId}/allergies`,
   )
   return data.allergies
+}
+
+// Historia del sistema anterior; null si el paciente no viene de ahí.
+export async function fetchPatientLegacyHistory(patientId: number): Promise<PatientLegacyHistory | null> {
+  const { data } = await api.get<{ legacyHistory: PatientLegacyHistory | null }>(
+    `/patients/${patientId}/legacy-history`,
+  )
+  return data.legacyHistory
 }

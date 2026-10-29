@@ -3,4 +3,5 @@ export const patientsKeys = {
   lists: () => [...patientsKeys.all, 'list'] as const,
   detail: (id: number) => [...patientsKeys.all, 'detail', id] as const,
   allergies: (patientId: number) => [...patientsKeys.all, 'allergies', patientId] as const,
+  legacyHistory: (patientId: number) => [...patientsKeys.all, 'legacy-history', patientId] as const,
 }

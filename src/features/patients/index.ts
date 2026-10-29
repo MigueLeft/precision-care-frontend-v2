@@ -7,6 +7,7 @@ export { fetchPatients, fetchPatient } from './services/patients.service'
 export { usePatients } from './hooks/usePatients'
 export { usePatient } from './hooks/usePatient'
 export { usePatientAllergies } from './hooks/usePatientAllergies'
+export { usePatientLegacyHistory } from './hooks/usePatientLegacyHistory'
 export {
   formatPatientName,
   formatPatientInitials,
@@ -18,4 +19,4 @@ export {
   allergySeverityColor,
   isSevereAllergy,
 } from './utils/allergy-format'
-export type { Patient, Allergy } from './types'
+export type { Patient, Allergy, PatientLegacyHistory, LegacySymptom } from './types'
