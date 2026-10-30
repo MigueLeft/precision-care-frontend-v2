@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Autocomplete,
   Checkbox,
@@ -10,6 +9,7 @@ import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
 import { CatalogOptionItem } from './CatalogOptionItem'
 import { filterCatalogOptions } from './catalog-option-filter'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 export interface CatalogOption {
   id: number
@@ -28,6 +28,8 @@ interface CatalogSearchInputProps {
   disabled?: boolean
   /** Texto de la casilla para habilitar la escritura libre. */
   manualLabel?: string
+  /** Clave del respaldo local (consulta en curso) de lo que se está escribiendo. */
+  draftKey?: string
   sx?: object
 }
 
@@ -40,11 +42,12 @@ export function CatalogSearchInput({
   onAdd,
   disabled,
   manualLabel = 'No está en el catálogo · escribir manualmente',
+  draftKey,
   sx,
 }: CatalogSearchInputProps) {
-  const [manual, setManual] = useState(false)
-  const [inputValue, setInputValue] = useState('')
-  const [manualText, setManualText] = useState('')
+  const [manual, setManual] = useConsultationDraftState(draftKey ? `${draftKey}.manual` : null, false)
+  const [inputValue, setInputValue] = useConsultationDraftState(draftKey ? `${draftKey}.inputValue` : null, '')
+  const [manualText, setManualText] = useConsultationDraftState(draftKey ? `${draftKey}.manualText` : null, '')
 
   function submitManual() {
     const clean = manualText.trim()

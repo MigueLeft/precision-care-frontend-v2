@@ -18,6 +18,7 @@ import {
 import { DeliverableDialogActions } from './DeliverableDialogActions'
 import { LabProfileChips } from './LabProfileChips'
 import { useLabOrderSelection } from './useLabOrderSelection'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type LabOrderDialogProps = {
   consultationId: number
@@ -45,7 +46,7 @@ function LabOrderContent({
 }: ContentProps) {
   const { ids, setIds, selected, toggleProfile, title, typeTitle } =
     useLabOrderSelection(profiles, initialIds, initialTitle)
-  const [indications, setIndications] = useState(initialIndications)
+  const [indications, setIndications] = useConsultationDraftState('labOrder.indications', initialIndications)
   const { data: paraclinicals = [] } = useParaclinicals()
   const { data: categories = [] } = useParaclinicalCategories()
   const save = useSaveLabOrder(consultationId)

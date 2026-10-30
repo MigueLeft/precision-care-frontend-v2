@@ -19,6 +19,7 @@ export function StudyPlanSection({ index, consultation, readOnly }: StudyPlanSec
         placeholder="Estudios, interconsultas y seguimiento a solicitar…"
         value={consultation.diagnosticPlan ?? ''}
         onSave={(diagnosticPlan) => update.mutate({ diagnosticPlan })}
+        draftKey="diagnosticPlan"
         disabled={readOnly}
         minRows={4}
       />

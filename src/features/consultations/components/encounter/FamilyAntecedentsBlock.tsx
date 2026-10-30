@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from '@/utils/toast'
@@ -12,6 +11,7 @@ import {
   FAMILY_RELATIONSHIPS,
 } from '@/features/antecedents'
 import type { Antecedent } from '@/features/antecedents'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface FamilyAntecedentsBlockProps {
   patientId: number
@@ -29,9 +29,9 @@ export function FamilyAntecedentsBlock({
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
   const diseaseOptions = useAntecedentDiseaseOptions()
-  const [relationship, setRelationship] = useState('')
-  const [condition, setCondition] = useState<CatalogPick | null>(null)
-  const [notes, setNotes] = useState('')
+  const [relationship, setRelationship] = useConsultationDraftState('familyAntecedentAdd.relationship', '')
+  const [condition, setCondition] = useConsultationDraftState<CatalogPick | null>('familyAntecedentAdd.condition', null)
+  const [notes, setNotes] = useConsultationDraftState('familyAntecedentAdd.notes', '')
 
   function reset() {
     setRelationship('')

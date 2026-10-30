@@ -38,6 +38,7 @@ export function SidebarClinicalFields({
         <AutosaveTextField
           value={consultation.currentIllness ?? ''}
           onSave={(currentIllness) => update.mutate({ currentIllness })}
+          draftKey="currentIllness"
           disabled={readOnly}
           minRows={3}
         />
@@ -60,6 +61,7 @@ export function SidebarClinicalFields({
         <AutosaveTextField
           value={consultation.evolution ?? ''}
           onSave={(evolution) => update.mutate({ evolution })}
+          draftKey="evolution"
           disabled={readOnly}
           minRows={6}
         />
@@ -70,6 +72,7 @@ export function SidebarClinicalFields({
         <AutosaveTextField
           value={consultation.treatmentPlan ?? ''}
           onSave={(treatmentPlan) => update.mutate({ treatmentPlan })}
+          draftKey="treatmentPlan"
           disabled={readOnly}
           minRows={4}
         />

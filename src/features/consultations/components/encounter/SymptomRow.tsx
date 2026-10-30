@@ -122,6 +122,7 @@ export function SymptomRow({
           value={symptom.onsetDate}
           disabled={readOnly}
           sx={fieldSx}
+          draftKey={`symptom:${symptom.symptomCatalogId}.onsetDate`}
           onCommit={(onsetDate) => onCapture({ onsetDate })}
         />
       </Stack>
@@ -129,6 +130,7 @@ export function SymptomRow({
       <SymptomNotesField
         value={symptom.notes}
         disabled={readOnly}
+        draftKey={`symptom:${symptom.symptomCatalogId}.notes`}
         onCommit={(notes) => onCapture({ notes })}
       />
 
@@ -136,6 +138,7 @@ export function SymptomRow({
         links={symptom.diseases}
         patientDiseases={diseases}
         readOnly={readOnly}
+        draftKey={`symptom:${symptom.symptomCatalogId}.diseaseSearch`}
         onChange={(next) => onCapture({ diseases: next })}
       />
     </Box>

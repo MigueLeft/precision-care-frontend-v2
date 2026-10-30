@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useConsultationDraftForm } from '@/hooks/useConsultationDraftForm'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
@@ -31,10 +32,13 @@ function AntecedentFormContent({
   onSubmit,
   onClose,
 }: AntecedentFormContentProps) {
-  const { control, handleSubmit, setValue } = useForm<AntecedentFormValues>({
+  const form = useForm<AntecedentFormValues>({
     resolver: zodResolver(antecedentFormSchema),
     defaultValues: initialValues ?? antecedentFormDefaultValues,
   })
+  const { control, handleSubmit, setValue } = form
+  // En la consulta en curso se respalda el alta de un antecedente hasta enviarla.
+  const clearDraft = useConsultationDraftForm(mode === 'create' ? 'antecedentForm.create' : null, form)
 
   return (
     <>
@@ -51,7 +55,10 @@ function AntecedentFormContent({
         <AppButton
           variant="contained"
           loading={isSubmitting}
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit((values) => {
+            clearDraft()
+            onSubmit(values)
+          })}
         >
           {mode === 'create' ? 'Agregar' : 'Guardar cambios'}
         </AppButton>

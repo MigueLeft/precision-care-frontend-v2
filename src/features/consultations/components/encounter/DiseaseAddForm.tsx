@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Autocomplete,
   Checkbox,
@@ -22,6 +21,7 @@ import {
   diseaseStatusOptions,
 } from '../../utils/consultation-format'
 import type { AddDiseaseInput, DiseaseStatus } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface DiseaseAddFormProps {
   onAdd: (input: AddDiseaseInput) => void
@@ -32,13 +32,13 @@ interface DiseaseAddFormProps {
 export function DiseaseAddForm({ onAdd, isAdding, usedCatalogIds }: DiseaseAddFormProps) {
   const { data: catalog = [] } = useDiseases()
 
-  const [manual, setManual] = useState(false)
-  const [onlyChronic, setOnlyChronic] = useState(false)
-  const [selected, setSelected] = useState<Disease | null>(null)
-  const [manualName, setManualName] = useState('')
-  const [manualChronic, setManualChronic] = useState(false)
-  const [status, setStatus] = useState<DiseaseStatus>('active')
-  const [dxDate, setDxDate] = useState('')
+  const [manual, setManual] = useConsultationDraftState('diseaseAdd.manual', false)
+  const [onlyChronic, setOnlyChronic] = useConsultationDraftState('diseaseAdd.onlyChronic', false)
+  const [selected, setSelected] = useConsultationDraftState<Disease | null>('diseaseAdd.selected', null)
+  const [manualName, setManualName] = useConsultationDraftState('diseaseAdd.manualName', '')
+  const [manualChronic, setManualChronic] = useConsultationDraftState('diseaseAdd.manualChronic', false)
+  const [status, setStatus] = useConsultationDraftState<DiseaseStatus>('diseaseAdd.status', 'active')
+  const [dxDate, setDxDate] = useConsultationDraftState('diseaseAdd.dxDate', '')
 
   const options = catalog.filter(
     (disease) =>

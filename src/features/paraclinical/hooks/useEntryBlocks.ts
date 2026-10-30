@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   labSubcategories,
   useLabProfiles,
@@ -6,6 +5,7 @@ import {
   useParaclinicals,
 } from '@/features/catalogs'
 import type { ParaclinicalCatalog } from '@/features/catalogs'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 // Bloque de captura: un perfil, una categoría de laboratorio o los estudios
 // sueltos. `addable` = estudios que se pueden sumar al bloque.
@@ -32,10 +32,10 @@ export function useEntryBlocks() {
   const { data: profiles = [] } = useLabProfiles()
   const { data: catalog = [] } = useParaclinicals()
   const { data: categories = [] } = useParaclinicalCategories()
-  const [profileIds, setProfileIds] = useState<number[]>([])
-  const [categoryIds, setCategoryIds] = useState<number[]>([])
-  const [studyIds, setStudyIds] = useState<number[]>([])
-  const [edits, setEdits] = useState<Record<string, BlockEdit>>({})
+  const [profileIds, setProfileIds] = useConsultationDraftState<number[]>('labEntry.profileIds', [])
+  const [categoryIds, setCategoryIds] = useConsultationDraftState<number[]>('labEntry.categoryIds', [])
+  const [studyIds, setStudyIds] = useConsultationDraftState<number[]>('labEntry.studyIds', [])
+  const [edits, setEdits] = useConsultationDraftState<Record<string, BlockEdit>>('labEntry.edits', {})
 
   const studyById = new Map(catalog.map((study) => [study.id, study]))
   const activeLab = catalog.filter((study) => study.active)
