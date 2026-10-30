@@ -12,10 +12,18 @@ type AnthropometryHistoryTableProps = {
   rows: Anthropometry[]
   // Medición a resaltar (la de la consulta actual).
   highlightId?: number
+  // Medición seleccionada por el usuario al hacer click en la fecha.
+  selectedId?: number | null
+  onSelectRow?: (id: number) => void
 }
 
 // Histórico tipo hoja de cálculo: una columna por medición, agrupado por apartado.
-export function AnthropometryHistoryTable({ rows, highlightId }: AnthropometryHistoryTableProps) {
+export function AnthropometryHistoryTable({
+  rows,
+  highlightId,
+  selectedId,
+  onSelectRow,
+}: AnthropometryHistoryTableProps) {
   if (rows.length === 0) {
     return (
       <Typography sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
@@ -26,6 +34,7 @@ export function AnthropometryHistoryTable({ rows, highlightId }: AnthropometryHi
 
   const values = rows.map(anthropometryValues)
   const isHighlight = (row: Anthropometry) => row.id === highlightId
+  const isSelected = (row: Anthropometry) => row.id === selectedId
 
   return (
     <DataTable minWidth={240 + rows.length * 90}>
@@ -37,7 +46,15 @@ export function AnthropometryHistoryTable({ rows, highlightId }: AnthropometryHi
             <HeadCell
               key={row.id}
               align="right"
-              sx={{ color: isHighlight(row) ? 'primary.main' : 'grey.700' }}
+              onClick={() => onSelectRow?.(row.id)}
+              sx={{
+                cursor: onSelectRow ? 'pointer' : undefined,
+                color: isSelected(row) ? 'common.white' : isHighlight(row) ? 'primary.main' : 'grey.700',
+                bgcolor: isSelected(row) ? 'primary.main' : undefined,
+                '&:hover': onSelectRow
+                  ? { bgcolor: isSelected(row) ? 'primary.main' : 'action.hover' }
+                  : undefined,
+              }}
             >
               {formatShortDate(row.assessmentDate)}
             </HeadCell>
