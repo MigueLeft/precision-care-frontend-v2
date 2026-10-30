@@ -7,8 +7,10 @@ import PushPinIcon from '@mui/icons-material/PushPin'
 import { AppButton } from '@/components/AppButton'
 import { IntakeResponseDetailContent, useIntakeResponsesByPatient } from '@/features/intake-responses'
 import { NutritionRecallSidebarSection } from '@/features/nutrition-recall'
+import { LandIntakeButton } from '../encounter/LandIntakeButton'
 import { BoardEmpty, BoardHeader } from './BoardHeader'
 import { useEncounterWorkspace } from './workspace-context'
+import type { Consultation } from '../../types'
 
 // Botón para fijar un ingresable en el panel derecho (o soltarlo).
 export function PinIntakeButton({ responseId }: { responseId: number }) {
@@ -23,9 +25,15 @@ export function PinIntakeButton({ responseId }: { responseId: number }) {
   )
 }
 
+type IntakesViewProps = {
+  consultation: Consultation
+  readOnly: boolean
+}
+
 // Ingresables del paciente en el panel central: la lista y, al elegir uno
 // completado, sus respuestas. Cualquiera se puede fijar a la derecha.
-export function IntakesView({ patientId }: { patientId: number }) {
+export function IntakesView({ consultation, readOnly }: IntakesViewProps) {
+  const patientId = consultation.patientId
   const { data: responses = [] } = useIntakeResponsesByPatient(patientId)
   const [openId, setOpenId] = useState<number | null>(null)
 
@@ -50,7 +58,9 @@ export function IntakesView({ patientId }: { patientId: number }) {
   return (
     <Stack spacing={3}>
       <div>
-        <BoardHeader title="Ingresables" meta={`${responses.length} asignados`} />
+        <BoardHeader title="Ingresables" meta={`${responses.length} asignados`}>
+          {!readOnly && consultation.visitType === 'first' && <LandIntakeButton consultation={consultation} />}
+        </BoardHeader>
         {responses.length === 0 && <BoardEmpty>Sin ingresables asignados.</BoardEmpty>}
         <Stack spacing={1}>
           {responses.map((response) => (

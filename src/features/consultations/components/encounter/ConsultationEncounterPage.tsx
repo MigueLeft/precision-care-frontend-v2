@@ -5,8 +5,9 @@ import { useMe, hasPermission } from '@/features/identity'
 import { useConsultation } from '../../hooks/useConsultationDetail'
 import { useConsultationLocalBackup } from '../../hooks/useConsultationLocalBackup'
 import { ConsultationWorkspace } from '../workspace/ConsultationWorkspace'
-import { EncounterHeader } from './EncounterHeader'
+import { EncounterDuration } from './EncounterDuration'
 import { EncounterPatientBar } from './EncounterPatientBar'
+import { FinalizeConsultationButton } from './FinalizeConsultationButton'
 
 interface ConsultationEncounterPageProps {
   consultationId: number
@@ -33,8 +34,13 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
     // Lo capturado aquí es borrador de la consulta hasta finalizarla.
     <DraftConsultationContext.Provider value={consultation.id}>
       <Box sx={{ mx: -4, mt: -4 }}>
-        <EncounterHeader consultation={consultation} readOnly={readOnly} />
-        {patient && <EncounterPatientBar patient={patient} />}
+        {patient && (
+          <EncounterPatientBar
+            patient={patient}
+            startAction={<FinalizeConsultationButton consultation={consultation} readOnly={readOnly} />}
+            endAction={readOnly ? undefined : <EncounterDuration startAt={consultation.startAt} />}
+          />
+        )}
         <ConsultationWorkspace consultation={consultation} readOnly={readOnly} />
       </Box>
     </DraftConsultationContext.Provider>

@@ -60,7 +60,7 @@ export function SectionContent({ section, consultation, readOnly }: SectionConte
     case 'previous':
       return <PreviousConsultationSection index={1} consultation={consultation} />
     case 'intakes':
-      return <IntakesView patientId={patientId} />
+      return <IntakesView consultation={consultation} readOnly={readOnly} />
     case 'deliverables':
       return <DeliverablesView consultationId={consultationId} patientId={patientId} readOnly={readOnly} />
   }

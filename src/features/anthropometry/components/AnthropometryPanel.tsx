@@ -16,11 +16,14 @@ import { AnthropometryReportsMenu } from './AnthropometryReportsMenu'
 export function AnthropometryPanel({ patientId }: { patientId: number }) {
   const [view, setView] = useState<'current' | 'history'>('current')
   const [editing, setEditing] = useState<'new' | number | null>(null)
+  // Medición seleccionada en el histórico (click en la columna de fecha).
+  const [selectedId, setSelectedId] = useState<number | null>(null)
   const { data = [], isLoading, isError, error } = useAnthropometriesByPatient(patientId)
   const rows = sortAnthropometries(data)
   const [latest, previous] = rows
   const editTarget = typeof editing === 'number' ? rows.find((r) => r.id === editing) : undefined
   const save = useSaveAnthropometry(editTarget?.id, { onSuccess: () => setEditing(null) })
+  const editButtonTarget = (selectedId !== null && rows.find((r) => r.id === selectedId)) || latest
 
   if (isLoading || isError) {
     return (
@@ -44,11 +47,11 @@ export function AnthropometryPanel({ patientId }: { patientId: number }) {
         </ToggleButtonGroup>
         <Stack direction="row" spacing={1}>
           {latest && <AnthropometryReportsMenu patientId={patientId} row={latest} />}
-          {latest && (
+          {editButtonTarget && (
             <AppButton
               variant="outlined"
               startIcon={<EditOutlinedIcon sx={{ fontSize: 16 }} />}
-              onClick={() => setEditing(latest.id)}
+              onClick={() => setEditing(editButtonTarget.id)}
             >
               Editar medición
             </AppButton>
@@ -70,7 +73,9 @@ export function AnthropometryPanel({ patientId }: { patientId: number }) {
           <EmptyState message="Sin mediciones de antropometría." />
         ))}
 
-      {view === 'history' && <AnthropometryHistoryView rows={rows} />}
+      {view === 'history' && (
+        <AnthropometryHistoryView rows={rows} selectedId={selectedId} onSelectRow={setSelectedId} />
+      )}
 
       <Dialog open={editing !== null} onClose={() => setEditing(null)} maxWidth="lg" fullWidth>
         <DialogTitle>
