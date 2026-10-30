@@ -29,4 +29,6 @@ export const consultationsKeys = {
     [...consultationsKeys.all, 'detail', id, 'recorded'] as const,
   evolution: (id: number) =>
     [...consultationsKeys.all, 'detail', id, 'evolution'] as const,
+  lifestylePending: (id: number) =>
+    [...consultationsKeys.all, 'detail', id, 'lifestyle-pending'] as const,
 }

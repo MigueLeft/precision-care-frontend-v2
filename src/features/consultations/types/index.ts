@@ -340,6 +340,35 @@ export interface IntakeLandingResult {
 
 // Resultado de recalcular el scoring del IM1 (estilo de vida y demás
 // mapeos) con las respuestas ya guardadas por el paciente.
+// Pregunta del IM1 que falta para un componente del Life's Essential 8 y que
+// se puede completar desde la consulta (GET /consultations/:id/lifestyle/pending).
+export type LifestyleClinicalTarget =
+  | { kind: 'anthropometry'; field: 'weightKg' | 'heightCm' | 'systolicBp' | 'diastolicBp' }
+  | { kind: 'lab'; loinc: string }
+
+export interface PendingLifestyleQuestion {
+  questionId: number
+  component: string
+  componentLabel: string
+  text: string
+  type: 'numeric' | 'boolean' | 'single_choice'
+  options: { id: number; text: string }[]
+  target: LifestyleClinicalTarget | null
+  suggestedValue: number | null
+}
+
+export interface LifestylePending {
+  intakeResponseId: number | null
+  questions: PendingLifestyleQuestion[]
+}
+
+export interface LifestyleAnswerInput {
+  questionId: number
+  numericValue?: number
+  booleanValue?: boolean
+  optionId?: number
+}
+
 export interface RecalculateLifestyleResult {
   mappingId: number
   scoringType: string

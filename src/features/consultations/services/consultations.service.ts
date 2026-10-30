@@ -24,6 +24,8 @@ import type {
   ConsultationEvolution,
   IntakeLandingResult,
   RecalculateLifestyleResult,
+  LifestylePending,
+  LifestyleAnswerInput,
 } from '../types'
 
 export async function fetchConsultationsByPatient(
@@ -338,6 +340,20 @@ export async function landConsultationIntake(id: number): Promise<IntakeLandingR
     `/consultations/${id}/land-intake`,
   )
   return data.landing
+}
+
+export async function fetchLifestylePending(id: number): Promise<LifestylePending> {
+  const { data } = await api.get<LifestylePending>(`/consultations/${id}/lifestyle/pending`)
+  return data
+}
+
+// Completa las preguntas faltantes del IM1, carga los valores en la consulta y recalcula.
+export async function completeLifestyle(id: number, answers: LifestyleAnswerInput[]): Promise<RecalculateLifestyleResult[]> {
+  const { data } = await api.post<{ results: RecalculateLifestyleResult[] }>(
+    `/consultations/${id}/lifestyle/complete`,
+    { answers },
+  )
+  return data.results
 }
 
 // Recalcula el estilo de vida (Life's Essential 8) y demás scores del último

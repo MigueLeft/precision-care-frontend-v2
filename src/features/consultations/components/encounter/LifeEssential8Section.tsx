@@ -9,6 +9,7 @@ import {
   ClinicalRiskScoresCard,
 } from '@/features/lifestyle'
 import { RecalculateLifestyleButton } from './RecalculateLifestyleButton'
+import { LifestyleQuickFill } from '../workspace/lifestyle/LifestyleQuickFill'
 
 interface LifeEssential8SectionProps {
   index: number
@@ -17,9 +18,10 @@ interface LifeEssential8SectionProps {
   readOnly: boolean
 }
 
-// Sólo lectura: la captura del ingresable de estilo de vida vive en su propio
-// flujo (ver "Enviar ingresable" en la pestaña Ingresables del expediente);
-// aquí se muestra la última evaluación disponible del paciente, junto con el
+// La captura del ingresable de estilo de vida vive en su propio flujo (ver
+// "Enviar ingresable" en la pestaña Ingresables del expediente); aquí se
+// completan rápido las preguntas que faltaron (LifestyleQuickFill) y se
+// muestra la última evaluación disponible del paciente, junto con el
 // resto de los scores del IM1 que no son uno de los 8 componentes de Life's
 // Essential 8 (educación, nivel socioeconómico, antecedentes familiares,
 // apnea del sueño, ansiedad, depresión, alcohol, tabaquismo, drogas...).
@@ -53,6 +55,7 @@ export function LifeEssential8Section({
               <RecalculateLifestyleButton consultationId={consultationId} patientId={patientId} />
             </Stack>
           )}
+          {!readOnly && <LifestyleQuickFill consultationId={consultationId} patientId={patientId} />}
           {latest ? <LifeEssential8Card assessment={latest} /> : <LifeEssential8Empty />}
           <ClinicalRiskScoresCard
             scores={clinicalScores.map((r) => ({
