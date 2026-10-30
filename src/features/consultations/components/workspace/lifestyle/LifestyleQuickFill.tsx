@@ -1,4 +1,4 @@
-import { Box, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material'
 import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { OptionButtons } from '@/components/ui/OptionButtons'
@@ -98,9 +98,35 @@ function QuickFillForm({ consultationId, patientId, questions }: LifestyleQuickF
 }
 
 // Captura rápida de lo que falta para el Life's Essential 8 (glucosa, lípidos,
-// presión arterial, ejercicio e IMC). No se muestra si no falta nada.
+// presión arterial, ejercicio e IMC): el cuadro aparece al marcar la casilla.
+// No se muestra nada si no falta ningún dato.
 export function LifestyleQuickFill({ consultationId, patientId }: LifestyleQuickFillProps) {
   const { data } = useLifestylePending(consultationId)
+  const [open, setOpen] = useCaptureDraftState('workspace.lifestyle.open', false)
   if (!data || data.questions.length === 0) return null
-  return <QuickFillForm key={data.questions.map((q) => q.questionId).join('-')} consultationId={consultationId} patientId={patientId} questions={data.questions} />
+
+  const components = [...new Set(data.questions.map((q) => q.componentLabel))].join(', ')
+  return (
+    <Stack spacing={1}>
+      <FormControlLabel
+        control={<Checkbox size="small" checked={open} onChange={(event) => setOpen(event.target.checked)} />}
+        label={
+          <Typography sx={{ fontSize: '13px' }}>
+            Completar datos faltantes
+            <Typography component="span" sx={{ fontSize: '12px', color: 'text.secondary', ml: 0.75 }}>
+              ({components})
+            </Typography>
+          </Typography>
+        }
+      />
+      {open && (
+        <QuickFillForm
+          key={data.questions.map((q) => q.questionId).join('-')}
+          consultationId={consultationId}
+          patientId={patientId}
+          questions={data.questions}
+        />
+      )}
+    </Stack>
+  )
 }
