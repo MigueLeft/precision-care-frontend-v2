@@ -31,7 +31,6 @@ function NoteField({ title, action, children }: { title: string; action?: ReactN
 export function NotesPanel({ consultation, readOnly }: NotesPanelProps) {
   const update = useUpdateConsultation(consultation.id)
   const [showChanges, setShowChanges] = useState(false)
-  const isSubsequent = consultation.visitType === 'subsequent'
 
   return (
     <Stack spacing={2}>
@@ -50,16 +49,14 @@ export function NotesPanel({ consultation, readOnly }: NotesPanelProps) {
           <NoteField
             title="Nota evolutiva"
             action={
-              isSubsequent && (
-                <AppButton
-                  size="small"
-                  variant="text"
-                  startIcon={<CompareArrowsIcon sx={{ fontSize: 16 }} />}
-                  onClick={() => setShowChanges((prev) => !prev)}
-                >
-                  {showChanges ? 'Ocultar cambios' : 'Ver cambios'}
-                </AppButton>
-              )
+              <AppButton
+                size="small"
+                variant="text"
+                startIcon={<CompareArrowsIcon sx={{ fontSize: 16 }} />}
+                onClick={() => setShowChanges((prev) => !prev)}
+              >
+                {showChanges ? 'Ocultar cambios' : 'Ver cambios'}
+              </AppButton>
             }
           >
             <Collapse in={showChanges} unmountOnExit>

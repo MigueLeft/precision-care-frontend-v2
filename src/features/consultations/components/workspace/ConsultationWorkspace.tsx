@@ -15,8 +15,8 @@ type ConsultationWorkspaceProps = {
 // Consulta en tres columnas: índice de apartados (izquierda), panel central y
 // panel de captura / ingresable fijado (derecha).
 export function ConsultationWorkspace({ consultation, readOnly }: ConsultationWorkspaceProps) {
-  // Primera vez abre en Antecedentes; subsecuente, en la consulta anterior.
-  const workspace = useEncounterWorkspaceState(consultation.visitType === 'subsequent' ? 'previous' : 'antecedents')
+  // Toda consulta (primera o subsecuente) abre igual, en Antecedentes.
+  const workspace = useEncounterWorkspaceState('antecedents')
   const showRight = hasRightPanel(workspace.section, readOnly, workspace.pinnedIntakeId)
 
   return (

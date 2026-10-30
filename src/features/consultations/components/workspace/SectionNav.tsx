@@ -20,6 +20,8 @@ const EXTRA_ICONS: Record<ExtraSectionId, SvgIconComponent> = {
   deliverables: ReceiptLongOutlinedIcon,
 }
 
+const EXTRAS: ExtraSectionId[] = ['previous', 'intakes', 'deliverables']
+
 const itemSx = { borderRadius: '6px', py: 0.5, px: 1, mb: 0.25 }
 
 // Índice de la consulta: cada apartado con su círculo, que se rellena con un
@@ -27,8 +29,6 @@ const itemSx = { borderRadius: '6px', py: 0.5, px: 1, mb: 0.25 }
 export function SectionNav({ consultation }: SectionNavProps) {
   const { section, centerView, selectSection } = useEncounterWorkspace()
   const completion = useSectionCompletion(consultation)
-  const extras: ExtraSectionId[] =
-    consultation.visitType === 'subsequent' ? ['previous', 'intakes', 'deliverables'] : ['intakes', 'deliverables']
 
   const isActive = (id: WorkspaceSectionId) => centerView === 'section' && section === id
 
@@ -55,7 +55,7 @@ export function SectionNav({ consultation }: SectionNavProps) {
       <Divider sx={{ my: 1 }} />
 
       <List dense disablePadding>
-        {extras.map((id) => {
+        {EXTRAS.map((id) => {
           const Icon = EXTRA_ICONS[id]
           return (
             <ListItemButton key={id} selected={isActive(id)} onClick={() => selectSection(id)} sx={itemSx}>
