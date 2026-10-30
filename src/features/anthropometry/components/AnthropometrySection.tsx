@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Box, Stack, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { formatShortDate } from '@/utils/format-date'
 import {
@@ -7,8 +6,8 @@ import {
   useAnthropometryByConsultation,
   useSaveAnthropometry,
 } from '../hooks/useAnthropometry'
-import { anthropometryValues, sortAnthropometries } from '../utils/anthropometry-calculations'
-import { AnthropometryHistoryTable } from './AnthropometryHistoryTable'
+import { sortAnthropometries } from '../utils/anthropometry-calculations'
+import { historyColumns } from '../utils/history-columns'
 import { AnthropometryForm } from './AnthropometryForm'
 
 type AnthropometrySectionProps = {
@@ -19,7 +18,8 @@ type AnthropometrySectionProps = {
   readOnly: boolean
 }
 
-// Antropometría dentro de la consulta: histórico reciente y captura de la consulta.
+// Antropometría dentro de la consulta: hoja de captura con las últimas tres
+// mediciones a la izquierda (de la más vieja a la más nueva) y esta consulta.
 export function AnthropometrySection({
   index,
   consultationId,
@@ -27,36 +27,19 @@ export function AnthropometrySection({
   consultationDate,
   readOnly,
 }: AnthropometrySectionProps) {
-  const [historyOpen, setHistoryOpen] = useState(false)
   const { data: all = [] } = useAnthropometriesByPatient(patientId, consultationId)
   const { data: existing, isLoading } = useAnthropometryByConsultation(consultationId)
   const save = useSaveAnthropometry(existing?.id)
 
   const history = sortAnthropometries(all.filter((row) => row.consultationId !== consultationId))
-  const recent = history.slice(0, 3)
 
   return (
     <CollapsibleSection title={`${index}. Antropometría`} defaultExpanded>
-      {recent.length > 0 && (
-        <Box sx={{ mb: 3 }}>
-          <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-            <Typography sx={{ fontSize: '13px', fontWeight: 700, color: 'text.secondary' }}>
-              Histórico · {recent.length}{' '}
-              {recent.length === 1 ? 'medición anterior' : 'mediciones anteriores'}
-            </Typography>
-            <Typography
-              onClick={() => setHistoryOpen((prev) => !prev)}
-              sx={{ fontSize: '12px', color: 'primary.main', fontWeight: 600, cursor: 'pointer' }}
-            >
-              {historyOpen ? 'Ocultar' : 'Ver'}
-            </Typography>
-          </Stack>
-          {historyOpen && <AnthropometryHistoryTable rows={recent} />}
-        </Box>
-      )}
-
       <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'primary.main', mb: 1.5 }}>
         CAPTURA DE ESTA CONSULTA · {formatShortDate(consultationDate)}
+        <Typography component="span" sx={{ fontSize: '11px', fontWeight: 400, color: 'text.secondary', ml: 1 }}>
+          Enter o ↓ pasa al siguiente valor
+        </Typography>
       </Typography>
 
       {!isLoading && (
@@ -65,7 +48,7 @@ export function AnthropometrySection({
           patientId={patientId}
           consultationId={consultationId}
           existing={existing}
-          previous={history[0] ? anthropometryValues(history[0]) : undefined}
+          history={historyColumns(history)}
           readOnly={readOnly}
           isSaving={save.isPending}
           onSave={save.mutate}

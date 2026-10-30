@@ -6,6 +6,7 @@ import { AntecedentCapturePanel } from './antecedents/AntecedentCapturePanel'
 import { DiseaseCapturePanel } from './diseases/DiseaseCapturePanel'
 import { PinIntakeButton } from './IntakesView'
 import { SymptomCapturePanel } from './symptoms/SymptomCapturePanel'
+import { MedicationCapturePanel } from './treatment/MedicationCapturePanel'
 import { useEncounterWorkspace } from './workspace-context'
 import { isCaptureSection, type CaptureSectionId } from './workspace-sections'
 import type { Consultation } from '../../types'
@@ -18,6 +19,7 @@ type RightPanelProps = {
 const CAPTURE_TITLES: Record<CaptureSectionId, [add: string, edit: string]> = {
   antecedents: ['Agregar antecedente', 'Editar antecedente'],
   symptoms: ['Agregar síntoma', 'Editar síntoma'],
+  treatment: ['Agregar medicamento', 'Revisar medicamento'],
   diagnoses: ['Agregar diagnóstico', 'Editar diagnóstico'],
 }
 
@@ -62,6 +64,7 @@ export function RightPanel({ consultation, readOnly }: RightPanelProps) {
             <Typography variant="h3">{captureTitle}</Typography>
             {captureSection === 'symptoms' && <SymptomCapturePanel consultationId={consultation.id} />}
             {captureSection === 'diagnoses' && <DiseaseCapturePanel consultationId={consultation.id} />}
+            {captureSection === 'treatment' && <MedicationCapturePanel consultationId={consultation.id} />}
             {captureSection === 'antecedents' && (
               <AntecedentCapturePanel patientId={consultation.patientId} consultationId={consultation.id} />
             )}

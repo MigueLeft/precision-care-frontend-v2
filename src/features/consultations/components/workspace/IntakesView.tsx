@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { IconButton, Paper, Stack, Tooltip, Typography } from '@mui/material'
+import { IconButton, MenuItem, Paper, Stack, TextField, Tooltip, Typography } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined'
 import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 import PushPinIcon from '@mui/icons-material/PushPin'
-import { AppButton } from '@/components/AppButton'
 import { IntakeResponseDetailContent, useIntakeResponsesByPatient } from '@/features/intake-responses'
 import { NutritionRecallSidebarSection } from '@/features/nutrition-recall'
 import { LandIntakeButton } from '../encounter/LandIntakeButton'
@@ -37,21 +36,37 @@ export function IntakesView({ consultation, readOnly }: IntakesViewProps) {
   const { data: responses = [] } = useIntakeResponsesByPatient(patientId)
   const [openId, setOpenId] = useState<number | null>(null)
 
+  const completed = responses.filter((response) => response.completed)
+
   if (openId !== null) {
     return (
-      <Paper sx={{ p: 2.5, borderRadius: '8px' }}>
-        <IntakeResponseDetailContent
-          responseId={openId}
-          headerAction={
-            <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-              <PinIntakeButton responseId={openId} />
-              <AppButton size="small" variant="text" startIcon={<ArrowBackIcon sx={{ fontSize: 16 }} />} onClick={() => setOpenId(null)}>
-                Volver
-              </AppButton>
-            </Stack>
-          }
-        />
-      </Paper>
+      <Stack spacing={1.5}>
+        {/* Flecha para volver a la lista y selector para pasar a otro ingresable. */}
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          <Tooltip title="Volver a los ingresables">
+            <IconButton aria-label="Volver a los ingresables" onClick={() => setOpenId(null)} sx={{ border: '1px solid', borderColor: 'divider' }}>
+              <ArrowBackIcon />
+            </IconButton>
+          </Tooltip>
+          <TextField
+            select
+            size="small"
+            label="Ingresable"
+            value={openId}
+            onChange={(event) => setOpenId(Number(event.target.value))}
+            sx={{ flex: 1, maxWidth: 360 }}
+          >
+            {completed.map((response) => (
+              <MenuItem key={response.id} value={response.id}>
+                {response.intakeName ?? 'Ingresable'}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
+        <Paper sx={{ p: 2.5, borderRadius: '8px' }}>
+          <IntakeResponseDetailContent key={openId} responseId={openId} headerAction={<PinIntakeButton responseId={openId} />} />
+        </Paper>
+      </Stack>
     )
   }
 

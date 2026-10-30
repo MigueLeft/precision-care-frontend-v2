@@ -4,7 +4,7 @@ import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
 import { PartialDateField } from '@/components/ui/PartialDateField'
 import { useHospitalizationCatalog, useSurgeryCatalog } from '@/features/catalogs'
 import { useCreateAntecedent, type Antecedent } from '@/features/antecedents'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { buildSurgicalAntecedentPayload } from '../../../utils/surgical-antecedent-payload'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
 import { useEncounterWorkspace } from '../workspace-context'
@@ -36,7 +36,7 @@ export function SurgicalAntecedentForm({ patientId, type, antecedent }: Surgical
   const { clearEdit } = useEncounterWorkspace()
   const { data: surgeries = [] } = useSurgeryCatalog()
   const { data: hospitalizations = [] } = useHospitalizationCatalog()
-  const [values, setValues, clearDraft] = useConsultationDraftState<SurgicalValues>(
+  const [values, setValues, clearDraft] = useCaptureDraftState<SurgicalValues>(
     `workspace.antecedent.${type}.${antecedent?.id ?? 'new'}`,
     () => (antecedent ? toValues(antecedent) : EMPTY),
   )

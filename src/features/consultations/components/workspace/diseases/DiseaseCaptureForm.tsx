@@ -5,7 +5,7 @@ import { PartialDateField } from '@/components/ui/PartialDateField'
 import { useDiseases } from '@/features/catalogs'
 import { useAntecedentDiseaseOptions } from '@/features/antecedents'
 import { isLettersOnly } from '@/utils/text-validation'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { useAddConsultationDisease, useUpdateConsultationDisease } from '../../../hooks/useConsultationDiseases'
 import { DISEASE_STATUS_LABELS, diseaseStatusOptions } from '../../../utils/consultation-format'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
@@ -38,7 +38,7 @@ export function DiseaseCaptureForm({ consultationId, current, disease }: Disease
   const diseaseOptions = useAntecedentDiseaseOptions()
   const addMutation = useAddConsultationDisease(consultationId)
   const updateMutation = useUpdateConsultationDisease(consultationId)
-  const [values, setValues, clearDraft] = useConsultationDraftState<DiseaseFormValues>(
+  const [values, setValues, clearDraft] = useCaptureDraftState<DiseaseFormValues>(
     `workspace.disease.${disease?.id ?? 'new'}`,
     () =>
       disease

@@ -5,7 +5,8 @@ import {
   useAnthropometryByAppointment,
   useSaveAnthropometry,
 } from '../hooks/useAnthropometry'
-import { anthropometryValues, sortAnthropometries } from '../utils/anthropometry-calculations'
+import { sortAnthropometries } from '../utils/anthropometry-calculations'
+import { historyColumns } from '../utils/history-columns'
 import { AnthropometryForm } from './AnthropometryForm'
 
 type AnthropometryPreloadSectionProps = {
@@ -24,7 +25,7 @@ export function AnthropometryPreloadSection({
   const { data: all = [] } = useAnthropometriesByPatient(patientId)
   const { data: existing, isLoading } = useAnthropometryByAppointment(appointmentId)
   const save = useSaveAnthropometry(existing?.id)
-  const previous = sortAnthropometries(all.filter((row) => row.id !== existing?.id))[0]
+  const previous = sortAnthropometries(all.filter((row) => row.id !== existing?.id))
 
   return (
     <CollapsibleSection title={`${index}. Antropometría`} defaultExpanded>
@@ -37,7 +38,7 @@ export function AnthropometryPreloadSection({
           patientId={patientId}
           appointmentId={appointmentId}
           existing={existing}
-          previous={previous ? anthropometryValues(previous) : undefined}
+          history={historyColumns(previous)}
           isSaving={save.isPending}
           onSave={save.mutate}
         />

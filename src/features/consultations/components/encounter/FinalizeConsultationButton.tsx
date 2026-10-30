@@ -10,6 +10,7 @@ import {
   flushBeforeFinalize,
 } from '../../hooks/useConsultationLocalBackup'
 import { countErrors, validateExam } from '@/features/physical-exam'
+import { clearCaptureDrafts } from '@/utils/capture-draft-storage'
 import type { Consultation } from '../../types'
 
 interface FinalizeConsultationButtonProps {
@@ -55,6 +56,7 @@ export function FinalizeConsultationButton({ consultation, readOnly }: FinalizeC
       {
         onSuccess: () => {
           clearConsultationDraft(consultation.id)
+          clearCaptureDrafts(consultation.id)
           goBack()
         },
       },

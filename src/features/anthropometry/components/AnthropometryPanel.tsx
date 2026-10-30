@@ -6,10 +6,11 @@ import { AppButton } from '@/components/AppButton'
 import { EmptyState } from '@/components/EmptyState'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { useAnthropometriesByPatient, useSaveAnthropometry } from '../hooks/useAnthropometry'
-import { anthropometryValues, sortAnthropometries } from '../utils/anthropometry-calculations'
+import { sortAnthropometries } from '../utils/anthropometry-calculations'
 import { AnthropometryCurrentView } from './AnthropometryCurrentView'
 import { AnthropometryHistoryView } from './AnthropometryHistoryView'
 import { AnthropometryForm } from './AnthropometryForm'
+import { historyColumns } from '../utils/history-columns'
 import { AnthropometryReportsMenu } from './AnthropometryReportsMenu'
 
 // Antropometría en el expediente: medición actual, histórico y captura/edición.
@@ -87,7 +88,7 @@ export function AnthropometryPanel({ patientId }: { patientId: number }) {
               key={editing}
               patientId={patientId}
               existing={editTarget}
-              previous={editing === 'new' && latest ? anthropometryValues(latest) : undefined}
+              history={historyColumns(rows.filter((row) => row.id !== editTarget?.id))}
               showDate
               isSaving={save.isPending}
               onSave={save.mutate}

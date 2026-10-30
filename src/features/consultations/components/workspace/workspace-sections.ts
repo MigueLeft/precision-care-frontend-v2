@@ -38,10 +38,12 @@ export const EXTRA_SECTION_LABELS: Record<ExtraSectionId, string> = {
   deliverables: 'Entregables',
 }
 
-export type CaptureSectionId = Extract<ClinicalSectionId, 'antecedents' | 'symptoms' | 'diagnoses'>
+export type CaptureSectionId = Extract<ClinicalSectionId, 'antecedents' | 'symptoms' | 'treatment' | 'diagnoses'>
+
+const CAPTURE_SECTIONS: WorkspaceSectionId[] = ['antecedents', 'symptoms', 'treatment', 'diagnoses']
 
 export function isCaptureSection(id: WorkspaceSectionId): id is CaptureSectionId {
-  return id === 'antecedents' || id === 'symptoms' || id === 'diagnoses'
+  return CAPTURE_SECTIONS.includes(id)
 }
 
 // El panel derecho aparece con un apartado de captura o un ingresable fijado.

@@ -3,7 +3,7 @@ import { toast } from '@/utils/toast'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
 import { useDiseases } from '@/features/catalogs'
 import { FAMILY_RELATIONSHIPS, useAntecedentDiseaseOptions, useCreateAntecedent, type Antecedent } from '@/features/antecedents'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
 import { useEncounterWorkspace } from '../workspace-context'
 import { useAntecedentEdit } from './useAntecedentEdit'
@@ -22,7 +22,7 @@ export function FamilyAntecedentForm({ patientId, antecedent }: FamilyAntecedent
   const { clearEdit } = useEncounterWorkspace()
   const options = useAntecedentDiseaseOptions()
   const { data: diseases = [] } = useDiseases()
-  const [values, setValues, clearDraft] = useConsultationDraftState<FamilyValues>(
+  const [values, setValues, clearDraft] = useCaptureDraftState<FamilyValues>(
     `workspace.antecedent.family.${antecedent?.id ?? 'new'}`,
     () =>
       antecedent

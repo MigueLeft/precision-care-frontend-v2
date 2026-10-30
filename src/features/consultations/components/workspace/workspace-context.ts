@@ -1,8 +1,12 @@
 import { createContext, useContext, useState } from 'react'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import type { WorkspaceSectionId } from './workspace-sections'
 
 // Registro de la lista central que se está editando en el panel de captura.
-export type EditingRecord = { kind: 'symptom' | 'disease' | 'antecedent' | 'allergy'; id: number }
+export type EditingRecord = {
+  kind: 'symptom' | 'disease' | 'antecedent' | 'allergy' | 'medication'
+  id: number
+}
 
 // Qué muestra el panel derecho cuando hay captura e ingresable fijado a la vez.
 export type RightView = 'capture' | 'pinned'
@@ -23,23 +27,35 @@ export interface EncounterWorkspace {
 }
 
 // Estado de navegación de la consulta (índice, panel central y panel derecho).
+// El registro en edición se recuerda por sección (y en localStorage): al volver
+// a la sección sigue abierto en el panel de captura.
 export function useEncounterWorkspaceState(initialSection: WorkspaceSectionId): EncounterWorkspace {
   const [section, setSection] = useState<WorkspaceSectionId>(initialSection)
   const [centerView, setCenterView] = useState<'section' | 'notes'>('section')
-  const [editing, setEditing] = useState<EditingRecord | null>(null)
+  const [editingBySection, setEditingBySection] = useCaptureDraftState<Partial<Record<WorkspaceSectionId, EditingRecord>>>(
+    'workspace.editing',
+    {},
+  )
   const [pinnedIntakeId, setPinnedIntakeId] = useState<number | null>(null)
   const [rightView, setRightView] = useState<RightView>('capture')
+
+  const setEditing = (record: EditingRecord | null) =>
+    setEditingBySection((prev) => {
+      const next = { ...prev }
+      if (record) next[section] = record
+      else delete next[section]
+      return next
+    })
 
   return {
     section,
     centerView,
-    editing,
+    editing: editingBySection[section] ?? null,
     pinnedIntakeId,
     rightView,
     selectSection: (next) => {
       setSection(next)
       setCenterView('section')
-      setEditing(null)
       setRightView('capture')
     },
     toggleNotes: () => setCenterView((view) => (view === 'notes' ? 'section' : 'notes')),

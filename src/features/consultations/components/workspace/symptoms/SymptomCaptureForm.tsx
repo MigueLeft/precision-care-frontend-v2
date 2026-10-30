@@ -5,7 +5,7 @@ import { OptionButtons } from '@/components/ui/OptionButtons'
 import { PartialDateField } from '@/components/ui/PartialDateField'
 import { useSymptoms, useSymptomSeverities } from '@/features/catalogs'
 import { isLettersOnly } from '@/utils/text-validation'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { useAddConsultationSymptom, useCaptureConsultationSymptom } from '../../../hooks/useConsultationDetail'
 import { SYMPTOM_STATUSES, SYMPTOM_STATUS_LABELS } from '../../../utils/consultation-format'
 import { CaptureActions, CaptureField, CaptureHeader } from '../capture/CaptureLayout'
@@ -30,7 +30,7 @@ export function SymptomCaptureForm({ consultationId, current, symptom }: Symptom
   const { data: severities = [] } = useSymptomSeverities()
   const addMutation = useAddConsultationSymptom(consultationId)
   const captureMutation = useCaptureConsultationSymptom(consultationId)
-  const [values, setValues, clearDraft] = useConsultationDraftState<SymptomFormValues>(
+  const [values, setValues, clearDraft] = useCaptureDraftState<SymptomFormValues>(
     `workspace.symptom.${symptom?.id ?? 'new'}`,
     () => (symptom ? symptomToForm(symptom) : EMPTY_SYMPTOM_FORM),
   )

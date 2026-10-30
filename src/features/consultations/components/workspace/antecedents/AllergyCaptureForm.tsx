@@ -3,7 +3,7 @@ import { toast } from '@/utils/toast'
 import { CatalogPicker, type CatalogPick } from '@/components/ui/CatalogPicker'
 import { OptionButtons } from '@/components/ui/OptionButtons'
 import { useAllergyCatalog, useAllergySeverities, useAllergyTypes } from '@/features/catalogs'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import {
   useAddConsultationAllergy,
   useConsultationAllergies,
@@ -39,7 +39,7 @@ export function AllergyCaptureForm({ consultationId, allergy }: AllergyCaptureFo
   const { data: severities = [] } = useAllergySeverities()
   const { data: allergyData } = useConsultationAllergies(consultationId)
   const flag = useSetNoKnownAllergies(consultationId)
-  const [values, setValues, clearDraft] = useConsultationDraftState<AllergyValues>(
+  const [values, setValues, clearDraft] = useCaptureDraftState<AllergyValues>(
     `workspace.antecedent.allergy.${allergy?.id ?? 'new'}`,
     () => (allergy ? toValues(allergy) : EMPTY),
   )

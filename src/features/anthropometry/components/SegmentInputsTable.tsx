@@ -4,6 +4,7 @@ import { formatNumber } from '@/utils/parse-numeric'
 import { SEGMENTS, SEGMENT_LABELS, SEGMENT_PARAMS } from '../segment-config'
 import { segmentField } from '../hooks/useAnthropometryForm'
 import { segmentSkeletalKg } from '../utils/anthropometry-calculations'
+import { SHEET_INPUT_CLASS, handleSheetKeyDown } from '../utils/sheet-navigation'
 import { ParamLabel } from './ParamLabel'
 
 type SegmentInputsTableProps = {
@@ -55,6 +56,7 @@ export function SegmentInputsTable({ raw, readOnly, onChange }: SegmentInputsTab
                         onChange(segmentField(segment, param.key), event.target.value)
                       }
                       disabled={readOnly}
+                      slotProps={{ htmlInput: { className: SHEET_INPUT_CLASS, onKeyDown: handleSheetKeyDown } }}
                       sx={{ width: 90 }}
                     />
                   )}

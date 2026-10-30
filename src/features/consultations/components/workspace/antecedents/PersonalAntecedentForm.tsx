@@ -10,7 +10,7 @@ import {
   type Antecedent,
   type AntecedentStatus,
 } from '@/features/antecedents'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
 import { useEncounterWorkspace } from '../workspace-context'
 import { useAntecedentEdit } from './useAntecedentEdit'
@@ -31,7 +31,7 @@ export function PersonalAntecedentForm({ patientId, antecedent }: PersonalAntece
   const { clearEdit } = useEncounterWorkspace()
   const options = useAntecedentDiseaseOptions()
   const { data: diseases = [] } = useDiseases()
-  const [values, setValues, clearDraft] = useConsultationDraftState<PersonalValues>(
+  const [values, setValues, clearDraft] = useCaptureDraftState<PersonalValues>(
     `workspace.antecedent.personal.${antecedent?.id ?? 'new'}`,
     () =>
       antecedent

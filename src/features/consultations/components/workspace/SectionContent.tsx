@@ -6,12 +6,12 @@ import { PhysicalExamSection } from '../encounter/PhysicalExamSection'
 import { PlaceholderSection } from '../encounter/PlaceholderSection'
 import { PreviousConsultationSection } from '../encounter/PreviousConsultationSection'
 import { ProblemsSection } from '../encounter/ProblemsSection'
-import { TreatmentSection } from '../encounter/TreatmentSection'
 import { AntecedentsBoard } from './antecedents/AntecedentsBoard'
 import { DeliverablesView } from './DeliverablesView'
 import { DiseasesBoard } from './diseases/DiseasesBoard'
 import { IntakesView } from './IntakesView'
 import { SymptomsBoard } from './symptoms/SymptomsBoard'
+import { TreatmentBoard } from './treatment/TreatmentBoard'
 import { sectionNumber, type WorkspaceSectionId } from './workspace-sections'
 import type { Consultation } from '../../types'
 
@@ -34,7 +34,7 @@ export function SectionContent({ section, consultation, readOnly }: SectionConte
     case 'diagnoses':
       return <DiseasesBoard consultationId={consultationId} readOnly={readOnly} />
     case 'treatment':
-      return <TreatmentSection index={index} consultation={consultation} readOnly={readOnly} />
+      return <TreatmentBoard consultationId={consultationId} readOnly={readOnly} />
     case 'anthropometry':
       return (
         <AnthropometrySection

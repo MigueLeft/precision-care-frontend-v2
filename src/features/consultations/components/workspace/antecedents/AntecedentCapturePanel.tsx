@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material'
 import { OptionButtons } from '@/components/ui/OptionButtons'
 import { useAntecedentsByPatient, type Antecedent } from '@/features/antecedents'
-import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { useConsultationAllergies } from '../../../hooks/useConsultationAllergies'
 import { CaptureField } from '../capture/CaptureLayout'
 import { useEncounterWorkspace } from '../workspace-context'
@@ -36,7 +36,7 @@ export function AntecedentCapturePanel({ patientId, consultationId }: Antecedent
   const { editing } = useEncounterWorkspace()
   const { data: antecedents = [] } = useAntecedentsByPatient(patientId)
   const { data: allergyData } = useConsultationAllergies(consultationId)
-  const [selectedKind, setKind] = useConsultationDraftState<AntecedentKind>('workspace.antecedent.kind', 'family')
+  const [selectedKind, setKind] = useCaptureDraftState<AntecedentKind>('workspace.antecedent.kind', 'family')
 
   const antecedent = editing?.kind === 'antecedent' ? (antecedents.find((item) => item.id === editing.id) ?? null) : null
   const allergy = editing?.kind === 'allergy' ? (allergyData?.allergies.find((item) => item.id === editing.id) ?? null) : null

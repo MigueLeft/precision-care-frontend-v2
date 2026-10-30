@@ -2,7 +2,7 @@ import { Box, Checkbox, FormControlLabel, Stack, TextField, Typography } from '@
 import { AppButton } from '@/components/AppButton'
 import { ANTHROPOMETRY_GROUPS } from '../config'
 import { useAnthropometryForm } from '../hooks/useAnthropometryForm'
-import type { ValueMap } from '../utils/anthropometry-calculations'
+import type { AnthropometryHistoryColumn } from '../utils/history-columns'
 import type { Anthropometry, SaveAnthropometryInput } from '../types'
 import { AnthropometryGroupInputs } from './AnthropometryGroupInputs'
 import { SegmentInputsTable } from './SegmentInputsTable'
@@ -12,7 +12,8 @@ type AnthropometryFormProps = {
   consultationId?: number
   appointmentId?: number
   existing?: Anthropometry | null
-  previous?: ValueMap
+  // Mediciones anteriores que se ven junto a la captura (vieja → nueva).
+  history?: AnthropometryHistoryColumn[]
   readOnly?: boolean
   // En la consulta la fecha es la de la consulta; en el expediente se elige.
   showDate?: boolean
@@ -26,7 +27,7 @@ export function AnthropometryForm({
   consultationId,
   appointmentId,
   existing,
-  previous,
+  history = [],
   readOnly = false,
   showDate = false,
   isSaving,
@@ -56,7 +57,7 @@ export function AnthropometryForm({
               group={group}
               raw={form.raw}
               computed={form.computed}
-              previous={previous}
+              history={history}
               readOnly={readOnly}
               segmentsEnabled={form.segmentsEnabled}
               onChange={form.setField}
