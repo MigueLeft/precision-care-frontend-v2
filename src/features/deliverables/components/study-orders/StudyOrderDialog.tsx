@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogTitle, MenuItem, Stack, TextField } from '@mui/material'
+import { DialogContent, DialogTitle, MenuItem, Stack, TextField } from '@mui/material'
+import { DialogSurface } from '@/components/ui/DialogSurface'
 import { useMe, useSpecialistsLookup } from '@/features/identity'
 import { usePrintStudyOrder, useSaveStudyOrder, useStudyOrder } from '../../hooks/useStudyOrders'
 import { printDeliverable } from '../../utils/print-deliverable'
@@ -17,10 +18,11 @@ type StudyOrderDialogProps = {
   // Sin consulta = orden del expediente (se elige el médico que firma).
   consultationId?: number
   readOnly?: boolean
+  inline?: boolean
   onClose: () => void
 }
 
-type ContentProps = Omit<StudyOrderDialogProps, 'open' | 'orderId'> & {
+type ContentProps = Omit<StudyOrderDialogProps, 'open' | 'orderId' | 'inline'> & {
   order: StudyOrder | null
   defaultSpecialistId: number | null
 }
@@ -99,16 +101,16 @@ function StudyOrderContent({ order, patientId, consultationId, readOnly = false,
   )
 }
 
-export function StudyOrderDialog({ open, orderId, ...props }: StudyOrderDialogProps) {
+export function StudyOrderDialog({ open, orderId, inline, ...props }: StudyOrderDialogProps) {
   const { data: order } = useStudyOrder(open ? orderId : null)
   const { data: me } = useMe()
   const ready = open && (orderId === null || !!order)
   return (
     // Sin cierre por clic afuera: los cambios se guardan con "Guardar".
-    <Dialog open={ready} maxWidth="md" fullWidth>
+    <DialogSurface open={ready} inline={inline}>
       {ready && (
         <StudyOrderContent {...props} order={order ?? null} defaultSpecialistId={me?.specialistId ?? null} />
       )}
-    </Dialog>
+    </DialogSurface>
   )
 }

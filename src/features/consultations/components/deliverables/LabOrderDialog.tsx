@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
+import { DialogContent, DialogTitle, Stack, TextField } from '@mui/material'
+import { DialogSurface } from '@/components/ui/DialogSurface'
 import {
   LabStudiesPicker,
   labStudyOptions,
@@ -24,6 +25,8 @@ type LabOrderDialogProps = {
   consultationId: number
   readOnly: boolean
   open: boolean
+  // En línea: dentro del panel central de la consulta en vez de un modal.
+  inline?: boolean
   onClose: () => void
 }
 
@@ -130,14 +133,14 @@ function LabOrderContent({
   )
 }
 
-export function LabOrderDialog({ open, ...props }: LabOrderDialogProps) {
+export function LabOrderDialog({ open, inline, ...props }: LabOrderDialogProps) {
   const { data: drafts } = useConsultationDrafts(props.consultationId)
   // Los perfiles se necesitan al montar para saber cuáles ya están en la orden.
   const { data: profiles } = useLabProfiles()
   const ready = !!drafts && !!profiles
   return (
     // Sin cierre por clic afuera: "Cerrar" guarda los cambios en espera.
-    <Dialog open={open && ready} maxWidth="md" fullWidth>
+    <DialogSurface open={open && ready} inline={inline}>
       {ready && (
         <LabOrderContent
           {...props}
@@ -147,6 +150,6 @@ export function LabOrderDialog({ open, ...props }: LabOrderDialogProps) {
           initialIndications={drafts.labOrder.indications ?? ''}
         />
       )}
-    </Dialog>
+    </DialogSurface>
   )
 }

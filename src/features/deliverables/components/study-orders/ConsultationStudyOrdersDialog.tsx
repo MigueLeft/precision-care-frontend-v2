@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Tooltip, Typography } from '@mui/material'
+import { DialogActions, DialogContent, DialogTitle, IconButton, Paper, Stack, Tooltip, Typography } from '@mui/material'
+import { DialogSurface } from '@/components/ui/DialogSurface'
 import AddIcon from '@mui/icons-material/Add'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined'
@@ -16,6 +17,8 @@ type ConsultationStudyOrdersDialogProps = {
   consultationId: number
   patientId: number
   readOnly: boolean
+  // En línea: dentro del panel central de la consulta en vez de un modal.
+  inline?: boolean
   onClose: () => void
 }
 
@@ -53,7 +56,7 @@ function OrderRow({ order, readOnly, onOpen, onDelete }: {
 }
 
 // Órdenes de estudio de la consulta: puede haber varias (una por centro).
-export function ConsultationStudyOrdersDialog({ open, consultationId, patientId, readOnly, onClose }: ConsultationStudyOrdersDialogProps) {
+export function ConsultationStudyOrdersDialog({ open, consultationId, patientId, readOnly, inline, onClose }: ConsultationStudyOrdersDialogProps) {
   const { data: orders = [] } = useConsultationStudyOrders(consultationId)
   const remove = useDeleteStudyOrder()
   const [editing, setEditing] = useState<'new' | number | null>(null)
@@ -61,7 +64,7 @@ export function ConsultationStudyOrdersDialog({ open, consultationId, patientId,
 
   return (
     <>
-      <Dialog open={open && editing === null} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogSurface open={open && editing === null} inline={inline} onClose={onClose} maxWidth="sm">
         <DialogTitle>Órdenes de estudio</DialogTitle>
         <DialogContent>
           <Stack spacing={1} sx={{ mt: 0.5 }}>
@@ -85,7 +88,7 @@ export function ConsultationStudyOrdersDialog({ open, consultationId, patientId,
             </AppButton>
           )}
         </DialogActions>
-      </Dialog>
+      </DialogSurface>
       <ConfirmDialog
         open={deleting !== null}
         title="Eliminar orden de estudio"
@@ -96,6 +99,7 @@ export function ConsultationStudyOrdersDialog({ open, consultationId, patientId,
       />
       <StudyOrderDialog
         open={open && editing !== null}
+        inline={inline}
         orderId={typeof editing === 'number' ? editing : null}
         patientId={patientId}
         consultationId={consultationId}

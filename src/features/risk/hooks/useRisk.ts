@@ -19,10 +19,11 @@ export const riskKeys = {
 }
 
 // Siempre fresco: el backend recalcula con los datos vigentes al consultarlo.
-export function useRiskOverview(patientId: number) {
+export function useRiskOverview(patientId: number, enabled = true) {
   return useQuery({
     queryKey: riskKeys.overview(patientId),
     queryFn: () => fetchRiskOverview(patientId),
+    enabled,
     staleTime: 0,
   })
 }

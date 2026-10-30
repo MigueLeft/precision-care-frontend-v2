@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogTitle, Typography } from '@mui/material'
+import { DialogContent, DialogTitle, Typography } from '@mui/material'
+import { DialogSurface } from '@/components/ui/DialogSurface'
 import { toast } from '@/utils/toast'
 import {
   printDeliverable,
@@ -21,6 +22,8 @@ type PrescriptionDialogProps = {
   consultationId: number
   readOnly: boolean
   open: boolean
+  // En línea: dentro del panel central de la consulta en vez de un modal.
+  inline?: boolean
   onClose: () => void
 }
 
@@ -144,20 +147,20 @@ function PrescriptionContent({ consultationId, readOnly, onClose, initial }: Con
   )
 }
 
-export function PrescriptionDialog({ open, ...props }: PrescriptionDialogProps) {
+export function PrescriptionDialog({ open, inline, ...props }: PrescriptionDialogProps) {
   const { data: drafts } = useConsultationDrafts(props.consultationId)
   const { data: medications } = useConsultationMedications(props.consultationId)
   const { data: catalog } = useMedications()
   const ready = !!drafts && !!medications && !!catalog
   return (
     // Sin cierre por clic afuera: "Cerrar" guarda los cambios en espera.
-    <Dialog open={open && ready} maxWidth="md" fullWidth>
+    <DialogSurface open={open && ready} inline={inline}>
       {ready && (
         <PrescriptionContent
           {...props}
           initial={initialLines(medications, drafts.prescription.items, catalog)}
         />
       )}
-    </Dialog>
+    </DialogSurface>
   )
 }
