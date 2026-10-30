@@ -11,6 +11,7 @@ import {
   type ManualMedicationValue,
 } from '../../utils/manual-medication'
 import type { AddMedicationInput } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface MedicationAddFormProps {
   onAdd: (input: AddMedicationInput) => void
@@ -20,13 +21,13 @@ interface MedicationAddFormProps {
 export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
   const { data: catalog = [] } = useMedications()
 
-  const [manual, setManual] = useState(false)
+  const [manual, setManual] = useConsultationDraftState('medicationAdd.manual', false)
   const [manualMedication, setManualMedication] =
-    useState<ManualMedicationValue>(EMPTY_MANUAL_MEDICATION)
-  const [medicationId, setMedicationId] = useState<number | null>(null)
-  const [medicationLabel, setMedicationLabel] = useState('')
-  const [dose, setDose] = useState('')
-  const [frequency, setFrequency] = useState('')
+    useConsultationDraftState<ManualMedicationValue>('medicationAdd.manualMedication', EMPTY_MANUAL_MEDICATION)
+  const [medicationId, setMedicationId] = useConsultationDraftState<number | null>('medicationAdd.medicationId', null)
+  const [medicationLabel, setMedicationLabel] = useConsultationDraftState('medicationAdd.medicationLabel', '')
+  const [dose, setDose] = useConsultationDraftState('medicationAdd.dose', '')
+  const [frequency, setFrequency] = useConsultationDraftState('medicationAdd.frequency', '')
   // Remonta el selector de frecuencia (cierra el "Otro" abierto) tras añadir.
   const [resetCount, setResetCount] = useState(0)
 

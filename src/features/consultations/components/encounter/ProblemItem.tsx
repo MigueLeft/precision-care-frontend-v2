@@ -1,19 +1,20 @@
-import { useState } from 'react'
 import { Box, IconButton, Stack, TextField, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type ProblemItemProps = {
   value: string
   readOnly: boolean
+  draftKey?: string
   onChange: (value: string) => void
   onRemove: () => void
 }
 
 // Una nota de diagnóstico: se puede editar en línea para agregar detalles a lo
 // que generó el sistema (Enter o salir del campo guarda, Escape cancela).
-export function ProblemItem({ value, readOnly, onChange, onRemove }: ProblemItemProps) {
-  const [draft, setDraft] = useState<string | null>(null)
+export function ProblemItem({ value, readOnly, draftKey, onChange, onRemove }: ProblemItemProps) {
+  const [draft, setDraft] = useConsultationDraftState<string | null>(draftKey ? `${draftKey}.draft` : null, null)
 
   const commit = () => {
     const clean = draft?.trim()

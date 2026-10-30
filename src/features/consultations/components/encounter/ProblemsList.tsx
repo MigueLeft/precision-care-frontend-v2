@@ -1,13 +1,15 @@
-import { useState } from 'react'
 import { IconButton, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { ProblemItem } from './ProblemItem'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface ProblemsListProps {
   items: string[]
   readOnly: boolean
   placeholder: string
   emptyLabel: string
+  // Clave del respaldo local de lo que se está escribiendo.
+  draftKey?: string
   onChange: (items: string[]) => void
 }
 
@@ -18,9 +20,10 @@ export function ProblemsList({
   readOnly,
   placeholder,
   emptyLabel,
+  draftKey,
   onChange,
 }: ProblemsListProps) {
-  const [draft, setDraft] = useState('')
+  const [draft, setDraft] = useConsultationDraftState(draftKey ? `${draftKey}.draft` : null, '')
 
   const add = () => {
     const value = draft.trim()
@@ -53,6 +56,7 @@ export function ProblemsList({
               key={`${index}-${item}`}
               value={item}
               readOnly={readOnly}
+              draftKey={draftKey && `${draftKey}.item${index}`}
               onChange={(next) => onChange(items.map((current, i) => (i === index ? next : current)))}
               onRemove={() => onChange(items.filter((_, i) => i !== index))}
             />

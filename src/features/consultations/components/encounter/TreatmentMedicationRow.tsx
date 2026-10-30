@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Autocomplete,
   Box,
@@ -28,6 +27,7 @@ import type {
   MedicationAdherence,
   MedicationRamStatus,
 } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface CaptureInput {
   dose?: string
@@ -74,22 +74,22 @@ export function TreatmentMedicationRow({
 
   const { data: medicationCatalog = [] } = useMedications()
 
-  const [capturing, setCapturing] = useState(!hasCapture && !suspended)
-  const [editingMed, setEditingMed] = useState(false)
-  const [dose, setDose] = useState(medication.dose ?? '')
-  const [frequency, setFrequency] = useState(medication.frequency ?? '')
-  const [replacement, setReplacement] = useState<Medication | null>(null)
-  const [adherence, setAdherence] = useState<MedicationAdherence | null>(
+  const [capturing, setCapturing] = useConsultationDraftState(`treatment:${medication.medicationId}.capturing`, !hasCapture && !suspended)
+  const [editingMed, setEditingMed] = useConsultationDraftState(`treatment:${medication.medicationId}.editingMed`, false)
+  const [dose, setDose] = useConsultationDraftState(`treatment:${medication.medicationId}.dose`, medication.dose ?? '')
+  const [frequency, setFrequency] = useConsultationDraftState(`treatment:${medication.medicationId}.frequency`, medication.frequency ?? '')
+  const [replacement, setReplacement] = useConsultationDraftState<Medication | null>(`treatment:${medication.medicationId}.replacement`, null)
+  const [adherence, setAdherence] = useConsultationDraftState<MedicationAdherence | null>(`treatment:${medication.medicationId}.adherence`, 
     medication.adherence ?? null,
   )
-  const [ramStatus, setRamStatus] = useState<MedicationRamStatus | null>(
+  const [ramStatus, setRamStatus] = useConsultationDraftState<MedicationRamStatus | null>(`treatment:${medication.medicationId}.ramStatus`, 
     medication.ramStatus ?? null,
   )
-  const [adherenceNotes, setAdherenceNotes] = useState(medication.adherenceNotes ?? '')
-  const [ramNotes, setRamNotes] = useState(medication.ramNotes ?? '')
-  const [suspendForRam, setSuspendForRam] = useState(false)
-  const [finishing, setFinishing] = useState(false)
-  const [finishReason, setFinishReason] = useState('')
+  const [adherenceNotes, setAdherenceNotes] = useConsultationDraftState(`treatment:${medication.medicationId}.adherenceNotes`, medication.adherenceNotes ?? '')
+  const [ramNotes, setRamNotes] = useConsultationDraftState(`treatment:${medication.medicationId}.ramNotes`, medication.ramNotes ?? '')
+  const [suspendForRam, setSuspendForRam] = useConsultationDraftState(`treatment:${medication.medicationId}.suspendForRam`, false)
+  const [finishing, setFinishing] = useConsultationDraftState(`treatment:${medication.medicationId}.finishing`, false)
+  const [finishReason, setFinishReason] = useConsultationDraftState(`treatment:${medication.medicationId}.finishReason`, '')
 
   const doseChanged = editingMed && dose.trim() !== (medication.dose ?? '')
   const freqChanged = editingMed && frequency.trim() !== (medication.frequency ?? '')

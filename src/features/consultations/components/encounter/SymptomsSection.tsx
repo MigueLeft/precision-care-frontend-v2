@@ -101,6 +101,7 @@ export function SymptomsSection({
           sx={{ mt: 2 }}
           options={availableOptions.map((s) => ({ id: s.id, name: s.name }))}
           placeholder="Buscar síntoma…"
+          draftKey="symptomSearch"
           onAdd={(name, id) => addSymptom(name, id)}
           manualLabel="El síntoma no está en el catálogo · escribir manualmente"
         />

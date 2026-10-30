@@ -5,6 +5,10 @@ import { useNavigate } from '@tanstack/react-router'
 import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { useUpdateConsultation } from '../../hooks/useConsultationDetail'
+import {
+  clearConsultationDraft,
+  flushBeforeFinalize,
+} from '../../hooks/useConsultationLocalBackup'
 import { LandIntakeButton } from './LandIntakeButton'
 import type { Consultation } from '../../types'
 
@@ -25,6 +29,7 @@ export function EncounterHeader({ consultation, readOnly }: EncounterHeaderProps
   const navigate = useNavigate()
   const [duration, setDuration] = useState(() => elapsed(consultation.startAt))
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [flushing, setFlushing] = useState(false)
 
   const finalize = useUpdateConsultation(consultation.id)
 
@@ -33,6 +38,23 @@ export function EncounterHeader({ consultation, readOnly }: EncounterHeaderProps
     const timer = setInterval(() => setDuration(elapsed(consultation.startAt)), 30000)
     return () => clearInterval(timer)
   }, [consultation.startAt, readOnly])
+
+  // Primero llega a la base lo pendiente del respaldo local; al finalizar se borra.
+  async function finalizeConsultation() {
+    setFlushing(true)
+    const ready = await flushBeforeFinalize(consultation.id)
+    setFlushing(false)
+    if (!ready) return
+    finalize.mutate(
+      { status: 'completed' },
+      {
+        onSuccess: () => {
+          clearConsultationDraft(consultation.id)
+          goBack()
+        },
+      },
+    )
+  }
 
   function goBack() {
     navigate({
@@ -91,13 +113,8 @@ export function EncounterHeader({ consultation, readOnly }: EncounterHeaderProps
         description="Lo capturado en la consulta es un borrador: al finalizar queda cerrada y toda su información pasa al expediente del paciente. ¿Continuar?"
         confirmLabel="Finalizar"
         color="primary"
-        isConfirming={finalize.isPending}
-        onConfirm={() =>
-          finalize.mutate(
-            { status: 'completed' },
-            { onSuccess: () => goBack() },
-          )
-        }
+        isConfirming={flushing || finalize.isPending}
+        onConfirm={finalizeConsultation}
         onClose={() => setConfirmOpen(false)}
       />
     </Stack>

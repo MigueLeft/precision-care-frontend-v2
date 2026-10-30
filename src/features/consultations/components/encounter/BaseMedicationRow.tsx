@@ -6,6 +6,7 @@ import { AppButton } from '@/components/AppButton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { MedicationDoseFields } from './MedicationDoseFields'
 import type { CaptureMedicationInput, ConsultationMedication } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface BaseMedicationRowProps {
   medication: ConsultationMedication
@@ -31,10 +32,10 @@ export function BaseMedicationRow({
   onSave,
   onRemove,
 }: BaseMedicationRowProps) {
-  const [editing, setEditing] = useState(false)
+  const [editing, setEditing] = useConsultationDraftState(`baseMedication:${medication.medicationId}.editing`, false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [dose, setDose] = useState(medication.dose ?? '')
-  const [frequency, setFrequency] = useState(medication.frequency ?? '')
+  const [dose, setDose] = useConsultationDraftState(`baseMedication:${medication.medicationId}.dose`, medication.dose ?? '')
+  const [frequency, setFrequency] = useConsultationDraftState(`baseMedication:${medication.medicationId}.frequency`, medication.frequency ?? '')
 
   const changed =
     dose.trim() !== (medication.dose ?? '') || frequency.trim() !== (medication.frequency ?? '')
