@@ -5,6 +5,7 @@ import { ANTECEDENT_STATUS_COLORS, ANTECEDENT_STATUS_LABELS, ANTECEDENT_TYPE_LAB
 
 type AntecedentCardProps = {
   antecedent: Antecedent
+  selected: boolean
   readOnly: boolean
   onEdit: () => void
   onRemove: () => void
@@ -17,7 +18,7 @@ function subtitleOf(antecedent: Antecedent): string | null {
 }
 
 // Antecedente familiar, personal o quirúrgico/hospitalización en la lista central.
-export function AntecedentCard({ antecedent, readOnly, onEdit, onRemove }: AntecedentCardProps) {
+export function AntecedentCard({ antecedent, selected, readOnly, onEdit, onRemove }: AntecedentCardProps) {
   const date = antecedent.eventDate ?? antecedent.hospitalizationDetail?.admissionDate ?? null
   const complications = antecedent.surgeryDetail?.complications ?? antecedent.hospitalizationDetail?.complications
   const notes = antecedent.description && antecedent.description !== complications ? antecedent.description : null
@@ -27,6 +28,7 @@ export function AntecedentCard({ antecedent, readOnly, onEdit, onRemove }: Antec
     <RecordCard
       title={antecedent.name}
       subtitle={subtitleOf(antecedent)}
+      selected={selected}
       onEdit={readOnly ? undefined : onEdit}
       onRemove={readOnly ? undefined : onRemove}
       chips={

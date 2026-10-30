@@ -1,14 +1,13 @@
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Box, Chip, Stack, Typography } from '@mui/material'
-import { AntecedentEditDialog, useAntecedentsByPatient, useDeleteAntecedent, type Antecedent } from '@/features/antecedents'
+import { useAntecedentsByPatient, useDeleteAntecedent, type Antecedent } from '@/features/antecedents'
 import { groupAntecedents } from '../../../utils/antecedent-groups'
 import { useConsultationAllergies, useRemoveConsultationAllergy } from '../../../hooks/useConsultationAllergies'
 import { AllergyCard } from '../../encounter/AllergyCard'
-import { AllergyEditDialog } from '../../encounter/AllergyEditDialog'
 import { AllergyHistory } from '../../encounter/AllergyHistory'
 import { BoardHeader } from '../BoardHeader'
+import { useEncounterWorkspace } from '../workspace-context'
 import { AntecedentCard } from './AntecedentCard'
-import type { ConsultationAllergy } from '../../../types'
 
 type AntecedentsBoardProps = {
   patientId: number
@@ -32,14 +31,20 @@ function Group({ title, count, children }: { title: string; count: number; child
 }
 
 // Antecedentes del expediente agrupados por tipo, más las alergias. Se agregan
-// desde el panel derecho; aquí se editan o se quitan.
+// y se editan en el panel derecho; aquí se eligen o se quitan.
 export function AntecedentsBoard({ patientId, consultationId, readOnly }: AntecedentsBoardProps) {
   const { data: antecedents = [] } = useAntecedentsByPatient(patientId)
   const { data: allergyData } = useConsultationAllergies(consultationId)
   const deleteAntecedent = useDeleteAntecedent(patientId)
   const removeAllergy = useRemoveConsultationAllergy(consultationId)
-  const [editing, setEditing] = useState<Antecedent | null>(null)
-  const [editingAllergy, setEditingAllergy] = useState<ConsultationAllergy | null>(null)
+  const { editing, startEdit, clearEdit } = useEncounterWorkspace()
+  const isEditing = (kind: 'antecedent' | 'allergy', id: number) => editing?.kind === kind && editing.id === id
+  // Al quitar el registro que se está editando, el panel vuelve a "Agregar".
+  const afterRemove = (kind: 'antecedent' | 'allergy', id: number) => ({
+    onSuccess: () => {
+      if (isEditing(kind, id)) clearEdit()
+    },
+  })
 
   const groups = groupAntecedents(antecedents)
   const allergies = allergyData?.allergies ?? []
@@ -47,9 +52,10 @@ export function AntecedentsBoard({ patientId, consultationId, readOnly }: Antece
     <AntecedentCard
       key={antecedent.id}
       antecedent={antecedent}
+      selected={isEditing('antecedent', antecedent.id)}
       readOnly={readOnly}
-      onEdit={() => setEditing(antecedent)}
-      onRemove={() => deleteAntecedent.mutate(antecedent.id)}
+      onEdit={() => startEdit({ kind: 'antecedent', id: antecedent.id })}
+      onRemove={() => deleteAntecedent.mutate(antecedent.id, afterRemove('antecedent', antecedent.id))}
     />
   )
 
@@ -66,8 +72,8 @@ export function AntecedentsBoard({ patientId, consultationId, readOnly }: Antece
               key={allergy.id}
               allergy={allergy}
               readOnly={readOnly}
-              onEdit={() => setEditingAllergy(allergy)}
-              onRemove={() => removeAllergy.mutate(allergy.id)}
+              onEdit={() => startEdit({ kind: 'allergy', id: allergy.id })}
+              onRemove={() => removeAllergy.mutate(allergy.id, afterRemove('allergy', allergy.id))}
             />
           ))}
         </Group>
@@ -78,9 +84,6 @@ export function AntecedentsBoard({ patientId, consultationId, readOnly }: Antece
       <Typography sx={{ fontSize: '11px', color: 'text.secondary', fontStyle: 'italic', mt: 1.5 }}>
         Los antecedentes y alergias se guardan en el expediente, no sólo en esta consulta.
       </Typography>
-
-      <AntecedentEditDialog patientId={patientId} antecedent={editing} onClose={() => setEditing(null)} />
-      <AllergyEditDialog consultationId={consultationId} allergy={editingAllergy} onClose={() => setEditingAllergy(null)} />
     </div>
   )
 }

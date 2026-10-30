@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from 'react'
 import type { WorkspaceSectionId } from './workspace-sections'
 
 // Registro de la lista central que se está editando en el panel de captura.
-export type EditingRecord = { kind: 'symptom' | 'disease'; id: number }
+export type EditingRecord = { kind: 'symptom' | 'disease' | 'antecedent' | 'allergy'; id: number }
 
 // Qué muestra el panel derecho cuando hay captura e ingresable fijado a la vez.
 export type RightView = 'capture' | 'pinned'

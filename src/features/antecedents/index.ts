@@ -8,10 +8,12 @@ export {
 export { useAntecedentsByPatient } from './hooks/useAntecedentsByPatient'
 export { useCreateAntecedent } from './hooks/useCreateAntecedent'
 export { useDeleteAntecedent } from './hooks/useDeleteAntecedent'
+export { useUpdateAntecedent } from './hooks/useUpdateAntecedent'
+export { mapAntecedentToForm, mapFormToUpdatePayload } from './utils/antecedent-mappers'
+export type { AntecedentFormValues } from './schemas/antecedent-form.schema'
 export { useAntecedentDiseaseOptions } from './hooks/useAntecedentDiseaseOptions'
 export { AntecedentsPanel } from './components/AntecedentsPanel'
 export { AntecedentListTable } from './components/AntecedentListTable'
-export { AntecedentEditDialog } from './components/AntecedentEditDialog'
 export { SurgeryHospitalizationList } from './components/SurgeryHospitalizationList'
 export {
   ANTECEDENT_STATUS_LABELS,

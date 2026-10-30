@@ -7,28 +7,52 @@ import {
   ANTECEDENT_STATUS_LABELS,
   useAntecedentDiseaseOptions,
   useCreateAntecedent,
+  type Antecedent,
   type AntecedentStatus,
 } from '@/features/antecedents'
 import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
+import { useEncounterWorkspace } from '../workspace-context'
+import { useAntecedentEdit } from './useAntecedentEdit'
 
 const STATUSES = Object.keys(ANTECEDENT_STATUS_LABELS) as AntecedentStatus[]
 
 type PersonalValues = { condition: CatalogPick | null; since: string; status: AntecedentStatus; notes: string }
 const EMPTY: PersonalValues = { condition: null, since: '', status: 'active', notes: '' }
 
+type PersonalAntecedentFormProps = {
+  patientId: number
+  // Antecedente en edición; null = registro nuevo.
+  antecedent: Antecedent | null
+}
+
 // Antecedente personal patológico: condición, desde cuándo, estado y notas.
-export function PersonalAntecedentForm({ patientId }: { patientId: number }) {
+export function PersonalAntecedentForm({ patientId, antecedent }: PersonalAntecedentFormProps) {
+  const { clearEdit } = useEncounterWorkspace()
   const options = useAntecedentDiseaseOptions()
   const { data: diseases = [] } = useDiseases()
-  const [values, setValues] = useConsultationDraftState<PersonalValues>('workspace.antecedent.personal', EMPTY)
+  const [values, setValues, clearDraft] = useConsultationDraftState<PersonalValues>(
+    `workspace.antecedent.personal.${antecedent?.id ?? 'new'}`,
+    () =>
+      antecedent
+        ? {
+            condition: { name: antecedent.name, catalogId: antecedent.diseaseCatalogId ?? undefined },
+            since: antecedent.eventDate ?? '',
+            status: antecedent.status ?? 'active',
+            notes: antecedent.description ?? '',
+          }
+        : EMPTY,
+  )
   const set = (patch: Partial<PersonalValues>) => setValues((prev) => ({ ...prev, ...patch }))
   const create = useCreateAntecedent(patientId, { onSuccess: () => setValues(EMPTY) })
-  const code = diseases.find((disease) => disease.id === values.condition?.catalogId)?.code
+  const done = () => { clearDraft(); clearEdit() }
+  const edit = useAntecedentEdit(patientId, antecedent, done)
+  const code = antecedent?.cie10Code ?? diseases.find((disease) => disease.id === values.condition?.catalogId)?.code
 
   function submit() {
     const name = values.condition?.name.trim()
     if (!name) return toast.error('Busca y selecciona la condición o padecimiento.')
+    if (antecedent) return edit.save({ eventDate: values.since, status: values.status, description: values.notes })
     create.mutate({
       patientId,
       type: 'personal',
@@ -42,12 +66,14 @@ export function PersonalAntecedentForm({ patientId }: { patientId: number }) {
 
   return (
     <Stack spacing={2}>
-      <CatalogPicker
-        options={options}
-        value={values.condition}
-        onChange={(condition) => set({ condition })}
-        placeholder="Buscar condición o padecimiento…"
-      />
+      {!antecedent && (
+        <CatalogPicker
+          options={options}
+          value={values.condition}
+          onChange={(condition) => set({ condition })}
+          placeholder="Buscar condición o padecimiento…"
+        />
+      )}
       {values.condition && (
         <>
           <CaptureHeader name={values.condition.name} code={code} />
@@ -60,7 +86,12 @@ export function PersonalAntecedentForm({ patientId }: { patientId: number }) {
             ))}
           </TextField>
           <TextField size="small" label="Notas" multiline minRows={2} value={values.notes} onChange={(event) => set({ notes: event.target.value })} />
-          <CaptureActions editing={false} loading={create.isPending} onSubmit={submit} onCancel={() => setValues(EMPTY)} />
+          <CaptureActions
+            editing={!!antecedent}
+            loading={create.isPending || edit.isPending}
+            onSubmit={submit}
+            onCancel={antecedent ? done : () => setValues(EMPTY)}
+          />
         </>
       )}
     </Stack>

@@ -16,7 +16,7 @@ type RightPanelProps = {
 }
 
 const CAPTURE_TITLES: Record<CaptureSectionId, [add: string, edit: string]> = {
-  antecedents: ['Agregar antecedente', 'Agregar antecedente'],
+  antecedents: ['Agregar antecedente', 'Editar antecedente'],
   symptoms: ['Agregar síntoma', 'Editar síntoma'],
   diagnoses: ['Agregar diagnóstico', 'Editar diagnóstico'],
 }
