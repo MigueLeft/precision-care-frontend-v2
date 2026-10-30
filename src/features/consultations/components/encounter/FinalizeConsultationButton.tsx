@@ -30,8 +30,8 @@ function finalizeDescription(consultation: Consultation): string {
   return `Aviso: el examen físico tiene ${warnings} ${warnings === 1 ? 'pendiente' : 'pendientes'} por revisar. ${FINALIZE_TEXT}`
 }
 
-// "Finalizar consulta" (en curso) o "Volver al expediente" (solo lectura), en la
-// barra del paciente.
+// "Finalizar consulta" (en curso) o "Volver al expediente" (solo lectura), al
+// extremo derecho de la barra del paciente.
 export function FinalizeConsultationButton({ consultation, readOnly }: FinalizeConsultationButtonProps) {
   const navigate = useNavigate()
   const [confirmOpen, setConfirmOpen] = useState(false)

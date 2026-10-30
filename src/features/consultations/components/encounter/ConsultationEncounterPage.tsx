@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { DraftConsultationContext } from '@/hooks/draft-consultation'
 import { usePatient } from '@/features/patients'
 import { useMe, hasPermission } from '@/features/identity'
@@ -37,8 +37,12 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
         {patient && (
           <EncounterPatientBar
             patient={patient}
-            startAction={<FinalizeConsultationButton consultation={consultation} readOnly={readOnly} />}
-            endAction={readOnly ? undefined : <EncounterDuration startAt={consultation.startAt} />}
+            endAction={
+              <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                {!readOnly && <EncounterDuration startAt={consultation.startAt} />}
+                <FinalizeConsultationButton consultation={consultation} readOnly={readOnly} />
+              </Stack>
+            }
           />
         )}
         <ConsultationWorkspace consultation={consultation} readOnly={readOnly} />
