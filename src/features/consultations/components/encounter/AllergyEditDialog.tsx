@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Button,
   Dialog,
@@ -18,6 +17,7 @@ import { toast } from '@/utils/toast'
 import { useAllergySeverities } from '@/features/catalogs'
 import { useUpdateConsultationAllergy } from '../../hooks/useConsultationAllergies'
 import type { ConsultationAllergy } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type AllergyEditDialogProps = {
   consultationId: number
@@ -32,9 +32,9 @@ const CURRENT_YEAR = new Date().getFullYear()
 function AllergyEditContent({ consultationId, allergy, onClose }: AllergyEditDialogProps & { allergy: ConsultationAllergy }) {
   const { data: severities = [] } = useAllergySeverities()
   const update = useUpdateConsultationAllergy(consultationId, { onSuccess: onClose })
-  const [severityId, setSeverityId] = useState<number>(allergy.severityId)
-  const [onsetYear, setOnsetYear] = useState(allergy.onsetYear ? String(allergy.onsetYear) : '')
-  const [reaction, setReaction] = useState(allergy.reaction ?? '')
+  const [severityId, setSeverityId] = useConsultationDraftState<number>(`allergyEdit:${allergy.id}.severityId`, allergy.severityId)
+  const [onsetYear, setOnsetYear] = useConsultationDraftState(`allergyEdit:${allergy.id}.onsetYear`, allergy.onsetYear ? String(allergy.onsetYear) : '')
+  const [reaction, setReaction] = useConsultationDraftState(`allergyEdit:${allergy.id}.reaction`, allergy.reaction ?? '')
 
   function submit() {
     const year = onsetYear.trim() ? Number(onsetYear) : null

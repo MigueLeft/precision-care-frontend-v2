@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import type { ParaclinicalCatalog } from '@/features/catalogs'
 import { todayIsoDate } from '@/utils/format-date'
 import { buildStudyValue, resultDateIso } from '../utils/single-study-result'
 import type { CreateParaclinicalResultInput } from '../types'
 import { useEntryBlocks } from './useEntryBlocks'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 export interface StudyEntry {
   result: string
@@ -16,8 +16,8 @@ export interface StudyEntry {
 export function useProfileResultsDraft(patientId: number) {
   const entryBlocks = useEntryBlocks()
   const { blocks } = entryBlocks
-  const [entries, setEntries] = useState<Record<number, StudyEntry>>({})
-  const [date, setDate] = useState(todayIsoDate())
+  const [entries, setEntries] = useConsultationDraftState<Record<number, StudyEntry>>(`labResults:${patientId}.entries`, {})
+  const [date, setDate] = useConsultationDraftState(`labResults:${patientId}.date`, todayIsoDate())
 
   function entryOf(study: ParaclinicalCatalog): StudyEntry {
     return entries[study.id] ?? { result: '', unit: study.defaultUnit ?? '' }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { StudyOrder, StudyOrderContentPayload } from '../../types'
 import type { ProviderChoice } from './ProviderPicker'
 import type { StudyItemValue } from './StudyItemsPicker'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type FormState = {
   provider: ProviderChoice
@@ -24,7 +25,7 @@ function fromOrder(order: StudyOrder | null, defaultSpecialistId: number | null)
 // Estado del formulario de una orden de estudio: valores, cambios sin guardar
 // y el cuerpo que espera el backend (UpdateStudyOrderSchema).
 export function useStudyOrderForm(order: StudyOrder | null, defaultSpecialistId: number | null) {
-  const [form, setForm] = useState<FormState>(() => fromOrder(order, defaultSpecialistId))
+  const [form, setForm] = useConsultationDraftState<FormState>(`studyOrder:${order?.id ?? "new"}.form`, () => fromOrder(order, defaultSpecialistId))
   const [saved, setSaved] = useState<FormState>(form)
   const dirty = JSON.stringify(form) !== JSON.stringify(saved)
 

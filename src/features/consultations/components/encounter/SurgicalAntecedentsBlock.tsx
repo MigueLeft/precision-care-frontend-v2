@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from '@/utils/toast'
@@ -13,6 +12,7 @@ import {
 } from '@/features/antecedents'
 import type { Antecedent, AntecedentType } from '@/features/antecedents'
 import { buildSurgicalAntecedentPayload } from '../../utils/surgical-antecedent-payload'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type SurgicalType = Extract<AntecedentType, 'surgery' | 'hospitalization'>
 
@@ -33,10 +33,10 @@ export function SurgicalAntecedentsBlock({
   const deleteMutation = useDeleteAntecedent(patientId)
   const { data: surgeryCatalog = [] } = useSurgeryCatalog()
   const { data: hospitalizationCatalog = [] } = useHospitalizationCatalog()
-  const [type, setType] = useState<SurgicalType>('surgery')
-  const [event, setEvent] = useState<CatalogPick | null>(null)
-  const [date, setDate] = useState('')
-  const [complications, setComplications] = useState('')
+  const [type, setType] = useConsultationDraftState<SurgicalType>('surgicalAntecedentAdd.type', 'surgery')
+  const [event, setEvent] = useConsultationDraftState<CatalogPick | null>('surgicalAntecedentAdd.event', null)
+  const [date, setDate] = useConsultationDraftState('surgicalAntecedentAdd.date', '')
+  const [complications, setComplications] = useConsultationDraftState('surgicalAntecedentAdd.complications', '')
 
   // Cirugías se eligen de surgery_catalog; hospitalizaciones de hospitalization_catalog.
   const catalog = (type === 'surgery' ? surgeryCatalog : hospitalizationCatalog).filter(

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { MenuItem, Select, Stack, TextField, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from '@/utils/toast'
@@ -13,6 +12,7 @@ import {
   ANTECEDENT_STATUS_LABELS,
 } from '@/features/antecedents'
 import type { Antecedent, AntecedentStatus } from '@/features/antecedents'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 const STATUSES = Object.keys(ANTECEDENT_STATUS_LABELS) as AntecedentStatus[]
 
@@ -32,10 +32,10 @@ export function PersonalAntecedentsBlock({
   const createMutation = useCreateAntecedent(patientId, { onSuccess: () => reset() })
   const deleteMutation = useDeleteAntecedent(patientId)
   const diseaseOptions = useAntecedentDiseaseOptions()
-  const [condition, setCondition] = useState<CatalogPick | null>(null)
-  const [since, setSince] = useState('')
-  const [status, setStatus] = useState<AntecedentStatus>('active')
-  const [notes, setNotes] = useState('')
+  const [condition, setCondition] = useConsultationDraftState<CatalogPick | null>('personalAntecedentAdd.condition', null)
+  const [since, setSince] = useConsultationDraftState('personalAntecedentAdd.since', '')
+  const [status, setStatus] = useConsultationDraftState<AntecedentStatus>('personalAntecedentAdd.status', 'active')
+  const [notes, setNotes] = useConsultationDraftState('personalAntecedentAdd.notes', '')
 
   function reset() {
     setCondition(null)

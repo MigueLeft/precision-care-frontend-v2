@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 import type { AttrValue, ElementPath, ElementState, GuVariant, PhysicalExam, SystemState } from '../types'
 import * as el from '../utils/element-reducers'
 import * as sys from '../utils/system-reducers'
@@ -29,7 +30,15 @@ type UsePhysicalExamOptions = {
 
 // Estado del formulario de examen físico y sus acciones.
 export function usePhysicalExam({ saved, sex, ctx, onChange }: UsePhysicalExamOptions) {
-  const [exam, setExam] = useState(() => withNarrative(finalizeExam(createExam(sex, saved), ctx)))
+  const initial = () => withNarrative(finalizeExam(createExam(sex, saved), ctx))
+  // Con respaldo de la consulta en curso: si quedó un examen sin guardar, se
+  // recupera y se vuelve a enviar.
+  const [exam, setExam] = useConsultationDraftState<PhysicalExam>('physicalExam', initial)
+  const restored = useRef(JSON.stringify(exam) !== JSON.stringify(initial()))
+  useEffect(() => {
+    if (restored.current) onChange(exam)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const commit = (next: PhysicalExam) => {
     const complete = withNarrative(next)

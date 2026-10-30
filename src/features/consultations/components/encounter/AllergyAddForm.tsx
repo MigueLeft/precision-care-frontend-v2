@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Autocomplete,
   Checkbox,
@@ -16,6 +15,7 @@ import { AppButton } from '@/components/AppButton'
 import { useAllergyCatalog, useAllergySeverities, useAllergyTypes } from '@/features/catalogs'
 import type { AllergyCatalog } from '@/features/catalogs'
 import type { AddAllergyInput } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface AllergyAddFormProps {
   onAdd: (input: AddAllergyInput) => void
@@ -29,13 +29,13 @@ export function AllergyAddForm({ onAdd, isAdding, usedCatalogIds }: AllergyAddFo
   const { data: types = [] } = useAllergyTypes()
   const { data: severities = [] } = useAllergySeverities()
 
-  const [manual, setManual] = useState(false)
-  const [typeId, setTypeId] = useState<number | ''>('')
-  const [selected, setSelected] = useState<AllergyCatalog | null>(null)
-  const [manualName, setManualName] = useState('')
-  const [severityId, setSeverityId] = useState<number | ''>('')
-  const [onsetYear, setOnsetYear] = useState('')
-  const [reaction, setReaction] = useState('')
+  const [manual, setManual] = useConsultationDraftState('allergyAdd.manual', false)
+  const [typeId, setTypeId] = useConsultationDraftState<number | ''>('allergyAdd.typeId', '')
+  const [selected, setSelected] = useConsultationDraftState<AllergyCatalog | null>('allergyAdd.selected', null)
+  const [manualName, setManualName] = useConsultationDraftState('allergyAdd.manualName', '')
+  const [severityId, setSeverityId] = useConsultationDraftState<number | ''>('allergyAdd.severityId', '')
+  const [onsetYear, setOnsetYear] = useConsultationDraftState('allergyAdd.onsetYear', '')
+  const [reaction, setReaction] = useConsultationDraftState('allergyAdd.reaction', '')
 
   const options = catalog.filter(
     (item) =>

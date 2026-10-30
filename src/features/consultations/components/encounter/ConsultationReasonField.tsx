@@ -46,6 +46,7 @@ export function ConsultationReasonField({ consultation, readOnly }: Consultation
       <AutosaveTextField
         value={consultation.consultationReason ?? ''}
         onSave={(consultationReason) => update.mutate({ consultationReason })}
+        draftKey="consultationReason"
         disabled={readOnly || !textEnabled}
         minRows={2}
       />

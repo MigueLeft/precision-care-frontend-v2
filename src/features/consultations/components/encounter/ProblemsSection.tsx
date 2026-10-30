@@ -15,6 +15,7 @@ import {
   syncProblems,
 } from '../../utils/problems-sync'
 import type { Consultation, ConsultationProblems } from '../../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 interface ProblemsSectionProps {
   index: number
@@ -39,7 +40,7 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
   // Orígenes vistos en la pasada anterior (null = aún no hay pasada), para
   // detectar los que se agregan o se quitan durante la consulta.
   const knownPrefixes = useRef<string[] | null>(null)
-  const [problems, setProblems] = useState<ConsultationProblems>(() =>
+  const [problems, setProblems] = useConsultationDraftState<ConsultationProblems>('consultation.problems', () =>
     consultation.problems
       ? { actuales: consultation.problems.actuales, previos: consultation.problems.previos }
       : { actuales: [], previos: [] },
@@ -49,6 +50,14 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
   const save = useDebouncedCallback((next: ConsultationProblems) => {
     update.mutate({ problems: next })
   }, 700)
+
+  // Lo recuperado del respaldo local que no llegó al servidor se reenvía.
+  useEffect(() => {
+    const saved = consultation.problems
+    const pending = !saved || !sameProblems(problems, { actuales: saved.actuales, previos: saved.previos })
+    if (!readOnly && pending && problems.actuales.length + problems.previos.length > 0) save(problems)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Primera pasada: precarga si aún no hay problemas guardados. Después: agrega
   // los orígenes nuevos, quita los eliminados y reubica cada nota según su estado.
@@ -74,7 +83,7 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
     if (sameProblems(next, problems)) return
     setProblems(next)
     save(next)
-  }, [readOnly, ready, consultation.problems, diseases, antecedents, problems, save])
+  }, [readOnly, ready, consultation.problems, diseases, antecedents, problems, save, setProblems])
 
   const commit = (next: ConsultationProblems) => {
     setProblems(next)
@@ -105,6 +114,7 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
           items={problems.actuales}
           readOnly={readOnly}
           placeholder="Agregar problema…"
+          draftKey="problems.actuales"
           emptyLabel="Sin problemas actuales."
           onChange={(actuales) => commit({ ...problems, actuales })}
         />
@@ -114,6 +124,7 @@ export function ProblemsSection({ index, consultation, readOnly }: ProblemsSecti
           items={problems.previos}
           readOnly={readOnly}
           placeholder="Agregar problema previo…"
+          draftKey="problems.previos"
           emptyLabel="Sin problemas previos."
           onChange={(previos) => commit({ ...problems, previos })}
         />

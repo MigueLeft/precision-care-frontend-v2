@@ -1,4 +1,6 @@
 import axios from 'axios'
+// Bandeja de salida en localStorage (desactivada: el respaldo de la consulta vive en el backend).
+// import { installConsultationOutbox } from './consultation-outbox'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000',
@@ -12,3 +14,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject(error),
 )
+
+// Respaldo local de lo que se envía desde una consulta en curso (desactivado).
+// installConsultationOutbox(api)

@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import type { LabProfile } from '@/features/catalogs'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 // Perfiles cuyos estudios están todos en la orden (selección inicial al abrir).
 function coveredProfiles(profiles: LabProfile[], ids: number[]): number[] {
@@ -22,9 +22,9 @@ export function useLabOrderSelection(
       .filter(Boolean)
       .join(' + ')
 
-  const [ids, setIds] = useState(initialIds)
-  const [selected, setSelected] = useState(() => coveredProfiles(profiles, initialIds))
-  const [manualTitle, setManualTitle] = useState<string | null>(() =>
+  const [ids, setIds] = useConsultationDraftState('labOrder.ids', initialIds)
+  const [selected, setSelected] = useConsultationDraftState('labOrder.selected', () => coveredProfiles(profiles, initialIds))
+  const [manualTitle, setManualTitle] = useConsultationDraftState<string | null>('labOrder.manualTitle', () =>
     initialTitle && initialTitle !== autoTitle(coveredProfiles(profiles, initialIds))
       ? initialTitle
       : null,

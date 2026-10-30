@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useDraftCommitField } from '@/hooks/useDraftCommitField'
 import { TextField } from '@mui/material'
 
 type SymptomNotesFieldProps = {
   value: string | null
   disabled: boolean
+  // Clave del respaldo local en la consulta en curso.
+  draftKey?: string
   // Se llama al salir del campo si el texto cambió.
   onCommit: (value: string) => void
 }
@@ -11,8 +13,8 @@ type SymptomNotesFieldProps = {
 const MAX_LENGTH = 500
 
 // Notas del síntoma (texto libre). Se guardan al salir del campo.
-export function SymptomNotesField({ value, disabled, onCommit }: SymptomNotesFieldProps) {
-  const [draft, setDraft] = useState(value ?? '')
+export function SymptomNotesField({ value, disabled, draftKey, onCommit }: SymptomNotesFieldProps) {
+  const [draft, setDraft] = useDraftCommitField(draftKey ?? null, value, onCommit, disabled)
 
   return (
     <TextField

@@ -1,4 +1,5 @@
 import { Controller, useForm } from 'react-hook-form'
+import { useConsultationDraftForm } from '@/hooks/useConsultationDraftForm'
 import { Grid, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import { AppButton } from '@/components/AppButton'
 import type { ClinicalProfile, FamilyDiabetes, ProfileValue, RiskFactorAnswers } from '../types'
@@ -28,7 +29,10 @@ export function RiskFactorsForm({ profile, readOnly, saving, onSubmit }: RiskFac
     ALL_QUESTIONS.map((q) => [q.key, toYesNo(profile[q.key as keyof ClinicalProfile] as ProfileValue<boolean> | null)]),
   ) as FormValues
   defaults.familyDiabetes = profile.familyDiabetes?.value ?? ''
-  const { control, handleSubmit, formState } = useForm<FormValues>({ values: defaults })
+  const form = useForm<FormValues>({ values: defaults })
+  const { control, handleSubmit, formState } = form
+  // Respaldo de lo marcado en la consulta en curso hasta guardarlo.
+  useConsultationDraftForm(readOnly ? null : 'riskFactors', form)
 
   const submit = handleSubmit((values) => {
     const answers: RiskFactorAnswers = { familyDiabetes: values.familyDiabetes || null }

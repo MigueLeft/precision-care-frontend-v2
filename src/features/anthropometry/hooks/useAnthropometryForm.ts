@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { isoToLocalDay, todayIsoDate } from '@/utils/format-date'
 import { ANTHROPOMETRY_PARAMS } from '../config'
 import { SEGMENTS } from '../segment-config'
@@ -10,6 +9,7 @@ import type {
   SegmentInput,
   SegmentInputKey,
 } from '../types'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type Raw = Record<string, string>
 
@@ -53,13 +53,13 @@ function initialValues(existing: Anthropometry | null | undefined): Raw {
 // Estado del formulario de antropometría: valores en texto, vista previa de los
 // calculados y armado del payload (vacío = null para borrar al editar).
 export function useAnthropometryForm(existing: Anthropometry | null | undefined) {
-  const [raw, setRaw] = useState<Raw>(() => initialValues(existing))
-  const [date, setDate] = useState(
+  const [raw, setRaw] = useConsultationDraftState<Raw>(`anthropometry:${existing?.id ?? "new"}.raw`, () => initialValues(existing))
+  const [date, setDate] = useConsultationDraftState(`anthropometry:${existing?.id ?? "new"}.date`, 
     existing?.assessmentDate ? isoToLocalDay(existing.assessmentDate) : todayIsoDate(),
   )
-  const [notes, setNotes] = useState(existing?.notes ?? '')
+  const [notes, setNotes] = useConsultationDraftState(`anthropometry:${existing?.id ?? "new"}.notes`, existing?.notes ?? '')
   // Composición por segmento habilitada (por defecto, si la medición ya la tiene).
-  const [segmentsEnabled, setSegmentsEnabled] = useState(() => (existing?.segments.length ?? 0) > 0)
+  const [segmentsEnabled, setSegmentsEnabled] = useConsultationDraftState(`anthropometry:${existing?.id ?? "new"}.segmentsEnabled`, () => (existing?.segments.length ?? 0) > 0)
 
   const setField = (field: string, value: string) =>
     setRaw((prev) => ({ ...prev, [field]: value }))

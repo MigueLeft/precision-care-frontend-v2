@@ -20,6 +20,8 @@ interface SymptomDiseaseLinksProps {
   // Diagnósticos del paciente: se listan primero en el buscador.
   patientDiseases: ConsultationDisease[]
   readOnly: boolean
+  // Clave del respaldo local del buscador.
+  draftKey?: string
   onChange: (next: SymptomDiseaseInput[]) => void
 }
 
@@ -32,6 +34,7 @@ export function SymptomDiseaseLinks({
   links,
   patientDiseases,
   readOnly,
+  draftKey,
   onChange,
 }: SymptomDiseaseLinksProps) {
   const { data: catalog = [] } = useDiseases()
@@ -113,6 +116,7 @@ export function SymptomDiseaseLinks({
           options={options}
           placeholder="Asociar diagnóstico…"
           onAdd={add}
+          draftKey={draftKey}
           manualLabel="El diagnóstico no está en el catálogo · escribir manualmente"
         />
       )}

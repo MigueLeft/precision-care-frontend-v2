@@ -15,6 +15,7 @@ import { useConsultationMedications } from '../../hooks/useConsultationMedicatio
 import type { ConsultationMedication } from '../../types'
 import { PrescriptionLineRow } from './PrescriptionLineRow'
 import { fillIndication, isLineComplete, type PrescriptionLineState } from './prescription-lines'
+import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
 
 type PrescriptionDialogProps = {
   consultationId: number
@@ -61,7 +62,7 @@ function initialLines(
 type ContentProps = Omit<PrescriptionDialogProps, 'open'> & { initial: PrescriptionLineState[] }
 
 function PrescriptionContent({ consultationId, readOnly, onClose, initial }: ContentProps) {
-  const [lines, setLines] = useState(initial)
+  const [lines, setLines] = useConsultationDraftState('prescription.lines', initial)
   const [showErrors, setShowErrors] = useState(false)
   const save = useSavePrescription(consultationId)
   const print = usePrintConsultationDeliverable(consultationId)
