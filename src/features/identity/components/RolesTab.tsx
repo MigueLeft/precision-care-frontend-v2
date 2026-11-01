@@ -15,6 +15,8 @@ import { DeleteRoleDialog } from './DeleteRoleDialog'
 import { PermissionsMatrixDrawer } from './PermissionsMatrixDrawer'
 import type { RoleFormValues } from '../schemas/role-form.schema'
 
+import { PermissionGate } from './PermissionGate'
+
 export function RolesTab() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -56,9 +58,11 @@ export function RolesTab() {
   return (
     <div>
       <Stack direction="row" sx={{ justifyContent: 'flex-end', mb: 3 }}>
-        <AppButton variant="contained" startIcon={<AddIcon sx={{ fontSize: 18 }} />} onClick={() => setIsCreateOpen(true)}>
-          Nuevo rol
-        </AppButton>
+        <PermissionGate permission="roles:create" fallback={null}>
+          <AppButton variant="contained" startIcon={<AddIcon sx={{ fontSize: 18 }} />} onClick={() => setIsCreateOpen(true)}>
+            Nuevo rol
+          </AppButton>
+        </PermissionGate>
       </Stack>
 
       <Stack spacing={2}>

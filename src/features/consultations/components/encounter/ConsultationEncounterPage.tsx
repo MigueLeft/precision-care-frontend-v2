@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from '@mui/material'
 import { SectionDensityContext } from '@/components/ui/section-density'
 import { DraftConsultationContext } from '@/hooks/draft-consultation'
 import { usePatient } from '@/features/patients'
-import { useMe } from '@/features/identity'
+import { useMe, hasPermission } from '@/features/identity'
 import { useConsultation } from '../../hooks/useConsultationDetail'
 import { useConsultationLocalBackup } from '../../hooks/useConsultationLocalBackup'
 import { EncounterHeader } from './EncounterHeader'
@@ -43,9 +43,10 @@ export function ConsultationEncounterPage({ consultationId }: ConsultationEncoun
   // Otro especialista (con permiso para ver todas) solo puede consultarla.
   const isOtherSpecialist =
     me?.specialistId != null && me.specialistId !== consultation?.specialistId
-  // Mientras carga se trata como solo lectura.
+  // Sin permiso para editar consultas, o mientras carga, se abre en solo lectura.
+  const canEdit = hasPermission(me, 'consultas:update')
   const readOnly =
-    !consultation || !me || consultation.status === 'completed' || isOtherSpecialist
+    !consultation || !me || consultation.status === 'completed' || isOtherSpecialist || !canEdit
   // Recupera el respaldo de lo capturado antes de mostrar los apartados.
   const draftReady = useConsultationLocalBackup(consultationId, readOnly)
 

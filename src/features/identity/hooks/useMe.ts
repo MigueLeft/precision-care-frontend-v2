@@ -7,6 +7,8 @@ export function useMe() {
   return useQuery({
     queryKey: identityKeys.me,
     queryFn: fetchMe,
-    staleTime: 1000 * 60 * 10,
+    // Corto: si cambian roles o permisos, la interfaz se ajusta pronto.
+    staleTime: 1000 * 30,
+    refetchOnWindowFocus: true,
   })
 }

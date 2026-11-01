@@ -4,6 +4,7 @@ import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined'
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined'
 import { UsersTab } from './UsersTab'
 import { RolesTab } from './RolesTab'
+import { PermissionGate } from './PermissionGate'
 
 const TABS = [
   { label: 'Usuarios', icon: PeopleAltOutlinedIcon },
@@ -29,7 +30,11 @@ export function IdentityPage() {
       </Tabs>
 
       {tab === 0 && <UsersTab />}
-      {tab === 1 && <RolesTab />}
+      {tab === 1 && (
+        <PermissionGate permission="roles:read">
+          <RolesTab />
+        </PermissionGate>
+      )}
     </Box>
   )
 }

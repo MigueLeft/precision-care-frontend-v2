@@ -6,6 +6,8 @@ import type { PatientFormValues } from '../schemas/patient-form.schema'
 import type { Country } from '@/features/catalogs'
 import { PatientIdentityField } from './PatientIdentityField'
 import { PatientContactFields } from './PatientContactFields'
+import { PatientSexField } from './PatientSexField'
+import { PatientRaceField } from './PatientRaceField'
 
 interface PatientFormFieldsProps {
   control: Control<PatientFormValues>
@@ -96,6 +98,12 @@ export function PatientFormFields({ control, countries }: PatientFormFieldsProps
             />
           )}
         />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <PatientSexField control={control} />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <PatientRaceField control={control} />
       </Grid>
       <PatientContactFields control={control} />
       <Grid size={{ xs: 12, sm: 6 }}>

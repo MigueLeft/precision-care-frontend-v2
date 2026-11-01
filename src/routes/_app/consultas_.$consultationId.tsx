@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { Box, Typography } from '@mui/material'
 import {
   ConsultationEncounterPage,
@@ -8,6 +9,7 @@ import {
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 
 export const Route = createFileRoute('/_app/consultas_/$consultationId')({
+  beforeLoad: requirePermission('consultas:read'),
   loader: ({ context: { queryClient }, params: { consultationId } }) =>
     queryClient.ensureQueryData({
       queryKey: consultationsKeys.detail(Number(consultationId)),

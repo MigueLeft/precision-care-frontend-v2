@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { isoToLocalDay, todayIsoDate } from '@/utils/format-date'
 import { ANTHROPOMETRY_PARAMS } from '../config'
 import { SEGMENTS } from '../segment-config'
@@ -58,6 +59,8 @@ export function useAnthropometryForm(existing: Anthropometry | null | undefined)
     existing?.assessmentDate ? isoToLocalDay(existing.assessmentDate) : todayIsoDate(),
   )
   const [notes, setNotes] = useConsultationDraftState(`anthropometry:${existing?.id ?? "new"}.notes`, existing?.notes ?? '')
+  // Composición por segmento habilitada (por defecto, si la medición ya la tiene).
+  const [segmentsEnabled, setSegmentsEnabled] = useState(() => (existing?.segments.length ?? 0) > 0)
 
   const setField = (field: string, value: string) =>
     setRaw((prev) => ({ ...prev, [field]: value }))
@@ -72,7 +75,7 @@ export function useAnthropometryForm(existing: Anthropometry | null | undefined)
     const lean = parse(raw[segmentField(segment, 'leanMassKg')])
     if (lean !== undefined) segmentLean[segment] = lean
   }
-  const computed = computeAnthropometry(values, segmentLean)
+  const computed = computeAnthropometry(values, segmentLean, segmentsEnabled)
 
   function buildSegments(): SegmentInput[] {
     return SEGMENTS.flatMap((segment) => {
@@ -93,11 +96,23 @@ export function useAnthropometryForm(existing: Anthropometry | null | undefined)
       appointmentId,
       assessmentDate: date,
       notes: notes.trim() || null,
-      segments: buildSegments(),
+      // Sin composición por segmento se borran los segmentos guardados.
+      segments: segmentsEnabled ? buildSegments() : [],
     }
     for (const key of INPUT_KEYS) input[key] = values[key] ?? null
     return input
   }
 
-  return { raw, setField, computed, date, setDate, notes, setNotes, buildInput }
+  return {
+    raw,
+    setField,
+    computed,
+    date,
+    setDate,
+    notes,
+    setNotes,
+    segmentsEnabled,
+    setSegmentsEnabled,
+    buildInput,
+  }
 }

@@ -89,7 +89,7 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
 
           <Divider />
 
-          <GenerarEntregablesPanel consultationId={consultation.id} readOnly={readOnly} />
+          <GenerarEntregablesPanel consultationId={consultation.id} patientId={consultation.patientId} readOnly={readOnly} />
         </Stack>
       )}
     </Box>

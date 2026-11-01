@@ -8,6 +8,8 @@ export interface Patient {
   // Cédula u otro documento de identidad.
   identityDocument: string | null
   birthDate: string
+  // Sexo biológico (define la silueta y las referencias de los reportes).
+  sex: 'male' | 'female' | null
   email: string | null
   // Formato internacional E.164 (+584121234567).
   phone: string | null
@@ -43,4 +45,29 @@ export interface Allergy {
   reaction: string | null
   onsetYear: number | null
   createdAt: string
+}
+
+// Historia clínica traída de la plataforma anterior (solo lectura).
+export interface LegacySymptom {
+  name: string
+  category: string | null
+  severity: string | null
+  frequency: string | null
+  duration: string | null
+  notes: string | null
+  reportedAt: string | null
+}
+
+export interface PatientLegacyHistory {
+  id: number
+  patientId: number
+  source: string
+  currentIllness: string | null
+  diagnosticPlan: string | null
+  treatmentPlan: string | null
+  evolution: string | null
+  problems: { actuales: string[]; previos: string[] } | null
+  symptoms: LegacySymptom[] | null
+  recordedAt: string | null
+  importedAt: string
 }

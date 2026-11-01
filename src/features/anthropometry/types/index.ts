@@ -20,6 +20,8 @@ export type AnthropometryInputKey =
   | 'systolicBp'
   | 'diastolicBp'
   | 'heartRate'
+  | 'respiratoryRate'
+  | 'temperatureC'
   | 'oxygenSaturation'
   | 'brachialCircCm'
   | 'tricepsSkinfoldMm'
@@ -27,6 +29,9 @@ export type AnthropometryInputKey =
   | 'abdominalSkinfoldMm'
   | 'suprailiacSkinfoldMm'
   | 'thighSkinfoldMm'
+
+// Se calculan de la composición por segmento; sin segmentos se capturan a mano.
+export type ManualWithoutSegmentsKey = 'skeletalMuscleMassKg' | 'appendicularLeanMassKg'
 
 // Valores que calcula el backend al guardar.
 export type AnthropometryComputedKey =
@@ -84,4 +89,4 @@ export type SaveAnthropometryInput = {
   assessmentDate?: string
   notes?: string | null
   segments: SegmentInput[]
-} & Partial<Record<AnthropometryInputKey, number | null>>
+} & Partial<Record<AnthropometryInputKey | ManualWithoutSegmentsKey, number | null>>

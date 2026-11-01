@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { requirePermission } from '@/features/identity'
 import { Box, Typography } from '@mui/material'
 import { patientsKeys, fetchPatient, usePatient } from '@/features/patients'
 import { MedicalRecordShell } from '@/features/medical-record'
@@ -7,6 +8,7 @@ import { getApiErrorMessage } from '@/utils/get-api-error-message'
 // Sufijo "_" en el segmento padre: saca el expediente del layout de la lista de
 // pacientes (que no tiene <Outlet />) y lo muestra como página propia.
 export const Route = createFileRoute('/_app/pacientes_/$patientId')({
+  beforeLoad: requirePermission('pacientes:read'),
   loader: ({ context: { queryClient }, params: { patientId } }) =>
     queryClient.ensureQueryData({
       queryKey: patientsKeys.detail(Number(patientId)),

@@ -12,6 +12,8 @@ export function useAssignUserRole() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: identityKeys.users })
       queryClient.invalidateQueries({ queryKey: identityKeys.roles })
+      // Si cambió un rol del usuario de la sesión, se refrescan sus permisos.
+      queryClient.invalidateQueries({ queryKey: identityKeys.me })
       toast.success('Rol asignado correctamente')
     },
     onError: (error) => {

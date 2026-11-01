@@ -6,9 +6,9 @@ function todayIsoDate() {
   return new Date().toISOString().slice(0, 10)
 }
 
-// Solo los campos esenciales del modal de creación/edición — el resto de los
-// campos del DTO del backend (dirección, estado civil, raza, etc.) se difieren
-// a una futura pantalla de perfil completo.
+// Solo los campos esenciales del modal de creación/edición (más la raza, que
+// usa la PCE) — el resto del DTO del backend (dirección, estado civil, etc.) se
+// difiere a una futura pantalla de perfil completo.
 export const patientFormSchema = z.object({
   firstName: lettersOnlySchema('El primer nombre', 60),
   middleName: optionalLettersOnlySchema('El segundo nombre', 60),
@@ -26,6 +26,8 @@ export const patientFormSchema = z.object({
     .min(1, 'La fecha de nacimiento es requerida.')
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'La fecha de nacimiento debe tener formato YYYY-MM-DD.')
     .refine((value) => value <= todayIsoDate(), 'La fecha de nacimiento no puede ser una fecha futura.'),
+  // Obligatorio: define referencias clínicas y la silueta de los reportes.
+  sex: z.string().refine((value): boolean => ['male', 'female'].includes(value), 'Selecciona el sexo.'),
   email: z.string().email('El correo no tiene un formato válido.').optional().or(z.literal('')),
   // Opcional; si se escribe debe ser un número válido para el país elegido.
   phone: z
@@ -33,6 +35,7 @@ export const patientFormSchema = z.object({
     .refine((value) => value === '' || isValidPhone(value), 'El teléfono no es válido para el país elegido.'),
   nationalityCountryId: z.number().int().positive().optional(),
   residenceCountryId: z.number().int().positive().optional(),
+  raceId: z.number().int().positive().optional(),
 })
 
 export type PatientFormValues = z.infer<typeof patientFormSchema>
@@ -44,8 +47,10 @@ export const patientFormDefaultValues: PatientFormValues = {
   secondLastName: '',
   identityDocument: '',
   birthDate: '',
+  sex: '',
   email: '',
   phone: '',
   nationalityCountryId: undefined,
   residenceCountryId: undefined,
+  raceId: undefined,
 }

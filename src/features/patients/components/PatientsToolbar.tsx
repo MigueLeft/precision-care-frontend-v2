@@ -2,6 +2,7 @@ import { Box, Stack, TextField, InputAdornment } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { AppButton } from '@/components/AppButton'
+import { PermissionGate } from '@/features/identity'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import { MoreFiltersButton } from './MoreFiltersButton'
 import type { Country } from '@/features/catalogs'
@@ -53,14 +54,16 @@ export function PatientsToolbar({
 
       <MoreFiltersButton />
 
-      <AppButton
-        variant="contained"
-        startIcon={<AddIcon sx={{ fontSize: 18 }} />}
-        onClick={onNewPatient}
-        sx={{ ml: 'auto' }}
-      >
-        Nuevo paciente
-      </AppButton>
+      <PermissionGate permission="pacientes:create" fallback={null}>
+        <AppButton
+          variant="contained"
+          startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+          onClick={onNewPatient}
+          sx={{ ml: 'auto' }}
+        >
+          Nuevo paciente
+        </AppButton>
+      </PermissionGate>
     </Stack>
   )
 }

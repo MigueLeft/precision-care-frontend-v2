@@ -12,18 +12,23 @@ type AnthropometryGroupInputsProps = {
   // Valores de la medición anterior (columna "Anterior"); se omite si no hay.
   previous?: ValueMap
   readOnly: boolean
+  // Con composición por segmento, las filas "calcWithSegments" se calculan.
+  segmentsEnabled: boolean
   onChange: (key: string, value: string) => void
 }
 
-// Captura de un apartado (composición, circunferencias, fuerza, signos, pliegues).
+// Captura de un apartado (signos vitales, composición, circunferencias, pliegues, fuerza).
 export function AnthropometryGroupInputs({
   group,
   raw,
   computed,
   previous,
   readOnly,
+  segmentsEnabled,
   onChange,
 }: AnthropometryGroupInputsProps) {
+  const isCalc = (param: AnthropometryGroup['params'][number]) =>
+    !!param.calc || (!!param.calcWithSegments && segmentsEnabled)
   return (
     <>
       <Typography sx={{ fontSize: '12px', fontWeight: 700, color: 'text.secondary', mb: 1 }}>
@@ -42,11 +47,11 @@ export function AnthropometryGroupInputs({
           {group.params.map((param) => (
             <TableRow key={param.key}>
               <DataCell>
-                <ParamLabel param={param} />
+                <ParamLabel param={{ label: param.label, calc: isCalc(param) }} />
               </DataCell>
               <DataCell sx={{ fontSize: '12px', color: 'text.secondary' }}>{param.unit}</DataCell>
-              <DataCell align="right" calc={param.calc} sx={{ width: 110 }}>
-                {param.calc ? (
+              <DataCell align="right" calc={isCalc(param)} sx={{ width: 110 }}>
+                {isCalc(param) ? (
                   formatNumber(computed[param.key] ?? null, param.decimals)
                 ) : (
                   <TextField

@@ -31,7 +31,13 @@ export function gripAsymmetryPct(
   return round((Math.abs(right - left) / Math.max(right, left)) * 100)
 }
 
-export function computeAnthropometry(values: ValueMap, segmentLean: SegmentLean): ValueMap {
+// bySegments: con composición por segmento la masa músculo esquelética y la
+// masa magra apendicular salen de los segmentos; sin ella, de lo capturado.
+export function computeAnthropometry(
+  values: ValueMap,
+  segmentLean: SegmentLean,
+  bySegments = true,
+): ValueMap {
   const { heightCm, weightKg, fatMassPct } = values
   const { abdominalCircCm, hipCircCm, brachialCircCm, tricepsSkinfoldMm } = values
   const heightM2 = has(heightCm) && heightCm > 0 ? (heightCm / 100) ** 2 : undefined
@@ -40,7 +46,16 @@ export function computeAnthropometry(values: ValueMap, segmentLean: SegmentLean)
   const skeletal = SEGMENTS.map((s) => segmentSkeletalKg(segmentLean[s])).filter(has)
   // Masa magra apendicular: suma de la masa magra de las cuatro extremidades.
   const limbs = LIMBS.map((s) => segmentLean[s])
-  const alm = limbs.every(has) ? round(sum(limbs)) : undefined
+  const alm = bySegments
+    ? limbs.every(has)
+      ? round(sum(limbs))
+      : undefined
+    : values.appendicularLeanMassKg
+  const smm = bySegments
+    ? skeletal.length > 0
+      ? round(sum(skeletal))
+      : undefined
+    : values.skeletalMuscleMassKg
 
   return {
     ...values,
@@ -48,7 +63,7 @@ export function computeAnthropometry(values: ValueMap, segmentLean: SegmentLean)
     fatMassKg,
     leanMassPct: has(fatMassPct) ? round(100 - fatMassPct) : undefined,
     leanMassKg: has(weightKg) && has(fatMassKg) ? round(weightKg - fatMassKg) : undefined,
-    skeletalMuscleMassKg: skeletal.length > 0 ? round(sum(skeletal)) : undefined,
+    skeletalMuscleMassKg: smm,
     appendicularLeanMassKg: alm,
     appendicularLeanMassIndex: has(alm) && heightM2 ? round(alm / heightM2) : undefined,
     waistHipRatio:
