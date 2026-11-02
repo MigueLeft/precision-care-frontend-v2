@@ -4,6 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { AppButton } from '@/components/AppButton'
 import { IntakeResponseDetailContent } from '@/features/intake-responses'
 import { NutritionRecallSidebarSection } from '@/features/nutrition-recall'
+import { PatientLegacyHistorySummary } from '@/features/patients'
 import { EvolutionChanges } from '../evolution/EvolutionChanges'
 import { GenerarEntregablesPanel } from './GenerarEntregablesPanel'
 import { IntakeResponsesSection } from './IntakeResponsesSection'
@@ -77,6 +78,8 @@ export function EncounterSidebar({ consultation, readOnly }: EncounterSidebarPro
           />
 
           <Divider />
+
+          <PatientLegacyHistorySummary patientId={consultation.patientId} />
 
           <IntakeResponsesSection
             patientId={consultation.patientId}

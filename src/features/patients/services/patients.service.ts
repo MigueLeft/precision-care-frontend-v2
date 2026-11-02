@@ -41,3 +41,18 @@ export async function fetchPatientLegacyHistory(patientId: number): Promise<Pati
   )
   return data.legacyHistory
 }
+
+export type UpdatePatientLegacyHistoryPayload = Partial<
+  Pick<PatientLegacyHistory, 'currentIllness' | 'diagnosticPlan' | 'treatmentPlan' | 'evolution'>
+>
+
+export async function updatePatientLegacyHistory(
+  patientId: number,
+  payload: UpdatePatientLegacyHistoryPayload,
+): Promise<PatientLegacyHistory> {
+  const { data } = await api.patch<{ legacyHistory: PatientLegacyHistory }>(
+    `/patients/${patientId}/legacy-history`,
+    payload,
+  )
+  return data.legacyHistory
+}

@@ -1,12 +1,12 @@
 import { Chip, Stack, Typography } from '@mui/material'
 import { SectionCard } from '@/components/ui/SectionCard'
+import { NoteText, NoteProblems } from '@/components/ClinicalNoteFields'
 import { formatShortDate } from '@/utils/format-date'
 import type { ClinicalNoteEntry } from './clinical-notes'
-import { NoteProblems, NoteSymptoms, NoteText } from './NoteBlocks'
 
-// Una entrada de "Notas": encabezado (fecha, origen, médico) y el texto libre.
+// Una entrada de "Notas": encabezado (fecha, médico) y el texto libre de una
+// consulta finalizada.
 export function ClinicalNoteCard({ entry }: { entry: ClinicalNoteEntry }) {
-  const legacy = entry.source === 'legacy'
   return (
     <SectionCard
       title={
@@ -14,12 +14,7 @@ export function ClinicalNoteCard({ entry }: { entry: ClinicalNoteEntry }) {
           <Typography sx={{ fontSize: '14px', fontWeight: 700 }}>
             {entry.date ? formatShortDate(entry.date) : 'Sin fecha'}
           </Typography>
-          <Chip
-            size="small"
-            label={legacy ? 'Sistema anterior' : 'Consulta'}
-            color={legacy ? 'default' : 'primary'}
-            variant={legacy ? 'outlined' : 'filled'}
-          />
+          <Chip size="small" label="Consulta" color="primary" />
           {entry.author && (
             <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>{entry.author}</Typography>
           )}
@@ -34,7 +29,6 @@ export function ClinicalNoteCard({ entry }: { entry: ClinicalNoteEntry }) {
         <NoteText title="Plan de tratamiento" text={entry.treatmentPlan} />
         <NoteProblems title="Problemas actuales" items={entry.problems?.actuales} />
         <NoteProblems title="Problemas previos" items={entry.problems?.previos} />
-        <NoteSymptoms symptoms={entry.symptoms} />
       </Stack>
     </SectionCard>
   )
