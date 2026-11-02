@@ -7,6 +7,8 @@ export { usePatients } from './hooks/usePatients'
 export { usePatient } from './hooks/usePatient'
 export { usePatientAllergies } from './hooks/usePatientAllergies'
 export { usePatientLegacyHistory } from './hooks/usePatientLegacyHistory'
+export { useUpdatePatientLegacyHistory } from './hooks/useUpdatePatientLegacyHistory'
+export { PatientLegacyHistorySummary } from './components/PatientLegacyHistorySummary'
 export {
   formatPatientName,
   formatPatientInitials,
