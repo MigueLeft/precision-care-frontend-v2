@@ -21,6 +21,7 @@ type RecordCardProps = {
 export function RecordCard({ title, subtitle, chips, children, selected, highlight, onEdit, onRemove }: RecordCardProps) {
   return (
     <Paper
+      data-capture-record
       variant="outlined"
       sx={{
         p: 1.5,

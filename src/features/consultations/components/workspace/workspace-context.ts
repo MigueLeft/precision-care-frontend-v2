@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useRef, useState } from 'react'
 import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import type { WorkspaceSectionId } from './workspace-sections'
 
@@ -21,6 +21,8 @@ export interface EncounterWorkspace {
   toggleNotes: () => void
   startEdit: (record: EditingRecord) => void
   clearEdit: () => void
+  cancelCapture: () => void
+  registerCaptureCancel: (cancel: () => void) => () => void
   pinIntake: (responseId: number) => void
   unpinIntake: () => void
   setRightView: (view: RightView) => void
@@ -38,6 +40,14 @@ export function useEncounterWorkspaceState(initialSection: WorkspaceSectionId): 
   )
   const [pinnedIntakeId, setPinnedIntakeId] = useState<number | null>(null)
   const [rightView, setRightView] = useState<RightView>('capture')
+  const captureCancel = useRef<(() => void) | null>(null)
+
+  function registerCaptureCancel(cancel: () => void) {
+    captureCancel.current = cancel
+    return () => {
+      if (captureCancel.current === cancel) captureCancel.current = null
+    }
+  }
 
   const setEditing = (record: EditingRecord | null) =>
     setEditingBySection((prev) => {
@@ -64,6 +74,11 @@ export function useEncounterWorkspaceState(initialSection: WorkspaceSectionId): 
       setRightView('capture')
     },
     clearEdit: () => setEditing(null),
+    cancelCapture: () => {
+      if (captureCancel.current) captureCancel.current()
+      else setEditing(null)
+    },
+    registerCaptureCancel,
     pinIntake: (responseId) => {
       setPinnedIntakeId(responseId)
       setRightView('pinned')

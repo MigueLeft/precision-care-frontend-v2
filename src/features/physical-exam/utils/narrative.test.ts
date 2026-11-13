@@ -59,17 +59,19 @@ describe('buildNarrative', () => {
 })
 
 describe('reglas y validación', () => {
-  it('"Todo normal" pasa todo a Normal y borra lo marcado antes', () => {
+  it('"Marcar el resto como normal" conserva lo documentado y completa solo pendientes', () => {
     let exam = setSystemState(createExam('female'), 'OJOS', 'NO_EXAMINADO', ctx, { motivo: 'Paciente rechaza' })
     exam = setSystemState(exam, 'PIEL', 'ANORMAL', ctx)
+    exam = setElementNote(exam, { system: 'PIEL', element: exam.sistemas.find((s) => s.codigo === 'PIEL')!.elementos[0].codigo }, 'Hallazgo que debe conservarse', ctx)
+    const documented = structuredClone(exam.sistemas.filter((s) => s.codigo === 'OJOS' || s.codigo === 'PIEL'))
     exam = setAllNormal(exam, ctx)
     const ojos = exam.sistemas.find((s) => s.codigo === 'OJOS')
-    expect(ojos?.estado).toBe('NORMAL')
-    expect(ojos?.motivo).toBeNull()
+    expect(ojos?.estado).toBe('NO_EXAMINADO')
+    expect(ojos?.motivo).toBe('Paciente rechaza')
     const piel = exam.sistemas.find((s) => s.codigo === 'PIEL')
-    expect(piel?.estado).toBe('NORMAL')
-    expect(piel?.elementos.every((e) => e.estado === 'N' && e.hallazgos.length === 0)).toBe(true)
-    expect(exam.sistemas.every((s) => s.estado === 'NORMAL')).toBe(true)
+    expect(piel?.estado).toBe('ANORMAL')
+    expect(exam.sistemas.filter((s) => s.codigo === 'OJOS' || s.codigo === 'PIEL')).toEqual(documented)
+    expect(exam.sistemas.filter((s) => s.codigo !== 'OJOS' && s.codigo !== 'PIEL').every((s) => s.estado === 'NORMAL')).toBe(true)
   })
 
   it('signos vitales alterados fuerzan el elemento a A', () => {

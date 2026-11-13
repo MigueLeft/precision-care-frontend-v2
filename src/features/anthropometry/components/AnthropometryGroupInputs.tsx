@@ -85,7 +85,15 @@ export function AnthropometryGroupInputs({
                     onChange={(event) => onChange(param.key, event.target.value)}
                     disabled={readOnly}
                     slotProps={{ input: { className: SHEET_INPUT_CLASS, 'aria-label': `${param.label} ${param.unit}`, onKeyDown: handleSheetKeyDown } }}
-                    sx={{ width: '100%', px: 1, fontSize: '13px', '& input': { textAlign: 'right', py: 0.75 } }}
+                    sx={{
+                      width: 'calc(100% - 8px)', mx: 0.5, my: 0.5, px: 1,
+                      border: '1px solid', borderColor: 'grey.400', borderRadius: 1,
+                      bgcolor: readOnly ? 'action.disabledBackground' : 'background.paper',
+                      color: 'text.primary', fontSize: '13px',
+                      '&:hover': { borderColor: 'text.secondary' },
+                      '&.Mui-focused': { borderColor: 'primary.main' },
+                      '& input': { textAlign: 'right', py: 0.75 },
+                    }}
                   />
                 )}
               </DataCell>

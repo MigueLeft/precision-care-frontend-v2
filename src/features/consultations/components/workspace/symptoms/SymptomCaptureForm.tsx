@@ -9,6 +9,7 @@ import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { useAddConsultationSymptom, useCaptureConsultationSymptom } from '../../../hooks/useConsultationDetail'
 import { SYMPTOM_STATUSES, SYMPTOM_STATUS_LABELS } from '../../../utils/consultation-format'
 import { CaptureActions, CaptureField, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 import { useEncounterWorkspace } from '../workspace-context'
 import { LinkedDiagnosesField } from './LinkedDiagnosesField'
 import { EMPTY_SYMPTOM_FORM, symptomToForm, toAddSymptomInput, toDiseaseInputs, type SymptomFormValues } from './symptom-form'
@@ -35,6 +36,8 @@ export function SymptomCaptureForm({ consultationId, current, symptom }: Symptom
     () => (symptom ? symptomToForm(symptom) : EMPTY_SYMPTOM_FORM),
   )
   const set = (patch: Partial<SymptomFormValues>) => setValues((prev) => ({ ...prev, ...patch }))
+  const cancel = symptom ? () => { clearDraft(); clearEdit() } : () => setValues(EMPTY_SYMPTOM_FORM)
+  useCaptureCancel(cancel, addMutation.isPending || captureMutation.isPending)
 
   const used = new Set(current.map((item) => (item.name ?? '').toLowerCase()))
   const options = catalog.filter((item) => item.active && !used.has(item.name.toLowerCase()))
@@ -111,7 +114,7 @@ export function SymptomCaptureForm({ consultationId, current, symptom }: Symptom
             editing={!!symptom}
             loading={addMutation.isPending || captureMutation.isPending}
             onSubmit={submit}
-            onCancel={symptom ? () => { clearDraft(); clearEdit() } : () => setValues(EMPTY_SYMPTOM_FORM)}
+            onCancel={cancel}
           />
         </>
       )}

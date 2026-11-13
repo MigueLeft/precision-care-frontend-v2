@@ -7,6 +7,7 @@ import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { useAddConsultationMedication } from '../../../hooks/useConsultationMedications'
 import { EMPTY_MANUAL_MEDICATION, type ManualMedicationValue } from '../../../utils/manual-medication'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 
 type AddValues = { medicationId: number | null; manual: boolean; manualMedication: ManualMedicationValue; dose: string; frequency: string }
 const EMPTY: AddValues = { medicationId: null, manual: false, manualMedication: EMPTY_MANUAL_MEDICATION, dose: '', frequency: '' }
@@ -27,6 +28,7 @@ export function MedicationAddForm({ consultationId }: { consultationId: number }
     setResetCount((count) => count + 1)
   }
   const add = useAddConsultationMedication(consultationId, { onSuccess: reset })
+  useCaptureCancel(reset, add.isPending)
   const set = (patch: Partial<AddValues>) => setValues((prev) => ({ ...prev, ...patch }))
   const setManual = (patch: Partial<ManualMedicationValue>) => set({ manualMedication: { ...values.manualMedication, ...patch } })
 

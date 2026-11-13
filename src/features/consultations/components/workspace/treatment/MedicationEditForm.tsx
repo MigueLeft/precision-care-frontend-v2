@@ -6,6 +6,7 @@ import { useCaptureConsultationMedication } from '../../../hooks/useConsultation
 import { ADHERENCE_LABELS, TOLERANCE_LABELS } from '../../../utils/consultation-format'
 import { CaptureToggleField } from '../../encounter/CaptureToggleField'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 import { useEncounterWorkspace } from '../workspace-context'
 import { medicationName } from './medication-name'
 import { MedicationFinishBox } from './MedicationFinishBox'
@@ -50,6 +51,7 @@ export function MedicationEditForm({ consultationId, medication }: MedicationEdi
   const [values, setValues, clearDraft] = useCaptureDraftState<EditValues>(`workspace.medication.${medication.id}`, () => toValues(medication))
   const set = (patch: Partial<EditValues>) => setValues((prev) => ({ ...prev, ...patch }))
   const done = () => { clearDraft(); clearEdit() }
+  useCaptureCancel(done, capture.isPending)
   const save = (input: CaptureMedicationInput) => capture.mutate({ medicationId: medication.id, input }, { onSuccess: done })
 
   const replacement = catalog.find((item) => item.id === values.replacementId) ?? null

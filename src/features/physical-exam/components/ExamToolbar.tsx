@@ -13,7 +13,7 @@ type ExamToolbarProps = {
   onReview: () => void
 }
 
-// "Todo normal", progreso (X de 13 documentados) y avisos.
+// Completar los sistemas pendientes, progreso y avisos.
 export function ExamToolbar({ documented, total, pendingMandatory, warnings, readOnly, onAllNormal, onReview }: ExamToolbarProps) {
   return (
     <Stack spacing={1} sx={{ mb: 1.5 }}>
@@ -26,7 +26,7 @@ export function ExamToolbar({ documented, total, pendingMandatory, warnings, rea
             startIcon={<DoneAllIcon sx={{ fontSize: 16 }} />}
             onClick={onAllNormal}
           >
-            Todo normal
+            Marcar el resto como normal
           </AppButton>
         )}
         <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>
@@ -44,7 +44,7 @@ export function ExamToolbar({ documented, total, pendingMandatory, warnings, rea
       <LinearProgress variant="determinate" value={(documented / total) * 100} sx={{ height: 4, borderRadius: 2 }} />
       {!readOnly && (
         <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
-          "Todo normal" deja todos los sistemas en Normal y borra lo que hayas marcado antes.
+          Solo se completan los sistemas sin documentar; se conserva lo que ya hayas marcado.
         </Typography>
       )}
     </Stack>

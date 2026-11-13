@@ -9,6 +9,7 @@ import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { useAddConsultationDisease, useUpdateConsultationDisease } from '../../../hooks/useConsultationDiseases'
 import { DISEASE_STATUS_LABELS, diseaseStatusOptions } from '../../../utils/consultation-format'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 import { useEncounterWorkspace } from '../workspace-context'
 import type { ConsultationDisease, DiseaseStatus } from '../../../types'
 
@@ -46,6 +47,8 @@ export function DiseaseCaptureForm({ consultationId, current, disease }: Disease
         : EMPTY,
   )
   const set = (patch: Partial<DiseaseFormValues>) => setValues((prev) => ({ ...prev, ...patch }))
+  const cancel = disease ? () => { clearDraft(); clearEdit() } : () => setValues(EMPTY)
+  useCaptureCancel(cancel, addMutation.isPending || updateMutation.isPending)
 
   const used = new Set(current.map((item) => item.diseaseCatalogId))
   const selected = catalog.find((item) => item.id === values.pick?.catalogId)
@@ -127,7 +130,7 @@ export function DiseaseCaptureForm({ consultationId, current, disease }: Disease
             editing={!!disease}
             loading={addMutation.isPending || updateMutation.isPending}
             onSubmit={submit}
-            onCancel={disease ? () => { clearDraft(); clearEdit() } : () => setValues(EMPTY)}
+            onCancel={cancel}
           />
         </>
       )}

@@ -1,4 +1,4 @@
-import { Autocomplete, TextField, Chip } from '@mui/material'
+import { Autocomplete, Box, TextField, Chip } from '@mui/material'
 import type { SearchableOption } from './SearchableSelect'
 
 interface SearchableMultiSelectProps {
@@ -12,6 +12,8 @@ interface SearchableMultiSelectProps {
   placeholder?: string
   /** Máximo de opciones visibles en la lista antes de hacer scroll. */
   maxVisibleOptions?: number
+  /** Selección acotada con scroll y opciones elegidas ocultas en la lista. */
+  compact?: boolean
 }
 
 // Alto de cada fila de la lista (px); coincide con el `minHeight` fijado abajo.
@@ -29,6 +31,7 @@ export function SearchableMultiSelect({
   helperText,
   placeholder,
   maxVisibleOptions,
+  compact = false,
 }: SearchableMultiSelectProps) {
   const selected = options.filter((option) => value.includes(option.id))
 
@@ -36,6 +39,7 @@ export function SearchableMultiSelect({
     <Autocomplete
       multiple
       disableCloseOnSelect
+      filterSelectedOptions={compact}
       options={options}
       value={selected}
       disabled={disabled}
@@ -54,8 +58,8 @@ export function SearchableMultiSelect({
             }
           : undefined
       }
-      renderValue={(items, getItemProps) =>
-        items.map((option, index) => {
+      renderValue={(items, getItemProps) => {
+        const chips = items.map((option, index) => {
           const { key, ...itemProps } = getItemProps({ index })
           return (
             <Chip
@@ -63,10 +67,16 @@ export function SearchableMultiSelect({
               key={key}
               label={option.label}
               size="small"
+              sx={compact ? { maxWidth: '100%' } : undefined}
             />
           )
         })
-      }
+        return compact && items.length > 0 ? (
+          <Box component="span" sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxHeight: 88, overflowY: 'auto', width: '100%', pr: 3, py: 0.5 }}>
+            {chips}
+          </Box>
+        ) : chips
+      }}
       renderInput={(params) => (
         <TextField
           {...params}

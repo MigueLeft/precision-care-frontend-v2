@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import { Stack, Typography } from '@mui/material'
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -6,7 +7,7 @@ import { SectionDensityContext } from '@/components/ui/section-density'
 import { NotesPanel } from './NotesPanel'
 import { SectionContent } from './SectionContent'
 import { useEncounterWorkspace } from './workspace-context'
-import { sectionLabel } from './workspace-sections'
+import { isCaptureSection, sectionLabel } from './workspace-sections'
 import type { Consultation } from '../../types'
 
 type CenterPanelProps = {
@@ -17,11 +18,21 @@ type CenterPanelProps = {
 // Panel central: el apartado elegido o, con "Abrir notas", los campos de texto
 // libre y los Problemas de la consulta.
 export function CenterPanel({ consultation, readOnly }: CenterPanelProps) {
-  const { section, centerView, toggleNotes } = useEncounterWorkspace()
+  const { section, centerView, toggleNotes, cancelCapture } = useEncounterWorkspace()
   const showingNotes = centerView === 'notes'
 
+  function cancelOnBackground(event: MouseEvent<HTMLElement>) {
+    if (readOnly || showingNotes || !isCaptureSection(section)) return
+    const target = event.target
+    // Los controles, tarjetas y portales conservan sus propias acciones.
+    if (!(target instanceof Element) || !event.currentTarget.contains(target)) return
+    if (target.closest('button, a, input, textarea, select, label, [role="button"], [role="dialog"], [data-capture-record]')) return
+    if (window.getSelection()?.toString()) return
+    cancelCapture()
+  }
+
   return (
-    <Stack spacing={2} sx={{ flex: 1, minWidth: 0, width: '100%' }}>
+    <Stack onClick={cancelOnBackground} spacing={2} sx={{ flex: 1, minWidth: 0, width: '100%', minHeight: { lg: '75dvh' } }}>
       <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography sx={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em', color: 'text.secondary' }}>
           {showingNotes ? 'NOTAS DE LA CONSULTA' : sectionLabel(section).toUpperCase()}

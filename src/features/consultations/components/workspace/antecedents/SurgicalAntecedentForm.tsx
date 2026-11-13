@@ -7,6 +7,7 @@ import { useCreateAntecedent, type Antecedent } from '@/features/antecedents'
 import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { buildSurgicalAntecedentPayload } from '../../../utils/surgical-antecedent-payload'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 import { useEncounterWorkspace } from '../workspace-context'
 import { useAntecedentEdit } from './useAntecedentEdit'
 
@@ -44,6 +45,8 @@ export function SurgicalAntecedentForm({ patientId, type, antecedent }: Surgical
   const create = useCreateAntecedent(patientId, { onSuccess: () => setValues(EMPTY) })
   const done = () => { clearDraft(); clearEdit() }
   const edit = useAntecedentEdit(patientId, antecedent, done)
+  const cancel = antecedent ? done : () => setValues(EMPTY)
+  useCaptureCancel(cancel, create.isPending || edit.isPending)
   const catalog = (type === 'surgery' ? surgeries : hospitalizations).filter((item) => item.active)
   const isSurgery = type === 'surgery'
 
@@ -95,7 +98,7 @@ export function SurgicalAntecedentForm({ patientId, type, antecedent }: Surgical
             editing={!!antecedent}
             loading={create.isPending || edit.isPending}
             onSubmit={submit}
-            onCancel={antecedent ? done : () => setValues(EMPTY)}
+            onCancel={cancel}
           />
         </>
       )}

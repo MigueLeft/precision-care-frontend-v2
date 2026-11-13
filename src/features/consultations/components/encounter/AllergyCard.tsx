@@ -16,6 +16,7 @@ export function AllergyCard({ allergy, readOnly, onEdit, onRemove }: AllergyCard
   const severe = isSevereAllergy(allergy)
   return (
     <Box
+      data-capture-record
       sx={(theme) => ({
         p: 1.5,
         borderRadius: 1.5,

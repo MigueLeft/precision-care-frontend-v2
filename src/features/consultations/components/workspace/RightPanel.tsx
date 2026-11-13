@@ -1,6 +1,8 @@
 import { IconButton, Stack, Tooltip, Typography } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { AppButton } from '@/components/AppButton'
 import { IntakeResponseDetailContent } from '@/features/intake-responses'
 import { AntecedentCapturePanel } from './antecedents/AntecedentCapturePanel'
 import { DiseaseCapturePanel } from './diseases/DiseaseCapturePanel'
@@ -26,7 +28,7 @@ const CAPTURE_TITLES: Record<CaptureSectionId, [add: string, edit: string]> = {
 // Panel derecho: la captura rápida del apartado (Antecedentes, Síntomas,
 // Diagnósticos) y/o el ingresable fijado. Con ambos se alterna con flechas.
 export function RightPanel({ consultation, readOnly }: RightPanelProps) {
-  const { section, editing, pinnedIntakeId, rightView, setRightView } = useEncounterWorkspace()
+  const { section, editing, pinnedIntakeId, rightView, setRightView, cancelCapture } = useEncounterWorkspace()
   const captureSection = !readOnly && isCaptureSection(section) ? section : null
   const showPinned = pinnedIntakeId !== null && (rightView === 'pinned' || !captureSection)
   const both = pinnedIntakeId !== null && captureSection !== null
@@ -61,7 +63,12 @@ export function RightPanel({ consultation, readOnly }: RightPanelProps) {
       ) : (
         captureSection && (
           <>
-            <Typography variant="h3">{captureTitle}</Typography>
+            <Stack spacing={1}>
+              <AppButton size="small" variant="text" startIcon={<ArrowBackIcon />} onClick={cancelCapture} sx={{ alignSelf: 'flex-start' }}>
+                Volver · nuevo registro
+              </AppButton>
+              <Typography variant="h3">{captureTitle}</Typography>
+            </Stack>
             {captureSection === 'symptoms' && <SymptomCapturePanel consultationId={consultation.id} />}
             {captureSection === 'diagnoses' && <DiseaseCapturePanel consultationId={consultation.id} />}
             {captureSection === 'treatment' && <MedicationCapturePanel consultationId={consultation.id} />}

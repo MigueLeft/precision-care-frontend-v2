@@ -12,6 +12,7 @@ import {
 } from '@/features/antecedents'
 import { useCaptureDraftState } from '@/hooks/useCaptureDraftState'
 import { CaptureActions, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 import { useEncounterWorkspace } from '../workspace-context'
 import { useAntecedentEdit } from './useAntecedentEdit'
 
@@ -47,6 +48,8 @@ export function PersonalAntecedentForm({ patientId, antecedent }: PersonalAntece
   const create = useCreateAntecedent(patientId, { onSuccess: () => setValues(EMPTY) })
   const done = () => { clearDraft(); clearEdit() }
   const edit = useAntecedentEdit(patientId, antecedent, done)
+  const cancel = antecedent ? done : () => setValues(EMPTY)
+  useCaptureCancel(cancel, create.isPending || edit.isPending)
   const code = antecedent?.cie10Code ?? diseases.find((disease) => disease.id === values.condition?.catalogId)?.code
 
   function submit() {
@@ -90,7 +93,7 @@ export function PersonalAntecedentForm({ patientId, antecedent }: PersonalAntece
             editing={!!antecedent}
             loading={create.isPending || edit.isPending}
             onSubmit={submit}
-            onCancel={antecedent ? done : () => setValues(EMPTY)}
+            onCancel={cancel}
           />
         </>
       )}

@@ -11,6 +11,7 @@ import {
   useUpdateConsultationAllergy,
 } from '../../../hooks/useConsultationAllergies'
 import { CaptureActions, CaptureField, CaptureHeader } from '../capture/CaptureLayout'
+import { useCaptureCancel } from '../capture/useCaptureCancel'
 import { useEncounterWorkspace } from '../workspace-context'
 import type { ConsultationAllergy } from '../../../types'
 
@@ -47,6 +48,8 @@ export function AllergyCaptureForm({ consultationId, allergy }: AllergyCaptureFo
   const done = () => { clearDraft(); clearEdit() }
   const add = useAddConsultationAllergy(consultationId, { onSuccess: () => setValues(EMPTY) })
   const update = useUpdateConsultationAllergy(consultationId, { onSuccess: done })
+  const cancel = allergy ? done : () => setValues(EMPTY)
+  useCaptureCancel(cancel, add.isPending || update.isPending || flag.isPending)
 
   const allergies = allergyData?.allergies ?? []
   const used = new Set(allergies.map((item) => item.allergyCatalogId))
@@ -125,7 +128,7 @@ export function AllergyCaptureForm({ consultationId, allergy }: AllergyCaptureFo
             editing={!!allergy}
             loading={add.isPending || update.isPending}
             onSubmit={submit}
-            onCancel={allergy ? done : () => setValues(EMPTY)}
+            onCancel={cancel}
           />
         </>
       )}

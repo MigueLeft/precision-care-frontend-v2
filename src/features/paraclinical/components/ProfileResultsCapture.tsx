@@ -45,8 +45,10 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
   return (
     <Stack spacing={1.5} sx={{ mt: 2.5 }}>
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5}>
-        <Stack sx={{ flex: 1 }}>
+        <Stack sx={{ flex: 1, minWidth: 0 }}>
           <SearchableMultiSelect
+            compact
+            maxVisibleOptions={5}
             label="Perfiles de laboratorio"
             placeholder="Elige uno o más perfiles…"
             options={draft.profiles.map((profile) => ({
@@ -58,8 +60,10 @@ export function ProfileResultsCapture({ patientId, consultationId, onAdded }: Pr
             onChange={draft.selectProfiles}
           />
         </Stack>
-        <Stack sx={{ flex: 1 }}>
+        <Stack sx={{ flex: 1, minWidth: 0 }}>
           <SearchableMultiSelect
+            compact
+            maxVisibleOptions={5}
             label="Categorías de laboratorio"
             placeholder="Elige una o más categorías…"
             options={draft.labCategories.map((category) => ({ id: category.id, label: category.name }))}

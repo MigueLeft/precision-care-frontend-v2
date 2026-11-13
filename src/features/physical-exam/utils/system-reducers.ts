@@ -63,14 +63,22 @@ export function setSectionState(exam: PhysicalExam, code: string, sectionCode: s
   })
 }
 
-// "Todo normal": todos los sistemas pasan a Normal y se borra lo marcado antes
-// (anormales, hallazgos y motivos). Los signos vitales alterados siguen
-// forzando su elemento a A.
+// Completa solo sistemas sin documentar. Conserva estados, motivos y hallazgos
+// ya capturados, incluidos los subapartados y los elementos compartidos.
 export function setAllNormal(exam: PhysicalExam, ctx: ExamContext) {
-  return exam.sistemas.reduce(
-    (current, system) => setSystemState(current, system.codigo, 'NORMAL', ctx, { origen: 'todo_normal' }),
-    exam,
-  )
+  return editExam(exam, ctx, (draft) => {
+    for (const system of draft.sistemas) {
+      const sections = [system, ...system.subapartados]
+      const untouched = sections.every((section) =>
+        section.estado === 'SIN_DOCUMENTAR' && section.elementos.every((element) =>
+          element.estado === 'NE' && !element.nota?.trim() && element.hallazgos.length === 0,
+        ),
+      )
+      if (!untouched) continue
+      system.origen = 'todo_normal'
+      for (const section of sections) applySectionState(system, section, 'NORMAL', null)
+    }
+  })
 }
 
 // En un sistema anormal, los elementos aún en NE pasan a N.
