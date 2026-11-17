@@ -87,11 +87,11 @@ export function AnthropometryGroupInputs({
                     slotProps={{ input: { className: SHEET_INPUT_CLASS, 'aria-label': `${param.label} ${param.unit}`, onKeyDown: handleSheetKeyDown } }}
                     sx={{
                       width: 'calc(100% - 8px)', mx: 0.5, my: 0.5, px: 1,
-                      border: '1px solid', borderColor: 'grey.400', borderRadius: 1,
+                      border: '1px solid', borderColor: readOnly ? 'divider' : 'text.secondary', borderRadius: 1,
                       bgcolor: readOnly ? 'action.disabledBackground' : 'background.paper',
                       color: 'text.primary', fontSize: '13px',
-                      '&:hover': { borderColor: 'text.secondary' },
-                      '&.Mui-focused': { borderColor: 'primary.main' },
+                      '&:hover:not(.Mui-disabled)': { borderColor: 'primary.main' },
+                      '&.Mui-focused': { borderColor: 'primary.main', outline: '1px solid', outlineColor: 'primary.main' },
                       '& input': { textAlign: 'right', py: 0.75 },
                     }}
                   />

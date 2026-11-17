@@ -26,6 +26,7 @@ export function LabStudiesPicker({ options, value, onChange, error, helperText }
   return (
     <Autocomplete
       multiple
+      filterSelectedOptions
       disableCloseOnSelect
       options={options}
       value={selected}

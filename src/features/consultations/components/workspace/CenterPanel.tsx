@@ -32,7 +32,7 @@ export function CenterPanel({ consultation, readOnly }: CenterPanelProps) {
   }
 
   return (
-    <Stack onClick={cancelOnBackground} spacing={2} sx={{ flex: 1, minWidth: 0, width: '100%', minHeight: { lg: '75dvh' } }}>
+    <Stack onClick={cancelOnBackground} spacing={2} sx={{ flex: 1, minWidth: 0, width: '100%' }}>
       <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography sx={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.05em', color: 'text.secondary' }}>
           {showingNotes ? 'NOTAS DE LA CONSULTA' : sectionLabel(section).toUpperCase()}

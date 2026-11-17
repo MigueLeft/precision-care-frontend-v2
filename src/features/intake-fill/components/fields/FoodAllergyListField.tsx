@@ -37,6 +37,7 @@ export function FoodAllergyListField({ value, onChange }: QuestionFieldProps) {
     <Stack spacing={1.5}>
       <Autocomplete
         multiple
+        filterSelectedOptions
         disableCloseOnSelect
         size="small"
         options={[...catalogNames, OTHER]}

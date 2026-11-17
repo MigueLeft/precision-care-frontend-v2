@@ -33,6 +33,7 @@ export function StudyItemsPicker({ value, onChange, disabled }: StudyItemsPicker
   return (
     <Autocomplete<StudyOption, true, false, true>
       multiple
+      filterSelectedOptions
       freeSolo
       disableCloseOnSelect
       disabled={disabled}

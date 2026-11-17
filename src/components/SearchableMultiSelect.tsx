@@ -39,7 +39,7 @@ export function SearchableMultiSelect({
     <Autocomplete
       multiple
       disableCloseOnSelect
-      filterSelectedOptions={compact}
+      filterSelectedOptions
       options={options}
       value={selected}
       disabled={disabled}

@@ -26,7 +26,9 @@ export function ConsultationWorkspace({ consultation, readOnly }: ConsultationWo
           <SectionNav consultation={consultation} />
         </WorkspaceColumn>
 
-        <CenterPanel consultation={consultation} readOnly={readOnly} />
+        <WorkspaceColumn sx={{ flex: 1, flexShrink: 1 }}>
+          <CenterPanel consultation={consultation} readOnly={readOnly} />
+        </WorkspaceColumn>
 
         {showRight && (
           <WorkspaceColumn
