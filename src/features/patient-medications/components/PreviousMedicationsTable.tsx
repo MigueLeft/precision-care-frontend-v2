@@ -1,7 +1,6 @@
 import { Fragment, useState } from 'react'
 import {
   Box,
-  Button,
   Chip,
   Collapse,
   Stack,
@@ -14,6 +13,7 @@ import {
 } from '@mui/material'
 import { EmptyState } from '@/components/EmptyState'
 import { formatShortDate } from '@/utils/format-date'
+import { MedicationActionButtons } from './MedicationActionButtons'
 import type { PatientMedication } from '../types'
 import {
   formatMedicationName,
@@ -107,8 +107,8 @@ export function PreviousMedicationsTable({ medications, onEdit }: PreviousMedica
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
                     {medication.discontinuationReason ?? '—'}
                   </TableCell>
-                  <TableCell align="right">
-                    {onEdit && <Button size="small" onClick={(event) => { event.stopPropagation(); onEdit(medication) }}>Editar</Button>}
+                  <TableCell align="right" sx={{ width: '1%', whiteSpace: 'nowrap' }}>
+                    <MedicationActionButtons onEdit={onEdit ? () => onEdit(medication) : undefined} />
                     <Typography sx={{ fontSize: '12px', color: 'primary.main', fontWeight: 600 }}>
                       {isOpen ? 'Ocultar' : 'Ver detalle'}
                     </Typography>

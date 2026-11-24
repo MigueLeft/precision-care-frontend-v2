@@ -1,7 +1,6 @@
 import { Fragment } from 'react'
 import {
   Box,
-  Button,
   Chip,
   Stack,
   Table,
@@ -13,6 +12,7 @@ import {
 } from '@mui/material'
 import { EmptyState } from '@/components/EmptyState'
 import { formatShortDate } from '@/utils/format-date'
+import { MedicationActionButtons } from './MedicationActionButtons'
 import type { PatientMedication } from '../types'
 import {
   formatMedicationName,
@@ -81,15 +81,11 @@ export function CurrentMedicationsTable({
                   <TableCell sx={{ fontSize: '13px' }}>
                     {medication.prescriberName ?? '—'}
                   </TableCell>
-                  <TableCell align="right">
-                    <Stack direction="row" spacing={0.5}>
-                      {onEdit && <Button size="small" onClick={() => onEdit(medication)}>Editar</Button>}
-                      {onSuspend && (
-                        <Button size="small" color="error" onClick={() => onSuspend(medication)} sx={{ px: 1 }}>
-                          Suspender
-                        </Button>
-                      )}
-                    </Stack>
+                  <TableCell align="right" sx={{ width: '1%', whiteSpace: 'nowrap' }}>
+                    <MedicationActionButtons
+                      onEdit={onEdit ? () => onEdit(medication) : undefined}
+                      onSuspend={onSuspend ? () => onSuspend(medication) : undefined}
+                    />
                   </TableCell>
                 </TableRow>
                 {hasCapture && (
