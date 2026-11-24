@@ -42,9 +42,10 @@ export function MedicamentosActivosCard({ patientId }: MedicamentosActivosCardPr
               {formatMedicationName(medication)}
             </Typography>
             <Typography sx={{ fontSize: '12px', color: 'text.secondary' }}>
-              {[medication.frequency, medication.duration].filter(Boolean).join(' · ') ||
+              {[medication.dose, medication.frequency, medication.duration].filter(Boolean).join(' · ') ||
                 'Sin indicación'}
             </Typography>
+            {medication.frequencyNotes && <Typography sx={{ fontSize: '12px', color: 'text.secondary', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{medication.frequencyNotes}</Typography>}
           </Box>
         ))}
       </Stack>

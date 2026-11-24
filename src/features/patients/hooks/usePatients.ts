@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchPatients } from '../services/patients.service'
-import { patientsKeys } from './patients.keys'
+import { patientsListOptions } from './patients.queries'
+import type { PatientListFilters } from '../types'
 
-export function usePatients() {
-  return useQuery({
-    queryKey: patientsKeys.lists(),
-    queryFn: fetchPatients,
-  })
+export function usePatients(filters: PatientListFilters = {}) {
+  return useQuery(patientsListOptions(filters))
 }

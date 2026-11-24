@@ -27,11 +27,12 @@ export function PatientsToolbar({
   return (
     <Stack direction="row" spacing={2} useFlexGap sx={{ alignItems: 'center', flexWrap: 'wrap', mb: 3 }}>
       <TextField
-        placeholder="Buscar por nombre, correo o teléfono…"
+        placeholder="Nombre, correo, teléfono, cédula o MRN…"
         value={q}
         onChange={(event) => onQChange(event.target.value)}
         sx={{ minWidth: 280 }}
         slotProps={{
+          htmlInput: { maxLength: 200, 'aria-label': 'Buscar pacientes' },
           input: {
             startAdornment: (
               <InputAdornment position="start">

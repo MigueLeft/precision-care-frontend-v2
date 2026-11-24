@@ -28,10 +28,13 @@ import type {
   MedicationRamStatus,
 } from '../../types'
 import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useMedicationSchedule } from '../../hooks/useMedicationSchedule'
 
 interface CaptureInput {
   dose?: string
   frequency?: string
+  frequencyNotes?: string
+  duration?: string
   adherence?: MedicationAdherence
   adherenceNotes?: string
   ramStatus?: MedicationRamStatus
@@ -76,8 +79,7 @@ export function TreatmentMedicationRow({
 
   const [capturing, setCapturing] = useConsultationDraftState(`treatment:${medication.medicationId}.capturing`, !hasCapture && !suspended)
   const [editingMed, setEditingMed] = useConsultationDraftState(`treatment:${medication.medicationId}.editingMed`, false)
-  const [dose, setDose] = useConsultationDraftState(`treatment:${medication.medicationId}.dose`, medication.dose ?? '')
-  const [frequency, setFrequency] = useConsultationDraftState(`treatment:${medication.medicationId}.frequency`, medication.frequency ?? '')
+  const schedule = useMedicationSchedule(`treatment:${medication.medicationId}`, medication)
   const [replacement, setReplacement] = useConsultationDraftState<Medication | null>(`treatment:${medication.medicationId}.replacement`, null)
   const [adherence, setAdherence] = useConsultationDraftState<MedicationAdherence | null>(`treatment:${medication.medicationId}.adherence`, 
     medication.adherence ?? null,
@@ -91,23 +93,20 @@ export function TreatmentMedicationRow({
   const [finishing, setFinishing] = useConsultationDraftState(`treatment:${medication.medicationId}.finishing`, false)
   const [finishReason, setFinishReason] = useConsultationDraftState(`treatment:${medication.medicationId}.finishReason`, '')
 
-  const doseChanged = editingMed && dose.trim() !== (medication.dose ?? '')
-  const freqChanged = editingMed && frequency.trim() !== (medication.frequency ?? '')
+  const scheduleChanged = editingMed && schedule.changed
   const medChanged =
     editingMed && replacement != null && replacement.id !== medication.medicationId
   const canSave =
     !readOnly &&
     (adherence !== null ||
       ramStatus !== null ||
-      doseChanged ||
-      freqChanged ||
+      scheduleChanged ||
       medChanged ||
       suspendForRam)
 
   function save() {
     onSave({
-      dose: doseChanged ? dose.trim() : undefined,
-      frequency: freqChanged ? frequency.trim() : undefined,
+      ...(editingMed ? schedule.changedPayload : {}),
       adherence: adherence ?? undefined,
       adherenceNotes: adherence ? adherenceNotes.trim() || undefined : undefined,
       ramStatus: ramStatus ?? undefined,
@@ -143,8 +142,10 @@ export function TreatmentMedicationRow({
           {!editingMed && (
             <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
               {medication.dose ?? '—'} · {medication.frequency ?? '—'}
+              {medication.duration ? ` · ${medication.duration}` : ''}
             </Typography>
           )}
+          {!editingMed && medication.frequencyNotes && <Typography sx={{ fontSize: '12px', color: 'text.secondary', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{medication.frequencyNotes}</Typography>}
         </Box>
         {!readOnly && !suspended && (
           <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
@@ -177,12 +178,7 @@ export function TreatmentMedicationRow({
           los botones del encabezado. */}
       {editingMed && !suspended && (
         <Stack spacing={1} sx={{ mt: 1 }}>
-          <MedicationDoseFields
-            dose={dose}
-            frequency={frequency}
-            onDoseChange={setDose}
-            onFrequencyChange={setFrequency}
-          />
+          <MedicationDoseFields schedule={schedule} />
           <Autocomplete
             size="small"
             fullWidth

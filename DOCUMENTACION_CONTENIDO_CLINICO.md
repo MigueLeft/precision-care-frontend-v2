@@ -18,6 +18,7 @@ Cada medicamento que toma el paciente registra:
 
 - **Estado:** **Actual** (lo sigue tomando) o **Previo** (ya no lo toma).
 - **Esquema:** dosis, frecuencia, duración, cantidad y presentación.
+- **Nota de frecuencia (opcional):** texto libre para aclaraciones como «después de comer».
 - **Fechas:** inicio del tratamiento (si no se indica, se usa la fecha de alta) y fin.
 - **Médico que lo prescribió.**
 - **Motivo de suspensión**, cuando deja de tomarlo.
@@ -33,8 +34,9 @@ Cada medicamento que toma el paciente registra:
 En la consulta también se pueden emitir recetas. Cada receta indica medicamento, dosis, vía de administración, frecuencia, duración e indicaciones.
 
 ### En el expediente
-- **Medicamentos actuales:** muestra dosis, médico que lo prescribió, adherencia y RAM.
+- **Medicamentos actuales:** muestra la dosis registrada, frecuencia y su nota, duración, médico que lo prescribió, adherencia y RAM.
 - **Medicamentos previos:** muestra el motivo de suspensión y las notas de adherencia y RAM.
+- **Edición:** se pueden corregir los medicamentos actuales y previos; el registro anterior se conserva como una versión del tratamiento.
 
 ---
 
@@ -91,6 +93,8 @@ Sistema nervioso · Aparato circulatorio · Aparato respiratorio · Aparato dige
 ## 4. Antecedentes
 
 Los antecedentes guardan la historia clínica previa del paciente. Se dividen en cinco tipos:
+
+Desde el expediente se pueden preparar varios antecedentes en el mismo diálogo con «Añadir otro antecedente» y guardarlos juntos. Cada antecedente conserva sus propios datos; si falla alguno, se mantienen los fallidos para corregirlos o reintentarlos sin volver a enviar los guardados.
 
 | Tipo | Qué registra |
 |---|---|

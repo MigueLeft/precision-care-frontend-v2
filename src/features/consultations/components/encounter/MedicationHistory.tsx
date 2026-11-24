@@ -36,6 +36,7 @@ export function MedicationHistory({ consultationId }: MedicationHistoryProps) {
                   </Typography>
                   {item.dose ? ` ${item.dose}` : ''}
                   {item.frequency ? ` · ${item.frequency}` : ''}
+                  {item.duration ? ` · ${item.duration}` : ''}
                   {item.discontinuationReason ? ` — ${item.discontinuationReason}` : ''}
                 </Typography>
                 <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap' }}>
@@ -56,9 +57,9 @@ export function MedicationHistory({ consultationId }: MedicationHistoryProps) {
                     />
                   )}
                 </Stack>
-                {(item.adherenceNotes || item.ramNotes) && (
+                {(item.frequencyNotes || item.adherenceNotes || item.ramNotes) && (
                   <Typography sx={{ fontSize: '12px', fontStyle: 'italic', color: 'text.secondary' }}>
-                    {[item.adherenceNotes, item.ramNotes].filter(Boolean).join(' · ')}
+                    {[item.frequencyNotes, item.adherenceNotes, item.ramNotes].filter(Boolean).join(' · ')}
                   </Typography>
                 )}
               </Stack>

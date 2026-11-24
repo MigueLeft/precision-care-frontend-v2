@@ -4,7 +4,8 @@ import AddIcon from '@mui/icons-material/Add'
 import { toast } from '@/utils/toast'
 import { AppButton } from '@/components/AppButton'
 import { useMedications } from '@/features/catalogs'
-import { MedicationFrequencyField } from '@/features/patient-medications'
+import { MedicationDoseFields } from './MedicationDoseFields'
+import { useMedicationSchedule } from '../../hooks/useMedicationSchedule'
 import { ManualMedicationFields } from './ManualMedicationFields'
 import {
   EMPTY_MANUAL_MEDICATION,
@@ -26,8 +27,7 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
     useConsultationDraftState<ManualMedicationValue>('medicationAdd.manualMedication', EMPTY_MANUAL_MEDICATION)
   const [medicationId, setMedicationId] = useConsultationDraftState<number | null>('medicationAdd.medicationId', null)
   const [medicationLabel, setMedicationLabel] = useConsultationDraftState('medicationAdd.medicationLabel', '')
-  const [dose, setDose] = useConsultationDraftState('medicationAdd.dose', '')
-  const [frequency, setFrequency] = useConsultationDraftState('medicationAdd.frequency', '')
+  const schedule = useMedicationSchedule('medicationAdd')
   // Remonta el selector de frecuencia (cierra el "Otro" abierto) tras añadir.
   const [resetCount, setResetCount] = useState(0)
 
@@ -39,8 +39,7 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
     setManualMedication(EMPTY_MANUAL_MEDICATION)
     setMedicationId(null)
     setMedicationLabel('')
-    setDose('')
-    setFrequency('')
+    schedule.reset()
     setResetCount((count) => count + 1)
   }
 
@@ -74,15 +73,14 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
     if (!medication) return
     onAdd({
       ...medication,
-      dose: dose.trim() || undefined,
-      frequency: frequency.trim() || undefined,
+      ...schedule.payload,
     })
     reset()
   }
 
   return (
     <Stack spacing={0.5} sx={{ mt: 1 }}>
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} useFlexGap sx={{ flexWrap: 'wrap', alignItems: { xs: 'stretch', md: 'flex-start' } }}>
         {manual ? (
           <ManualMedicationFields value={manualMedication} onChange={setManualMedication} />
         ) : (
@@ -103,19 +101,7 @@ export function MedicationAddForm({ onAdd, isAdding }: MedicationAddFormProps) {
             )}
           />
         )}
-        <TextField
-          size="small"
-          placeholder="Dosis"
-          value={dose}
-          onChange={(event) => setDose(event.target.value)}
-          sx={{ width: { md: 120 } }}
-        />
-        <MedicationFrequencyField
-          key={resetCount}
-          value={frequency}
-          onChange={setFrequency}
-          sx={{ flex: { md: 1 }, minWidth: 160 }}
-        />
+        <MedicationDoseFields key={resetCount} schedule={schedule} />
         <AppButton
           variant="outlined"
           loading={isAdding}

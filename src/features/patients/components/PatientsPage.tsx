@@ -6,7 +6,8 @@ import { useCreatePatient } from '../hooks/useCreatePatient'
 import { useUpdatePatient } from '../hooks/useUpdatePatient'
 import { useDeletePatient } from '../hooks/useDeletePatient'
 import { ListPagination } from '@/components/ui/ListPagination'
-import { filterPatients } from '../utils/filter-patients'
+import { QueryBoundary } from '@/components/ui/QueryBoundary'
+import { usePatient } from '../hooks/usePatient'
 import { clampPage, pagePatients, PATIENTS_PAGE_SIZE, sortPatientsByName } from '../utils/paginate-patients'
 import { formatPatientName } from '../utils/patient-format'
 import { mapPatientToFormValues } from '../utils/map-patient-to-form-values'
@@ -29,14 +30,16 @@ export function PatientsPage({ searchParams, onSearchParamsChange }: PatientsPag
   const [editingPatientId, setEditingPatientId] = useState<number | null>(null)
   const [deletingPatientId, setDeletingPatientId] = useState<number | null>(null)
 
-  const { data: patients = [] } = usePatients()
+  const { data: patients = [], isLoading, isError, error } = usePatients(searchParams)
+  const { data: selectedPatient } = usePatient(searchParams.patientId)
   const { data: countries = [] } = useCountries()
 
   const countryNameById = new Map(countries.map((country) => [country.id, country.name]))
-  const filteredPatients = sortPatientsByName(filterPatients(patients, searchParams))
+  const filteredPatients = sortPatientsByName(patients)
   const page = clampPage(searchParams.page, filteredPatients.length)
-  const drawerPatient = patients.find((patient) => patient.id === searchParams.patientId) ?? null
-  const editingPatient = patients.find((patient) => patient.id === editingPatientId) ?? null
+  const drawerPatient = selectedPatient ?? patients.find((patient) => patient.id === searchParams.patientId) ?? null
+  const editingPatient = patients.find((patient) => patient.id === editingPatientId)
+    ?? (selectedPatient?.id === editingPatientId ? selectedPatient : null)
   const deletingPatient = patients.find((patient) => patient.id === deletingPatientId) ?? null
 
   const createMutation = useCreatePatient({ onSuccess: () => setIsCreateOpen(false) })
@@ -88,20 +91,22 @@ export function PatientsPage({ searchParams, onSearchParamsChange }: PatientsPag
         onNewPatient={() => setIsCreateOpen(true)}
       />
 
-      <PatientsTable
-        patients={pagePatients(filteredPatients, page)}
-        countryNameById={countryNameById}
-        onView={(id) => onSearchParamsChange({ patientId: id })}
-        onEdit={(id) => setEditingPatientId(id)}
-        onDelete={(id) => setDeletingPatientId(id)}
-      />
+      <QueryBoundary isLoading={isLoading} isError={isError} error={error}>
+        <PatientsTable
+          patients={pagePatients(filteredPatients, page)}
+          countryNameById={countryNameById}
+          onView={(id) => onSearchParamsChange({ patientId: id })}
+          onEdit={(id) => setEditingPatientId(id)}
+          onDelete={(id) => setDeletingPatientId(id)}
+        />
 
-      <ListPagination
-        page={page}
-        pageSize={PATIENTS_PAGE_SIZE}
-        total={filteredPatients.length}
-        onPageChange={(next) => onSearchParamsChange({ page: next > 1 ? next : undefined })}
-      />
+        <ListPagination
+          page={page}
+          pageSize={PATIENTS_PAGE_SIZE}
+          total={filteredPatients.length}
+          onPageChange={(next) => onSearchParamsChange({ page: next > 1 ? next : undefined })}
+        />
+      </QueryBoundary>
 
       <PatientFormModal
         open={isFormOpen}

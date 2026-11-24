@@ -1,19 +1,17 @@
 import { useState } from 'react'
-import { Stack, Box } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
+import { Stack } from '@mui/material'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { AppButton } from '@/components/AppButton'
 import { useAntecedentsByPatient } from '../hooks/useAntecedentsByPatient'
-import { useCreateAntecedent } from '../hooks/useCreateAntecedent'
+import { useCreateAntecedents } from '../hooks/useCreateAntecedents'
 import { useUpdateAntecedent } from '../hooks/useUpdateAntecedent'
 import { useDeleteAntecedent } from '../hooks/useDeleteAntecedent'
 import { AntecedentListTable } from './AntecedentListTable'
 import { SurgeryHospitalizationList } from './SurgeryHospitalizationList'
 import { AntecedentFormModal } from './AntecedentFormModal'
+import { CreateAntecedentsModal } from './CreateAntecedentsModal'
+import { AntecedentSection } from './AntecedentSection'
 import {
-  mapFormToPayload,
   mapFormToUpdatePayload,
   mapAntecedentToForm,
 } from '../utils/antecedent-mappers'
@@ -25,19 +23,6 @@ interface AntecedentsPanelProps {
   patientId: number
 }
 
-function AddButton({ onClick }: { onClick: () => void }) {
-  return (
-    <AppButton
-      size="small"
-      variant="outlined"
-      startIcon={<AddIcon sx={{ fontSize: 16 }} />}
-      onClick={onClick}
-    >
-      Agregar
-    </AppButton>
-  )
-}
-
 export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
   const { data: antecedents = [], isLoading, isError, error } =
     useAntecedentsByPatient(patientId)
@@ -46,11 +31,7 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
   const [creatingType, setCreatingType] = useState<AntecedentType | null>(null)
   const [deleting, setDeleting] = useState<Antecedent | null>(null)
 
-  const isModalOpen = creatingType !== null || editing !== null
-
-  const createMutation = useCreateAntecedent(patientId, {
-    onSuccess: () => setCreatingType(null),
-  })
+  const createMutation = useCreateAntecedents(patientId)
   const updateMutation = useUpdateAntecedent(patientId, editing?.id, {
     onSuccess: () => setEditing(null),
   })
@@ -67,16 +48,8 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
   function handleSubmit(values: AntecedentFormValues) {
     if (editing) {
       updateMutation.mutate(mapFormToUpdatePayload(values))
-    } else {
-      createMutation.mutate({ ...mapFormToPayload(values), patientId })
     }
   }
-
-  const initialValues: AntecedentFormValues | undefined = editing
-    ? mapAntecedentToForm(editing)
-    : creatingType
-      ? { ...antecedentFormDefaultValues, type: creatingType }
-      : undefined
 
   if (isLoading || isError) {
     return (
@@ -89,65 +62,42 @@ export function AntecedentsPanel({ patientId }: AntecedentsPanelProps) {
   return (
     <>
       <Stack spacing={2}>
-        <CollapsibleSection
-          title="Antecedentes familiares"
-          defaultExpanded
-        >
-          <Stack spacing={2}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <AddButton onClick={() => setCreatingType('family')} />
-            </Box>
-            <AntecedentListTable
-              antecedents={family}
-              variant="family"
-              onEdit={setEditing}
-              onDelete={setDeleting}
-            />
-          </Stack>
-        </CollapsibleSection>
+        <AntecedentSection title="Antecedentes familiares" onAdd={() => setCreatingType('family')}>
+          <AntecedentListTable antecedents={family} variant="family" onEdit={setEditing} onDelete={setDeleting} />
+        </AntecedentSection>
 
-        <CollapsibleSection
-          title="Antecedentes personales"
-          defaultExpanded
-        >
-          <Stack spacing={2}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <AddButton onClick={() => setCreatingType('personal')} />
-            </Box>
-            <AntecedentListTable
-              antecedents={personal}
-              variant="personal"
-              onEdit={setEditing}
-              onDelete={setDeleting}
-            />
-          </Stack>
-        </CollapsibleSection>
+        <AntecedentSection title="Antecedentes personales" onAdd={() => setCreatingType('personal')}>
+          <AntecedentListTable antecedents={personal} variant="personal" onEdit={setEditing} onDelete={setDeleting} />
+        </AntecedentSection>
 
-        <CollapsibleSection title="Cirugías y hospitalizaciones" defaultExpanded>
-          <Stack spacing={2}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <AddButton onClick={() => setCreatingType('surgery')} />
-            </Box>
-            <SurgeryHospitalizationList
-              antecedents={surgical}
-              onEdit={setEditing}
-              onDelete={setDeleting}
-            />
-          </Stack>
-        </CollapsibleSection>
+        <AntecedentSection title="Cirugías y hospitalizaciones" onAdd={() => setCreatingType('surgery')}>
+          <SurgeryHospitalizationList antecedents={surgical} onEdit={setEditing} onDelete={setDeleting} />
+        </AntecedentSection>
       </Stack>
 
-      <AntecedentFormModal
-        open={isModalOpen}
-        mode={editing ? 'edit' : 'create'}
-        initialValues={initialValues}
-        isSubmitting={createMutation.isPending || updateMutation.isPending}
+      {editing && <AntecedentFormModal
+        key={editing.id}
+        open
+        mode="edit"
+        initialValues={mapAntecedentToForm(editing)}
+        isSubmitting={updateMutation.isPending}
         onSubmit={handleSubmit}
         onClose={() => {
           setCreatingType(null)
           setEditing(null)
         }}
-      />
+      />}
+
+      {creatingType && <CreateAntecedentsModal
+        initialValues={{ ...antecedentFormDefaultValues, type: creatingType }}
+        isSubmitting={createMutation.isPending}
+        onSubmit={async (values) => {
+          const { failed } = await createMutation.mutateAsync(values)
+          if (!failed.length) setCreatingType(null)
+          return failed
+        }}
+        onClose={() => setCreatingType(null)}
+      />}
 
       <ConfirmDialog
         open={deleting !== null}

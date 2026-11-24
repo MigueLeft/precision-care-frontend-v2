@@ -1,3 +1,8 @@
+export interface PatientListFilters {
+  q?: string
+  nationalityCountryId?: number
+}
+
 export interface Patient {
   id: number
   mrn: string

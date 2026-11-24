@@ -10,6 +10,7 @@ export interface PatientMedication {
   status: MedicationStatus
   dose: string | null
   frequency: string | null
+  frequencyNotes: string | null
   duration: string | null
   quantity: string | null
   presentation: string | null
@@ -38,6 +39,7 @@ export interface CreatePatientMedicationPayload {
   status: MedicationStatus
   dose?: string
   frequency?: string
+  frequencyNotes?: string
   duration?: string
   quantity?: string
   presentation?: string
@@ -47,5 +49,5 @@ export interface CreatePatientMedicationPayload {
 }
 
 export type UpdatePatientMedicationPayload = Partial<
-  Omit<CreatePatientMedicationPayload, 'patientId'>
->
+  Omit<CreatePatientMedicationPayload, 'patientId' | 'startAt'>
+> & { startAt?: string | null }

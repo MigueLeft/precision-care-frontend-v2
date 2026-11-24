@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import {
   Box,
+  Button,
   Chip,
   Collapse,
   Stack,
@@ -15,13 +16,14 @@ import { EmptyState } from '@/components/EmptyState'
 import { formatShortDate } from '@/utils/format-date'
 import type { PatientMedication } from '../types'
 import {
-  getMedicationDisplayName,
+  formatMedicationName,
   ADHERENCE_LABELS,
   TOLERANCE_LABELS,
 } from '../utils/medication-helpers'
 
 interface PreviousMedicationsTableProps {
   medications: PatientMedication[]
+  onEdit?: (medication: PatientMedication) => void
 }
 
 const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Hasta', 'Motivo de suspensión', '']
@@ -61,7 +63,7 @@ function Detail({ medication }: { medication: PatientMedication }) {
   )
 }
 
-export function PreviousMedicationsTable({ medications }: PreviousMedicationsTableProps) {
+export function PreviousMedicationsTable({ medications, onEdit }: PreviousMedicationsTableProps) {
   const [openId, setOpenId] = useState<number | null>(null)
 
   if (medications.length === 0) {
@@ -90,13 +92,14 @@ export function PreviousMedicationsTable({ medications }: PreviousMedicationsTab
               <Fragment key={medication.id}>
                 <TableRow hover sx={{ cursor: 'pointer' }} onClick={() => setOpenId(isOpen ? null : medication.id)}>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary' }}>
-                    {getMedicationDisplayName(medication)}
+                    {formatMedicationName(medication)}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary' }}>
-                    {medication.dose ?? medication.concentration ?? '—'}
+                    {medication.dose?.trim() || '—'}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
-                    {medication.frequency ?? '—'}
+                    {medication.frequency || '—'}
+                    {medication.frequencyNotes && <Typography sx={{ fontSize: '12px', color: 'text.secondary', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{medication.frequencyNotes}</Typography>}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary' }}>
                     {formatShortDate(medication.endAt)}
@@ -105,6 +108,7 @@ export function PreviousMedicationsTable({ medications }: PreviousMedicationsTab
                     {medication.discontinuationReason ?? '—'}
                   </TableCell>
                   <TableCell align="right">
+                    {onEdit && <Button size="small" onClick={(event) => { event.stopPropagation(); onEdit(medication) }}>Editar</Button>}
                     <Typography sx={{ fontSize: '12px', color: 'primary.main', fontWeight: 600 }}>
                       {isOpen ? 'Ocultar' : 'Ver detalle'}
                     </Typography>

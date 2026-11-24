@@ -1,9 +1,9 @@
 import { api } from '@/utils/api'
-import type { Patient, Allergy, PatientLegacyHistory } from '../types'
+import type { Patient, Allergy, PatientLegacyHistory, PatientListFilters } from '../types'
 import type { CreatePatientDto, UpdatePatientDto } from '../schemas/patient.schema'
 
-export async function fetchPatients(): Promise<Patient[]> {
-  const { data } = await api.get<{ patients: Patient[] }>('/patients')
+export async function fetchPatients(filters: PatientListFilters = {}, signal?: AbortSignal): Promise<Patient[]> {
+  const { data } = await api.get<{ patients: Patient[] }>('/patients', { params: filters, signal })
   return data.patients
 }
 

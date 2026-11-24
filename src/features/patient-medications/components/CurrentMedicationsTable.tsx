@@ -15,21 +15,23 @@ import { EmptyState } from '@/components/EmptyState'
 import { formatShortDate } from '@/utils/format-date'
 import type { PatientMedication } from '../types'
 import {
-  getMedicationDisplayName,
+  formatMedicationName,
   ADHERENCE_LABELS,
   TOLERANCE_LABELS,
 } from '../utils/medication-helpers'
 
 interface CurrentMedicationsTableProps {
   medications: PatientMedication[]
-  onSuspend: (medication: PatientMedication) => void
+  onSuspend?: (medication: PatientMedication) => void
+  onEdit?: (medication: PatientMedication) => void
 }
 
-const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Desde', 'Prescriptor', '']
+const HEADERS = ['Medicamento', 'Dosis', 'Frecuencia', 'Duración', 'Desde', 'Prescriptor', '']
 
 export function CurrentMedicationsTable({
   medications,
   onSuspend,
+  onEdit,
 }: CurrentMedicationsTableProps) {
   if (medications.length === 0) {
     return <EmptyState message="Sin medicamentos activos." />
@@ -61,13 +63,17 @@ export function CurrentMedicationsTable({
               <Fragment key={medication.id}>
                 <TableRow sx={hasCapture ? { '& td': { borderBottom: 0 } } : undefined}>
                   <TableCell sx={{ fontSize: '13px', fontWeight: 600 }}>
-                    {getMedicationDisplayName(medication)}
+                    {formatMedicationName(medication)}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px' }}>
-                    {medication.dose ?? medication.concentration ?? '—'}
+                    {medication.dose?.trim() || '—'}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px', color: 'text.secondary', fontStyle: 'italic' }}>
-                    {medication.frequency ?? '—'}
+                    {medication.frequency || '—'}
+                    {medication.frequencyNotes && <Typography sx={{ fontSize: '12px', color: 'text.secondary', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{medication.frequencyNotes}</Typography>}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '13px' }}>
+                    {medication.duration || '—'}
                   </TableCell>
                   <TableCell sx={{ fontSize: '13px' }}>
                     {formatShortDate(medication.startAt)}
@@ -76,14 +82,14 @@ export function CurrentMedicationsTable({
                     {medication.prescriberName ?? '—'}
                   </TableCell>
                   <TableCell align="right">
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => onSuspend(medication)}
-                      sx={{ px: 1 }}
-                    >
-                      <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>Suspender</Typography>
-                    </Button>
+                    <Stack direction="row" spacing={0.5}>
+                      {onEdit && <Button size="small" onClick={() => onEdit(medication)}>Editar</Button>}
+                      {onSuspend && (
+                        <Button size="small" color="error" onClick={() => onSuspend(medication)} sx={{ px: 1 }}>
+                          Suspender
+                        </Button>
+                      )}
+                    </Stack>
                   </TableCell>
                 </TableRow>
                 {hasCapture && (

@@ -18,6 +18,7 @@ export function NoteMedications({ medications }: { medications: ConsultationMedi
             </Box>
             {medication.dose ? ` ${medication.dose}` : ''}
             {medication.frequency ? ` · ${medication.frequency}` : ''}
+            {medication.duration ? ` · ${medication.duration}` : ''}
             {medication.status === 'previous' && (
               <Box component="span" sx={{ color: 'error.main', fontWeight: 600 }}>
                 {' '}
@@ -40,9 +41,9 @@ export function NoteMedications({ medications }: { medications: ConsultationMedi
               )}
             </Stack>
           )}
-          {(medication.adherenceNotes || medication.ramNotes) && (
+          {(medication.frequencyNotes || medication.adherenceNotes || medication.ramNotes) && (
             <Typography sx={{ fontSize: '12px', fontStyle: 'italic', color: 'text.secondary' }}>
-              {[medication.adherenceNotes, medication.ramNotes].filter(Boolean).join(' · ')}
+              {[medication.frequencyNotes, medication.adherenceNotes, medication.ramNotes].filter(Boolean).join(' · ')}
             </Typography>
           )}
         </Box>

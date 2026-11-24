@@ -250,6 +250,8 @@ export interface ConsultationMedication {
   status: 'current' | 'previous'
   dose: string | null
   frequency: string | null
+  frequencyNotes: string | null
+  duration: string | null
   startAt: string | null
   endAt: string | null
   discontinuationReason: string | null
@@ -277,12 +279,16 @@ export interface AddMedicationInput {
   newMedication?: NewMedicationInput
   dose?: string
   frequency?: string
+  frequencyNotes?: string
+  duration?: string
   startAt?: string
 }
 
 export interface CaptureMedicationInput {
   dose?: string
   frequency?: string
+  frequencyNotes?: string
+  duration?: string
   adherence?: MedicationAdherence
   adherenceNotes?: string
   ramStatus?: MedicationRamStatus
@@ -299,6 +305,8 @@ export interface MedicationHistoryItem {
   genericName: string | null
   dose: string | null
   frequency: string | null
+  frequencyNotes: string | null
+  duration: string | null
   adherence: MedicationAdherence | null
   ramStatus: MedicationRamStatus | null
   adherenceNotes: string | null

@@ -9,8 +9,9 @@ export const medicationFormSchema = z.object({
     .number({ error: 'Selecciona un medicamento.' })
     .int()
     .positive('Selecciona un medicamento.'),
-  dose: z.string().optional(),
+  dose: z.string().trim().max(100, 'La dosis no debe superar los 100 caracteres.').optional(),
   frequency: z.string().optional(),
+  frequencyNotes: z.string().trim().max(500, 'La nota no debe superar los 500 caracteres.').optional(),
   duration: z.string().optional(),
   quantity: z.string().optional(),
   presentation: z.string().optional(),
@@ -27,6 +28,7 @@ export const medicationFormDefaultValues: MedicationFormValues = {
   medicationId: 0,
   dose: '',
   frequency: '',
+  frequencyNotes: '',
   duration: '',
   quantity: '',
   presentation: '',

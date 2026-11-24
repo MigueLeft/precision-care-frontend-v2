@@ -7,6 +7,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { MedicationDoseFields } from './MedicationDoseFields'
 import type { CaptureMedicationInput, ConsultationMedication } from '../../types'
 import { useConsultationDraftState } from '@/hooks/useConsultationDraftState'
+import { useMedicationSchedule } from '../../hooks/useMedicationSchedule'
 
 interface BaseMedicationRowProps {
   medication: ConsultationMedication
@@ -34,20 +35,15 @@ export function BaseMedicationRow({
 }: BaseMedicationRowProps) {
   const [editing, setEditing] = useConsultationDraftState(`baseMedication:${medication.medicationId}.editing`, false)
   const [confirmOpen, setConfirmOpen] = useState(false)
-  const [dose, setDose] = useConsultationDraftState(`baseMedication:${medication.medicationId}.dose`, medication.dose ?? '')
-  const [frequency, setFrequency] = useConsultationDraftState(`baseMedication:${medication.medicationId}.frequency`, medication.frequency ?? '')
-
-  const changed =
-    dose.trim() !== (medication.dose ?? '') || frequency.trim() !== (medication.frequency ?? '')
+  const schedule = useMedicationSchedule(`baseMedication:${medication.medicationId}`, medication)
 
   function startEditing() {
-    setDose(medication.dose ?? '')
-    setFrequency(medication.frequency ?? '')
+    schedule.reset()
     setEditing(true)
   }
 
   function save() {
-    onSave({ dose: dose.trim(), frequency: frequency.trim() })
+    onSave(schedule.payload)
     setEditing(false)
   }
 
@@ -62,6 +58,7 @@ export function BaseMedicationRow({
             <Box component="span" sx={{ color: 'text.secondary' }}>
               {medication.dose ? `  ${medication.dose}` : ''}
               {medication.frequency ? `  ${medication.frequency}` : ''}
+              {medication.duration ? ` · ${medication.duration}` : ''}
             </Box>
           )}
         </Typography>
@@ -81,16 +78,13 @@ export function BaseMedicationRow({
         )}
       </Stack>
 
+      {!editing && medication.frequencyNotes && <Typography sx={{ fontSize: '12px', color: 'text.secondary', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{medication.frequencyNotes}</Typography>}
+
       {editing && (
         <Stack spacing={1} sx={{ mt: 1 }}>
-          <MedicationDoseFields
-            dose={dose}
-            frequency={frequency}
-            onDoseChange={setDose}
-            onFrequencyChange={setFrequency}
-          />
+          <MedicationDoseFields schedule={schedule} />
           <Stack direction="row" spacing={1}>
-            <AppButton size="small" variant="contained" loading={isSaving} disabled={!changed} onClick={save}>
+            <AppButton size="small" variant="contained" loading={isSaving} disabled={!schedule.changed} onClick={save}>
               Guardar
             </AppButton>
             <AppButton size="small" variant="text" onClick={() => setEditing(false)}>
