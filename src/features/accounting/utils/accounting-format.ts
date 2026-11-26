@@ -1,6 +1,11 @@
 export function formatAmount(amount: number | null) {
   return amount == null ? 'Sin precio' : amount.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
+export function formatPaymentDate(date: string | null) {
+  if (!date) return '—'
+  const [year, month, day] = date.split('-')
+  return `${day}/${month}/${year}`
+}
 export function currentMonthRange() {
   const now = new Date()
   const local = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`

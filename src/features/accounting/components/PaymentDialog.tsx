@@ -15,8 +15,11 @@ export function PaymentDialog({ appointment, mode, onClose }: Props) {
   const paying = mode === 'pay'
   const methods = usePaymentMethods('accounting', paying)
   const { control, handleSubmit } = useForm<PaymentPayload>({
-    resolver: zodResolver(paymentSchema.extend({ paymentMethodId: paying ? paymentSchema.shape.paymentMethodId : z.number() })),
-    defaultValues: { basePrice: appointment.basePrice ?? undefined, discountPercent: appointment.discountPercent, paymentMethodId: 0 },
+    resolver: zodResolver(paymentSchema.extend({
+      paymentMethodId: paying ? paymentSchema.shape.paymentMethodId : z.number(),
+      paymentDate: paying ? paymentSchema.shape.paymentDate : z.string(),
+    })),
+    defaultValues: { basePrice: appointment.basePrice ?? undefined, discountPercent: appointment.discountPercent, paymentMethodId: 0, paymentDate: '' },
   })
   const pay = usePayAppointment(onClose)
   const price = useUpdateAppointmentPricing(onClose)
@@ -31,6 +34,11 @@ export function PaymentDialog({ appointment, mode, onClose }: Props) {
           <Typography color="text.secondary">Importes en USD</Typography>
           <PricingFields control={control} disabled={pending} />
           {paying && <>
+            <Controller name="paymentDate" control={control} render={({ field, fieldState }) => (
+              <TextField {...field} type="date" label="Fecha de pago" required fullWidth disabled={pending}
+                error={!!fieldState.error} helperText={fieldState.error?.message ?? 'Indica el día en que se realizó el pago.'}
+                slotProps={{ inputLabel: { shrink: true } }} />
+            )} />
             {methods.isError && <Alert severity="error">No se pudieron cargar los métodos. <Button onClick={() => void methods.refetch()}>Reintentar</Button></Alert>}
             {!methods.isLoading && !methods.isError && available.length === 0 && <Alert severity="warning">Crea o activa un método de pago en Catálogos para continuar.</Alert>}
             <Controller name="paymentMethodId" control={control} render={({ field, fieldState }) => (

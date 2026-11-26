@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Button, MenuItem, Stack, TablePagination, TextField, Typography } from '@mui/material'
+import { Button, MenuItem, Stack, TextField, Typography } from '@mui/material'
 import { QueryBoundary } from '@/components/ui/QueryBoundary'
 import { useAccountingAppointments } from '../hooks/useAccounting'
 import type { AccountingAppointment, AccountingFilters } from '../types'
 import { AccountingTable } from './AccountingTable'
 import { PaymentDialog } from './PaymentDialog'
 import { VoidPaymentDialog } from './VoidPaymentDialog'
+import { AccountingPagination } from './AccountingPagination'
 
 export function AccountingAppointments() {
   const [filters, setFilters] = useState<AccountingFilters>({ page: 1, pageSize: 25, status: 'all' })
@@ -23,9 +24,8 @@ export function AccountingAppointments() {
       <QueryBoundary isLoading={query.isLoading} isError={query.isError} error={query.error}>
         <AccountingTable appointments={query.data?.appointments ?? []} onPay={(appointment) => setDialog({ appointment, mode: 'pay' })}
           onPrice={(appointment) => setDialog({ appointment, mode: 'price' })} onVoid={(appointment) => setDialog({ appointment, mode: 'void' })} />
-        <TablePagination component="div" count={query.data?.total ?? 0} page={filters.page - 1} rowsPerPage={filters.pageSize} rowsPerPageOptions={[10, 25, 50]}
-          onPageChange={(_, page) => setFilters({ ...filters, page: page + 1 })} onRowsPerPageChange={(e) => setFilters({ ...filters, page: 1, pageSize: Number(e.target.value) })}
-          labelRowsPerPage="Citas por página" labelDisplayedRows={({ from, to, count }) => `${from}–${to} de ${count}`} />
+        <AccountingPagination page={filters.page} pageSize={filters.pageSize} total={query.data?.total ?? 0}
+          label="Citas por página" onChange={(pagination) => setFilters({ ...filters, ...pagination })} />
       </QueryBoundary>
       {dialog && (dialog.mode === 'void' ? <VoidPaymentDialog appointment={dialog.appointment} onClose={() => setDialog(null)} />
         : <PaymentDialog key={`${dialog.mode}-${dialog.appointment.id}`} appointment={dialog.appointment} mode={dialog.mode} onClose={() => setDialog(null)} />)}

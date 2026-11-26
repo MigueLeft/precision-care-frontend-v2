@@ -4,4 +4,7 @@ export const pricingSchema = z.object({
   basePrice: z.number({ error: 'Ingresa un precio.' }).finite().min(0).max(99999999.99).multipleOf(0.01),
   discountPercent: z.number().finite().min(0).max(100).multipleOf(0.01),
 })
-export const paymentSchema = pricingSchema.extend({ paymentMethodId: z.number().int().positive('Selecciona un método de pago.') })
+export const paymentSchema = pricingSchema.extend({
+  paymentMethodId: z.number().int().positive('Selecciona un método de pago.'),
+  paymentDate: z.iso.date({ error: 'La fecha de pago es obligatoria y debe ser válida.' }),
+})

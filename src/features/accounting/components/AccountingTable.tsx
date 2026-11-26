@@ -2,7 +2,7 @@ import { Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableContainer
 import { useCan } from '@/features/identity'
 import { EmptyState } from '@/components/EmptyState'
 import type { AccountingAppointment } from '../types'
-import { formatAmount } from '../utils/accounting-format'
+import { formatAmount, formatPaymentDate } from '../utils/accounting-format'
 
 type Props = { appointments: AccountingAppointment[]; onPay: (a: AccountingAppointment) => void; onPrice: (a: AccountingAppointment) => void; onVoid: (a: AccountingAppointment) => void }
 export function AccountingTable({ appointments, onPay, onPrice, onVoid }: Props) {
@@ -16,7 +16,7 @@ export function AccountingTable({ appointments, onPay, onPrice, onVoid }: Props)
           const excluded = ['cancelled_by_patient', 'cancelled_by_clinic', 'no_show'].includes(a.status)
           return (
             <TableRow key={a.id} hover>
-              <TableCell>{new Date(a.startAtUtc).toLocaleString('es-VE')}<Typography variant="caption" sx={{ display: 'block' }}>#{a.id}</Typography></TableCell>
+              <TableCell>{new Date(a.startAtUtc).toLocaleDateString('es-VE')}</TableCell>
               <TableCell><Typography sx={{ fontWeight: 600 }}>{a.patientName}</Typography><Typography variant="body2" color="text.secondary">{a.paidSpecialistName ?? a.specialistName ?? 'Sin especialista'}</Typography></TableCell>
               <TableCell>{formatAmount(a.basePrice)}</TableCell>
               <TableCell>{a.discountPercent} %</TableCell>
@@ -24,7 +24,7 @@ export function AccountingTable({ appointments, onPay, onPrice, onVoid }: Props)
               <TableCell>
                 <Stack spacing={0.5} sx={{ alignItems: 'flex-start' }}>
                   <Chip size="small" label={a.paidAt ? 'Pagada' : 'Por pagar'} color={a.paidAt ? 'success' : 'warning'} />
-                  {a.paidAt && <><Chip size="small" variant="outlined" label={a.paymentMethodName} sx={{ borderColor: a.paymentMethodColor, borderLeftWidth: 5 }} /><Typography variant="caption">{new Date(a.paidAt).toLocaleString('es-VE')}</Typography></>}
+                  {a.paidAt && <><Chip size="small" variant="outlined" label={a.paymentMethodName} sx={{ borderColor: a.paymentMethodColor, borderLeftWidth: 5 }} /><Typography variant="caption">{a.paymentDate ? formatPaymentDate(a.paymentDate) : new Date(a.paidAt).toLocaleDateString('es-VE')}</Typography></>}
                   {excluded && <Typography variant="caption" color="text.secondary">{a.status === 'no_show' ? 'No asistió' : 'Cancelada'} · excluida de cuentas por cobrar</Typography>}
                 </Stack>
               </TableCell>

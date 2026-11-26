@@ -14,7 +14,9 @@ pagos con `contabilidad:delete`. Los permisos se asignan desde Usuarios y roles.
   que falta definirlo; cero representa una cita gratuita. Un descuento no modifica el precio base.
 - Los cobros guardan el método y especialista de ese momento. La tarifa estándar posterior
   no modifica citas previas. Para corregir un cobro se anula con un motivo y se registra de nuevo.
-- Auditoría usa por defecto el mes actual. Los ingresos corresponden a la fecha del pago;
+- Al pagar es obligatorio indicar la fecha en que se realizó el pago. Transacciones permite
+  consultar los cobros por esa fecha, filtrar pagadas/anuladas y conservar el historial de recobros.
+- Auditoría usa por defecto el mes actual. Los ingresos corresponden a la fecha de pago indicada;
   las cuentas por cobrar, a la fecha de la cita. Se excluyen cancelaciones y ausencias
   de las cuentas por cobrar. Las fechas incluyen ambos días y usan la zona horaria local.
 - Las citas anteriores sin tarifa se señalan como pendientes de precio y no suman un importe

@@ -4,8 +4,13 @@ import { toast } from '@/utils/toast'
 import { getApiErrorMessage } from '@/utils/get-api-error-message'
 import { fetchAccountingAppointments, fetchAccountingReport, payAppointment, updateAppointmentPricing, voidAppointmentPayment } from '../services/accounting.service'
 import type { AccountingFilters, PaymentPayload, PricingPayload } from '../types'
+import { fetchAccountingTransactions } from '../services/accounting.service'
+import type { AccountingTransactionFilters } from '../types'
 
 export const accountingKeys = { all: ['accounting'] as const }
+export function useAccountingTransactions(filters: AccountingTransactionFilters, enabled: boolean) {
+  return useQuery({ queryKey: [...accountingKeys.all, 'transactions', filters], queryFn: () => fetchAccountingTransactions(filters), enabled })
+}
 export function useAccountingAppointments(filters: AccountingFilters) {
   return useQuery({ queryKey: [...accountingKeys.all, 'appointments', filters], queryFn: () => fetchAccountingAppointments(filters) })
 }
