@@ -10,6 +10,7 @@ import type { SpecialistStatusFilter } from './SpecialistsToolbar'
 import { SpecialistsTable } from './SpecialistsTable'
 import { DeactivateSpecialistDialog } from './DeactivateSpecialistDialog'
 import type { Specialist } from '../types'
+import { SpecialistPriceDialog } from './SpecialistPriceDialog'
 
 export function SpecialistsPage() {
   const navigate = useNavigate()
@@ -19,6 +20,7 @@ export function SpecialistsPage() {
   const [specialtyId, setSpecialtyId] = useState<number>()
   const [status, setStatus] = useState<SpecialistStatusFilter>('all')
   const [toggling, setToggling] = useState<Specialist | null>(null)
+  const [pricing, setPricing] = useState<Specialist | null>(null)
 
   const statusMutation = useSetSpecialistStatus({ onSuccess: () => setToggling(null) })
 
@@ -45,6 +47,7 @@ export function SpecialistsPage() {
       />
 
       <SpecialistsTable
+        onPrice={setPricing}
         specialists={filtered}
         onView={(id) =>
           navigate({ to: '/especialistas/$specialistId', params: { specialistId: String(id) } })
@@ -60,6 +63,7 @@ export function SpecialistsPage() {
         }
         onClose={() => setToggling(null)}
       />
+      {pricing && <SpecialistPriceDialog key={pricing.id} specialist={pricing} onClose={() => setPricing(null)} />}
     </Box>
   )
 }

@@ -24,6 +24,7 @@ import { Route as AppMiCuentaRouteImport } from './routes/_app/mi-cuenta'
 import { Route as AppIngresablesRouteImport } from './routes/_app/ingresables'
 import { Route as AppEspecialistasRouteImport } from './routes/_app/especialistas'
 import { Route as AppEntregablesRouteImport } from './routes/_app/entregables'
+import { Route as AppContabilidadRouteImport } from './routes/_app/contabilidad'
 import { Route as AppCitasRouteImport } from './routes/_app/citas'
 import { Route as AppCatalogosRouteImport } from './routes/_app/catalogos'
 import { Route as MobileAgendaIndexRouteImport } from './routes/_mobile/agenda/index'
@@ -125,6 +126,13 @@ const AppEntregablesRoute = AppEntregablesRouteImport.update({
   path: '/entregables',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppContabilidadRoute = AppContabilidadRouteImport.update({
+  id: '/contabilidad',
+  path: '/contabilidad',
+  getParentRoute: () => AppRouteRoute,
+} as any).lazy(() =>
+  import('./routes/_app/contabilidad.lazy').then((d) => d.Route),
+)
 const AppCitasRoute = AppCitasRouteImport.update({
   id: '/citas',
   path: '/citas',
@@ -286,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
   '/citas': typeof AppCitasRoute
+  '/contabilidad': typeof AppContabilidadRoute
   '/entregables': typeof AppEntregablesRoute
   '/especialistas': typeof AppEspecialistasRoute
   '/ingresables': typeof AppIngresablesRoute
@@ -327,6 +336,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/catalogos': typeof AppCatalogosRoute
   '/citas': typeof AppCitasRoute
+  '/contabilidad': typeof AppContabilidadRoute
   '/entregables': typeof AppEntregablesRoute
   '/especialistas': typeof AppEspecialistasRoute
   '/ingresables': typeof AppIngresablesRoute
@@ -370,6 +380,7 @@ export interface FileRoutesById {
   '/_mobile': typeof MobileRouteRouteWithChildren
   '/_app/catalogos': typeof AppCatalogosRoute
   '/_app/citas': typeof AppCitasRoute
+  '/_app/contabilidad': typeof AppContabilidadRoute
   '/_app/entregables': typeof AppEntregablesRoute
   '/_app/especialistas': typeof AppEspecialistasRoute
   '/_app/ingresables': typeof AppIngresablesRoute
@@ -414,6 +425,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalogos'
     | '/citas'
+    | '/contabilidad'
     | '/entregables'
     | '/especialistas'
     | '/ingresables'
@@ -455,6 +467,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalogos'
     | '/citas'
+    | '/contabilidad'
     | '/entregables'
     | '/especialistas'
     | '/ingresables'
@@ -497,6 +510,7 @@ export interface FileRouteTypes {
     | '/_mobile'
     | '/_app/catalogos'
     | '/_app/citas'
+    | '/_app/contabilidad'
     | '/_app/entregables'
     | '/_app/especialistas'
     | '/_app/ingresables'
@@ -649,6 +663,13 @@ declare module '@tanstack/react-router' {
       path: '/entregables'
       fullPath: '/entregables'
       preLoaderRoute: typeof AppEntregablesRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/contabilidad': {
+      id: '/_app/contabilidad'
+      path: '/contabilidad'
+      fullPath: '/contabilidad'
+      preLoaderRoute: typeof AppContabilidadRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/citas': {
@@ -900,6 +921,7 @@ const AppPacientesPatientIdRouteRouteWithChildren =
 interface AppRouteRouteChildren {
   AppCatalogosRoute: typeof AppCatalogosRoute
   AppCitasRoute: typeof AppCitasRoute
+  AppContabilidadRoute: typeof AppContabilidadRoute
   AppEntregablesRoute: typeof AppEntregablesRoute
   AppEspecialistasRoute: typeof AppEspecialistasRoute
   AppIngresablesRoute: typeof AppIngresablesRoute
@@ -919,6 +941,7 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppCatalogosRoute: AppCatalogosRoute,
   AppCitasRoute: AppCitasRoute,
+  AppContabilidadRoute: AppContabilidadRoute,
   AppEntregablesRoute: AppEntregablesRoute,
   AppEspecialistasRoute: AppEspecialistasRoute,
   AppIngresablesRoute: AppIngresablesRoute,

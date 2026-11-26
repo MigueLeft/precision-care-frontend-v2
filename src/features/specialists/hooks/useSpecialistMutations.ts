@@ -9,6 +9,7 @@ import {
   resendSpecialistInvitation,
 } from '../services/specialists.service'
 import { specialistsKeys } from './specialists.keys'
+import { identityKeys } from '@/features/identity'
 import type {
   CreateSpecialistResult,
   Specialist,
@@ -18,8 +19,10 @@ import type {
 
 function useInvalidate() {
   const queryClient = useQueryClient()
-  return () =>
-    queryClient.invalidateQueries({ queryKey: specialistsKeys.all })
+  return () => Promise.all([
+    queryClient.invalidateQueries({ queryKey: specialistsKeys.all }),
+    queryClient.invalidateQueries({ queryKey: identityKeys.specialistsLookup }),
+  ])
 }
 
 export function useCreateSpecialist(options?: {

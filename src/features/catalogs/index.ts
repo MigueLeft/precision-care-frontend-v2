@@ -139,3 +139,5 @@ export type {
   ReferralProvider,
   ReferralProviderPayload,
 } from './types'
+export { usePaymentMethods } from './hooks/usePaymentMethods'
+export type { PaymentMethod } from './types/payment-method'

@@ -8,6 +8,7 @@ import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined'
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined'
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined'
 import type { SvgIconComponent } from '@mui/icons-material'
 
 export interface SidebarNavItem {
@@ -39,6 +40,7 @@ export const sidebarNavConfig: SidebarNavSection[] = [
     title: 'ADMINISTRACIÓN',
     items: [
       { label: 'Especialistas', icon: BadgeOutlinedIcon, to: '/especialistas' },
+      { label: 'Contabilidad', icon: AccountBalanceWalletOutlinedIcon, to: '/contabilidad' },
       { label: 'Catálogos', icon: Inventory2OutlinedIcon, to: '/catalogos' },
       { label: 'Usuarios y roles', icon: AdminPanelSettingsOutlinedIcon, to: '/usuarios-y-roles' },
       { label: 'Configuración', icon: SettingsOutlinedIcon },

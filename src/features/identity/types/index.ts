@@ -59,6 +59,7 @@ export interface UpdateUserPayload {
 }
 
 export interface SpecialistLookup {
+  defaultAppointmentPrice: number | null
   id: number
   name: string
   lastName: string

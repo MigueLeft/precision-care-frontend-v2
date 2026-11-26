@@ -1,20 +1,17 @@
 import { Controller, useWatch } from 'react-hook-form'
-import type { Control } from 'react-hook-form'
+import type { Control, UseFormSetValue } from 'react-hook-form'
 import {
-  Checkbox,
   FormControl,
-  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  Stack,
   TextField,
-  Typography,
 } from '@mui/material'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import { usePatients, formatPatientName } from '@/features/patients'
-import { useSpecialistsLookup } from '@/features/identity'
+import { AppointmentSpecialistField } from './AppointmentSpecialistField'
+import { AppointmentAdditionalFields } from './AppointmentAdditionalFields'
 import { appointmentTypeOptions } from '../schemas/appointment-form.schema'
 import type { AppointmentFormValues } from '../schemas/appointment-form.schema'
 import {
@@ -27,22 +24,15 @@ import { AppointmentScheduleFields } from './AppointmentScheduleFields'
 interface AppointmentFormFieldsProps {
   control: Control<AppointmentFormValues>
   lockPatient?: boolean
+  priceLocked?: boolean
+  setValue: UseFormSetValue<AppointmentFormValues>
 }
 
 const MODALITIES: AppointmentModality[] = ['in_person', 'telemedicine']
 
-export function AppointmentFormFields({ control, lockPatient }: AppointmentFormFieldsProps) {
+export function AppointmentFormFields({ control, lockPatient, setValue, priceLocked }: AppointmentFormFieldsProps) {
   const { data: patients = [] } = usePatients()
-  const { data: specialists = [] } = useSpecialistsLookup()
   const modality = useWatch({ control, name: 'modality' })
-  const selectedSpecialistId = useWatch({ control, name: 'specialistId' })
-
-  // Solo especialistas activos; se mantiene el ya seleccionado aunque esté inactivo
-  // (para no romper la edición de una cita antigua).
-  const specialistOptions = specialists.filter(
-    (s) => s.active || s.id === selectedSpecialistId,
-  )
-
   return (
     <Grid container spacing={2} sx={{ mt: 0.5 }}>
       <Grid size={{ xs: 12 }}>
@@ -68,28 +58,7 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
       </Grid>
 
       <Grid size={{ xs: 12, sm: 6 }}>
-        <Controller
-          name="specialistId"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <FormControl fullWidth error={!!error}>
-              <InputLabel id="appt-form-specialist">Especialista</InputLabel>
-              <Select
-                labelId="appt-form-specialist"
-                label="Especialista"
-                value={field.value || ''}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-              >
-                {specialistOptions.map((s) => (
-                  <MenuItem key={s.id} value={s.id}>
-                    {s.name} {s.lastName}
-                    {!s.active ? ' (inactivo)' : ''}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-        />
+        <AppointmentSpecialistField control={control} setValue={setValue} priceLocked={priceLocked} />
       </Grid>
       <Grid size={{ xs: 12, sm: 6 }}>
         <Controller
@@ -159,49 +128,7 @@ export function AppointmentFormFields({ control, lockPatient }: AppointmentFormF
 
       <AppointmentScheduleFields control={control} />
 
-      <Grid size={{ xs: 12 }}>
-        <Controller
-          name="reason"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              value={field.value ?? ''}
-              label="Motivo de consulta"
-              placeholder="Motivo o tipo de cita…"
-              multiline
-              minRows={2}
-              fullWidth
-            />
-          )}
-        />
-      </Grid>
-
-      <Grid size={{ xs: 12 }}>
-        <Typography sx={{ fontSize: '13px', fontWeight: 600, mb: 0.5 }}>
-          Recordatorios
-        </Typography>
-        <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
-          <Controller
-            name="remindEmail"
-            control={control}
-            render={({ field }) => (
-              <FormControlLabel
-                control={<Checkbox checked={field.value} onChange={field.onChange} />}
-                label="Email"
-              />
-            )}
-          />
-          <FormControlLabel
-            control={<Checkbox checked disabled />}
-            label="WhatsApp"
-          />
-        </Stack>
-        <Typography sx={{ fontSize: '11px', color: 'text.secondary' }}>
-          Los recordatorios automáticos y WhatsApp aún no están integrados. El envío por email es
-          manual desde el detalle de la cita.
-        </Typography>
-      </Grid>
+      <AppointmentAdditionalFields control={control} />
     </Grid>
   )
 }

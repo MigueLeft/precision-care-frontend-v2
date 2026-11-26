@@ -7,6 +7,7 @@ export interface SpecialistSpecialtyRef {
 }
 
 export interface Specialist {
+  defaultAppointmentPrice: number | null
   id: number
   name: string
   lastName: string
@@ -48,6 +49,7 @@ export interface SpecialistUserInput {
 }
 
 export interface CreateSpecialistPayload {
+  defaultAppointmentPrice?: number | null
   name: string
   lastName: string
   email: string

@@ -1,6 +1,7 @@
 export const MODULE_ORDER = [
   'pacientes',
   'citas',
+  'contabilidad',
   'citas_todas',
   'consultas',
   'antecedentes',
@@ -22,6 +23,7 @@ export const MODULE_ORDER = [
 ]
 
 const MODULE_LABELS: Record<string, string> = {
+  contabilidad: 'Contabilidad',
   antropometria: 'Antropometría',
   antecedentes: 'Antecedentes',
   especialistas: 'Especialistas',

@@ -130,6 +130,7 @@ export function AppointmentsPage() {
       </QueryBoundary>
 
       <AppointmentFormModal
+        priceLocked={!!editing?.paidAt}
         open={createDraft !== null || editingId !== null}
         mode={editingId ? 'edit' : 'create'}
         initialValues={editing ? mapAppointmentToForm(editing) : (createDraft ?? undefined)}

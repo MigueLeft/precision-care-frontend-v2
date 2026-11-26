@@ -19,8 +19,10 @@ import type {
 
 function useInvalidateAppointments() {
   const queryClient = useQueryClient()
-  return () =>
-    queryClient.invalidateQueries({ queryKey: appointmentsKeys.all })
+  return () => Promise.all([
+    queryClient.invalidateQueries({ queryKey: appointmentsKeys.all }),
+    queryClient.invalidateQueries({ queryKey: ['accounting'] }),
+  ])
 }
 
 export function useCreateAppointment(options?: { onSuccess?: (a: Appointment) => void }) {

@@ -10,6 +10,7 @@ export function hasPermission(me: CurrentUser | null | undefined, code: string):
 export const PAGE_PERMISSIONS: Record<string, string> = {
   '/pacientes': 'pacientes:read',
   '/citas': 'citas:read',
+  '/contabilidad': 'contabilidad:read',
   '/ingresables': 'ingresables:read',
   '/entregables': 'plantillas_entregable:read',
   '/especialistas': 'especialistas:read',

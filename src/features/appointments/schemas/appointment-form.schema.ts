@@ -16,6 +16,8 @@ function todayIsoDate() {
 }
 
 const baseAppointmentFormSchema = z.object({
+  basePrice: z.number().finite().min(0).max(99999999.99).multipleOf(0.01).nullable(),
+  discountPercent: z.number().finite().min(0).max(100).multipleOf(0.01),
   patientId: z
     .number({ error: 'Selecciona un paciente.' })
     .int()
@@ -60,6 +62,8 @@ export function getAppointmentFormSchema(mode: 'create' | 'edit') {
 export type AppointmentFormValues = z.infer<typeof baseAppointmentFormSchema>
 
 export const appointmentFormDefaultValues: AppointmentFormValues = {
+  basePrice: null,
+  discountPercent: 0,
   patientId: 0,
   specialistId: 0,
   modality: 'in_person',

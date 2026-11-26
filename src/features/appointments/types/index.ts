@@ -50,6 +50,9 @@ export interface IntakeAssignment {
 }
 
 export interface Appointment {
+  basePrice: number | null
+  discountPercent: number
+  paidAt: string | null
   id: number
   patientId: number
   startAtUtc: string
@@ -77,6 +80,8 @@ export interface Appointment {
 }
 
 export interface CreateAppointmentPayload {
+  basePrice?: number | null
+  discountPercent?: number
   patientId: number
   startAtUtc: string
   endAtUtc: string

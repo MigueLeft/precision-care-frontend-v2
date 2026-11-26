@@ -20,6 +20,7 @@ import { BodySystemsTab } from './BodySystemsTab'
 import { MedicalSpecialtiesTab } from './MedicalSpecialtiesTab'
 import { AntecedentCatalogsTab } from './AntecedentCatalogsTab'
 import { ReferralProvidersTab } from './ReferralProvidersTab'
+import { PaymentMethodsTab } from './PaymentMethodsTab'
 
 const TABS = [
   { label: 'Medicamentos', icon: LinkOutlinedIcon },
@@ -32,6 +33,7 @@ const TABS = [
   { label: 'Listas demográficas', icon: ListOutlinedIcon },
   { label: 'Cirugías y hospitalizaciones', icon: HistoryOutlinedIcon },
   { label: 'Centros de referencia', icon: ApartmentOutlinedIcon },
+  { label: 'Métodos de pago', icon: ListOutlinedIcon },
 ] as const
 
 export function CatalogsPage() {
@@ -46,7 +48,7 @@ export function CatalogsPage() {
         Gestión de catálogos clínicos y listas de referencia del sistema
       </Typography>
 
-      <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ mb: 3 }}>
+      <Tabs value={tab} onChange={(_, value) => setTab(value)} variant="scrollable" scrollButtons="auto" sx={{ mb: 3 }}>
         {TABS.map(({ label, icon: Icon }) => (
           <Tab key={label} label={label} icon={<Icon sx={{ fontSize: 18 }} />} iconPosition="start" />
         ))}
@@ -62,6 +64,7 @@ export function CatalogsPage() {
       {tab === 7 && <DemographicListsTab />}
       {tab === 8 && <AntecedentCatalogsTab />}
       {tab === 9 && <ReferralProvidersTab />}
+      {tab === 10 && <PaymentMethodsTab />}
     </Box>
   )
 }

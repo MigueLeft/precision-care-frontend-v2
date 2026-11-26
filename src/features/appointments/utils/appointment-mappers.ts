@@ -15,6 +15,8 @@ export function mapFormToPayload(
   const startAtUtc = combineDateTimeToUtc(values.date, values.time)
   return {
     patientId: values.patientId,
+    basePrice: values.basePrice,
+    discountPercent: values.discountPercent,
     startAtUtc,
     endAtUtc: addMinutesIso(startAtUtc, values.durationMin),
     originTimezone: browserTimezone,
@@ -34,6 +36,8 @@ export function mapAppointmentToForm(
   const pad = (n: number) => String(n).padStart(2, '0')
   return {
     ...appointmentFormDefaultValues,
+    basePrice: appointment.basePrice ?? null,
+    discountPercent: appointment.discountPercent ?? 0,
     patientId: appointment.patientId,
     specialistId: getPrimarySpecialist(appointment)?.specialistId ?? 0,
     modality: appointment.modality,
